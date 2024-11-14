@@ -17,6 +17,7 @@
 */
 
 #include <common.h>
+#include <pspusbcam.h>
 
 #include "main.h"
 #include "adrenaline.h"
@@ -346,6 +347,172 @@ int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 	return res;
 }
 
+void sceUsb_driver_0xED8C8695();
+void sceUsb_driver_0x63E55EBE();
+
+int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
+int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
+	int k1 = pspSdkSetK1(0);
+	int ret = _sceUsbCamStillInput(buf, size);
+	sceUsb_driver_0xED8C8695(); // force camera stop 
+
+	pspSdkSetK1(k1);
+
+	return ret;
+}
+
+int sceUsbCamSetupStillEx_Patched(PspUsbCamSetupStillExParam *exparam) {
+	int res = 0;
+
+	int k1 = pspSdkSetK1(0);
+
+	PspUsbCamSetupStillParam param = {0};
+	param.size = sizeof(PspUsbCamSetupStillParam);
+	switch(exparam->resolution)
+	{
+		case 0:
+			param.resolution = 0;
+		break;
+		case 1:
+			param.resolution = 1;
+		break;
+		case 2:
+			param.resolution = 2;
+		break;
+		case 3:
+			param.resolution = 3;
+		break;
+		case 4:
+			param.resolution = 8;
+		break;
+		case 5:
+			param.resolution = 7;
+		break;
+		case 6:
+			param.resolution = 4;
+		break;
+		case 7:
+			param.resolution = 5;
+		break;
+		case 8:
+			// Vita camera doesn't support 1280x960
+			param.resolution = 7;
+			//param.resolution = 6;
+		break;
+	}
+
+	param.jpegsize = exparam->jpegsize;
+	param.complevel = exparam->complevel;
+	param.delay = exparam->delay;
+	param.reverseflags = 0x101;
+
+	res = sceUsbCamSetupStill(&param);
+
+	sceUsb_driver_0x63E55EBE(); // force camera start
+
+	pspSdkSetK1(k1);
+
+	return res;
+}
+
+int sceUsbCamSetupVideoEx_Patched(PspUsbCamSetupVideoExParam *exparam, void *workarea, int wasize) {
+	int res = 0;
+
+	int k1 = pspSdkSetK1(0);
+
+	PspUsbCamSetupVideoParam param = {0};
+	param.size = sizeof(PspUsbCamSetupVideoParam);
+	switch(exparam->resolution)
+	{
+		case 0:
+			param.resolution = 0;
+		break;
+		case 1:
+			param.resolution = 1;
+		break;
+		case 2:
+			param.resolution = 2;
+		break;
+		case 3:
+			param.resolution = 3;
+		break;
+		case 4:
+			param.resolution = 8;
+		break;
+		case 5:
+			param.resolution = 7;
+		break;
+		case 6:
+			param.resolution = 4;
+		break;
+		case 7:
+			param.resolution = 5;
+		break;
+		case 8:
+			// Vita camera doesn't support 1280x960
+			param.resolution = 7;
+//			param.resolution = 6;
+		break;
+	}
+
+	param.framerate = exparam->framerate;
+	param.wb = exparam->wb;
+	param.saturation = exparam->saturation;
+	param.brightness = exparam->brightness;
+	param.contrast = exparam->contrast;
+	param.sharpness = exparam->sharpness;
+	param.effectmode = exparam->effectmode;
+	param.framesize = exparam->framesize;
+	param.evlevel = exparam->evlevel;
+
+	res = sceUsbCamSetupVideo(&param, workarea, wasize);
+
+	pspSdkSetK1(k1);
+
+	return res;
+}
+
+
+typedef struct PspUsbCamSetupMicParam {
+    int size;
+    int alc;
+    int gain;
+    int noise;
+    int freq;
+} PspUsbCamSetupMicParam;
+
+typedef struct PspUsbCamSetupMicExParam {
+    int size;
+    int alc;
+    int gain;
+    u32 unk2[4];
+    int freq;
+    int unk3;
+} PspUsbCamSetupMicExParam;
+
+int sceUsbCamSetupMic(void *param, void *workarea, int wasize);
+
+int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workarea, int wasize) {
+	int res = 0;
+
+/*
+	// TODO: xmb wants 22050, but it causes crash for some reason
+	int k1 = pspSdkSetK1(0);
+	PspUsbCamSetupMicParam param = {0};
+	param.size = sizeof(PspUsbCamSetupMicParam);
+	param.alc = exparam->alc;
+	param.gain = exparam->gain;
+	
+	param.freq = exparam->freq;
+
+	res = sceUsbCamSetupMic(&param, workarea, wasize);
+
+	pspSdkSetK1(k1);
+
+*/
+	return res;
+}
+
 int sceKernelSuspendThreadPatched(SceUID thid) {
 	SceKernelThreadInfo info;
 	info.size = sizeof(SceKernelThreadInfo);
@@ -440,6 +607,12 @@ int OnModuleStart(SceModule2 *mod) {
 		ClearCaches();
 	} else if (strcmp(modname, "sceSAScore") == 0) {
 		PatchSasCore();
+	} else if(strcmp(modname, "sceUSBCam_Driver") == 0) {
+		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);
+		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
+		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
+		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
+		ClearCaches();
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		u32 func = sctrlHENFindImport(modname, "IoFileMgrForUser", 0xE3EB004C);
 		if (func) {

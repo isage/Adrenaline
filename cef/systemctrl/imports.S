@@ -58,3 +58,12 @@
 	IMPORT_START "sceChkreg_driver",0x00090011
 	IMPORT_FUNC  "sceChkreg_driver",0x54495B19,sceChkregCheckRegion661
 	IMPORT_FUNC  "sceChkreg_driver",0x59F8491D,sceChkregGetPsCode661
+
+	IMPORT_START "sceUsbCam",0x40090000
+	IMPORT_FUNC  "sceUsbCam",0x3F0CF289,sceUsbCamSetupStill
+	IMPORT_FUNC  "sceUsbCam",0x17F7B2FB,sceUsbCamSetupVideo
+	IMPORT_FUNC  "sceUsbCam",0x03ED7A82,sceUsbCamSetupMic
+
+	IMPORT_START "sceUsb_driver",0x00090011
+	IMPORT_FUNC  "sceUsb_driver",0x63E55EBE,sceUsb_driver_0x63E55EBE
+	IMPORT_FUNC  "sceUsb_driver",0xED8C8695,sceUsb_driver_0xED8C8695

@@ -762,8 +762,9 @@ void PatchVshMain(u32 text_addr) {
 	sctrlHENPatchSyscall(K_EXTRACT_IMPORT(&sceCtrlReadBufferPositive), sceCtrlReadBufferPositivePatched);
 
 	// Dummy usb detection functions
-	MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
-	MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
+	// Those break camera, but doesn't seem to affect usb connection
+//	MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
+//	MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
 
 	if (config.skipgameboot) {
 		// Disable sceDisplaySetHoldMode
