@@ -6,7 +6,7 @@ AdrenalineKernel:
   main:
     start: module_start
     stop: module_stop
-  modules:
+  libraries:
     AdrenalineKubridge:
       syscall: true
       functions:

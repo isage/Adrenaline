@@ -32,6 +32,7 @@ target_link_libraries(adrenaline_kernel
   SceSysrootForKernel_stub
   SceSysrootForDriver_stub
   SceThreadmgrForDriver_stub
+  SceDebugForDriver_stub
 )
 
 vita_create_self(adrenaline_kernel.skprx adrenaline_kernel CONFIG exports.yml UNSAFE)

@@ -16,6 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <psp2/kernel/clib.h>
 #include <psp2/kernel/modulemgr.h>
 #include <psp2/kernel/sysmem.h>
 #include <psp2/io/fcntl.h>
@@ -29,12 +30,12 @@ int debugPrintf(char *text, ...) {
   char string[512];
 
   va_start(list, text);
-  vsprintf(string, text, list);
+  sceClibVsnprintf(string, 512, text, list);
   va_end(list);
 
   SceUID fd = sceIoOpen("ux0:data/adrenaline_vsh_log.txt", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
   if (fd >= 0) {
-    sceIoWrite(fd, string, strlen(string));
+    sceIoWrite(fd, string, sceClibStrnlen(string, 512));
     sceIoClose(fd);
   }
 

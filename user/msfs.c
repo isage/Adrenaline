@@ -481,7 +481,7 @@ static int ScePspemuMsfsExtraDread(ScePspemuMsfsDescriptor *descriptor, SceIoDir
 
     ScePspemuMsfsGetstat(descriptor->path, &dir->d_stat);
 
-    dir->d_stat.st_mode = (SCE_S_IFDIR | SCE_S_IRWXO | SCE_S_IRWXG | SCE_S_IRWXU);
+    dir->d_stat.st_mode = (SCE_S_IFDIR | SCE_S_IRWXS | SCE_S_IRWXG | SCE_S_IRWXU);
     dir->d_stat.st_attr = SCE_SO_IFDIR;
 
     return 1;

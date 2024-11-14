@@ -11,7 +11,7 @@ endif()
 project(adrenaline_vsh)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostartfiles")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostdlib")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_executable(adrenaline_vsh
@@ -21,8 +21,10 @@ add_executable(adrenaline_vsh
 
 target_link_libraries(adrenaline_vsh
   taihen_stub
+  SceLibKernel_stub
   SceAppMgr_stub
   SceLsdb_stub_weak
+  SceIofilemgr_stub
 )
 
 vita_create_self(adrenaline_vsh.suprx adrenaline_vsh CONFIG exports.yml UNSAFE)

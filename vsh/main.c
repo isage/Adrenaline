@@ -47,7 +47,7 @@ static int sceLsdbGetTypePatched(void *a1) {
 
   if (val == 1) { // type normal
     char *name = sceLsdbGetName(a1);
-    if (name && strcmp(name, ADRENALINE_TITLEID) == 0) {
+    if (name && sceClibStrcmp(name, ADRENALINE_TITLEID) == 0) {
       return 2; // type pspemu
     }
   }
