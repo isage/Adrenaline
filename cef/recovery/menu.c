@@ -79,7 +79,7 @@ void ChangeValue(int interval) {
 }
 
 void MenuDisplayCtrl() {
-	pspDebugScreenSetTextColor(0x0000FF);
+	pspDebugScreenSetTextColor(0xFF0000);
 	pspDebugScreenSetXY(0, 1);
 	printf("Adrenaline Recovery Menu\n%s", menu_struct.title);
 
@@ -93,7 +93,7 @@ void MenuDisplayCtrl() {
 			y = 1;
 		}
 
-		pspDebugScreenSetTextColor(sel == i ? 0x0000FF : 0xFFFFFF);
+		pspDebugScreenSetTextColor(sel == i ? 0xFF0000 : 0xFFFFFF);
 		printf(menu_struct.entries[i].name);
 
 		if (menu_struct.entries[i].options) {
@@ -104,7 +104,7 @@ void MenuDisplayCtrl() {
 		printf("\n");
 	}
 
-	pspDebugScreenSetTextColor(0x0000FF);
+	pspDebugScreenSetTextColor(0xFF0000);
 	pspDebugScreenSetXY(1, 29);
 
 	for (i = 0; i < 67; i++)
