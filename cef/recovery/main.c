@@ -27,7 +27,8 @@
 #include "options.h"
 
 PSP_MODULE_INFO("Recovery mode", 0, 1, 0);
-PSP_HEAP_SIZE_MAX();
+PSP_DISABLE_NEWLIB();
+PSP_DISABLE_AUTOSTART_PTHREAD();
 
 static int usbStatus = 0;
 

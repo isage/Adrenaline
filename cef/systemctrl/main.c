@@ -316,6 +316,8 @@ int bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
 
 #define N_CPU (sizeof(cpu_list) / sizeof(int))
 
+int sceDisplaySetFrameBuf661(void *topaddr, int bufferwidth, int pixelformat, int sync);
+
 void OnSystemStatusIdle() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 

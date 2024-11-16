@@ -73,6 +73,8 @@ int sceIoReadPatched(SceUID fd, void *data, SceSize size) {
 // PGD decryption by Hykem
 // https://github.com/Hykem/psxtract/blob/master/Linux/crypto.c
 
+int sceUtilsBufferCopyWithRange(void *inbuf, SceSize insize, void *outbuf, int outsize, int cmd);
+
 int kirk7(u8 *buf, int size, int type) {
 	u32 *header = (u32 *)buf;
 
