@@ -24,7 +24,7 @@ FUNCTION(ADD_RESOURCES out_var)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${out_dir}
     COMMAND ${CMAKE_LINKER} -r -b binary -o ${out_f} ${in_f}
     DEPENDS ${in_f}
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Building resource ${out_f}"
     VERBATIM
     )
@@ -34,7 +34,7 @@ FUNCTION(ADD_RESOURCES out_var)
 ENDFUNCTION()
 
 file(GLOB res_files RELATIVE
-  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
   flash0/kd/*.prx
   flash0/kd/*.bin
   flash0/vsh/module/*.prx
@@ -57,6 +57,7 @@ add_executable(adrenaline_user
   lz4/lz4.c
 )
 
+target_link_directories(adrenaline_user PRIVATE ${CMAKE_BINARY_DIR}/kernel)
 target_link_libraries(adrenaline_user
   AdrenalineKernel_stub
   taihen_stub
@@ -94,19 +95,25 @@ target_link_libraries(adrenaline_user
 
 vita_create_self(adrenaline_user.suprx adrenaline_user CONFIG exports.yml UNSAFE)
 
-vita_create_stubs(stubs adrenaline_user ${CMAKE_SOURCE_DIR}/exports.yml)
+#vita_create_stubs(ustubs adrenaline_user ${CMAKE_CURRENT_SOURCE_DIR}/exports.yml)
 
-add_custom_target(copy
-  COMMAND cp adrenaline_user.suprx F:/app/PSPEMUCFW/sce_module/adrenaline_user.suprx
-  DEPENDS adrenaline_user.suprx
+#add_custom_target(copy
+#  COMMAND cp adrenaline_user.suprx F:/app/PSPEMUCFW/sce_module/adrenaline_user.suprx
+#  DEPENDS adrenaline_user.suprx
+#)
+
+#add_custom_target(pkg
+#  COMMAND cp adrenaline_user.suprx ../../bubble/pkg/sce_module/adrenaline_user.suprx
+#  DEPENDS adrenaline_user.suprx
+#)
+
+#add_custom_target(updater
+#  COMMAND bin2c adrenaline_user.suprx ../../cef/updater/adrenaline_user.h adrenaline_user
+#  DEPENDS adrenaline_user.suprx
+#)
+
+add_custom_target(user_all
+  ALL
+  DEPENDS adrenaline_user.suprx-self
 )
 
-add_custom_target(pkg
-  COMMAND cp adrenaline_user.suprx ../../bubble/pkg/sce_module/adrenaline_user.suprx
-  DEPENDS adrenaline_user.suprx
-)
-
-add_custom_target(updater
-  COMMAND bin2c adrenaline_user.suprx ../../cef/updater/adrenaline_user.h adrenaline_user
-  DEPENDS adrenaline_user.suprx
-)

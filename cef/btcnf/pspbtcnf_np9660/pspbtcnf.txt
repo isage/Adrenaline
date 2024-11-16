@@ -1,3 +1,4 @@
+0x06060010
 $/kd/sysmem.prx VGUPAEM
 $/kd/loadcore.prx VGUPAEM
 $/kd/exceptionman.prx VGUPAEM

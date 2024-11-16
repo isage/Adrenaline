@@ -37,24 +37,32 @@ target_link_libraries(adrenaline_kernel
 
 vita_create_self(adrenaline_kernel.skprx adrenaline_kernel CONFIG exports.yml UNSAFE)
 
-vita_create_stubs(stubs adrenaline_kernel ${CMAKE_SOURCE_DIR}/exports.yml KERNEL)
+vita_create_stubs(kstubs adrenaline_kernel ${CMAKE_CURRENT_SOURCE_DIR}/exports.yml KERNEL)
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/stubs/
-  DESTINATION lib
-  FILES_MATCHING PATTERN "*.a"
-)
+#install(DIRECTORY ${CMAKE_BINARY_DIR}/stubs/
+#  DESTINATION lib
+#  FILES_MATCHING PATTERN "*.a"
+#)
 
-add_custom_target(copy
-  COMMAND cp adrenaline_kernel.skprx H:/app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
-  DEPENDS adrenaline_kernel.skprx
-)
 
-add_custom_target(pkg
-  COMMAND cp adrenaline_kernel.skprx ../../bubble/pkg/sce_module/adrenaline_kernel.skprx
-  DEPENDS adrenaline_kernel.skprx
-)
+#add_custom_target(copy
+#  COMMAND cp adrenaline_kernel.skprx H:/app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
+#  DEPENDS adrenaline_kernel.skprx
+#)
 
-add_custom_target(updater
-  COMMAND bin2c adrenaline_kernel.skprx ../../cef/updater/adrenaline_kernel.h adrenaline_kernel
-  DEPENDS adrenaline_kernel.skprx
+#add_custom_target(pkg
+#  COMMAND cp adrenaline_kernel.skprx ../../bubble/pkg/sce_module/adrenaline_kernel.skprx
+#  DEPENDS adrenaline_kernel.skprx
+#)
+
+#add_custom_target(updater
+#  COMMAND bin2c adrenaline_kernel.skprx ../../cef/updater/adrenaline_kernel.h adrenaline_kernel
+#  DEPENDS adrenaline_kernel.skprx
+#)
+
+add_custom_target(kernel_all
+  ALL
+  DEPENDS adrenaline_kernel.skprx-self
+  DEPENDS libAdrenalineKernel_stub.a
+  DEPENDS libAdrenalineKernel_stub_weak.a
 )

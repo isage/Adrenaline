@@ -1,4 +1,30 @@
-all: _payloadex _rebootex _binary _systemctrl _popcorn _vshctrl _satelite _recovery
+all: _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _btcnf
+
+_btcnf:
+	make -C btcnf/pspbtcnf_inferno clean
+	make -C btcnf/pspbtcnf_inferno
+	cp "btcnf/pspbtcnf_inferno/pspbtcnf.bin" "../user/flash0/kd/pspbtknf.bin"
+	make -C btcnf/pspbtcnf_inferno clean
+
+	make -C btcnf/pspbtcnf_march33 clean
+	make -C btcnf/pspbtcnf_march33
+	cp "btcnf/pspbtcnf_march33/pspbtcnf.bin" "../user/flash0/kd/pspbtlnf.bin"
+	make -C btcnf/pspbtcnf_march33 clean
+
+	make -C btcnf/pspbtcnf_normal clean
+	make -C btcnf/pspbtcnf_normal
+	cp "btcnf/pspbtcnf_normal/pspbtcnf.bin" "../user/flash0/kd/pspbtjnf.bin"
+	make -C btcnf/pspbtcnf_normal clean
+
+	make -C btcnf/pspbtcnf_np9660 clean
+	make -C btcnf/pspbtcnf_np9660
+	cp "btcnf/pspbtcnf_np9660/pspbtcnf.bin" "../user/flash0/kd/pspbtmnf.bin"
+	make -C btcnf/pspbtcnf_np9660 clean
+
+	make -C btcnf/pspbtcnf_recovery clean
+	make -C btcnf/pspbtcnf_recovery
+	cp "btcnf/pspbtcnf_recovery/pspbtcnf.bin" "../user/flash0/kd/pspbtrnf.bin"
+	make -C btcnf/pspbtcnf_recovery clean
 
 _payloadex:
 	make -C payloadex clean
@@ -31,6 +57,13 @@ _popcorn:
 	psp-packer popcorn/popcorn.prx
 	cp "popcorn/popcorn.prx" "../user/flash0/kd/popcorn.prx"
 	make -C popcorn clean
+
+_inferno:
+	make -C inferno clean
+	make -C inferno
+	psp-packer inferno/inferno.prx
+	cp "inferno/inferno.prx" "../user/flash0/kd/inferno.prx"
+	make -C inferno clean
 
 _vshctrl:
 	make -C vshctrl clean

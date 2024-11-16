@@ -11,8 +11,8 @@ ASFLAGS = $(CFLAGS)
 
 BUILD_PRX = 1
 
-LIBDIR = ../lib
-LIBS = -lpspsystemctrl_user
+#LIBDIR = ../lib
+LIBS = ../lib/libpspsystemctrl_user.a
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
