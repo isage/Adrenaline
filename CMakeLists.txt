@@ -23,3 +23,13 @@ add_dependencies(${PROJECT_NAME} "user_all")
 add_dependencies(${PROJECT_NAME} "vsh_all")
 add_dependencies(adrenaline_user "kernel_all")
 
+add_custom_target(updater
+  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/user/adrenaline_user.suprx ${CMAKE_SOURCE_DIR}/cef/updater/adrenaline_user.h adrenaline_user
+  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/kernel/adrenaline_kernel.skprx ${CMAKE_SOURCE_DIR}/cef/updater/adrenaline_kernel.h adrenaline_kernel
+  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/vsh/adrenaline_vsh.suprx ${CMAKE_SOURCE_DIR}/cef/updater/adrenaline_vsh.h adrenaline_vsh
+  DEPENDS user_all kernel_all vsh_all
+)
+
+#add_dependencies(updater "kernel_all")
+#add_dependencies(updater "user_all")
+#add_dependencies(updater "vsh_all")
