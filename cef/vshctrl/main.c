@@ -865,7 +865,7 @@ int sceUpdateDownloadSetVersionPatched(int version) {
 	int (* sceUpdateDownloadSetVersion)(int version) = (void *)FindProc("SceUpdateDL_Library", "sceLibUpdateDL", 0xC1AF1076);
 	int (* sceUpdateDownloadSetUrl)(const char *url) = (void *)FindProc("SceUpdateDL_Library", "sceLibUpdateDL", 0xF7E66CB4);
 
-	sceUpdateDownloadSetUrl("http://adrenaline.abertschi.ch/psp-updatelist.txt");
+	sceUpdateDownloadSetUrl("http://adrenaline.sarcasticat.com/psp-updatelist.txt");
 	int res = sceUpdateDownloadSetVersion(sctrlSEGetVersion());
 
 	pspSdkSetK1(k1);

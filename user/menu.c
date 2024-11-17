@@ -111,11 +111,7 @@ static MenuEntry settings_entries[] = {
 };
 
 static MenuEntry about_entries[] = {
-#if (ADRENALINE_VERSION_MINOR > 0)
-  { "6.61 Adrenaline-" ADRENALINE_VERSION_MAJOR_STR "." ADRENALINE_VERSION_MINOR_STR, MENU_ENTRY_TYPE_TEXT, ORANGE, NULL, NULL, NULL, 0 },
-#else
-  { "6.61 Adrenaline-" ADRENALINE_VERSION_MAJOR_STR, MENU_ENTRY_TYPE_TEXT, ORANGE, NULL, NULL, NULL, 0 },
-#endif
+  { "6.61 Adrenaline-" ADRENALINE_VERSION_MAJOR_STR "." ADRENALINE_VERSION_MINOR_STR "." ADRENALINE_VERSION_MICRO_STR, MENU_ENTRY_TYPE_TEXT, ORANGE, NULL, NULL, NULL, 0 },
   { "by TheFloW", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
   { "", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
   { "", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
@@ -124,6 +120,7 @@ static MenuEntry about_entries[] = {
   { "frangarcj for graphics filtering", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
   { "Rinnegatamante for f.lux", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
   { "xerpi for vita2dlib", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
+  { "Cat for featurrrs", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 };
 
 static TabEntry tab_entries[] = {

@@ -19,6 +19,7 @@
 #include <common.h>
 
 #include "adrenaline_user.h"
+#include "adrenaline_vsh.h"
 #include "adrenaline_kernel.h"
 
 PSP_MODULE_INFO("updater", 0x800, 1, 0);
@@ -37,6 +38,10 @@ typedef struct {
 File files[] = {
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_user.suprx", adrenaline_user, sizeof(adrenaline_user) },
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_kernel.skprx", adrenaline_kernel, sizeof(adrenaline_kernel) },
+	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_vsh.suprx", adrenaline_vsh, sizeof(adrenaline_vsh) },
+//	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_user.suprx", adrenaline_user, size_adrenaline_user },
+//	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_kernel.skprx", adrenaline_kernel, size_adrenaline_kernel },
+//	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_vsh.suprx", adrenaline_vsh, size_adrenaline_vsh },
 };
 
 void ErrorExit(int milisecs, char *fmt, ...) {
@@ -76,10 +81,11 @@ int main(void) {
 		ErrorExit(5000, "This update or a higher one was already applied.\n");
 	}
 
-	printf("6.61 Adrenaline-%d.%d Installer\n", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR);
+	printf("6.61 Adrenaline-%d.%d.%d Installer\n", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO);
 	printf("Changes:\n\n");
 
 	printf("- Added support for native resolution patches.\n");
+
 	printf("\n");
 
 	printf("Press X to install, R to exit.\n\n");
