@@ -1,6 +1,12 @@
 release: all
 	pack-pbp EBOOT.PBP UPDATE.SFO ICON0.PNG NULL NULL NULL NULL updater.prx NULL
 
+version:
+	gcc version.c -o version
+
+psp-updatelist.txt: version
+	sed "s/{{ADRENALINE_VERSION}}/$$(./version)/g" psp-updatelist.template > psp-updatelist.txt
+
 TARGET = updater
 OBJS = main.o
 
@@ -13,6 +19,8 @@ BUILD_PRX = 1
 
 #LIBDIR = ../lib
 LIBS = ../lib/libpspsystemctrl_user.a
+EXTRA_TARGETS = version psp-updatelist.txt
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
+

@@ -1,0 +1,67 @@
+#SystemSoftwareVersion=6.61;
+# JP
+Dest=00;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=10;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=20;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=30;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=40;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# US
+Dest=01;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=11;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=21;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=31;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=41;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# EU
+Dest=02;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=12;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=22;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=32;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=42;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# KR
+Dest=03;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=13;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=23;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=33;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=43;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# UK
+Dest=04;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=14;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=24;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=34;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=44;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# MX
+Dest=05;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=15;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=25;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=35;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=45;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# AU/NZ
+Dest=06;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=16;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=26;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=36;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=46;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# E/HK
+Dest=07;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=17;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=27;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=37;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=47;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# TW
+Dest=08;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=18;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=28;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=38;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=48;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# RU
+Dest=09;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=19;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=29;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=39;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=49;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+# CN
+Dest=0A;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=1A;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=2A;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=3A;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
+Dest=4A;ImageVersion={{ADRENALINE_VERSION}};CDN=http://adrenaline.sarcasticat.com/EBOOT.PBP;
