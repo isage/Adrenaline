@@ -55,6 +55,7 @@ typedef struct {
 	int notusepopsplugins;
 	int forcehighmemory;
 	int executebootbin;
+	int recoverycolor;
 } AdrenalineConfig;
 
 

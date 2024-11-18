@@ -22,6 +22,7 @@
 #define printf pspDebugScreenPrintf
 
 extern AdrenalineConfig config;
+extern u32 select_color;
 
 void MainMenu();
 void ToggleUSB();
@@ -35,6 +36,7 @@ void RegistryHacks();
 void SetButtonAssign(int sel);
 void SetWMA(int sel);
 void SetFlashPlayer(int sel);
+void SetRecoveryColor(int sel);
 void Exit();
 
 #endif

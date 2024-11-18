@@ -31,6 +31,7 @@ typedef struct {
 MenuStruct menu_struct;
 
 int sel = 0;
+u32 select_color = 0x00FF0000;
 
 void MenuResetSelection() {
 	sel = 0;
@@ -68,7 +69,6 @@ void ChangeValue(int interval) {
 			printf(" > Back...");
 			sceKernelDelayThread(1 * 1000 * 1000);
 		}
-
 		menu_struct.entries[sel].function(sel);
 	}
 
@@ -79,7 +79,7 @@ void ChangeValue(int interval) {
 }
 
 void MenuDisplayCtrl() {
-	pspDebugScreenSetTextColor(0xFF0000);
+	pspDebugScreenSetTextColor(select_color);
 	pspDebugScreenSetXY(0, 1);
 	printf("Adrenaline Recovery Menu\n%s", menu_struct.title);
 
@@ -93,7 +93,7 @@ void MenuDisplayCtrl() {
 			y = 1;
 		}
 
-		pspDebugScreenSetTextColor(sel == i ? 0xFF0000 : 0xFFFFFF);
+		pspDebugScreenSetTextColor(sel == i ? select_color : 0xFFFFFF);
 		printf(menu_struct.entries[i].name);
 
 		if (menu_struct.entries[i].options) {
@@ -104,7 +104,7 @@ void MenuDisplayCtrl() {
 		printf("\n");
 	}
 
-	pspDebugScreenSetTextColor(0xFF0000);
+	pspDebugScreenSetTextColor(select_color);
 	pspDebugScreenSetXY(1, 29);
 
 	for (i = 0; i < 67; i++)

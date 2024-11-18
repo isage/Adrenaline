@@ -45,4 +45,16 @@ static char *regions[] = {
 	"Debug Type II"
 };
 
+static char *colors[] = {
+	"Blue",
+	"Green",
+	"Red",
+	"Gray",
+	"Pink",
+	"Purple",
+	"Cyan",
+	"Orange",
+	"Yellow"
+};
+
 #endif

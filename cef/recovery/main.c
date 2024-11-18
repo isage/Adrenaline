@@ -61,6 +61,7 @@ Entry configuration_entries[] = {
 	{ "Hide DLC's in game menu", NULL, disenabled, sizeof(disenabled), &config.hidedlcs },
 	{ "Hide PIC0.PNG and PIC1.PNG in game menu", NULL, disenabled, sizeof(disenabled), &config.hidepic0pic1 },
 	{ "Use extended colors", NULL, extendedcolors, sizeof(extendedcolors), &config.useextendedcolors },
+	{ "Recovery color", SetRecoveryColor, colors, sizeof(colors), &config.recoverycolor },
 	{ "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.usesonypsposk },
 	{ "Use NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.notusenodrmengine },
 };
@@ -194,6 +195,21 @@ void SetFlashPlayer(int sel) {
 	MenuResetSelection();
 }
 
+void SetRecoveryColor(int sel) {
+    u32 color_list[] = {
+        0x00FF0000, // Blue
+        0x0000FF00, // Green
+        0x000000FF, // Red
+        0x00808080, // Gray
+        0x00FF80FF, // Pink
+        0x00FF0080, // Purple
+        0x00FFFF00, // Cyan
+        0x004080FF, // Orange
+        0x0000FFFF  // Yellow
+    };
+    select_color = color_list[config.recoverycolor];
+}
+
 void Exit() {
 	printf(" > Exiting recovery...");
 	sceKernelDelayThread(700 * 1000);
@@ -210,7 +226,7 @@ int main(int argc, char *argv[]) {
 		Installer();
 
 	sctrlSEGetConfig(&config);
-
+	SetRecoveryColor(config.recoverycolor);
 	MainMenu();
 
 	while (!recovery_exit) {
