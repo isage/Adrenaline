@@ -479,7 +479,7 @@ typedef struct PspUsbCamSetupMicParam {
     int size;
     int alc;
     int gain;
-    int noise;
+    int noize;
     int freq;
 } PspUsbCamSetupMicParam;
 
@@ -487,31 +487,61 @@ typedef struct PspUsbCamSetupMicExParam {
     int size;
     int alc;
     int gain;
-    u32 unk2[4];
+    u32 unk2[4]; // noize/hold/decay/attack?
     int freq;
     int unk3;
 } PspUsbCamSetupMicExParam;
 
+static int mute_mic = 0;
+
+int (* _sceUsbCamReadMic)(void *buf, SceSize size);
+int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
+	int res = 0;
+	memset(buf, 0, size);
+
+    int k1 = pspSdkSetK1(0);
+    res = _sceUsbCamReadMic(buf, size);
+    pspSdkSetK1(k1);
+
+    if (mute_mic)
+    {
+        memset(buf, 0, size);
+    }
+	return res;
+}
+
 int sceUsbCamSetupMic(void *param, void *workarea, int wasize);
+int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
+
+int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize)
+{
+	int res = 0;
+	int k1 = pspSdkSetK1(0);
+	res = sceUsbCamSetupMic(param, workarea, wasize);
+	pspSdkSetK1(k1);
+	mute_mic = 0;
+	return res;
+
+}
 
 int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workarea, int wasize) {
 	int res = 0;
 
-/*
 	// TODO: xmb wants 22050, but it causes crash for some reason
+	// TODO: pspemu resampler looks broken (see invizimals voice chat, for example)
 	int k1 = pspSdkSetK1(0);
 	PspUsbCamSetupMicParam param = {0};
 	param.size = sizeof(PspUsbCamSetupMicParam);
 	param.alc = exparam->alc;
 	param.gain = exparam->gain;
-	
-	param.freq = exparam->freq;
+	param.freq = 11025;//exparam->freq;
 
-	res = sceUsbCamSetupMic(&param, workarea, wasize);
+	res = _sceUsbCamSetupMic(&param, workarea, wasize);
 
 	pspSdkSetK1(k1);
 
-*/
+	mute_mic = 1;
+
 	return res;
 }
 
@@ -614,6 +644,8 @@ int OnModuleStart(SceModule2 *mod) {
 		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
 		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
 		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
+		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
+		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
 		ClearCaches();
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		u32 func = sctrlHENFindImport(modname, "IoFileMgrForUser", 0xE3EB004C);
