@@ -98,7 +98,8 @@ void MenuDisplayCtrl() {
 
 		if (menu_struct.entries[i].options) {
 			int max = menu_struct.entries[i].size_options / sizeof(char **);
-			printf(" (currently: %s)", menu_struct.entries[i].options[(*menu_struct.entries[i].value) % max]);
+			pspDebugScreenSetXY(menu_struct.x + (68 - 22), 5 + i + y);
+			printf("%14s", menu_struct.entries[i].options[(*menu_struct.entries[i].value) % max]);
 		}
 
 		printf("\n");

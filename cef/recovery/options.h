@@ -36,7 +36,7 @@ static char *regions[] = {
 	"Korea",
 	"United Kingdom",
 	"Mexico",
-	"Australia/New Zealand",
+	"Australia/NZ",
 	"East",
 	"Taiwan",
 	"Russia",
