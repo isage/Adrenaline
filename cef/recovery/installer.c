@@ -277,7 +277,7 @@ void Installer() {
 								int i;
 								for (i = 0; i < N_FILES; i++) {
 									if (strcmp(name + 7, files[i]) == 0) {
-										char path[128];
+										char path[256];
 										sprintf(path, "ms0:/__ADRENALINE__/flash0/%s", name + 8);
 
 										printf("Writing %s (%d)...", name + 7, cbExpanded);
