@@ -493,21 +493,29 @@ typedef struct PspUsbCamSetupMicExParam {
 } PspUsbCamSetupMicExParam;
 
 static int mute_mic = 0;
+static void* mic_buf = NULL;
+static SceSize mic_size = 0;
 
 int (* _sceUsbCamReadMic)(void *buf, SceSize size);
 int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
-	int res = 0;
-	memset(buf, 0, size);
-
     int k1 = pspSdkSetK1(0);
-    res = _sceUsbCamReadMic(buf, size);
+    int res = _sceUsbCamReadMic(buf, size);
+    mic_buf = buf;
+    mic_size = size;
     pspSdkSetK1(k1);
+    return res;
+}
 
+int (* _sceUsbCamWaitReadMicEnd)(void);
+int sceUsbCamWaitReadMicEnd_Patched() {
+    int k1 = pspSdkSetK1(0);
+    int res = _sceUsbCamWaitReadMicEnd();
     if (mute_mic)
     {
-        memset(buf, 0, size);
+        memset(mic_buf, 0, mic_size);
     }
-	return res;
+    pspSdkSetK1(k1);
+    return res;
 }
 
 int sceUsbCamSetupMic(void *param, void *workarea, int wasize);
@@ -517,7 +525,7 @@ int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize)
 {
 	int res = 0;
 	int k1 = pspSdkSetK1(0);
-	res = sceUsbCamSetupMic(param, workarea, wasize);
+	res = _sceUsbCamSetupMic(param, workarea, wasize);
 	pspSdkSetK1(k1);
 	mute_mic = 0;
 	return res;
@@ -543,6 +551,57 @@ int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workare
 	mute_mic = 1;
 
 	return res;
+}
+
+static int dummy_read_cam = 0;
+
+int (* _sceUsbCamSetEvLevel)(int level);
+
+int sceUsbCamSetEvLevel_Patched(int level)
+{
+	int res = 0;
+	int k1 = pspSdkSetK1(0);
+	dummy_read_cam = 1;
+	sceKernelDelayThread(100000);
+	res = _sceUsbCamSetEvLevel(level);
+	sceKernelDelayThread(100000);
+	dummy_read_cam = 0;
+	sceKernelDelayThread(100000);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int (* _sceUsbCamReadVideoFrame)(u8 *buf, SceSize size);
+
+int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size)
+{
+    int k1 = pspSdkSetK1(0);
+
+    if (dummy_read_cam)
+    {
+        sceKernelDelayThread(300000);
+        pspSdkSetK1(k1);
+        return 0;
+    }
+    int res = _sceUsbCamReadVideoFrame(buf, size);
+    pspSdkSetK1(k1);
+    return res;
+}
+
+int (* _sceUsbCamWaitReadVideoFrameEnd)(void);
+
+int sceUsbCamWaitReadVideoFrameEnd_Patched()
+{
+    int k1 = pspSdkSetK1(0);
+    if (dummy_read_cam)
+    {
+        sceKernelDelayThread(300000);
+        pspSdkSetK1(k1);
+        return 0x8000;
+    }
+    int res = _sceUsbCamWaitReadVideoFrameEnd();
+    pspSdkSetK1(k1);
+    return res;
 }
 
 int sceKernelSuspendThreadPatched(SceUID thid) {
@@ -644,8 +703,12 @@ int OnModuleStart(SceModule2 *mod) {
 		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
 		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
 		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
+		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x1D686870), sceUsbCamSetEvLevel_Patched, _sceUsbCamSetEvLevel);
+		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x99D86281), sceUsbCamReadVideoFrame_Patched, _sceUsbCamReadVideoFrame);
+		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xF90B2293), sceUsbCamWaitReadVideoFrameEnd_Patched, _sceUsbCamWaitReadVideoFrameEnd);
 		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
 		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
+		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xB048A67D), sceUsbCamWaitReadMicEnd_Patched, _sceUsbCamWaitReadMicEnd);
 		ClearCaches();
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		u32 func = sctrlHENFindImport(modname, "IoFileMgrForUser", 0xE3EB004C);

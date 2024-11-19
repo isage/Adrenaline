@@ -63,7 +63,7 @@
 	IMPORT_FUNC  "sceUsbCam",0x3F0CF289,sceUsbCamSetupStill
 	IMPORT_FUNC  "sceUsbCam",0x17F7B2FB,sceUsbCamSetupVideo
 	IMPORT_FUNC  "sceUsbCam",0x03ED7A82,sceUsbCamSetupMic
-	IMPORT_FUNC "sceUsbCam",0x3DC0088E,sceUsbCamReadMic
+	IMPORT_FUNC  "sceUsbCam",0x3DC0088E,sceUsbCamReadMic
 
 	IMPORT_START "sceUsb_driver",0x00090011
 	IMPORT_FUNC  "sceUsb_driver",0x63E55EBE,sceUsb_driver_0x63E55EBE
