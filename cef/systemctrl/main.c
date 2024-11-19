@@ -510,7 +510,7 @@ int (* _sceUsbCamWaitReadMicEnd)(void);
 int sceUsbCamWaitReadMicEnd_Patched() {
     int k1 = pspSdkSetK1(0);
     int res = _sceUsbCamWaitReadMicEnd();
-    if (mute_mic)
+    if (mute_mic && mic_buf)
     {
         memset(mic_buf, 0, mic_size);
     }
