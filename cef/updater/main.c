@@ -39,9 +39,6 @@ File files[] = {
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_user.suprx", adrenaline_user, sizeof(adrenaline_user) },
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_kernel.skprx", adrenaline_kernel, sizeof(adrenaline_kernel) },
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_vsh.suprx", adrenaline_vsh, sizeof(adrenaline_vsh) },
-//	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_user.suprx", adrenaline_user, size_adrenaline_user },
-//	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_kernel.skprx", adrenaline_kernel, size_adrenaline_kernel },
-//	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_vsh.suprx", adrenaline_vsh, size_adrenaline_vsh },
 };
 
 void ErrorExit(int milisecs, char *fmt, ...) {
@@ -84,7 +81,9 @@ int main(void) {
 	printf("6.61 Adrenaline-%d.%d.%d Installer\n", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO);
 	printf("Changes:\n\n");
 
-	printf("- Added support for native resolution patches.\n");
+	printf("- Fixed XMB camera app.\n");
+	printf("- Added support for PS2/PS3 <-> PSP game link.\n");
+	printf("- Cleaner recovery with adjustable color.\n");
 
 	printf("\n");
 

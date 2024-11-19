@@ -34,6 +34,11 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 Changelog
 ---------
 
+### Changelog v7.1
+- Fixed XMB camera app.
+- Added support for PS2/PS3 <-> PSP game link.
+- Cleaner recovery with adjustable color.
+
 ### Changelog v7
 - Fixed issue where plugins were loaded in recovery mode.
 - Moved native display buffer to a different location, so GePatch works for some more games. Please note that only GePatch v0.18 or above will only work, older versions will cause a black screen. If you're using GTANativeRes, please download the latest binary as well.
@@ -162,6 +167,24 @@ offical settings, then apply the custom screen mode. On the other hand, if you w
 - Fixed bug where 'ms0:/MUSIC' and 'ms0:/PICTURE' were not found in XMB.
 - Fixed bug where changing options in the official settings menu didn't have any effect.
 
-# Dependencies
+# Building
+
+## Dependencies
+- [pspsdk](https://pspdev.github.io/) + psp-packer binary in your $PATH
+- [vitasdk](https://vitasdk.org/)
 - [vita2dlib-fbo](https://github.com/frangarcj/vita2dlib/tree/fbo)
 - [vita-shader-collection](https://github.com/frangarcj/vita-shader-collection)
+- python3
+
+## Building
+- `cd cef && make && cd ..`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`
+- `cmake --build build`
+- grab VKP from `build/bubble/`
+
+## Building updater
+- Build adrenaline (sse above)
+- `cmake --build build --target updater`
+- (optionally) modify `cef/updater/psp-updatelist.template`
+- `cd cef/updater && make`
+- resulting files are `EBOOT.PBP` and `psp-updatelist.txt`
