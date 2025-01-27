@@ -78,6 +78,7 @@ SceUID sceKernelLoadModule661(const char *path, int flags, SceKernelLMOption *op
 SceUID sceKernelStartModule661(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option);
 
 int sceKernelExitVSHVSH661(struct SceKernelLoadExecVSHParam *param);
+int LoadExecForKernel_0xAA2029EC();
 
 int scePowerRequestStandby661();
 int scePowerRequestSuspend661();

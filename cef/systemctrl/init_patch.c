@@ -174,22 +174,22 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 				vshmain_args[1] = 0x20;
 				vshmain_args[16] = 1;
 
-				argsize = sizeof(vshmain_args);
-				argp = vshmain_args;
-
-				if( config.startupprog && argsize == 0)
+				if(config.startupprog && argsize == 0)
 				{
+					LoadExecForKernel_0xAA2029EC();
+
 					struct SceKernelLoadExecVSHParam param;
 					memset(&param, 0, sizeof(param));
 					param.size = sizeof(param);
 					param.args = sizeof("ms0:/PSP/GAME/BOOT/EBOOT.PBP");
 					param.argp = "ms0:/PSP/GAME/BOOT/EBOOT.PBP";
 					param.key = "game";
-					param.vshmain_args_size = 0x0400;
-					param.vshmain_args = vshmain_args;
 
 					sctrlKernelLoadExecVSHMs2("ms0:/PSP/GAME/BOOT/EBOOT.PBP", &param);
 				}
+
+				argsize = sizeof(vshmain_args);
+				argp = vshmain_args;
 
 			}
 		} else if (!plugindone) {

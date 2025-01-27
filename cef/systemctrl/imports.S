@@ -43,6 +43,7 @@
 
 	IMPORT_START "LoadExecForKernel",0x00090011
 	IMPORT_FUNC  "LoadExecForKernel",0x08F7166C,sceKernelExitVSHVSH661
+	IMPORT_FUNC  "LoadExecForKernel",0xAA2029EC,LoadExecForKernel_0xAA2029EC
 
 	IMPORT_START "scePower_driver",0x00090011
 	IMPORT_FUNC  "scePower_driver",0x9B44CFD9,scePowerRequestStandby661
