@@ -42,6 +42,10 @@ E.g.: if you have `ux0:/pspemu/ISO/MYGAME.iso` name your manual `ux0:/pspemu/ISO
 Changelog
 ---------
 
+### Changelog v7.1.7
+- Fix autoboot.
+- Support vita firmwares 3.71-3.74.
+
 ### Changelog v7.1.6
 - Fix recovery plugin manager.
 

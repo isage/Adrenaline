@@ -85,7 +85,8 @@ int main(void) {
 	printf("6.61 Adrenaline-%d.%d.%d Installer\n", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO);
 	printf("Changes:\n\n");
 
-	printf("- Fix recovery plugin manager.\n");
+	printf("- Fix autoboot.\n");
+	printf("- Support vita firmwares 3.71-3.74.\n");
 
 	printf("\n");
 
