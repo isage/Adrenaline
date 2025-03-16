@@ -15,7 +15,7 @@ If you have already been using Adrenaline, simply open Adrenaline.vpk as zip fil
 
 Alternatively, you can download [this file](http://adrenaline.sarcasticat.com/EBOOT.PBP) and use [VitaShell](https://github.com/RealYoti/VitaShell/releases) to copy it to the `ux0:/pspemu/PSP/GAME/UPDATE/` directory. Afterwards, launch Adrenaline and run the update application.
 
-If you already installed 7.1.0 or later, you can also use the 'System Update' button from the XMB to download the update from the consolei itself.
+If you already installed 7.1.0 or later, you can also use the 'System Update' button from the XMB to download the update with the console itself.
 
 How to install
 --------------
