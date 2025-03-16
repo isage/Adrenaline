@@ -11,15 +11,18 @@ inject custom code into the IPL which allows unsigned code to run at boottime.
 
 How to update
 -------------
-If you have already been using Adrenaline, simply open Adrenaline.vpk as zip file and copy all modules from sce_module to ux0:app/PSPEMUCFW/sce_module.  
-Alternatively, use "System update" from XMB and follow instructions.
+If you have already been using Adrenaline, simply open Adrenaline.vpk as zip file and copy all modules from sce_module to `ux0:app/PSPEMUCFW/sce_module`.
+
+Alternatively, you can download [this file](http://adrenaline.sarcasticat.com/EBOOT.PBP) and use [VitaShell](https://github.com/RealYoti/VitaShell/releases) to copy it to the `ux0:/pspemu/PSP/GAME/UPDATE/` directory. Afterwards, launch Adrenaline and run the update application.
+
+If you already installed 7.1.0 or later, you can also use the 'System Update' button from the XMB to download the update from the consolei itself.
 
 How to install
 --------------
 Please only do this approach for a fresh installation, otherwise please refer to the guide above.
 
 1. Remove the Adrenaline bubble and the `ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx` path from the taiHEN config.txt and finally reboot your device.
-2. Download [Adrenaline.vpk](https://github.com/TheOfficialFloW/Adrenaline/releases) and install it using [VitaShell](https://github.com/TheOfficialFloW/VitaShell/releases).
+2. Download [Adrenaline.vpk](https://github.com/isage/Adrenaline/releases) and install it using [VitaShell](https://github.com/RealYoti/VitaShell/releases).
 3. Launch Adrenaline and press ❌ to download the 6.61 firmware. After finishing it will automatically terminate.
 4. Relaunch Adrenaline, this time it will go into pspemu mode. Follow the instructions on screen.
 
