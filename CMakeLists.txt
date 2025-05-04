@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 
 if(NOT DEFINED ENV{VITASDK})
     message(FATAL_ERROR "Please define VITASDK to point to your vita SDK path!")
