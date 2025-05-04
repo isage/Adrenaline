@@ -33,17 +33,16 @@
 #include "systemctrl_se.h"
 #include "inferno.h"
 
-PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 1, 1);
+PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 2, 1);
 
 u32 psp_model;
 u32 psp_fw_version;
 
-extern int sceKernelApplicationType(void);
 extern int sceKernelSetQTGP3(void *unk0);
 extern char *GetUmdFile();
 
 // 00002790
-const char *g_iso_fn = NULL;
+char g_iso_fn[255] = {0};
 
 // 0x00002248
 u8 g_umddata[16] = {
@@ -65,9 +64,11 @@ int setup_umd_device(void)
 {
 	int ret;
 
-	g_iso_fn = GetUmdFile();
-	// always use umd game type
-	infernoSetDiscType(PSP_UMD_TYPE_GAME);
+	memset(g_iso_fn, 0, sizeof(g_iso_fn));
+    strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
+
+    infernoSetDiscType(sctrlSEGetDiscType());
+
 	ret = sceIoAddDrv(&g_iodrv);
 
 	if(ret < 0) {
@@ -86,7 +87,7 @@ int init_inferno(void)
 	g_drive_status = PSP_UMD_INITING;
 	g_umd_cbid = -1;
 	g_umd_error_status = 0;
-	g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
+	if (g_drive_status_evf < 0) g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
 	sceKernelRegisterSysEventHandler(&g_power_event);
 
 	return MIN(g_drive_status_evf, 0);
@@ -95,42 +96,15 @@ int init_inferno(void)
 // 0x00000000
 int module_start(SceSize args, void* argp)
 {
-	int ret, key_config;
-#if 0
-	// TODO: read inferno config when implemented
-	AdrenalineConfig config;
-#endif
-	psp_model = sceKernelGetModel();
-	psp_fw_version = sceKernelDevkitVersion();
-	setup_patch_offset_table(psp_fw_version);
-	printk_init("ms0:/inferno.txt");
-	printk("Inferno started FW=0x%08X %02dg\n", (uint)psp_fw_version, (int)psp_model+1);
+	int ret;
 
-	key_config = sceKernelApplicationType();
-#if 0
-	// TODO: read inferno config when implemented (iso cache, size, num and mode)
-	sctrlSEGetConfig(&config);
+	#ifdef DEBUG
+	printk("Inferno started\n");
+	#endif
 
-	if(config.iso_cache && psp_model != PSP_1000 && key_config == PSP_INIT_KEYCONFIG_GAME) {
-		int bufsize;
-
-		bufsize = config.iso_cache_total_size * 1024 * 1024 / config.iso_cache_num;
-
-		if((bufsize % 512) != 0) {
-			bufsize &= ~(512-1);
-		}
-
-		if(bufsize == 0) {
-			bufsize = 512;
-		}
-
-		infernoCacheSetPolicy(config.iso_cache_policy);
-		infernoCacheInit(bufsize, config.iso_cache_num);
-	}
-#endif
 	ret = setup_umd_device();
 
-	if(ret < 0) {
+	if (ret < 0) {
 		return ret;
 	}
 

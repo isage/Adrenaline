@@ -327,7 +327,7 @@ void OnSystemStatusIdle() {
 	PatchVolatileMemBug();
 
 	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
-		SetSpeed(cpu_list[config.umdisocpuspeed % N_CPU], bus_list[config.umdisocpuspeed % N_CPU]);
+		SetCpuSpeed(cpu_list[config.umdisocpuspeed % N_CPU], bus_list[config.umdisocpuspeed % N_CPU]);
 	}
 
 	// Set fake framebuffer so that cwcheat can be displayed
@@ -357,7 +357,7 @@ int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
 int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int ret = _sceUsbCamStillInput(buf, size);
-	sceUsb_driver_0xED8C8695(); // force camera stop 
+	sceUsb_driver_0xED8C8695(); // force camera stop
 
 	pspSdkSetK1(k1);
 

@@ -134,7 +134,7 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC_UPDATER, file, param);
 }
 
-void SetConfig(AdrenalineConfig *conf) {
+void sctrlSEApplyConfig(AdrenalineConfig *conf) {
 	memcpy(&config, conf, sizeof(AdrenalineConfig));
 }
 
@@ -182,6 +182,14 @@ int sctrlSEGetBootConfBootFileIndex() {
 
 void sctrlSESetBootConfFileIndex(int index) {
 	rebootex_config.bootfileindex = index;
+}
+
+void sctrlSESetDiscType(int type) {
+    rebootex_config.iso_disc_type = type;
+}
+
+int sctrlSEGetDiscType(void) {
+    return rebootex_config.iso_disc_type;
 }
 
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags) {

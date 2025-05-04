@@ -75,6 +75,8 @@ SceUID g_umd9660_sema_id = -1;
 // 0x00002744
 static struct IsoOpenSlot g_open_slot[MAX_FILES_NR];
 
+void* g_sector_buf = NULL;
+
 // 0x000023D8
 // it's the serial of Coded arms
 static const char *g_umd_ids[] = {
@@ -129,18 +131,22 @@ static int IoInit(PspIoDrvArg* arg)
 	void *p;
 	SceUID thid;
 
-	p = oe_malloc(ISO_SECTOR_SIZE);
+	if (g_sector_buf == NULL){
+		p = oe_malloc(ISO_SECTOR_SIZE);
 
-	if(p == NULL) {
-		return -1;
+		if(p == NULL) {
+			return -1;
+		}
+
+		g_sector_buf = p;
 	}
 
-	g_sector_buf = p;
+	if (g_umd9660_sema_id < 0) {
+		g_umd9660_sema_id = sceKernelCreateSema("EcsUmd9660DeviceFile", 0, 1, 1, 0);
 
-	g_umd9660_sema_id = sceKernelCreateSema("EcsUmd9660DeviceFile", 0, 1, 1, 0);
-
-	if(g_umd9660_sema_id < 0) {
-		return g_umd9660_sema_id;
+		if(g_umd9660_sema_id < 0) {
+			return g_umd9660_sema_id;
+		}
 	}
 
 	memset(g_open_slot, 0, sizeof(g_open_slot));
@@ -173,7 +179,6 @@ static int IoExit(PspIoDrvArg* arg)
 static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode)
 {
 	int i, ret;
-
 	i = 0;
 
 	do {
@@ -315,8 +320,9 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len)
 	ret = retv;
 
 exit:
+	#ifdef DEBUG
 	printk("%s: len 0x%08X -> 0x%08X\n", __func__, len, ret);
-
+	#endif
 	return ret;
 }
 
@@ -324,6 +330,7 @@ exit:
 static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 {
 	int ret, idx;
+	int curr = -1;
 
 	ret = sceKernelWaitSema(g_umd9660_sema_id, 1, NULL);
 
@@ -333,7 +340,8 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 	}
 
 	idx = (int)arg->arg;
-	
+	curr = g_open_slot[idx].offset;
+
 	if(whence == PSP_SEEK_SET) {
 		g_open_slot[idx].offset = ofs;
 	} else if (whence == PSP_SEEK_CUR) {
@@ -370,7 +378,11 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 	ret = g_open_slot[idx].offset;
 
 exit:
+	#ifdef DEBUG
 	printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
+	#endif
+
+	if (ret>=0) cur_offset = ret;
 
 	return ret;
 }
@@ -391,7 +403,7 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 			ret = 0x80010016;
 			goto exit;
 		}
-		
+
 		/* Read fd current offset */
 		ret = sceKernelWaitSema(g_umd9660_sema_id, 1, NULL);
 
@@ -440,13 +452,14 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 		ret = IoRead(arg, outdata, len);
 		goto exit;
 	}
-
+	#ifdef DEBUG
 	printk("%s: Unknown ioctl 0x%08X\n", __func__, cmd);
+	#endif
 	ret = 0x80010086;
-
 exit:
+	#ifdef DEBUG
 	printk("%s: cmd:0x%08X -> 0x%08X\n", __func__, cmd, ret);
-
+	#endif
 	return ret;
 }
 
@@ -477,7 +490,6 @@ static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param)
 	}
 
 	ret = iso_read_with_stack(offset, outdata, byte_size_total);
-//	printk("%s: offset: 0x%08X len: 0x%08X -> 0x%08X\n", __func__, offset, byte_size_total, ret);
 
 	return ret;
 }
@@ -494,7 +506,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		ret = 0;
 		goto exit;
 	} else if(cmd == 0x01F20001) {
-		// get UMD disc type 
+		// get UMD disc type
 		_sw(-1, (u32)(outdata));
 		_sw(g_disc_type, (u32)(outdata+4));
 
@@ -512,7 +524,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 	} else if(cmd == 0x01F100A4) {
 		u32 lba;
 		u32 sector;
-		
+
 		/* missing cmd in march33, prepare UMD data into cache */
 		if(indata == NULL || inlen < 16) {
 			ret = 0x80010016;
@@ -632,13 +644,13 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		ret = 0;
 		goto exit;
 	} else {
+		#ifdef DEBUG
 		printk("%s: Unknown cmd 0x%08X\n", __func__, cmd);
+		#endif
 		ret = 0x80010086;
 	}
 
 exit:
-//	printk("%s: cmd 0x%08X -> 0x%08X\n", __func__, cmd, ret);
-
 	return ret;
 }
 

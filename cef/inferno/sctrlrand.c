@@ -20,29 +20,37 @@
 #include <systemctrl_se.h>
 #include "pspcrypt.h"
 
-u32 sctrlKernelRand(void)
-{
-        u32 k1, result;
-        u8 *alloc, *ptr;
+// Calculate Random Number via KIRK
+unsigned int sctrlKernelRand(void) {
+    // Elevate Permission Level
+    unsigned int k1 = pspSdkSetK1(0);
 
-        enum {
-                KIRK_PRNG_CMD=0xE,
-        };
+    // Allocate KIRK Buffer
+    unsigned char * alloc = oe_malloc(20 + 4);
 
-        k1 = pspSdkSetK1(0);
+    // Allocation Error
+    if(alloc == NULL) __asm__ volatile ("break");
 
-        alloc = oe_malloc(20 + 4);
+    // Align Buffer to 4 Bytes
+    unsigned char * buffer = (void *)(((unsigned int)alloc & (~(4-1))) + 4);
 
-        if(alloc == NULL) {
-                asm("break");
-        }
+    // KIRK Random Generator Opcode
+    enum {
+        KIRK_PRNG_CMD=0xE,
+    };
 
-        /* output ptr has to be 4 bytes aligned */
-        ptr = (void*)(((u32)alloc & (~(4-1))) + 4);
-        sceUtilsBufferCopyWithRange(ptr, 20, NULL, 0, KIRK_PRNG_CMD);
-        result = *(u32*)ptr;
-        oe_free(alloc);
-        pspSdkSetK1(k1);
+    // Create 20 Random Bytes
+    sceUtilsBufferCopyWithRange(buffer, 20, NULL, 0, KIRK_PRNG_CMD);
 
-        return result;
+    // Fetch Random Number
+    unsigned int random = *(unsigned int *)buffer;
+
+    // Free Buffer
+    oe_free(alloc);
+
+    // Restore Permission Level
+    pspSdkSetK1(k1);
+
+    // Return Random Number
+    return random;
 }

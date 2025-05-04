@@ -174,6 +174,7 @@ typedef struct {
 
 typedef struct {
 	int bootfileindex;
+	unsigned char iso_disc_type;
 
 	char *module_after;
 	void *buf;

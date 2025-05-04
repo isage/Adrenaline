@@ -689,7 +689,7 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 		u32 t = (u32)curtick;
 		if (t >= (10 * 1000 * 1000)) {
 			set = 1;
-			SetSpeed(cpu_list[config.vshcpuspeed % N_CPU], bus_list[config.vshcpuspeed % N_CPU]);
+			SetCpuSpeed(cpu_list[config.vshcpuspeed % N_CPU], bus_list[config.vshcpuspeed % N_CPU]);
 		}
 	}
 
@@ -732,14 +732,14 @@ int vctrlVSHExitVSHMenu(AdrenalineConfig *conf) {
 
 	vshmenu_ctrl = NULL;
 	memcpy(&config, conf, sizeof(AdrenalineConfig));
-	SetConfig(&config);
+	sctrlSEApplyConfig(&config);
 
 	if (set) {
 		if (config.vshcpuspeed != oldspeed) {
 			if (config.vshcpuspeed) {
-				SetSpeed(cpu_list[config.vshcpuspeed % N_CPU], bus_list[config.vshcpuspeed % N_CPU]);
+				SetCpuSpeed(cpu_list[config.vshcpuspeed % N_CPU], bus_list[config.vshcpuspeed % N_CPU]);
 			} else {
-				SetSpeed(222, 111);
+				SetCpuSpeed(222, 111);
 			}
 		}
 	}

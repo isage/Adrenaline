@@ -59,43 +59,44 @@ int g_disc_type = PSP_UMD_TYPE_GAME;
 
 extern int sceKernelCancelSema(SceUID semaid, int newcount, int *num_wait_threads);
 
-int sceUmdCheckMedium(void)
-{
+int sceUmdCheckMedium(void) {
 	int ret;
+
+    if (g_iso_fn[0] == '\0'){
+        return 0;
+    }
 
 	while(!g_iso_opened) {
 		sceKernelDelayThread(10000);
 	}
 
 	ret = 1;
-//	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#ifdef DEBUG
+	printk("%s: -> 0x%08X\n", __func__, ret);
+	#endif
 	return ret;
 }
 
-int sceUmdReplacePermit(void)
-{
+int sceUmdReplacePermit(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-int sceUmdReplaceProhibit(void)
-{
+int sceUmdReplaceProhibit(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
 // 0x00001A14
-static void do_umd_notify(int arg)
-{
+static void do_umd_notify(int arg) {
 	if(g_umd_cbid < 0) {
 		return;
 	}
@@ -103,8 +104,7 @@ static void do_umd_notify(int arg)
 	sceKernelNotifyCallback(g_umd_cbid, arg);
 }
 
-int sceUmdRegisterUMDCallBack(int cbid)
-{
+int sceUmdRegisterUMDCallBack(int cbid) {
 	int ret, intr;
 	u32 k1;
 
@@ -127,8 +127,7 @@ exit:
 	return ret;
 }
 
-int sceUmdUnRegisterUMDCallBack(int cbid)
-{
+int sceUmdUnRegisterUMDCallBack(int cbid) {
 	u32 k1;
 	int ret, intr;
 	uidControlBlock *type;
@@ -150,8 +149,7 @@ int sceUmdUnRegisterUMDCallBack(int cbid)
 	return ret;
 }
 
-int infernoSetDiscType(int type)
-{
+int infernoSetDiscType(int type) {
 	int oldtype;
 
 	oldtype = g_disc_type;
@@ -160,8 +158,7 @@ int infernoSetDiscType(int type)
 	return oldtype;
 }
 
-int sceUmdGetDiscInfo(pspUmdInfo *info)
-{
+int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	int ret;
 	u32 k1;
 
@@ -182,13 +179,13 @@ int sceUmdGetDiscInfo(pspUmdInfo *info)
 	pspSdkSetK1(k1);
 
 exit:
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-int sceUmdCancelWaitDriveStat(void)
-{
+int sceUmdCancelWaitDriveStat(void) {
 	int ret;
 	u32 k1;
 
@@ -199,55 +196,50 @@ int sceUmdCancelWaitDriveStat(void)
 	return ret;
 }
 
-u32 sceUmdGetErrorStatus(void)
-{
+u32 sceUmdGetErrorStatus(void) {
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, g_umd_error_status);
-
+	#endif
 	return g_umd_error_status;
 }
 
-void sceUmdSetErrorStatus(u32 status)
-{
+void sceUmdSetErrorStatus(u32 status) {
 	g_umd_error_status = status;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, g_umd_error_status);
+	#endif
 }
 
-int sceUmdGetDriveStat(void)
-{
-//	printk("%s: -> 0x%08X\n", __func__, g_drive_status);
-	
+int sceUmdGetDriveStat(void) {
 	return g_drive_status;
 }
 
-u32 sceUmdGetDriveStatus(u32 status)
-{
+u32 sceUmdGetDriveStatus(u32 status) {
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, g_drive_status);
-	
+	#endif
 	return g_drive_status;
 }
 
-int sceUmdMan_driver_D37B6422(void)
-{
+int sceUmdMan_driver_D37B6422(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-int sceUmdMan_driver_6A1FB0DD(void)
-{
+int sceUmdMan_driver_6A1FB0DD(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-int sceUmdMan_driver_7DF4C4DA(u32 a0)
-{
+int sceUmdMan_driver_7DF4C4DA(u32 a0) {
 	if(g_0000279C != a0) {
 		return 0x80010002;
 	}
@@ -260,18 +252,16 @@ int sceUmdMan_driver_7DF4C4DA(u32 a0)
 	return 0;
 }
 
-int sceUmdMan_driver_F7A0D0D9(void)
-{
+int sceUmdMan_driver_F7A0D0D9(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-static inline u32 get_gp(void)
-{
+static inline u32 get_gp(void) {
 	u32 gp;
 
 	__asm__ volatile ("move %0, $gp;" : "=r"(gp));
@@ -279,18 +269,12 @@ static inline u32 get_gp(void)
 	return gp;
 }
 
-static inline void set_gp(u32 gp)
-{
+static inline void set_gp(u32 gp) {
 	__asm__ volatile ("move $gp, %0;" : :"r"(gp));
 }
 
 // for now 6.20/6.35 share the same patch
-int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2)
-{
-	SceModule2 *mod;
-	u32 text_addr, intr;
-	int i;
-
+int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2) {
 	if(0 != g_0000279C) {
 		return 0x8001000C;
 	}
@@ -299,16 +283,32 @@ int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2)
 	g_prev_gp = get_gp();
 	g_000027A0 = a2;
 	g_00002798 = (void*)a1;
-	
-	mod = (SceModule2*)sceKernelFindModuleByName("sceIsofs_driver");
-	text_addr = mod->text_addr;
 
-	intr = 0x00001021; // move $v0, $zr
+	SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceIsofs_driver");
+	u32 text_addr = mod->text_addr;
+	u32 intr = ((0x2402 << 16) | ((0) & 0xFFFF));
 
-	for(i=0; i<NELEMS(g_offs->patches); ++i) {
-		_sw(intr, g_offs->patches[i] + text_addr);
-	}
-
+	int patches = 4;
+    u32 top_addr = text_addr+mod->text_size;
+    for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
+        u32 data = _lw(addr);
+        if (data == 0x86430048){
+            _sw(intr, addr-16);
+            patches--;
+        }
+        else if (data == 0x3C147FDE){
+            _sw(intr, addr+8);
+            patches--;
+        }
+        else if (data == 0x8D240018){
+            _sw(intr, addr+4);
+            patches--;
+        }
+        else if (data == 0x34C30016){
+            _sw(intr, addr-16);
+            patches--;
+        }
+    }
 	sync_cache();
 
 	if(0 == g_00002798) {
@@ -322,8 +322,7 @@ int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2)
 }
 
 // 0x000014F0
-void sceUmdClearDriveStatus(u32 mask)
-{
+void sceUmdClearDriveStatus(u32 mask) {
 	int intr;
 
 	intr = sceKernelCpuSuspendIntr();
@@ -333,38 +332,34 @@ void sceUmdClearDriveStatus(u32 mask)
 	do_umd_notify(g_drive_status);
 }
 
-int sceUmd9660_driver_63342C0F(void)
-{
+int sceUmd9660_driver_63342C0F(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-int sceUmd9660_driver_6FFFEE54(void)
-{
+int sceUmd9660_driver_6FFFEE54(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-int sceUmd9660_driver_7CB291E3(void)
-{
+int sceUmd9660_driver_7CB291E3(void) {
 	int ret;
-
 	ret = 0;
+	#ifdef DEBUG
 	printk("%s: -> 0x%08X\n", __func__, ret);
-
+	#endif
 	return ret;
 }
 
-int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout)
-{
+int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout) {
 	int ret;
 	u32 k1, result;
 
@@ -379,8 +374,7 @@ int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout)
 	return ret;
 }
 
-int sceUmdWaitDriveStatCB(int stat, SceUInt timeout)
-{
+int sceUmdWaitDriveStatCB(int stat, SceUInt timeout) {
 	int ret;
 	u32 k1, result;
 
@@ -395,8 +389,7 @@ int sceUmdWaitDriveStatCB(int stat, SceUInt timeout)
 	return ret;
 }
 
-int sceUmdWaitDriveStat(int stat)
-{
+int sceUmdWaitDriveStat(int stat) {
 	int ret;
 	u32 k1, result;
 
@@ -411,8 +404,7 @@ int sceUmdWaitDriveStat(int stat)
 	return ret;
 }
 
-int sceUmdActivate(int unit, const char* drive)
-{
+int sceUmdActivate(int unit, const char* drive) {
 	u32 k1;
 	int value;
 
@@ -455,8 +447,7 @@ int sceUmdActivate(int unit, const char* drive)
 	return 0;
 }
 
-int sceUmdDeactivate(int unit, const char *drive)
-{
+int sceUmdDeactivate(int unit, const char *drive) {
 	int ret;
 	u32 k1;
 
@@ -479,8 +470,7 @@ int sceUmdDeactivate(int unit, const char *drive)
 	return ret;
 }
 
-int sceUmdGetErrorStat(void)
-{
+int sceUmdGetErrorStat(void) {
 	u32 k1;
 	int ret;
 
@@ -493,8 +483,7 @@ int sceUmdGetErrorStat(void)
 
 // 0x000018A4
 // call @PRO_Inferno_Driver:sceUmd,0xF60013F8@
-void sceUmdSetDriveStatus(int status)
-{
+void sceUmdSetDriveStatus(int status) {
 	int intr;
 
 	intr = sceKernelCpuSuspendIntr();
@@ -535,8 +524,7 @@ void sceUmdSetDriveStatus(int status)
 	do_umd_notify(g_drive_status);
 }
 
-int sceUmd_004F4BE5(int orig_error_code)
-{
+int sceUmd_004F4BE5(int orig_error_code) {
 	u32 compiled_version;
 	int error_code = orig_error_code;
 
@@ -565,35 +553,27 @@ int sceUmd_004F4BE5(int orig_error_code)
 	}
 
 exit:
-//	printk("%s: 0x%08X -> 0x%08X\n", __func__, orig_error_code, error_code);
-
 	return error_code;
 }
 
 static u32 g_unk_data = 0;
 
 /* Used by vshbridge */
-u32 sceUmd_107064CC(void)
-{
+u32 sceUmd_107064CC(void) {
 	return g_unk_data;
 }
 
-void sceUmd_C886430B(u32 a0)
-{
+void sceUmd_C886430B(u32 a0) {
 	g_unk_data = a0;
 }
 
-int power_event_handler(int ev_id, char *ev_name, void *param, int *result)
-{
-	static int old_status;
-
-	if(ev_id == 0x40000) { // melt
-		old_status = g_drive_status;
-		do_umd_notify(PSP_UMD_INITING);
+int power_event_handler(int ev_id, char *ev_name, void *param, int *result) {
+	if (ev_id == 0x400 || ev_id == 0x40000) { // melt
+		do_umd_notify(PSP_UMD_INITING  | PSP_UMD_NOT_PRESENT);
 	}
 
-	if(ev_id == 0x400000) { // resume complete
-		do_umd_notify(old_status);
+	if (ev_id == 0x400000) { // resume complete
+		do_umd_notify(PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT);
 	}
 
 	return 0;

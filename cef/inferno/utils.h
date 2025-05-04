@@ -50,17 +50,6 @@ typedef unsigned int uint;
 #define FW_303 0x03000310
 #define FW_302 0x03000210
 
-enum {
-	PSP_1000 = 0,
-	PSP_2000 = 1,
-	PSP_3000 = 2,
-	PSP_4000 = 3,
-	PSP_GO   = 4,
-	PSP_7000 = 6,
-	PSP_9000 = 8,
-	PSP_11000 = 10,
-};
-
 #define SYSMEM_TEXT_ADDR 0x88000000
 
 #define MAKE_JUMP(f) (0x08000000 | (((u32)(f) >> 2) & 0x03ffffff))

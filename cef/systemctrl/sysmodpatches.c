@@ -353,7 +353,7 @@ void PatchMediaSync(u32 text_addr) {
 	ClearCaches();
 }
 
-void SetSpeed(int cpu, int bus) {
+void SetCpuSpeed(int cpu, int bus) {
 	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
 		scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x737486F2);
 		scePowerSetClockFrequency_k(cpu, cpu, bus);

@@ -49,7 +49,7 @@ enum PSPKeyConfig
 };
 
 /**
- * Gets the api type 
+ * Gets the api type
  *
  * @returns the api type in which the system has booted
 */
@@ -73,11 +73,14 @@ int sceKernelBootFrom();
 /**
  * Get the key configuration in which the system has booted.
  *
- * @returns the key configuration code, one of PSPKeyConfig values 
+ * @returns the key configuration code, one of PSPKeyConfig values
 */
 int InitForKernel_7233B5BC();
 
 #define sceKernelInitKeyConfig InitForKernel_7233B5BC
+
+// From pspinit.h
+#define sceKernelApplicationType InitForKernel_7233B5BC
 
 #endif
 
