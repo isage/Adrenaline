@@ -64,6 +64,7 @@ typedef struct {
 	int recoverycolor;
 } AdrenalineConfig;
 
+typedef AdrenalineConfig SEConfig;
 
 /**
  * Gets the SE/OE version

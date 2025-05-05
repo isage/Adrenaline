@@ -98,3 +98,6 @@
 #ifdef F_SystemCtrlForUser_0030
 	IMPORT_FUNC  "SystemCtrlForUser",0xB364FBB4,sctrlKernelRand
 #endif
+#ifdef F_SystemCtrlForUser_0031
+	IMPORT_FUNC  "SystemCtrlForUser",0x159AF5CC,sctrlHENFindFunction
+#endif
