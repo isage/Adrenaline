@@ -7,6 +7,24 @@
 #include <pspsysmem_kernel.h>
 #include <pspctrl.h>
 
+// interface for passing arguments to kernel functions
+struct KernelCallArg {
+    u32 arg1;
+    u32 arg2;
+    u32 arg3;
+    u32 arg4;
+    u32 arg5;
+    u32 arg6;
+    u32 arg7;
+    u32 arg8;
+    u32 arg9;
+    u32 arg10;
+    u32 arg11;
+    u32 arg12;
+    u32 ret1;
+    u32 ret2;
+};
+
 /**
  * Functions to let user mode access certain functions only available in
  * kernel mode
@@ -14,7 +32,7 @@
 
 /**
   * Load a module using ModuleMgrForKernel.
-  * 
+  *
   * @param path - The path to the module to load.
   * @param flags - Unused, always 0 .
   * @param option  - Pointer to a mod_param_t structure. Can be NULL.
@@ -26,7 +44,7 @@ SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option
 
 /**
   * Load a module with a specific apitype
-  * 
+  *
   * @param apìtype - The apitype
   * @param path - The path to the module to load.
   * @param flags - Unused, always 0 .
@@ -37,7 +55,7 @@ SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option
 SceUID kuKernelLoadModuleWithApitype2(int apitype, const char *path, int flags, SceKernelLMOption *option);
 
 /**
- * Gets the api type 
+ * Gets the api type
  *
  * @returns the api type in which the system has booted
 */
@@ -62,7 +80,7 @@ int kuKernelBootFrom();
 /**
  * Get the key configuration in which the system has booted.
  *
- * @returns the key configuration code, one of PSPKeyConfig values 
+ * @returns the key configuration code, one of PSPKeyConfig values
 */
 int kuKernelInitKeyConfig();
 
@@ -93,6 +111,40 @@ int kuKernelSetDdrMemoryProtection(void *addr, int size, int prot);
 */
 int kuKernelGetModel(void);
 
+/**
+ * Find module by name
+ *
+ * @param modname - Name of Module
+ * @param mod - module structure for output (actually treated as SceModule2)
+ *
+ * @return < 0 on error
+ */
+int kuKernelFindModuleByName(char *modname, SceModule2 *mod);
+
+/**
+ * Invalidate the entire instruction cache
+ */
+void kuKernelIcacheInvalidateAll(void);
+
+/**
+ * Call a kernel function with kernel privilege
+ *
+ * @param func_addr - kernel function address
+ * @param args - kernel arguments and return values
+ *
+ * return < 0 on error
+ */
+int kuKernelCall(void *func_addr, struct KernelCallArg *args);
+
+/**
+ * Call a kernel function with kernel privilege and extended stack
+ *
+ * @param func_addr - kernel function address
+ * @param args - kernel arguments and return values
+ *
+ * return < 0 on error
+ */
+int kuKernelCallExtendStack(void *func_addr, struct KernelCallArg *args, int stack_size);
 
 #endif
 
