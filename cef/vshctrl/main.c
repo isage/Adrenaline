@@ -22,7 +22,7 @@
 #include "isofs_driver/umd9660_driver.h"
 #include "isofs_driver/isofs_driver.h"
 
-PSP_MODULE_INFO("VshControl", 0x1007, 1, 0);
+PSP_MODULE_INFO("VshControl", 0x1007, 1, 1);
 
 #define BOOT_BIN "disc0:/PSP_GAME/SYSDIR/BOOT.BIN"
 #define EBOOT_BIN "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"
