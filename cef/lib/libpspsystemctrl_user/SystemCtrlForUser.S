@@ -101,3 +101,9 @@
 #ifdef F_SystemCtrlForUser_0031
 	IMPORT_FUNC  "SystemCtrlForUser",0x159AF5CC,sctrlHENFindFunction
 #endif
+#ifdef F_SystemCtrlForUser_0032
+	IMPORT_FUNC  "SystemCtrlForUser",0x16100529,LZ4_decompress_fast
+#endif
+#ifdef F_SystemCtrlForUser_0033
+	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
+#endif

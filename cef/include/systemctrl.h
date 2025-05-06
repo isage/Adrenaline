@@ -304,4 +304,10 @@ void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int fla
 */
 void sctrlHENPatchSyscall(u32 addr, void *newaddr);
 
+// LZ4 decompress
+int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+
+// LZO decompress
+int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
+
 #endif

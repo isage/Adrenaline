@@ -84,6 +84,8 @@ PSP_EXPORT_FUNC_HASH(sctrlGetUsbState)
 PSP_EXPORT_FUNC_HASH(sctrlStartUsb)
 PSP_EXPORT_FUNC_HASH(sctrlStopUsb)
 PSP_EXPORT_FUNC_HASH(sctrlRebootDevice)
+PSP_EXPORT_FUNC(LZ4_decompress_fast)
+PSP_EXPORT_FUNC(lzo1x_decompress)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForKernel, 0, 0x0001)
@@ -122,6 +124,8 @@ PSP_EXPORT_FUNC(sctrlHENSetMemory)
 PSP_EXPORT_FUNC_HASH(GetUmdFile)
 PSP_EXPORT_FUNC_HASH(SetUmdFile)
 PSP_EXPORT_FUNC_NID(sctrlSESetBootConfFileIndex, 0x5CB025F0)
+PSP_EXPORT_FUNC(LZ4_decompress_fast)
+PSP_EXPORT_FUNC(lzo1x_decompress)
 # private:
 PSP_EXPORT_FUNC_HASH(sctrlHENLoadModuleOnReboot)
 PSP_EXPORT_FUNC_HASH(oe_malloc)

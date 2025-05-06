@@ -140,3 +140,9 @@
 #ifdef F_SystemCtrlForKernel_0044
 	IMPORT_FUNC  "SystemCtrlForKernel",0xB364FBB4,sctrlKernelRand
 #endif
+#ifdef F_SystemCtrlForKernel_0045
+	IMPORT_FUNC  "SystemCtrlForKernel",0x16100529,LZ4_decompress_fast
+#endif
+#ifdef F_SystemCtrlForKernel_0046
+	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
+#endif
