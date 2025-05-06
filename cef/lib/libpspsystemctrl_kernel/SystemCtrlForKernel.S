@@ -102,7 +102,7 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0x02BFCB5F,sctrlHENPatchSyscall
 #endif
 #ifdef F_SystemCtrlForKernel_0032
-	IMPORT_FUNC  "SystemCtrlForKernel",0x98012538,SetCpuSpeed
+	IMPORT_FUNC  "SystemCtrlForKernel",0x98012538,SetSpeed
 #endif
 #ifdef F_SystemCtrlForKernel_0033
 	IMPORT_FUNC  "SystemCtrlForKernel",0x2F157BAF,sctrlSEApplyConfig

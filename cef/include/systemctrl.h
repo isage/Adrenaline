@@ -304,8 +304,4 @@ void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int fla
 */
 void sctrlHENPatchSyscall(u32 addr, void *newaddr);
 
-// GZIP decompress
-int sctrlDeflateDecompress(void* dest, void* src, int size);
-int sctrlGzipDecompress(void* dest, void* src, int size);
-
 #endif

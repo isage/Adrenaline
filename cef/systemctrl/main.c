@@ -327,7 +327,7 @@ void OnSystemStatusIdle() {
 	PatchVolatileMemBug();
 
 	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
-		SetCpuSpeed(cpu_list[config.umdisocpuspeed % N_CPU], bus_list[config.umdisocpuspeed % N_CPU]);
+		SetSpeed(cpu_list[config.umdisocpuspeed % N_CPU], bus_list[config.umdisocpuspeed % N_CPU]);
 	}
 
 	// Set fake framebuffer so that cwcheat can be displayed

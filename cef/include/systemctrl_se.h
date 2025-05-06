@@ -193,7 +193,7 @@ void SetUmdFile(char *file);
 */
 void sctrlSESetBootConfFileIndex(int index);
 
-void SetConfig(AdrenalineConfig *conf);
+void sctrlSEApplyConfig(AdrenalineConfig *conf);
 void SetSpeed(int cpu, int bus);
 
 void oe_free(void *ptr);
