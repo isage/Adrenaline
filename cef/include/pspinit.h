@@ -79,8 +79,5 @@ int InitForKernel_7233B5BC();
 
 #define sceKernelInitKeyConfig InitForKernel_7233B5BC
 
-// From pspinit.h
-#define sceKernelApplicationType InitForKernel_7233B5BC
-
 #endif
 
