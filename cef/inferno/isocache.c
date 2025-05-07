@@ -19,8 +19,8 @@ static u32 read_missed = 0;
 
 static u32 cache_on = 0;
 
-#define CACHE_POLICY_LRU 0
-#define CACHE_POLICY_RR 1
+static SceUID cache_ctrl = -1;
+static SceUID cache_mem = -1;
 
 #define NR_CACHE_REQ 8
 #define CACHE_MINIMUM_THRESHOLD (16 * 1024)
@@ -181,7 +181,9 @@ static void reorder_iso_cache(int idx)
 	int i;
 
 	if(idx < 0 && idx >= g_caches_num) {
+		#ifdef DEBUG
 		printk("%s: wrong idx\n", __func__);
+		#endif
 		return;
 	}
 
@@ -224,7 +226,9 @@ static int add_cache(struct IoReadArg *arg)
 
 		if(last_cache != NULL) {
 			if(pos + len <= last_cache->pos + last_cache->bufsize) {
+				#ifdef DEBUG
 				printk("%s: error pos\n", __func__);
+				#endif
 				asm("break");
 			}
 
@@ -258,7 +262,9 @@ static int add_cache(struct IoReadArg *arg)
 			break;
 		} else {
 			reorder_iso_cache(cache - g_caches);
+			#ifdef DEBUG
 			printk("%s: read -> 0x%08X\n", __func__, ret);
+			#endif
 			return ret;
 		}
 	}
@@ -358,7 +364,7 @@ int iso_cache_read(struct IoReadArg *arg)
 	pos = arg->offset;
 	len = arg->size;
 	ret = get_hit_caches(pos, len, data, &last_cache);
-	
+
 	if(ret < 0) {
 #if 0
 		{
@@ -379,7 +385,7 @@ int iso_cache_read(struct IoReadArg *arg)
 		read_missed += len;
 	} else {
 		// we have to sleep a bit to prevent mystery freeze in KHBBS (from worldmap to location)
-		// it's caused by caching too fast 
+		// it's caused by caching too fast
 		// tested NFS Carbon: Own the city, seems delaying 100 wasn't enough...
 		sceKernelDelayThread(MAX(512, len / 16));
 	}
@@ -387,7 +393,7 @@ int iso_cache_read(struct IoReadArg *arg)
 #ifdef CACHE_TEST
 	cache_test(arg);
 #endif
-	
+
 	read_call += len;
 	process_request();
 	update_cache_info();
@@ -395,8 +401,18 @@ int iso_cache_read(struct IoReadArg *arg)
 	return ret;
 }
 
-int infernoCacheInit(int cache_size, int cache_num)
+int infernoCacheInit(int cache_size, int cache_num, int partition)
 {
+	if (cache_size == 0){ // disable cache
+        sceKernelFreePartitionMemory(cache_ctrl);
+        sceKernelFreePartitionMemory(cache_mem);
+        cache_ctrl = -1;
+        cache_mem = -1;
+        cache_on = 0;
+        return 0;
+    }
+
+    if (cache_on) return 0; // cache already on
 	SceUID memid;
 	int i;
 	struct ISOCache *cache;
@@ -408,11 +424,14 @@ int infernoCacheInit(int cache_size, int cache_num)
 	if(g_caches_cap % 0x200 != 0) {
 		return -1;
 	}
-	
-	memid = sceKernelAllocPartitionMemory(9, "infernoCacheCtl", PSP_SMEM_High, g_caches_num * sizeof(g_caches[0]), NULL);
+
+	memid = sceKernelAllocPartitionMemory(partition, "infernoCacheCtl", PSP_SMEM_High, g_caches_num * sizeof(g_caches[0]), NULL);
+    cache_ctrl = memid;
 
 	if(memid < 0) {
-		printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid); 
+		#ifdef DEBUG
+		printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
+		#endif
 		return -2;
 	}
 
@@ -422,10 +441,13 @@ int infernoCacheInit(int cache_size, int cache_num)
 		return -3;
 	}
 
-	memid = sceKernelAllocPartitionMemory(9, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
+	memid = sceKernelAllocPartitionMemory(partition, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
+    cache_mem = memid;
 
 	if(memid < 0) {
+		#ifdef DEBUG
 		printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
+		#endif
 		return -4;
 	}
 
@@ -439,6 +461,9 @@ int infernoCacheInit(int cache_size, int cache_num)
 	}
 
 	cache_on = 1;
+
+	extern int (*iso_reader)(struct IoReadArg *args);
+    iso_reader = &iso_cache_read;
 
 	return 0;
 }
@@ -471,6 +496,7 @@ int infernoCacheAdd(u32 pos, int len)
 }
 
 // call @PRO_Inferno_Driver:CacheCtrl,0x5CC24481@
+#ifdef DEBUG
 void isocache_stat(int reset)
 {
 	char buf[256];
@@ -505,6 +531,9 @@ void isocache_stat(int reset)
 		read_call = read_hit = read_missed = 0;
 	}
 }
+#else
+void isocache_stat(int reset){}
+#endif
 
 // call @PRO_Inferno_Driver:CacheCtrl,0xC0736FD6@
 void infernoCacheSetPolicy(int policy)

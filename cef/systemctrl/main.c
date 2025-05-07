@@ -357,7 +357,7 @@ int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
 int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int ret = _sceUsbCamStillInput(buf, size);
-	sceUsb_driver_0xED8C8695(); // force camera stop 
+	sceUsb_driver_0xED8C8695(); // force camera stop
 
 	pspSdkSetK1(k1);
 

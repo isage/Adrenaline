@@ -2,17 +2,17 @@
 #define __SCTRLLIBRARY_SE_H__
 
 /**
- * These functions are only available in SE-C and later, 
- * and they are not in HEN 
+ * These functions are only available in SE-C and later,
+ * and they are not in HEN
 */
 
-enum 
+enum
 {
 	FAKE_REGION_DISABLED = 0,
 	FAKE_REGION_JAPAN = 1,
 	FAKE_REGION_AMERICA = 2,
 	FAKE_REGION_EUROPE = 3,
-	FAKE_REGION_KOREA = 4, 
+	FAKE_REGION_KOREA = 4,
 	FAKE_REGION_UNK = 5,
 	FAKE_REGION_UNK2 = 6,
 	FAKE_REGION_AUSTRALIA = 7,
@@ -29,6 +29,12 @@ enum SEUmdModes
 	MODE_INFERNO,
 	MODE_MARCH33,
 	MODE_NP9660,
+};
+
+enum InfernoCachePolicy
+{
+    CACHE_POLICY_LRU = 0,
+    CACHE_POLICY_RR = 1,
 };
 
 #define ADRENALINE_CFG_MAGIC_1 0x31483943
@@ -109,10 +115,10 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size);
 /**
  * Initiates the emulation of a disc from an ISO9660/CSO file.
  *
- * @param file - The path of the 
+ * @param file - The path of the
  * @param noumd - Wether use noumd or not
  * @param isofs - Wether use the custom SE isofs driver or not
- * 
+ *
  * @returns 0 on success
  *
  * @Note - When setting noumd to 1, isofs should also be set to 1,
@@ -162,6 +168,11 @@ void sctrlSESetDiscOut(int out);
 void sctrlSESetDiscType(int type);
 
 /**
+ * Get the disctype.
+*/
+int sctrlSEGetDiscType(void);
+
+/**
  * Gets the current umd file (kernel only)
 */
 char *sctrlSEGetUmdFile();
@@ -175,14 +186,14 @@ char *GetUmdFile();
 void sctrlSESetUmdFile(char *file);
 void SetUmdFile(char *file);
 
-/** 
+/**
  * Sets the boot config file for next reboot (kernel only)
  *
  * @param index - The index identifying the file (0 -> normal bootconf, 1 -> march33 driver bootconf, 2 -> np9660 bootcnf)
 */
 void sctrlSESetBootConfFileIndex(int index);
 
-void SetConfig(AdrenalineConfig *conf);
+void sctrlSEApplyConfig(AdrenalineConfig *conf);
 void SetSpeed(int cpu, int bus);
 
 void oe_free(void *ptr);

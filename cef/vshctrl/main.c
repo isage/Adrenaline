@@ -360,7 +360,7 @@ NEXT:
 				res2 = virtualpbp_add(fullpath, &dir->d_stat.sce_st_mtime, &vpbp);
 				docache = 1;
 			}
-			
+
 			if (res2 >= 0) {
 				ApplyIsoNamePatch(dir);
 
@@ -368,7 +368,7 @@ NEXT:
 				dir->d_stat.st_mode = 0x11FF;
 				dir->d_stat.st_attr = 0x0010;
 				dir->d_stat.st_size = 0;
-				
+
 				// Change the modifcation time to creation time
 				memcpy(&dir->d_stat.sce_st_mtime, &dir->d_stat.sce_st_ctime, sizeof(ScePspDateTime));
 
@@ -401,7 +401,7 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 			return res;
 		}
 	}
-	
+
 	if (fd >= 0) {
 		if (fd == gamedfd) {
 			if (isodfd < 0 && !overiso) {
@@ -442,9 +442,9 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 	if (res > 0) {
 		if (config.hidecorrupt)
 			CorruptIconPatch(dir->d_name);
-		
+
 		if (config.hidedlcs)
-			HideDlc(dir->d_name);		
+			HideDlc(dir->d_name);
 	}
 
 	pspSdkSetK1(k1);
@@ -456,13 +456,13 @@ int sceIoDclosePatched(SceUID fd) {
 	int res;
 
 	if (vpbpinited) {
-		res = virtualpbp_close(fd);	
+		res = virtualpbp_close(fd);
 		if (res >= 0) {
 			pspSdkSetK1(k1);
 			return res;
 		}
 	}
-	
+
 	if (fd == categorydfd) {
 		categorydfd = -1;
 	} else if (fd == gamedfd) {
@@ -492,7 +492,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 			return sceIoOpen(file, flags, mode);
 		}
 
-		int res = virtualpbp_open(index);	
+		int res = virtualpbp_open(index);
 		pspSdkSetK1(k1);
 		return res;
 	}
@@ -520,7 +520,7 @@ int sceIoClosePatched(SceUID fd) {
 int sceIoReadPatched(SceUID fd, void *data, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
-	
+
 	if (vpbpinited) {
 		res = virtualpbp_read(fd, data, size);
 	}
@@ -556,7 +556,7 @@ int sceIoLseek32Patched(SceUID fd, int offset, int whence) {
 	int res = -1;
 
 	if (vpbpinited) {
-		res = virtualpbp_lseek(fd, offset, whence);	
+		res = virtualpbp_lseek(fd, offset, whence);
 	}
 
 	pspSdkSetK1(k1);
@@ -732,7 +732,7 @@ int vctrlVSHExitVSHMenu(AdrenalineConfig *conf) {
 
 	vshmenu_ctrl = NULL;
 	memcpy(&config, conf, sizeof(AdrenalineConfig));
-	SetConfig(&config);
+	sctrlSEApplyConfig(&config);
 
 	if (set) {
 		if (config.vshcpuspeed != oldspeed) {
@@ -766,7 +766,7 @@ int ShutdownUsbPatched() {
 	return sctrlStopUsb();
 }
 
-int GetUsbStatusPatched() {	
+int GetUsbStatusPatched() {
 	int state = sctrlGetUsbState();
 
 	if (state & 0x20)
@@ -802,7 +802,7 @@ ImportPatch import_patch[] = {
 void IoPatches() {
 	int i;
 	for (i = 0; i < (sizeof(import_patch) / sizeof(ImportPatch)); i++) {
-		sctrlHENPatchSyscall(K_EXTRACT_IMPORT(import_patch[i].import), import_patch[i].patched); 
+		sctrlHENPatchSyscall(K_EXTRACT_IMPORT(import_patch[i].import), import_patch[i].patched);
 	}
 }
 
@@ -833,7 +833,7 @@ void PatchVshMain(u32 text_addr) {
 	}
 
 
-	ClearCaches();	
+	ClearCaches();
 }
 
 //wchar_t verinfo[] = L"6.61 Adrenaline-     ";
@@ -956,7 +956,7 @@ void PatchGamePlugin(u32 text_addr) {
 		_sw(0x24040002, text_addr + 0x19134);
 	}
 
-	ClearCaches();	
+	ClearCaches();
 }
 
 int sceUpdateDownloadSetVersionPatched(int version) {

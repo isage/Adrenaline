@@ -18,8 +18,6 @@
 #ifndef INFERNO_H
 #define INFERNO_H
 
-#include "inferno_patch_offset.h"
-
 #define ISO_SECTOR_SIZE 2048
 #define CISO_IDX_BUFFER_SIZE 0x200
 #define CISO_DEC_BUFFER_SIZE 0x2000
@@ -27,17 +25,17 @@
 #define MAX_FILES_NR 8
 
 #define SAFE_FREE(p) \
-do { \
-	if(p != NULL) { \
-		oe_free(p); \
-		p = NULL; \
-	} \
-} while ( 0 )
+  do { \
+    if(p != NULL) { \
+      oe_free(p); \
+      p = NULL; \
+    } \
+  } while ( 0 )
 
 struct IoReadArg {
-	u32 offset; // 0
-	u8 *address; // 4
-	u32 size; // 8
+  u32 offset; // 0
+  u8 *address; // 4
+  u32 size; // 8
 };
 
 extern u32 psp_model;
@@ -48,7 +46,7 @@ extern SceUID g_umd_cbid;
 extern int g_umd_error_status;
 extern int g_drive_status;
 
-extern const char *g_iso_fn;
+extern char g_iso_fn[255];
 extern int g_game_fix_type;
 extern SceUID g_drive_status_evf;
 extern void *g_sector_buf;
@@ -58,6 +56,10 @@ extern SceUID g_iso_fd;
 extern int g_total_sectors;
 extern struct IoReadArg g_read_arg;
 extern int g_disc_type;
+extern unsigned char umd_seek;
+extern unsigned char umd_speed;
+extern u32 last_read_offset;
+extern u32 cur_offset;
 
 extern void sceUmdSetDriveStatus(int status);
 
@@ -69,7 +71,7 @@ extern int iso_cache_read(struct IoReadArg *args);
 extern int iso_read_with_stack(u32 offset, void *ptr, u32 data_len);
 
 extern int infernoSetDiscType(int type);
-extern int infernoCacheInit(int cache_size, int cache_num);
+extern int infernoCacheInit(int cache_size, int cache_num, int partition);
 extern int infernoCacheAdd(u32 pos, int len);
 extern void infernoCacheSetPolicy(int policy);
 

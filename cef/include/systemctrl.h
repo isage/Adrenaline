@@ -25,6 +25,18 @@ enum BootLoadFlags
 	BOOTLOAD_UMDEMU = 64, /* for original NP9660 */
 };
 
+// Different PSP models
+enum {
+    PSP_1000 = 0,   // 01g
+    PSP_2000 = 1,   // 02g
+    PSP_3000 = 2,   // 03g
+    PSP_4000 = 3,   // 04g
+    PSP_GO   = 4,   // 05g
+    PSP_7000 = 6,   // 07g
+    PSP_9000 = 8,   // 09g
+    PSP_11000 = 10, // 11g
+};
+
 /**
  * Restart the vsh.
  *
@@ -42,7 +54,7 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
 
@@ -53,7 +65,7 @@ int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHPara
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExecVSHParam *param);
 
@@ -64,7 +76,7 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam *param);
 
@@ -75,7 +87,7 @@ int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *param);
 
@@ -86,7 +98,7 @@ int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam *param);
 
@@ -97,7 +109,7 @@ int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam *param);
 
@@ -109,12 +121,12 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
- * Sets the api type 
+ * Sets the api type
  *
  * @param apitype - The apitype to set
  * @returns the previous apitype
@@ -150,10 +162,10 @@ int sctrlKernelSetUserLevel(int level);
 
 /**
  * Sets the devkit version
- * 
+ *
  * @param version - The devkit version to set
  * @return the previous devkit version
- * 
+ *
 */
 int sctrlKernelSetDevkitVersion(int version);
 
@@ -192,7 +204,7 @@ int sctrlHENGetVersion();
  */
 PspIoDrv *sctrlHENFindDriver(char *drvname);
 
-/** 
+/**
  * Finds a function.
  *
  * @param szMod - The module where to search the function
@@ -217,7 +229,7 @@ typedef int (* STMOD_HANDLER)(SceModule2 *);
  * @Note: because only one handler function is handled by HEN, you should
  * call the previous function in your code.
  *
- * @Example: 
+ * @Example:
  *
  * STMOD_HANDLER previous = NULL;
  *
@@ -255,7 +267,7 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
  * @param p2 - The size in MB for the user partition. Must be > 0
  * @param p8 - The size in MB for partition 8. Can be 0.
  *
- * @returns 0 on success, < 0 on error. 
+ * @returns 0 on success, < 0 on error.
  * This function is only available in the slim. The function will fail
  * if p2+p8 > 52 or p2 == 0
 */
@@ -271,21 +283,21 @@ int sctrlHENSetMemory(u32 p2, u32 p8);
  * @param flags - The modes in which the module should be loaded, one of BootLoadFlags
  *
  * @Example:
- * sctrlHENLoadModuleOnReboot("/kd/usersystemlib.prx", module_buffer, module_size, BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UMDEMU); 
+ * sctrlHENLoadModuleOnReboot("/kd/usersystemlib.prx", module_buffer, module_size, BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UMDEMU);
  *
  * This will load the module contained in module_buffer just before /kd/usersystemlib.prx in the next reboot, if the mode of next reboot is game, pops or umdemu
  *
  * @Remarks: Don't use too early modules in first param like "/kd/init.prx" or "/kd/systemctrl.prx", or your module may not load properly
- * Only one module will be loaded on reboot with this function. 
+ * Only one module will be loaded on reboot with this function.
  * If this function is called many times, only the last one will be considered.
- * By making a module to load itself using this function, and calling 
+ * By making a module to load itself using this function, and calling
  * sctrlHENLoadModuleOnReboot on module_start, a prx can cause itself to be resident in the modes choosen by flags.
  * If all flags are selected, the module will stay resident until a psp shutdown, or until sctrlHENLoadModuleOnReboot is not called.
 */
 
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags);
 
-/** Changes a syscall to another function 
+/** Changes a syscall to another function
  *
  * @param addr - the address of the original function
  * @param newaddr - the address of the new function
