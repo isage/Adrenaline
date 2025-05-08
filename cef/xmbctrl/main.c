@@ -41,8 +41,6 @@
 
 PSP_MODULE_INFO("AdrenalineXmbControl", 0x0007, 1, 0);
 
-#define NELEMS(n) ((sizeof(n)) / sizeof(n[0]))
-
 extern List plugins;
 
 static char buf[64];

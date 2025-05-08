@@ -100,3 +100,20 @@ _recovery:
 	cp "newrecovery/recovery.prx" "../user/flash0/vsh/module/recovery.prx"
 	make -C newrecovery clean
 
+clean:
+	make -C btcnf/pspbtcnf_inferno clean
+	make -C btcnf/pspbtcnf_march33 clean
+	make -C btcnf/pspbtcnf_normal clean
+	make -C btcnf/pspbtcnf_np9660 clean
+	make -C btcnf/pspbtcnf_recovery clean
+	make -C payloadex clean
+	make -C rebootex clean
+	make -C binary clean
+	make -C systemctrl clean
+	make -C popcorn clean
+	make -C inferno clean
+	make -C vshctrl clean
+	make -C kermit_idstorage clean
+	make -C xmbctrl clean
+	make -C satelite clean
+	make -C newrecovery clean

@@ -70,8 +70,10 @@ int ReadLine(SceUID fd, char *str) {
 			return n;
 
 		if (ch < 0x20) {
-			if(n != 0)
+			if(n != 0) {
+				*str = 0;
 				return n;
+			}
 		} else {
 			*str++ = ch;
 			n++;
