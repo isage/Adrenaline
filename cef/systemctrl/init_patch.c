@@ -214,7 +214,9 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			}
 
 			if (sceKernelFindModuleByName661(waitmodule)) {
-				loadXmbControl();
+				if (config.enablexmbctrl) {
+					loadXmbControl();
+				}
 				char plugin[64];
 				int i, size;
 				SceUID fd;

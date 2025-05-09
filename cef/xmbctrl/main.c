@@ -59,6 +59,7 @@ enum {
 	USE_SONY_OSK,
 	USE_NO_DRM,
 	AUTORUN_BOOT,
+	XMBCNTRL,
 	FORCE_HIGHMEM,
 	EXEC_BOOT_BIN,
 	VSH_REGION,
@@ -89,12 +90,13 @@ GetItem GetItemes[] = {
 	{12, 0, "Extended colors", 1, 0},
 	{13, 0, "Use Sony PSP OSK", 1, 0},
 	{14, 0, "Use NoDRM engine", 1, 0},
-	{15, 0, "Autorun program in /PSP/GAME/BOOT/EBOOT.PBP", 0, 1},
-	{16, 0, "Force high memory layout", 1, 1},
-	{17, 0, "Execute BOOT.BIN in Game", 1, 1},
-	{18, 0, "XMB Plugins", 1, 1},
-	{19, 0, "Game Plugins", 1, 1},
-	{20, 0, "POPS Plugins", 1, 1},
+	{15, 0, "XMB Control", 1, 0},
+	{16, 0, "Autorun program in /PSP/GAME/BOOT/EBOOT.PBP", 1, 1},
+	{17, 0, "Force high memory layout", 1, 1},
+	{18, 0, "Execute BOOT.BIN in Game", 1, 1},
+	{19, 0, "XMB Plugins", 1, 1},
+	{20, 0, "Game Plugins", 1, 1},
+	{21, 0, "POPS Plugins", 1, 1},
 };
 
 #define PLUGINS_CONTEXT 1
@@ -154,6 +156,7 @@ struct {
 	{3, use_extended_color_option}, // Use extended color
 	{2, boolean_options},           // Use Sony PSP OSK
 	{2, boolean_options},           // Use NoDRM Engine
+	{2, boolean_options},           // XMB Control
 	{2, boolean_options},           // Autorun /PSP/GAME/BOOT/EBOOT.PBP
 	{2, boolean_options},           // Force high memory layout
 	{2, boolean_options},           // Execute BOOT.BIN in Game
@@ -518,7 +521,8 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 				config.vsh_cpu_speed,  config.game_cpu_speed, config.umd_driver,
 				config.skip_sony_coldboot_logo, config.skip_sony_gameboot_logo,
 				config.hide_corrupt_icons, config.hide_mac_addr, config.hide_dlcs,
-				config.hide_pic01, config.vsh_region, config.extended_colors, config.use_sony_osk, config.use_nodrm,
+				config.hide_pic01, config.vsh_region, config.extended_colors, config.use_sony_osk,
+				config.use_nodrm, config.enablexmbctrl,
 				config.autorun_boot_eboot, config.force_highmem, config.exec_bootbin,
 				config.vsh_plugins, config.game_plugins, config.pops_plugins,
 			};
@@ -553,7 +557,8 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
 				&config.vsh_cpu_speed,  &config.game_cpu_speed, &config.umd_driver,
 				&config.skip_sony_coldboot_logo, &config.skip_sony_gameboot_logo,
 				&config.hide_corrupt_icons, &config.hide_mac_addr, &config.hide_dlcs,
-				&config.hide_pic01, &config.vsh_region, &config.extended_colors, &config.use_sony_osk, &config.use_nodrm,
+				&config.hide_pic01, &config.vsh_region, &config.extended_colors, &config.use_sony_osk,
+				&config.use_nodrm, &config.enablexmbctrl,
 				&config.autorun_boot_eboot, &config.force_highmem, &config.exec_bootbin,
 				&config.vsh_plugins, &config.game_plugins, &config.pops_plugins,
 			};

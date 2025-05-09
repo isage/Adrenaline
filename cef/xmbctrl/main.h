@@ -53,25 +53,7 @@ typedef struct {
 	int vsh_plugins;
 	int game_plugins;
 	int pops_plugins;
-	// int usbcharge;
-	// int wpa2;
-	// int launcher;
-	// int highmem;
-	// int mscache;
-	// int infernocache;
-	// int disablepause;
-	// int oldplugin;
-	// int hibblock;
-	// int skiplogos;
-	// int hidepics;
-	// int hidemac;
-	// int hidedlc;
-	// int noled;
-	// int noumd;
-	// int noanalog;
-	// int umdregion;
-	// int vshregion;
-	// int qaflags;
+	int enablexmbctrl;
 } CFWConfig;
 
 typedef struct

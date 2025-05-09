@@ -29,13 +29,14 @@ void loadSettings() {
 	config.hide_dlcs = se_config.hidedlcs;
 	config.hide_pic01 = se_config.hidepic0pic1;
 	config.use_sony_osk = se_config.usesonypsposk;
-	config.use_nodrm = !se_config.notusenodrmengine;
 	config.autorun_boot_eboot = se_config.startupprog;
 	config.force_highmem = se_config.forcehighmemory;
 	config.exec_bootbin = se_config.executebootbin;
 	config.vsh_region = se_config.fakeregion;
 	config.extended_colors = se_config.useextendedcolors;
+	config.enablexmbctrl = se_config.enablexmbctrl;
 
+	config.use_nodrm = !se_config.notusenodrmengine;
 	config.vsh_plugins = !se_config.notusexmbplugins;
 	config.game_plugins = !se_config.notusegameplugins;
 	config.pops_plugins = !se_config.notusepopsplugins;
@@ -54,13 +55,14 @@ void saveSettings() {
 	se_config.hidedlcs = config.hide_dlcs;
 	se_config.hidepic0pic1 = config.hide_pic01;
 	se_config.usesonypsposk = config.use_sony_osk;
-	se_config.notusenodrmengine = !config.use_nodrm;
 	se_config.startupprog = config.autorun_boot_eboot;
 	se_config.forcehighmemory = config.force_highmem;
 	se_config.executebootbin = config.exec_bootbin;
 	se_config.fakeregion = config.vsh_region;
 	se_config.useextendedcolors = config.extended_colors;
+	se_config.enablexmbctrl = config.enablexmbctrl;
 
+	se_config.notusenodrmengine = !config.use_nodrm;
 	se_config.notusexmbplugins = !config.vsh_plugins;
 	se_config.notusegameplugins= !config.game_plugins;
 	se_config.notusepopsplugins= !config.pops_plugins;
