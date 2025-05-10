@@ -141,6 +141,18 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 	return sceKernelLoadModuleBufferBootInitBtcnf661(info->size, buf, flags, option);
 }
 
+static void loadXmbControl(){
+	int apitype = sceKernelInitApitype();
+	if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
+		// load XMB Control Module
+		int modid = sceKernelLoadModule661("ms0:/__ADRENALINE__/flash0/kd/xmbctrl.prx", 0, NULL);
+		if (modid < 0) {
+		  	modid = sceKernelLoadModule661("flash0:/kd/xmbctrl.prx", 0, NULL);
+		}
+		sceKernelStartModule661(modid, 0, NULL, NULL, NULL);
+	}
+}
+
 SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
 	char path[64];
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name);
@@ -194,7 +206,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			}
 		} else if (!plugindone) {
 			char *waitmodule;
-		
+
 			if (sceKernelFindModuleByName661("sceNp9660_driver")) {
 				waitmodule = "sceMeCodecWrapper";
 			} else {
@@ -202,6 +214,9 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			}
 
 			if (sceKernelFindModuleByName661(waitmodule)) {
+				if (config.enablexmbctrl) {
+					loadXmbControl();
+				}
 				char plugin[64];
 				int i, size;
 				SceUID fd;

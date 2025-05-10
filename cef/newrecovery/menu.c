@@ -292,6 +292,7 @@ Entry general_entries[] = {
   { "Recovery color", SetRecoveryColor, theme_names, sizeof(theme_names), &config.recoverycolor },
   { "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.usesonypsposk },
   { "Use NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.notusenodrmengine },
+  { "Enable XMBControl", NULL, disenabled, sizeof(disenabled), &config.enablexmbctrl },
   { "", NULL, NULL, 0, NULL },
   { "Toggle USB", ToggleUSB, NULL, 0, NULL },
   { "", NULL, NULL, 0, NULL },
@@ -312,7 +313,7 @@ Entry advanced_entries[] = {
 };
 
 Page pages[] = {
-  { general_entries, 19, "General" },
+  { general_entries, 20, "General" },
   { advanced_entries, 10, "Advanced" },
   { plugins_tool_entries, 0, "Plugins" }
 };

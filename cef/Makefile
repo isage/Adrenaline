@@ -1,4 +1,4 @@
-all: _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf
+all: _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
 _btcnf:
 	make -C btcnf/pspbtcnf_inferno clean
@@ -79,6 +79,13 @@ _kermit_idstorage:
 	cp "kermit_idstorage/kermit_idstorage.prx" "../user/flash0/kd/kermit_idstorage.prx"
 	make -C kermit_idstorage clean
 
+_xmbctrl:
+	make -C xmbctrl clean
+	make -C xmbctrl
+	psp-packer xmbctrl/xmbctrl.prx
+	cp "xmbctrl/xmbctrl.prx" "../user/flash0/kd/xmbctrl.prx"
+	make -C xmbctrl clean
+
 _satelite:
 	make -C satelite clean
 	make -C satelite
@@ -93,3 +100,20 @@ _recovery:
 	cp "newrecovery/recovery.prx" "../user/flash0/vsh/module/recovery.prx"
 	make -C newrecovery clean
 
+clean:
+	make -C btcnf/pspbtcnf_inferno clean
+	make -C btcnf/pspbtcnf_march33 clean
+	make -C btcnf/pspbtcnf_normal clean
+	make -C btcnf/pspbtcnf_np9660 clean
+	make -C btcnf/pspbtcnf_recovery clean
+	make -C payloadex clean
+	make -C rebootex clean
+	make -C binary clean
+	make -C systemctrl clean
+	make -C popcorn clean
+	make -C inferno clean
+	make -C vshctrl clean
+	make -C kermit_idstorage clean
+	make -C xmbctrl clean
+	make -C satelite clean
+	make -C newrecovery clean

@@ -1,5 +1,6 @@
 TARGET = vshctrl
-OBJS = main.o virtualsfo.o virtualpbpmgr.o isofs_driver/isofs_driver.o isofs_driver/umd9660_driver.o isofs_driver/csoread.o exports.o imports.o
+OBJS = main.o registry.o virtualsfo.o virtualpbpmgr.o isofs_driver/isofs_driver.o isofs_driver/umd9660_driver.o isofs_driver/csoread.o exports.o imports.o \
+	utils.o 
 
 INCDIR = ../include
 CFLAGS = -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division

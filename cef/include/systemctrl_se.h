@@ -62,8 +62,10 @@ typedef struct {
 	int forcehighmemory;
 	int executebootbin;
 	int recoverycolor;
+	int enablexmbctrl;
 } AdrenalineConfig;
 
+typedef AdrenalineConfig SEConfig;
 
 /**
  * Gets the SE/OE version

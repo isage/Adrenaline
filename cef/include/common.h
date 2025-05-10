@@ -101,6 +101,9 @@
 #define K_EXTRACT_CALL(x) (((((u32)_lw((u32)x)) & ~0x0C000000) << 2) | 0x80000000)
 
 #define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
+#define NELEMS(a) (sizeof(a) / sizeof(a[0]))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 typedef struct {
 	u32 magic;
