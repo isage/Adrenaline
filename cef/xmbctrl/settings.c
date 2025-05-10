@@ -49,7 +49,8 @@ char * strtrim(char * text) {
 
 int readLine(char* source, char *str) {
 	u8 ch = 0;
-	int n, i = 0;
+	int n = 0;
+	int i = 0;
 
 	while (1) {
 		if ((ch = source[i]) == 0) {
