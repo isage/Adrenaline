@@ -1,9 +1,9 @@
 /*
-	6.39 TN-A, XmbControl
+	Adrenaline, XmbControl
 	Copyright (C) 2011, Total_Noob
 	Copyright (C) 2011, Frostegater
 
-	main.h: XmbControl main header file
+	utils.c: XmbControl utilities implementation file
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by

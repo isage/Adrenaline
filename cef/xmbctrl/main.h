@@ -1,5 +1,5 @@
 /*
-	6.39 TN-A, XmbControl
+	Adrenaline XmbControl
 	Copyright (C) 2011, Total_Noob
 	Copyright (C) 2011, Frostegater
 	Copyright (C) 2025, GrayJack
