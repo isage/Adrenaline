@@ -56,6 +56,8 @@
 #include "includes/sharp_bilinear_simple_v.h"
 #include "includes/advanced_aa_v.h"
 #include "includes/advanced_aa_f.h"
+#include "includes/scale2x_v.h"
+#include "includes/scale2x_f.h"
 #include "includes/vflux_f.h"
 #include "includes/vflux_v.h"
 
@@ -81,7 +83,7 @@ static float flux_colors[] = {
   0.0f, 0.0f, 0.0f, 0.0f  // Black
 };
 
-static char *graphics_options[] = { "Original", "Bilinear", "Sharp bilinear", "Advanced AA", "LCD3x", "Sharp bilinear without scanlines" };
+static char *graphics_options[] = { "Original", "Bilinear", "Sharp bilinear", "Advanced AA", "LCD3x", "Sharp bilinear without scanlines", "Scale2x" };
 static char *flux_mode_options[] = { "None", "Yellow", "Blue", "Black" };
 static char *no_yes_options[] = { "No", "Yes" };
 static char *yes_no_options[] = { "Yes", "No" };
@@ -407,6 +409,7 @@ int AdrenalineDraw(SceSize args, void *argp) {
   vita2d_shader *advanced_aa_shader = vita2d_create_shader((SceGxmProgram *)advanced_aa_v, (SceGxmProgram *)advanced_aa_f);
   vita2d_shader *lcd3x_shader = vita2d_create_shader((SceGxmProgram *)lcd3x_v, (SceGxmProgram *)lcd3x_f);
   vita2d_shader *sharp_simple_shader = vita2d_create_shader((SceGxmProgram *)sharp_bilinear_simple_v, (SceGxmProgram *)sharp_bilinear_simple_f);
+  vita2d_shader *scale2x_shader = vita2d_create_shader((SceGxmProgram *)scale2x_v, (SceGxmProgram *)scale2x_f);
 
   // f.lux shader
   vita2d_shader *flux_shader = vita2d_create_shader_untextured((SceGxmProgram *)gxm_program_vflux_v, (SceGxmProgram *)gxm_program_vflux_f);
@@ -563,6 +566,8 @@ int AdrenalineDraw(SceSize args, void *argp) {
       shader = lcd3x_shader;
     else if (config.graphics_filtering == 5)
       shader = sharp_simple_shader;
+    else if (config.graphics_filtering == 6)
+      shader = scale2x_shader;
     else
       shader = opaque_shader;
 
