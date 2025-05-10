@@ -45,6 +45,8 @@ void loadSettings() {
 void saveSettings() {
 	sctrlSEGetConfig(&se_config);
 
+	int oldspeed = se_config.vshcpuspeed;
+
 	se_config.vshcpuspeed = config.vsh_cpu_speed;
 	se_config.umdisocpuspeed = config.game_cpu_speed;
 	se_config.umdmode = config.umd_driver;
@@ -68,4 +70,12 @@ void saveSettings() {
 	se_config.notusepopsplugins= !config.pops_plugins;
 
 	sctrlSESetConfig(&se_config);
+
+	// Apply VSH config change
+	if (config.vsh_cpu_speed != oldspeed) {
+		int cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
+		int bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
+
+		sctrlHENSetSpeed(cpu_list[config.vsh_cpu_speed], bus_list[config.vsh_cpu_speed]);
+	}
 }
