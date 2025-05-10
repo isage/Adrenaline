@@ -86,6 +86,7 @@ PSP_EXPORT_FUNC_HASH(sctrlStopUsb)
 PSP_EXPORT_FUNC_HASH(sctrlRebootDevice)
 PSP_EXPORT_FUNC(LZ4_decompress_fast)
 PSP_EXPORT_FUNC(lzo1x_decompress)
+PSP_EXPORT_FUNC(sctrlHENSetSpeed)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(SystemCtrlForKernel, 0, 0x0001)

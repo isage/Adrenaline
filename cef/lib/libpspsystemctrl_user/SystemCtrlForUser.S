@@ -107,3 +107,6 @@
 #ifdef F_SystemCtrlForUser_0033
 	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
 #endif
+#ifdef F_SystemCtrlForUser_0034
+	IMPORT_FUNC  "SystemCtrlForUser",0xCC9ADCF8,sctrlHENSetSpeed
+#endif

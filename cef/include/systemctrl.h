@@ -262,6 +262,14 @@ typedef int (* STMOD_HANDLER)(SceModule2 *);
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
 
 /**
+ * Sets the speed for the cpu and bus.
+ *
+ * @param cpu - The cpu speed
+ * @param bus - The bus speed
+*/
+void sctrlHENSetSpeed(int cpu, int bus);
+
+/**
  * Sets the partition 2 and 8  memory for next loadexec.
  *
  * @param p2 - The size in MB for the user partition. Must be > 0

@@ -370,6 +370,7 @@ void SetSpeed(int cpu, int bus) {
 }
 
 void sctrlHENSetSpeed(int cpu, int bus) {
-	scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x545A7F3C);
-	scePowerSetClockFrequency_k(cpu, cpu, bus);
+	int k1 = pspSdkSetK1(0);
+	SetSpeed(cpu, bus);
+	pspSdkSetK1(k1);
 }
