@@ -146,3 +146,9 @@
 #ifdef F_SystemCtrlForKernel_0046
 	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
 #endif
+#ifdef F_SystemCtrlForKernel_0047
+	IMPORT_FUNC  "SystemCtrlForKernel",0xBA21998E,sctrlSEGetUmdFile
+#endif
+#ifdef F_SystemCtrlForKernel_0048
+	IMPORT_FUNC  "SystemCtrlForKernel",0x5A35C948,sctrlSESetUmdFile
+#endif
