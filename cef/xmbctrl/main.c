@@ -459,7 +459,7 @@ SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1) {
 wchar_t *scePafGetTextPatched(void *a0, char *name) {
 	if (name) {
 		if (is_cfw_config == 1) {
-			if (sce_paf_private_strncmp(name, "cfw_need_reboot", 15) == 0) {
+			if (sce_paf_private_strncmp(name, "cfw_need_restart", 17) == 0) {
 				utf8_to_unicode((wchar_t *)user_buffer, need_reboot_subtitle);
 				return (wchar_t *)user_buffer;
 			}
