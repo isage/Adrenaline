@@ -46,8 +46,35 @@
 #define FW_TO_FIRMWARE(f) ((((f >> 8) & 0xF) << 24) | (((f >> 4) & 0xF) << 16) | ((f & 0xF) << 8) | 0x10)
 #define FIRMWARE_TO_FW(f) ((((f >> 24) & 0xF) << 8) | (((f >> 16) & 0xF) << 4) | ((f >> 8) & 0xF))
 
-#define MAKE_JUMP(a, f) _sw(0x08000000 | (((u32)(f) & 0x0FFFFFFC) >> 2), a);
-#define MAKE_CALL(a, f) _sw(0x0C000000 | (((u32)(f) >> 2) & 0x03FFFFFF), a);
+// Kernelify Address
+#define KERNELIFY(f) (0x80000000 | ((unsigned int)(f)))
+
+// j addr
+#define JUMP(f) (0x08000000 | (((unsigned int)(f) >> 2) & 0x03ffffff))
+
+// j addr getter (for kernel range, use in combination with KERNELIFY, works with j & jal)
+#define JUMP_TARGET(i) (((unsigned int)(i) & 0x03ffffff) << 2)
+
+// jal addr
+#define JAL(f) (0x0C000000 | (((unsigned int)(f) >> 2) & 0x03ffffff))
+
+#define MAKE_JUMP(a, f) _sw(JUMP(f), a);
+#define MAKE_CALL(a, f) _sw(JAL(f), a);
+
+// jal checker
+#define IS_JAL(i) ((((unsigned int)i) & 0xFC000000) == 0x0C000000)
+
+// syscall number
+#define SYSCALL(n) ((n<<6)|12)
+
+// nop
+#define NOP 0
+
+// jr ra
+#define JR_RA 0x03E00008
+
+// v0 result setter
+#define LI_V0(n) ((0x2402 << 16) | ((n) & 0xFFFF))
 
 #define MAKE_SYSCALL_FUNCTION(a, n) \
 { \
@@ -74,6 +101,16 @@
 		_sw(0x24020000 | r, _func_ + 4); \
 	} \
 }
+
+#define MAKE_DUMMY_FUNCTION_RETURN_0(a) do {\
+	_sw(0x03E00008, a);\
+	_sw(0x00001021, a + 4);\
+} while (0)
+
+#define MAKE_DUMMY_FUNCTION_RETURN_1(a) do {\
+	_sw(0x03E00008, a);\
+	_sw(0x24020001, a + 4);\
+} while (0)
 
 //by Davee
 #define HIJACK_FUNCTION(a, f, ptr) \

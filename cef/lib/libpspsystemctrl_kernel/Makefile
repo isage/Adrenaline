@@ -48,7 +48,10 @@ OBJS = \
 	SystemCtrlForKernel_0045.o \
 	SystemCtrlForKernel_0046.o \
 	SystemCtrlForKernel_0047.o \
-	SystemCtrlForKernel_0048.o
+	SystemCtrlForKernel_0048.o \
+	SystemCtrlForKernel_0049.o \
+	SystemCtrlForKernel_0050.o \
+	SystemCtrlForKernel_0051.o
 
 
 %.o: SystemCtrlForKernel.S

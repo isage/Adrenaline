@@ -152,3 +152,12 @@
 #ifdef F_SystemCtrlForKernel_0048
 	IMPORT_FUNC  "SystemCtrlForKernel",0x5A35C948,sctrlSESetUmdFile
 #endif
+#ifdef F_SystemCtrlForKernel_0049
+	IMPORT_FUNC  "SystemCtrlForKernel",0x5328B431,sctrlHENGetRevisionVersion
+#endif
+#ifdef F_SystemCtrlForKernel_0050
+	IMPORT_FUNC  "SystemCtrlForKernel",0x70B92B45,sctrlSEGetBootConfFileIndex
+#endif
+#ifdef F_SystemCtrlForKernel_0051
+	IMPORT_FUNC  "SystemCtrlForKernel",0x869F24E9,sctrlHENHookImportByNID
+#endif

@@ -195,6 +195,11 @@ void SetUmdFile(char *file);
 */
 void sctrlSESetBootConfFileIndex(int index);
 
+/**
+ * Get the boot config index
+ */
+int sctrlSEGetBootConfFileIndex(void);
+
 void sctrlSEApplyConfig(AdrenalineConfig *conf);
 void SetSpeed(int cpu, int bus);
 
