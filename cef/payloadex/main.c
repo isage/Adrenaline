@@ -159,19 +159,21 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 			case BOOT_NORMAL:
 				name = "/kd/pspbtjnf.bin";
 				break;
-				
+
+			case BOOT_VSHUMD:
+				rebootex_config->bootfileindex = BOOT_INFERNO;
 			case BOOT_INFERNO:
 				name = "/kd/pspbtknf.bin";
 				break;
-				
+
 			case BOOT_MARCH33:
 				name = "/kd/pspbtlnf.bin";
 				break;
-				
+
 			case BOOT_NP9660:
 				name = "/kd/pspbtmnf.bin";
 				break;
-				
+
 			case BOOT_RECOVERY:
 				name = "/kd/pspbtrnf.bin";
 				break;
@@ -233,7 +235,7 @@ int _start(void *a0, void *a1, void *a2) {
 			sceBoot = (void *)(addr + 4);
 			continue;
 		}
-		
+
 		// Don't load pspemu params
 		if (_lw(addr) == 0x240500CF) {
 			MAKE_CALL(addr + 4, loadParamsPatched);

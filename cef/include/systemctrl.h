@@ -14,6 +14,8 @@ enum BootModes
 	BOOT_MARCH33,
 	BOOT_NP9660,
 	BOOT_RECOVERY,
+	BOOT_VSHUMD,
+	BOOT_UPDATERUMD,
 };
 
 enum BootLoadFlags
@@ -195,6 +197,13 @@ int	sctrlHENIsDevhook();
 int sctrlHENGetVersion();
 
 /**
+ * Gets the HEN minor version
+ *
+ * @returns - The HEN minor version
+ */
+int sctrlHENGetRevisionVersion();
+
+/**
  * Finds a driver
  *
  * @param drvname - The name of the driver (without ":" or numbers)
@@ -217,6 +226,9 @@ PspIoDrv *sctrlHENFindDriver(char *drvname);
 u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
 
 #define FindProc sctrlHENFindFunction
+
+// Replace Import Function Stub
+int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * func);
 
 typedef int (* STMOD_HANDLER)(SceModule2 *);
 
@@ -280,6 +292,8 @@ void sctrlHENSetSpeed(int cpu, int bus);
  * if p2+p8 > 52 or p2 == 0
 */
 int sctrlHENSetMemory(u32 p2, u32 p8);
+
+int sctrlKernelQuerySystemCall(void *func_addr);
 
 /**
  * Loads a module on next reboot. Only kernel mode.
