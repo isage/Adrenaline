@@ -77,4 +77,84 @@ void *vsh_malloc(size_t size);
  */
 void vsh_free(void *ptr);
 
+/**
+ * Detect the UMD type of an ISO.
+ *
+ * @param path - full path to the ISO (or CSO) file.
+ *
+ * @returns disc type on success, < 0 on error.
+ */
+int vshDetectDiscType(const char *path);
+
+/**
+ * Open an ISO (or CSO) for reading.
+ *
+ * @param path - full path to the ISO (or CSO) file.
+ *
+ * @returns 0 on success, < 0 on error.
+ */
+int isoOpen(const char *path);
+
+
+/**
+ * Raw sector read of currently opened ISO.
+ *
+ * @param buffer - pointer to where data will be stored.
+ * @param lba - Logical Block Address of the ISO. Each ISO block is 2048 bytes in size.
+ * @param offset - offset within the LBA to start reading data from.
+ * @param size - amount of bytes to read into provided buffer.
+ *
+ * @returns amount of actual bytes read into buffer, < 0 on error.
+ */
+int isoRead(void *buffer, u32 lba, int offset, u32 size);
+
+
+/**
+ * Closes the currently opened ISO, if there was one.
+ */
+void isoClose();
+
+
+/**
+ * Get information about a file inside the currently opened ISO.
+ * Information retrieved is the file size and LBA where the file starts
+ *  (all files in an ISO are aligned by ISO block size - a file does not start in the middle of a block).
+ *
+ * @param path - path of the file inside the ISO that you want to scan.
+ * @param filesize - pointer to an unsigned 32 bit integer where the size of the file will be stored.
+ * @param lba - pointer to an unsigned 32 bit integer where the starting LBA of the file will be stored.
+ *
+ * @returns 0 on success, < 0 on error.
+ */
+int isoGetFileInfo(char * path, u32 *filesize, u32 *lba);
+
+
+/**
+ * Get total amount of sectors/blocks in the currently opened ISO.
+ * Each standard ISO sector/block is 2048 bytes in size.
+ * Not to be confused with CSO sectors/blocks, which can be of any arbitrary size.
+ *
+ * @returns total number of sectors in the currently opened ISO file.
+ */
+int isoGetTotalSectorSize();
+
+
+/**
+ * Helper function to detect if an ISO (or CSO) has been patched with Prometheus Patches.
+ *
+ * @param isopath - full path of the ISO (or CSO) file.
+ *
+ * @returns boolean - 1 if patched, 0 if unpatched.
+ */
+int has_prometheus_module(const char *isopath);
+
+/**
+ * Helper function to detect if an ISO (or CSO) has an update (PBOOT.PBP) available to use.
+ *
+ * @param isopath - full path of the ISO (or CSO) file.
+ *
+ * @returns boolean - 1 if update available, 0 if unavailable.
+ */
+int has_update_file(const char* isopath, char* update_file);
+
 #endif

@@ -160,19 +160,21 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 			case BOOT_NORMAL:
 				name = "/kd/pspbtjnf.bin";
 				break;
-				
+
+			case BOOT_VSHUMD:
+				rebootex_config->bootfileindex = BOOT_INFERNO;
 			case BOOT_INFERNO:
 				name = "/kd/pspbtknf.bin";
 				break;
-				
+
 			case BOOT_MARCH33:
 				name = "/kd/pspbtlnf.bin";
 				break;
-				
+
 			case BOOT_NP9660:
 				name = "/kd/pspbtmnf.bin";
 				break;
-				
+
 			case BOOT_RECOVERY:
 				name = "/kd/pspbtrnf.bin";
 				break;

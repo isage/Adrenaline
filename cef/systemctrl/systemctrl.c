@@ -50,7 +50,12 @@ int sctrlHENIsDevhook() {
 }
 
 int sctrlHENGetVersion() {
-	return 0x00001000;
+	return ADRENALINE_VERSION;
+}
+
+// Same NID as `sctrlHENGetMinorVersion` on ARK-4
+int sctrlHENGetRevisionVersion() {
+	return ADRENALINE_VERSION_REV;
 }
 
 int sctrlSEGetVersion() {
@@ -159,11 +164,14 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr) {
 	}
 }
 
-void SetUmdFile(char *file) {
+
+void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
+void sctrlSESetUmdFile(char *file) {
 	strncpy(rebootex_config.umdfilename, file, 255);
 }
 
-char *GetUmdFile() {
+char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
+char *sctrlSEGetUmdFile() {
 	return rebootex_config.umdfilename;
 }
 
@@ -176,7 +184,7 @@ int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs) {
 	return 0;
 }
 
-int sctrlSEGetBootConfBootFileIndex() {
+int sctrlSEGetBootConfFileIndex() {
 	return rebootex_config.bootfileindex;
 }
 

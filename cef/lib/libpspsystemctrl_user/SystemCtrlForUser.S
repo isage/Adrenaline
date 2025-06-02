@@ -110,3 +110,9 @@
 #ifdef F_SystemCtrlForUser_0034
 	IMPORT_FUNC  "SystemCtrlForUser",0xCC9ADCF8,sctrlHENSetSpeed
 #endif
+#ifdef F_SystemCtrlForUser_0035
+	IMPORT_FUNC  "SystemCtrlForUser",0x5328B431,sctrlHENGetRevisionVersion
+#endif
+#ifdef F_SystemCtrlForUser_0036
+	IMPORT_FUNC  "SystemCtrlForUser",0x70B92B45,sctrlSEGetBootConfFileIndex
+#endif

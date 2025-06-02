@@ -99,7 +99,7 @@ u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
 	while (i < mod->ent_size) {
 		SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
 
-        if (!szLib || (entry->libname && strcmp(entry->libname, szLib) == 0)) {
+		if (!szLib || (entry->libname && strcmp(entry->libname, szLib) == 0)) {
 			u32 *table = entry->entrytable;
 			int total = entry->stubcount + entry->vstubcount;
 
@@ -146,6 +146,78 @@ u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid) {
 
 		i += (stub->len * 4);
 	}
+
+	return 0;
+}
+
+static u32 sctrlHENFindFunction2(SceModule2 *mod, const char *szLib, u32 nid) {
+	u32 new_nid = ResolveOldNIDs(szLib, nid);
+	if (new_nid)
+		nid = new_nid;
+
+	int i = 0;
+	while (i < mod->ent_size) {
+		SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
+
+		if (!szLib || (entry->libname && strcmp(entry->libname, szLib) == 0)) {
+			u32 *table = entry->entrytable;
+			int total = entry->stubcount + entry->vstubcount;
+
+			int j;
+			for (j = 0; j < total; j++) {
+				if (table[j] == nid) {
+					return table[j + total];
+				}
+			}
+		}
+
+		i += (entry->len * 4);
+	}
+
+	return 0;
+}
+
+// Replace Import Function Stub
+int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, unsigned int nid, void * func) {
+	// Invalid Arguments
+	if(pMod == NULL || library == NULL) return -1;
+
+	u32 stub = sctrlHENFindFunction2(pMod, library, nid);
+
+	if (stub == 0) {
+		return -2;
+	}
+
+	// Function as 16-Bit Unsigned Integer
+	unsigned int func_int = (unsigned int)func;
+
+	// Dummy Return
+	if (func_int <= 0xFFFF) {
+		// Create Dummy Return
+		_sw(JR_RA, stub);
+		_sw(LI_V0(func_int), stub + 4);
+	} else { // Normal Hook
+		// Syscall Hook
+		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
+			// Query Syscall Number
+			int syscall = sceKernelQuerySystemCall661(func);
+
+			// Not properly exported in exports.exp
+			if(syscall < 0) return -3;
+
+			// Create Syscall Hook
+			_sw(JR_RA, stub);
+			_sw(SYSCALL(syscall), stub + 4);
+		} else { // Direct Jump Hook
+			// Create Direct Jump Hook
+			_sw(JUMP(func), stub);
+			_sw(NOP, stub + 4);
+		}
+	}
+
+	// Invalidate Cache
+	sceKernelDcacheWritebackInvalidateRange((void *)stub, 8);
+	sceKernelIcacheInvalidateRange((void *)stub, 8);
 
 	return 0;
 }
