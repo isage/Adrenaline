@@ -83,6 +83,11 @@ void ApplyMemory() {
 		partition->size = (rebootex_config.ram11 * 1024 * 1024);
 		partition->address = 0x88800000 + user_size;
 		partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
+
+		// Protects the regions with pspemu addresses
+		sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "SCE_PSPEMU_FLASH0", PSP_SMEM_Addr, 1024*1024, (void*)SCE_PSPEMU_FLASH0_RAMFS);
+		sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "SCE_PSPEMU_SCRATCHPAD", PSP_SMEM_Addr, 1024*1024, (void*)SCE_PSPEMU_SCRATCHPAD);
+		sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "SCE_PSPEMU_VRAM", PSP_SMEM_Addr, 2*1024*1024, (void*)SCE_PSPEMU_VRAM);
 	}
 }
 
@@ -96,11 +101,32 @@ void UnprotectExtraMemory() {
 }
 
 int sctrlHENSetMemory(u32 p2, u32 p11) {
-	if (p2 == 0)
+	if ((p2 == 0) || ((p2 + p11) > 52)) {
 		return 0x80000107;
+	}
 
-	if ((p2 + p11) > 52)
-		return 0x80000107;
+	// Disallow setting after game boot
+    if (sctrlHENIsSystemBooted()) {
+		return -3;
+	};
+
+	// Do not allow in pops and vsh
+	int apitype = sceKernelInitApitype();
+    if (apitype == 0x144 || apitype == 0x155 || apitype >= 0x200)
+        return -1;
+
+	// Checks for unlock state
+    if (p2 > 24) {
+		// already enabled
+        if (rebootex_config.ram2 > 24) {
+			return -2;
+		}
+    } else if (p2 == 24) { // Checks for default state
+		// already enabled
+        if (rebootex_config.ram2 == 24) {
+			return -2;
+		}
+    }
 
 	int k1 = pspSdkSetK1(0);
 

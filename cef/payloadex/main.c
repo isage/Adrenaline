@@ -42,7 +42,7 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 	SetMemoryPartitionTable(sysmem_config, table);
 
 	// Add partition 11
-	table->extVshell.addr = 0x8A000000;
+	table->extVshell.addr = PSP_EXTRA_RAM;
 	table->extVshell.size = 20 * 1024 * 1024;
 }
 
@@ -159,19 +159,19 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 			case BOOT_NORMAL:
 				name = "/kd/pspbtjnf.bin";
 				break;
-				
+
 			case BOOT_INFERNO:
 				name = "/kd/pspbtknf.bin";
 				break;
-				
+
 			case BOOT_MARCH33:
 				name = "/kd/pspbtlnf.bin";
 				break;
-				
+
 			case BOOT_NP9660:
 				name = "/kd/pspbtmnf.bin";
 				break;
-				
+
 			case BOOT_RECOVERY:
 				name = "/kd/pspbtrnf.bin";
 				break;
@@ -233,7 +233,7 @@ int _start(void *a0, void *a1, void *a2) {
 			sceBoot = (void *)(addr + 4);
 			continue;
 		}
-		
+
 		// Don't load pspemu params
 		if (_lw(addr) == 0x240500CF) {
 			MAKE_CALL(addr + 4, loadParamsPatched);

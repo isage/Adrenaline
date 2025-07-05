@@ -205,3 +205,9 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 
 	return res;
 }
+
+int sctrlHENIsSystemBooted() {
+	int res = sceKernelGetSystemStatus661();
+
+    return (res == 0x20000) ? 1 : 0;
+}
