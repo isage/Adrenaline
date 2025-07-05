@@ -270,16 +270,24 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
 void sctrlHENSetSpeed(int cpu, int bus);
 
 /**
- * Sets the partition 2 and 8  memory for next loadexec.
+ * Sets the partition 2 and 11 memory for next loadexec.
  *
  * @param p2 - The size in MB for the user partition. Must be > 0
- * @param p8 - The size in MB for partition 8. Can be 0.
+ * @param p11 - The size in MB for partition 8. Can be 0.
  *
  * @returns 0 on success, < 0 on error.
- * This function is only available in the slim. The function will fail
- * if p2+p8 > 52 or p2 == 0
+ * The function will fail if p2+p8 > 52 or p2 == 0
+ * The function will fail with -1 if can't unlock (i.e. pops, vsh),
+ * -2 if already unlocked, -3 if too late to unlock.
 */
-int sctrlHENSetMemory(u32 p2, u32 p8);
+int sctrlHENSetMemory(u32 p2, u32 p11);
+
+/**
+ * Checks if the system already started.
+ *
+ * @returns 1 if system has started, 0 otherwise.
+*/
+int sctrlHENIsSystemBooted();
 
 /**
  * Loads a module on next reboot. Only kernel mode.

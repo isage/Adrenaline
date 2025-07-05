@@ -146,3 +146,6 @@
 #ifdef F_SystemCtrlForKernel_0046
 	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
 #endif
+#ifdef F_SystemCtrlForKernel_0047
+	IMPORT_FUNC  "SystemCtrlForKernel",0xC4D88D50,sctrlHENIsSystemBooted
+#endif

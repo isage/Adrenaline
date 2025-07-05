@@ -782,7 +782,7 @@ int OnModuleStart(SceModule2 *mod) {
 	}
 
 	if (!idle) {
-		if (sceKernelGetSystemStatus661() == 0x20000) {
+		if (sctrlHENIsSystemBooted()) {
 			idle = 1;
 			OnSystemStatusIdle();
 		}
