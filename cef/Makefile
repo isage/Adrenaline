@@ -1,4 +1,26 @@
-all: _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+
+_libs:
+	make -C lib/libpspkubridge clean
+	make -C lib/libpspkubridge
+	cp "lib/libpspkubridge/libpspkubridge.a" "lib/"
+	make -C lib/libpspkubridge clean
+
+	make -C lib/libpspsystemctrl_kernel clean
+	make -C lib/libpspsystemctrl_kernel
+	cp "lib/libpspsystemctrl_kernel/libpspsystemctrl_kernel.a" "lib/"
+	make -C lib/libpspsystemctrl_kernel clean
+
+	make -C lib/libpspsystemctrl_user clean
+	make -C lib/libpspsystemctrl_user
+	cp "lib/libpspsystemctrl_user/libpspsystemctrl_user.a" "lib/"
+	make -C lib/libpspsystemctrl_user clean
+
+	make -C lib/libpspvshctrl clean
+	make -C lib/libpspvshctrl
+	cp "lib/libpspvshctrl/libpspvshctrl.a" "lib/"
+	make -C lib/libpspvshctrl clean
+
 
 _btcnf:
 	make -C btcnf/pspbtcnf_inferno clean
@@ -101,6 +123,10 @@ _recovery:
 	make -C newrecovery clean
 
 clean:
+	make -C lib/libpspkubridge clean
+	make -C lib/libpspsystemctrl_kernel clean
+	make -C lib/libpspsystemctrl_user clean
+	make -C lib/libpspvshctrl clean
 	make -C btcnf/pspbtcnf_inferno clean
 	make -C btcnf/pspbtcnf_march33 clean
 	make -C btcnf/pspbtcnf_normal clean
