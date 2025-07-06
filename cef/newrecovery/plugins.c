@@ -38,8 +38,7 @@ Entry plugins_tool_entries[MAX_PLUGINS + 1];
 int n_vsh = 0, n_game = 0, n_pops = 0;
 
 void trim(char *str) {
-	int i;
-	for (i = strlen(str) - 1; i >= 0; i--) {
+	for (int i = strlen(str) - 1; i >= 0; i--) {
 		if (str[i] == 0x20 || str[i] == '\t') {
 			str[i] = 0;
 		} else {
@@ -102,8 +101,7 @@ void SavePlugins(char *mode, int start, int end) {
 
 	SceUID fd = sceIoOpen(file, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 	if (fd >= 0) {
-		int i;
-		for (i = start; i < end; i++) {
+		for (int i = start; i < end; i++) {
 			if (plugins_path[i][0] != '\0') {
 				char string[128];
 				sprintf(string, "%s %d\r\n", plugins_path[i], plugins_info[i].activated);
@@ -185,8 +183,7 @@ int Plugins() {
 	n_game = ReadPlugins("game", 1, n_vsh);
 	n_pops = ReadPlugins("pops", 1, n_vsh+n_game);
 
-	int i;
-	for (i = 0; i < (n_vsh+n_game+n_pops); i++) {
+	for (int i = 0; i < (n_vsh+n_game+n_pops); i++) {
 	    printf(plugins_info[i].name);
 		plugins_tool_entries[i].name = plugins_info[i].name;
 		plugins_tool_entries[i].function = (void *)SetPlugins;

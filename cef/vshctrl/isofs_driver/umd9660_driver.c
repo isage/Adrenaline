@@ -62,8 +62,7 @@ int ReadUmdFileRetry(void *buf, int size, u32 offset) {
 
 int Umd9660ReadSectors2(int lba, int nsectors, void *buf) {
 	if (umd_open == 0) {
-		int i;
-		for (i = 0; i < 0x10; i++) {
+		for (int i = 0; i < 0x10; i++) {
 			if (sceIoLseek32(umdfd, 0, PSP_SEEK_CUR) >= 0) {
 				break;
 			}

@@ -305,8 +305,7 @@ int SaveCache() {
 }
 
 int IsCached(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
-	int i;
-	for (i = 0; i < MAX_FILES; i++) {
+	for (int i = 0; i < MAX_FILES; i++) {
 		if (cache[i].isofile[0] != 0) {
 			if (strcmp(cache[i].isofile, isofile) == 0) {
 				if (memcmp(mtime, &cache[i].mtime, sizeof(ScePspDateTime)) == 0) {
@@ -321,8 +320,7 @@ int IsCached(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 }
 
 int Cache(VirtualPbp *pbp) {
-	int i;
-	for (i = 0; i < MAX_FILES; i++) {
+	for (int i = 0; i < MAX_FILES; i++) {
 		if (cache[i].isofile[0] == 0) {
 			memcpy(&cache[i], pbp, sizeof(VirtualPbp));
 			cachechanged = 1;
@@ -795,8 +793,7 @@ ImportPatch import_patch[] = {
 };
 
 void IoPatches() {
-	int i;
-	for (i = 0; i < (sizeof(import_patch) / sizeof(ImportPatch)); i++) {
+	for (int i = 0; i < (sizeof(import_patch) / sizeof(ImportPatch)); i++) {
 		sctrlHENPatchSyscall(K_EXTRACT_IMPORT(import_patch[i].import), import_patch[i].patched);
 	}
 }

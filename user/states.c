@@ -190,8 +190,7 @@ void deleteState(int num) {
 
 void finishStates() {
   if (states) {
-    int i;
-    for (i = 0; i < MAX_STATES; i++) {
+    for (int i = 0; i < MAX_STATES; i++) {
       if (states[i].num != -1) {
         if (states[i].tex)
           vita2d_free_texture(states[i].tex);
@@ -212,8 +211,7 @@ int initStates() {
     return -1;
 
   // Clear
-  int i;
-  for (i = 0; i < MAX_STATES; i++) {
+  for (int i = 0; i < MAX_STATES; i++) {
     states[i].num = -1;
   }
 
@@ -297,8 +295,7 @@ void drawStates() {
 
   float k = 92.0f / 136.0f;
 
-  int i;
-  for (i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     if (i == rel_pos)
       vita2d_draw_rectangle(WINDOW_X, FONT_Y_LINE(2 + i * 5) + 3.0f - FONT_Y_SPACE/2.0f, WINDOW_WIDTH, FONT_Y_SPACE * 5, COLOR_ALPHA(0xFFFF1F7F, 0x8F));
 
@@ -331,8 +328,7 @@ void drawStates() {
 
   // Show options
   if (open_options) {
-    int i;
-    for (i = 0; i < n_options; i++) {
+    for (int i = 0; i < n_options; i++) {
       uint32_t color = (i == option_sel) ? GREEN : WHITE;
       pgf_draw_text(ALIGN_RIGHT(885.0f, vita2d_pgf_text_width(font, FONT_SIZE, option_entries[i])), FONT_Y_LINE(2 + rel_pos * 5 + i), color, FONT_SIZE, option_entries[i]);
     }

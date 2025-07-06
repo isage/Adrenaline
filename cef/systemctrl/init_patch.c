@@ -58,8 +58,7 @@ int sctrlHENRegisterHomebrewLoader(int (* handler)(const char *path, int flags, 
 }
 
 void trim(char *str) {
-	int i;
-	for (i = strlen(str) - 1; i >= 0; i--) {
+	for (int i = strlen(str) - 1; i >= 0; i--) {
 		if (str[i] == 0x20 || str[i] == '\t') {
 			str[i] = 0;
 		} else {

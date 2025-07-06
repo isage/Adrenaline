@@ -18,12 +18,11 @@ void GetSFOInfo(char *title, int n, char *discid, int m, char *system_version , 
 {
 	SFOHeader *header = (SFOHeader *)sfo;
 	SFODir *entries = (SFODir *)(sfo+0x14);
-	int i;
-	
+
 	opnssmp[0] = 0;
 	*(u32 *)system_version = 0x30302E31;
 
-	for (i = 0; i < header->nitems; i++)
+	for (int i = 0; i < header->nitems; i++)
 	{
 		char *fields_str = (char *)( sfo+header->fields_table_offs+entries[i].field_offs );
 		char *values_str = (char *)( sfo+header->values_table_offs+entries[i].val_offs );
@@ -57,7 +56,7 @@ int virtualpbp_init()
 {
 	vpbps = (VirtualPbp *)oe_malloc(MAX_FILES*sizeof(VirtualPbp));
 	memset(vpbps, 0, MAX_FILES*sizeof(VirtualPbp));
-	
+
 	if (!vpbps)
 	{
 		return -1;
@@ -75,7 +74,7 @@ int virtualpbp_init()
 	{
 		return vpsema;
 	}
-	
+
 	memset(vpbps, 0, MAX_FILES*sizeof(VirtualPbp));
 	g_index = 0;
 	virtual_sfo_init();
@@ -84,7 +83,7 @@ int virtualpbp_init()
 
 int virtualpbp_exit()
 {
-	sceKernelWaitSema(vpsema, 1, NULL);	
+	sceKernelWaitSema(vpsema, 1, NULL);
 	oe_free(vpbps);
 	oe_free(states);
 	sceKernelDeleteSema(vpsema);
@@ -107,19 +106,19 @@ int virtualpbp_reset()
 void getlba_andsize(PspIoDrvFileArg *arg, const char *file, int *lba, int *size)
 {
 	SceIoStat stat;
-	
-	memset(&stat, 0, sizeof(SceIoStat));	
+
+	memset(&stat, 0, sizeof(SceIoStat));
 	if (isofs_getstat(file, &stat) >= 0)
 	{
 		*lba = stat.st_private[0];
 		*size = stat.st_size;
-	}	
+	}
 }
 
 int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res)
 {
 	PspIoDrvFileArg arg;
-	int offset;	
+	int offset;
 
 	sceKernelWaitSema(vpsema, 1, NULL);
 
@@ -131,7 +130,7 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res)
 
 	memset(vpbps[g_index].isofile, 0, sizeof(vpbps[g_index].isofile));
 	strncpy(vpbps[g_index].isofile, isofile, sizeof(vpbps[g_index].isofile));
-	VshCtrlSetUmdFile(isofile);	
+	VshCtrlSetUmdFile(isofile);
 
 	memset(&arg, 0, sizeof(arg));
 	if (isofs_init() < 0)
@@ -145,7 +144,7 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res)
 	if (fd >= 0)
 	{
 		char *buf = (char *)oe_malloc(1024);
-		
+
 		isofs_read(fd, buf, 1024);
 		isofs_close(fd);
 
@@ -172,37 +171,37 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res)
 	getlba_andsize(&arg, "/PSP_GAME/PIC0.PNG", &vpbps[g_index].p0png_lba, &vpbps[g_index].p0png_size);
 	getlba_andsize(&arg, "/PSP_GAME/PIC1.PNG", &vpbps[g_index].p1png_lba, &vpbps[g_index].p1png_size);
 	getlba_andsize(&arg, "/PSP_GAME/SND0.AT3", &vpbps[g_index].s0at3_lba, &vpbps[g_index].s0at3_size);
-	
+
 	isofs_exit();
 
 	vpbps[g_index].header[0] = 0x50425000;
 	vpbps[g_index].header[1] = 0x10000;
 
 	offset = 0x28;
-	
-	/*vpbps[g_index].header[2] = offset; // SFO 
+
+	/*vpbps[g_index].header[2] = offset; // SFO
 	offset += vpbps[g_index].psfo_size;*/
 
 	vpbps[g_index].header[2] = offset;
 	offset += virtual_sfo_size();
 
-	vpbps[g_index].header[3] = offset; // ICON0.PNG 
+	vpbps[g_index].header[3] = offset; // ICON0.PNG
 	offset += vpbps[g_index].i0png_size;
 
-	vpbps[g_index].header[4] = offset; // ICON1.PMF 
+	vpbps[g_index].header[4] = offset; // ICON1.PMF
 	offset += vpbps[g_index].i1pmf_size;
 
-	vpbps[g_index].header[5] = offset; // PIC0.PNG 
+	vpbps[g_index].header[5] = offset; // PIC0.PNG
 	offset += vpbps[g_index].p0png_size;
 
-	vpbps[g_index].header[6] = offset; // PIC1.PNG 
+	vpbps[g_index].header[6] = offset; // PIC1.PNG
 	offset += vpbps[g_index].p1png_size;
 
-	vpbps[g_index].header[7] = offset; // SND0.AT3 
+	vpbps[g_index].header[7] = offset; // SND0.AT3
 	offset += vpbps[g_index].s0at3_size;
 
-	vpbps[g_index].header[8] = offset; // DATA.PSP 
-	vpbps[g_index].header[9] = offset; // DATA.PSAR 
+	vpbps[g_index].header[8] = offset; // DATA.PSP
+	vpbps[g_index].header[9] = offset; // DATA.PSAR
 
 	vpbps[g_index].filesize = offset;
 
@@ -222,7 +221,7 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res)
 int virtualpbp_fastadd(VirtualPbp *pbp)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (g_index >= MAX_FILES)
 	{
 		sceKernelSignalSema(vpsema, 1);
@@ -240,7 +239,7 @@ int virtualpbp_fastadd(VirtualPbp *pbp)
 int virtualpbp_open(int i)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (i < 0 || i >= g_index || states[i].deleted)
 	{
 		sceKernelSignalSema(vpsema, 1);
@@ -256,7 +255,7 @@ int virtualpbp_open(int i)
 int virtualpbp_close(SceUID fd)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	fd = fd-0x7000;
 
 	if (fd < 0 || fd >= g_index)
@@ -272,7 +271,7 @@ int virtualpbp_close(SceUID fd)
 int virtualpbp_read(SceUID fd, void *data, SceSize size)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	fd = fd-0x7000;
 
 	if (fd < 0 || fd >= g_index)
@@ -301,11 +300,11 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 		{
 			u8 *header = (u8 *)&vpbps[fd].header;
 
-			n = 0x28-vpbps[fd].filepointer; 
+			n = 0x28-vpbps[fd].filepointer;
 			if (remaining < n)
 			{
 				n = remaining;
-			}			
+			}
 
 			memcpy(p, header+vpbps[fd].filepointer, n);
 			remaining -= n;
@@ -314,11 +313,11 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			read += n;
 		}
 
-		/*if ((vpbps[fd].filepointer >= vpbps[fd].header[2]) && 
+		/*if ((vpbps[fd].filepointer >= vpbps[fd].header[2]) &&
 			(vpbps[fd].filepointer < vpbps[fd].header[3]))
 		{
 			base = vpbps[fd].filepointer - vpbps[fd].header[2];
-			
+
 			n = vpbps[fd].psfo_size-(base);
 			if (remaining < n)
 			{
@@ -326,7 +325,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			}
 
 			sprintf(filename, "/sce_lbn0x%x_size0x%x", vpbps[fd].psfo_lba, vpbps[fd].psfo_size);
-			
+
 			SceUID fd = isofs_open(filename, PSP_O_RDONLY, 0);
 			isofs_lseek(fd, base, PSP_SEEK_SET);
 			isofs_read(fd, p, n);
@@ -338,7 +337,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			read += n;
 		}*/
 
-		if ((vpbps[fd].filepointer >= vpbps[fd].header[2]) && 
+		if ((vpbps[fd].filepointer >= vpbps[fd].header[2]) &&
 			(vpbps[fd].filepointer < vpbps[fd].header[3]))
 		{
 			sfo_set_string_param("TITLE", vpbps[fd].sfotitle);
@@ -347,7 +346,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			{
 				sfo_set_string_param("DISC_ID", vpbps[fd].discid);
 			}
-			
+
 			char *ver_str = vpbps[fd].system_ver;
 			sfo_set_string_param("PSP_SYSTEM_VER", ver_str);
 
@@ -362,7 +361,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			// TODO: Set APP_VER from PBOOT
 
 			base = vpbps[fd].filepointer - vpbps[fd].header[2];
-			
+
 			n = virtual_sfo_size()-(base);
 			if (remaining < n)
 			{
@@ -376,11 +375,11 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			read += n;
 		}
 
-		if ((vpbps[fd].filepointer >= vpbps[fd].header[3]) && 
+		if ((vpbps[fd].filepointer >= vpbps[fd].header[3]) &&
 			(vpbps[fd].filepointer < vpbps[fd].header[4]))
 		{
 			base = vpbps[fd].filepointer - vpbps[fd].header[3];
-			
+
 			n = vpbps[fd].i0png_size-(base);
 			if (remaining < n)
 			{
@@ -388,7 +387,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			}
 
 			sprintf(filename, "/sce_lbn0x%x_size0x%x", vpbps[fd].i0png_lba, vpbps[fd].i0png_size);
-			
+
 			SceUID fp = isofs_open(filename, PSP_O_RDONLY, 0);
 			isofs_lseek(fp, base, PSP_SEEK_SET);
 			isofs_read(fp, p, n);
@@ -400,11 +399,11 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			read += n;
 		}
 
-		if ((vpbps[fd].filepointer >= vpbps[fd].header[4]) && 
+		if ((vpbps[fd].filepointer >= vpbps[fd].header[4]) &&
 			(vpbps[fd].filepointer < vpbps[fd].header[5]))
 		{
 			base = vpbps[fd].filepointer - vpbps[fd].header[4];
-			
+
 			n = vpbps[fd].i1pmf_size-(base);
 			if (remaining < n)
 			{
@@ -412,7 +411,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			}
 
 			sprintf(filename, "/sce_lbn0x%x_size0x%x", vpbps[fd].i1pmf_lba, vpbps[fd].i1pmf_size);
-			
+
 			SceUID fp = isofs_open(filename, PSP_O_RDONLY, 0);
 			isofs_lseek(fp, base, PSP_SEEK_SET);
 			isofs_read(fp, p, n);
@@ -424,11 +423,11 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			read += n;
 		}
 
-		if ((vpbps[fd].filepointer >= vpbps[fd].header[5]) && 
+		if ((vpbps[fd].filepointer >= vpbps[fd].header[5]) &&
 			(vpbps[fd].filepointer < vpbps[fd].header[6]))
 		{
 			base = vpbps[fd].filepointer - vpbps[fd].header[5];
-			
+
 			n = vpbps[fd].p0png_size-(base);
 			if (remaining < n)
 			{
@@ -436,7 +435,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			}
 
 			sprintf(filename, "/sce_lbn0x%x_size0x%x", vpbps[fd].p0png_lba, vpbps[fd].p0png_size);
-			
+
 			SceUID fp = isofs_open(filename, PSP_O_RDONLY, 0);
 			isofs_lseek(fp, base, PSP_SEEK_SET);
 			isofs_read(fp, p, n);
@@ -448,11 +447,11 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			read += n;
 		}
 
-		if ((vpbps[fd].filepointer >= vpbps[fd].header[6]) && 
+		if ((vpbps[fd].filepointer >= vpbps[fd].header[6]) &&
 			(vpbps[fd].filepointer < vpbps[fd].header[7]))
 		{
 			base = vpbps[fd].filepointer - vpbps[fd].header[6];
-			
+
 			n = vpbps[fd].p1png_size-(base);
 			if (remaining < n)
 			{
@@ -460,7 +459,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			}
 
 			sprintf(filename, "/sce_lbn0x%x_size0x%x", vpbps[fd].p1png_lba, vpbps[fd].p1png_size);
-			
+
 			SceUID fp = isofs_open(filename, PSP_O_RDONLY, 0);
 			isofs_lseek(fp, base, PSP_SEEK_SET);
 			isofs_read(fp, p, n);
@@ -472,11 +471,11 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			read += n;
 		}
 
-		if ((vpbps[fd].filepointer >= vpbps[fd].header[7]) && 
+		if ((vpbps[fd].filepointer >= vpbps[fd].header[7]) &&
 			(vpbps[fd].filepointer < vpbps[fd].header[8]))
 		{
 			base = vpbps[fd].filepointer - vpbps[fd].header[7];
-			
+
 			n = vpbps[fd].s0at3_size-(base);
 			if (remaining < n)
 			{
@@ -484,7 +483,7 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size)
 			}
 
 			sprintf(filename, "/sce_lbn0x%x_size0x%x", vpbps[fd].s0at3_lba, vpbps[fd].s0at3_size);
-			
+
 			SceUID fp = isofs_open(filename, PSP_O_RDONLY, 0);
 			isofs_lseek(fp, base, PSP_SEEK_SET);
 			isofs_read(fp, p, n);
@@ -545,9 +544,9 @@ int virtualpbp_lseek(SceUID fd, SceOff offset, int whence)
 int virtualpbp_getstat(int i, SceIoStat *stat)
 {
 	int res;
-	
+
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (i < 0 || i >= g_index || states[i].deleted)
 	{
 		sceKernelSignalSema(vpsema, 1);
@@ -566,7 +565,7 @@ int virtualpbp_getstat(int i, SceIoStat *stat)
 int virtualpbp_chstat(int i, SceIoStat *stat, int bits)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (i < 0 || i >= g_index)
 	{
 		sceKernelSignalSema(vpsema, 1);
@@ -582,7 +581,7 @@ int virtualpbp_chstat(int i, SceIoStat *stat, int bits)
 int virtualpbp_remove(int i)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (i < 0 || i >= g_index)
 	{
 		sceKernelSignalSema(vpsema, 1);
@@ -595,7 +594,7 @@ int virtualpbp_remove(int i)
 	{
 		states[i].deleted = 1;
 	}
-	
+
 	sceKernelSignalSema(vpsema, 1);
 	return 0;
 }
@@ -603,7 +602,7 @@ int virtualpbp_remove(int i)
 int virtualpbp_rmdir(int i)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (i < 0 || i >= g_index || states[i].psdirdeleted)
 	{
 		sceKernelSignalSema(vpsema, 1);
@@ -619,7 +618,7 @@ int virtualpbp_rmdir(int i)
 int virtualpbp_dread(SceUID fd, SceIoDirent *dir)
 {
 	SceFatMsDirentPrivate *private;
-	
+
 	sceKernelWaitSema(vpsema, 1, NULL);
 
 	fd = fd - 0x7000;
@@ -670,7 +669,7 @@ int virtualpbp_dread(SceUID fd, SceIoDirent *dir)
 char *virtualpbp_getfilename(int i)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (i < 0 || i >= g_index)
 	{
 		sceKernelSignalSema(vpsema, 1);
@@ -698,7 +697,7 @@ int virtualpbp_get_isotype(int i)
 char *virtualpbp_getdiscid(int i)
 {
 	sceKernelWaitSema(vpsema, 1, NULL);
-	
+
 	if (i < 0 || i >= g_index)
 	{
 		sceKernelSignalSema(vpsema, 1);

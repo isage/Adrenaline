@@ -117,8 +117,7 @@ int getSfoTitle(char *title, int n) {
 	SFOHeader *header = (SFOHeader *)sfo;
 	SFODir *entries = (SFODir *)(sfo + sizeof(SFOHeader));
 
-	int i;
-	for (i = 0; i < header->nitems; i++) {
+	for (int i = 0; i < header->nitems; i++) {
 		if (strcmp(sfo + header->fields_table_offs + entries[i].field_offs, "TITLE") == 0) {
 			strncpy(title, sfo + header->values_table_offs + entries[i].val_offs, n);
 			break;

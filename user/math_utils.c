@@ -115,10 +115,8 @@ void matrix3x3_identity(matrix3x3 m)
 
 void matrix3x3_from_matrix4x4(matrix3x3 dst, const matrix4x4 src)
 {
-  int i, j;
-
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++)
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++)
       dst[i][j] = src[i][j];
   }
 }
@@ -139,12 +137,10 @@ void matrix4x4_copy(matrix4x4 dst, const matrix4x4 src)
 
 void matrix4x4_multiply(matrix4x4 dst, const matrix4x4 src1, const matrix4x4 src2)
 {
-  int i, j, k;
-
-  for (i = 0; i < 4; i++) {
-    for (j = 0; j < 4; j++) {
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
       dst[i][j] = 0.0f;
-      for (k = 0; k < 4; k++)
+      for (int k = 0; k < 4; k++)
         dst[i][j] += src1[i][k] * src2[k][j];
     }
   }
@@ -202,18 +198,14 @@ void matrix4x4_reflect_origin(matrix4x4 m)
 
 void matrix4x4_transpose(matrix4x4 out, const matrix4x4 m)
 {
-  int i, j;
-
-  for (i = 0; i < 4; i++) {
-    for (j = 0; j < 4; j++)
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++)
       out[i][j] = m[j][i];
   }
 }
 
 int matrix4x4_invert(matrix4x4 out, const matrix4x4 m)
 {
-  int i, j;
-  float det;
   matrix4x4 inv;
 
   inv[0][0] = m[1][1]  * m[2][2] * m[3][3] -
@@ -328,15 +320,15 @@ int matrix4x4_invert(matrix4x4 out, const matrix4x4 m)
     m[0][2] * m[1][0] * m[2][1] -
     m[0][2] * m[2][0] * m[1][1];
 
-  det = m[0][0] * inv[0][0] + m[1][0] * inv[0][1] + m[2][0] * inv[0][2] + m[3][0] * inv[0][3];
+  float det = m[0][0] * inv[0][0] + m[1][0] * inv[0][1] + m[2][0] * inv[0][2] + m[3][0] * inv[0][3];
 
   if (det == 0)
     return 0;
 
   det = 1.0 / det;
 
-  for (i = 0; i < 4; i++) {
-    for (j = 0; j < 4; j++)
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++)
       out[i][j] = inv[i][j] * det;
   }
 

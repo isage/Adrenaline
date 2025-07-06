@@ -102,8 +102,7 @@ int main(void) {
 			ErrorExit(5000, "Cancelled by user.\n");
 	}
 
-	int i;
-	for (i = 0; i < (sizeof(files) / sizeof(File)); i++) {
+	for (int i = 0; i < (sizeof(files) / sizeof(File)); i++) {
 		char *p = strrchr(files[i].path, '/');
 		printf("Writing %s (%d)... ", p+1, files[i].size);
 		sceKernelDelayThread(100 * 1000);

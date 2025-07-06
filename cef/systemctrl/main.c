@@ -142,8 +142,7 @@ void PatchModuleMgr() {
 	SceModule2 *mod = sceKernelFindModuleByName661("sceModuleManager");
 	u32 text_addr = mod->text_addr;
 
-	int i;
-	for (i = 0; i < mod->text_size; i += 4) {
+	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
 
 		if (_lw(addr) == 0xA4A60024) {
@@ -171,8 +170,7 @@ void PatchLoadCore() {
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelCheckExecFile661), sceKernelCheckExecFilePatched, _sceKernelCheckExecFile);
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelProbeExecutableObject661), sceKernelProbeExecutableObjectPatched, _sceKernelProbeExecutableObject);
 
-	int i;
-	for (i = 0; i < mod->text_size; i += 4) {
+	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
 
 		// Allow custom modules
@@ -272,8 +270,7 @@ u32 FindFirstBEQ(u32 addr) {
 void PatchSysmem() {
 	u32 nids[] = { 0x7591C7DB, 0x342061E5, 0x315AD3A0, 0xEBD5C3E6, 0x057E7380, 0x91DE343C, 0x7893F79A, 0x35669D4C, 0x1B4217BC, 0x358CA1BB };
 
-	int i;
-	for (i = 0; i < sizeof(nids) / sizeof(u32); i++) {
+	for (int i = 0; i < sizeof(nids) / sizeof(u32); i++) {
 		u32 addr = FindFirstBEQ(FindProc("sceSystemMemoryManager", "SysMemUserForUser", nids[i]));
 		if (addr)
 			_sh(0x1000, addr + 2);
@@ -285,8 +282,7 @@ int (* sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
 
-	int i;
-	for (i = 0; i < 0x10; i++) {
+	for (int i = 0; i < 0x10; i++) {
 		res = sceKernelVolatileMemTryLock(unk, ptr, size);
 		if (res >= 0)
 			break;
@@ -765,8 +761,7 @@ int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "VLF_Module") == 0) {
 		static u32 nids[] = { 0x2A245FE6, 0x7B08EAAB, 0x22050FC0, 0x158BE61A, 0xD495179F };
 
-		int i;
-		for (i = 0; i < (sizeof(nids) / sizeof(u32)); i++) {
+		for (int i = 0; i < (sizeof(nids) / sizeof(u32)); i++) {
 			u32 vlf_function = FindProc(modname, "VlfGui", nids[i]);
 			if (vlf_function)
 				MAKE_DUMMY_FUNCTION(vlf_function, 0);

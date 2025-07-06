@@ -532,10 +532,8 @@ void MenuLoop()
 {
   DrawHeader();
 
-  int i;
-
   VGraphSetTextColor(themes[theme].text_color, themes[theme].main_bg);
-  for (i = 2; i < 32; i++) {
+  for (int i = 2; i < 32; i++) {
     VGraphGoto(0, i);
     VGraphClearLine(themes[theme].main_bg);
     VGraphPrintf("\xBA");
@@ -543,7 +541,7 @@ void MenuLoop()
     VGraphPrintf("\xBA");
   }
 
-  for (i = 0; i < pages[sel_page].n_entries; i++)
+  for (int i = 0; i < pages[sel_page].n_entries; i++)
   {
     VGraphGoto(3, 5 + i);
 

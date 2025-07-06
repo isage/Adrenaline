@@ -97,8 +97,7 @@ static int ScePspemuMsfsRemoveDescriptor(int index) {
 }
 
 static void ScePspemuMsfsCloseAllDescriptors() {
-  int i;
-  for (i = 0; i < MAX_DESCRIPTORS; i++) {
+  for (int i = 0; i < MAX_DESCRIPTORS; i++) {
     if (descriptor_list[i].fd) {
       int res = sceIoClose(descriptor_list[i].fd);
       if (res < 0)
@@ -132,8 +131,7 @@ void ScePspemuMsfsSetFileDescriptors(ScePspemuMsfsDescriptor *descriptors) {
 
   memcpy(descriptor_list, descriptors, MAX_DESCRIPTORS * sizeof(ScePspemuMsfsDescriptor));
 
-  int i;
-  for (i = 0; i < MAX_DESCRIPTORS; i++) {
+  for (int i = 0; i < MAX_DESCRIPTORS; i++) {
     if (descriptor_list[i].fd)
       ScePspemuMsfsReopenFile(&descriptor_list[i]);
   }

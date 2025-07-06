@@ -129,8 +129,7 @@ int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id)
 		kirk7(kirk_buf, VERSION_KEY_SIZE, (mac_key.type == 2) ? 0x3A : 0x38);
 
 		// Get version key
-		int i;
-		for (i = 0; i < VERSION_KEY_SIZE; i++) {
+		for (int i = 0; i < VERSION_KEY_SIZE; i++) {
 			version_key[i] = xor_keys[i] ^ kirk_buf[i];
 		}
 	}
@@ -141,8 +140,7 @@ int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id)
 int OnModuleStart(SceModule2 *mod) {
 	if (strcmp(mod->modname, "pops") == 0) {
 		// Use different pops register location
-		u32 i;
-		for (i = 0; i < mod->text_size; i += 4) {
+		for (u32 i = 0; i < mod->text_size; i += 4) {
 			if ((_lw(mod->text_addr+i) & 0xFFE0FFFF) == 0x3C0049FE) {
 				_sh(0x4BCD, mod->text_addr+i);
 			}

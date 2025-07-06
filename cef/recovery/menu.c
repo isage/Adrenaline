@@ -85,9 +85,7 @@ void MenuDisplayCtrl() {
 	printf("Adrenaline Recovery Menu %d\n%s", sel, menu_struct.title);
 
 	int y = 0;
-
-	int i;
-	for (i = 0; i < menu_struct.n_entries; i++) {
+	for (int i = 0; i < menu_struct.n_entries; i++) {
 		rDebugScreenSetXY(menu_struct.x, 5 + i + y);
 
 		if (strcmp(menu_struct.entries[i].name, "Back") == 0) {
@@ -113,7 +111,7 @@ void MenuDisplayCtrl() {
 	rDebugScreenSetTextColor(select_color, 0);
 	rDebugScreenSetXY(1, 29);
 
-	for (i = 0; i < 67; i++)
+	for (int i = 0; i < 67; i++)
 		printf("*");
 
 	printf("\n");

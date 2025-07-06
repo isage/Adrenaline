@@ -111,8 +111,7 @@ static int ciso_read_one(void *buf, int sector) {
 int CisofileReadSectors(int lba, int nsectors, void *buf) {
 	int num_bytes = nsectors * SECTOR_SIZE;
 
-	int i;
-	for (i = 0; i < num_bytes; i += 0x800) {
+	for (int i = 0; i < num_bytes; i += 0x800) {
 		int result = ciso_read_one(buf, lba);
 		if (result < 0) {
 			nsectors = result;

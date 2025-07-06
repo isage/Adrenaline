@@ -28,12 +28,11 @@ char *stristr(const char *str1, const char *str2) {
 	strncpy(temp1, str1, MAXLEN);
 	strncpy(temp2, str2, MAXLEN);
 
-	int i;
-	for (i = 0; i < MAXLEN && (temp1[i] != 0); i++) {
+	for (int i = 0; i < MAXLEN && (temp1[i] != 0); i++) {
 		temp1[i] = tolower(temp1[i]);
 	}
 
-	for (i = 0; i < MAXLEN && (temp2[i] != 0); i++) {
+	for (int i = 0; i < MAXLEN && (temp2[i] != 0); i++) {
 		temp2[i] = tolower(temp2[i]);
 	}
 
@@ -89,8 +88,7 @@ int removePath(const char *path) {
 }
 
 int CreateDirectories(char **directories, int n) {
-	int i;
-	for (i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		int res = sceIoMkdir(directories[i], 0777);
 		if (res < 0 && res != 0x80010011)
 			return res;

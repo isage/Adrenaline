@@ -33,11 +33,10 @@ MenuStruct menu_struct;
 int sel = 0;
 
 void ExtendLength() {
-	int i, j;
 	int longest_len = 0;
 
 	// Get longest length
-	for (i = 0; i < menu_struct.n_entries; i++) {
+	for (int i = 0; i < menu_struct.n_entries; i++) {
 		if (menu_struct.entries[i].options) {
 			int len = strlen(menu_struct.entries[i].name);
 			if (len > longest_len)
@@ -49,9 +48,9 @@ void ExtendLength() {
 	longest_len += 1;
 
 	// Extend all names
-	for (i = 0; i < menu_struct.n_entries; i++) {
+	for (int i = 0; i < menu_struct.n_entries; i++) {
 		if (menu_struct.entries[i].options) {
-			for (j = strlen(menu_struct.entries[i].name); j < longest_len; j++) {
+			for (int j = strlen(menu_struct.entries[i].name); j < longest_len; j++) {
 				menu_struct.entries[i].name[j] = ' ';
 			}
 		}
@@ -111,8 +110,7 @@ int MenuDisplay() {
 
 	blit_string(CENTER(19), 6 * 8, 0x00FFFFFF, 0x8000FF00, "ADRENALINE VSH MENU");
 
-	int i;
-	for (i = 0; i < menu_struct.n_entries; i++) {
+	for (int i = 0; i < menu_struct.n_entries; i++) {
 		u32 bc = (i == sel) ? 0x00FF8080 : 0xC00000FF;
 
 		int y = (8 + i) * 8;

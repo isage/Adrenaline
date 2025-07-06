@@ -53,8 +53,7 @@ int ctrl_handler(SceCtrlData *pad_data, int count) {
 	button_on = pad_data->Buttons & ~cur_buttons;
 	cur_buttons = pad_data->Buttons;
 
-	int i;
-	for (i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++) {
 		pad_data[i].Buttons &= ~ALL_CTRL;
 	}
 

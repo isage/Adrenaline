@@ -62,8 +62,7 @@ void ApplyMemory() {
 		SysMemPartition *partition;
 		u32 user_size;
 
-		u32 i;
-		for (i = 0; i < 0x4000; i += 4) {
+		for (u32 i = 0; i < 0x4000; i += 4) {
 			u32 addr = 0x88000000 + i;
 			if (_lw(addr) == 0x2C85000D) {
 				GetPartition = (void *)(addr - 4);
@@ -94,8 +93,7 @@ void ApplyMemory() {
 void UnprotectExtraMemory() {
 	u32 *prot = (u32 *)0xBC000040;
 
-	int i;
-	for (i = 0; i < 0x10; i++) {
+	for (int i = 0; i < 0x10; i++) {
 		prot[i] = 0xFFFFFFFF;
 	}
 }
@@ -144,8 +142,7 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 		SFOHeader *header = (SFOHeader *)sfo;
 		SFODir *entries = (SFODir *)(sfo + sizeof(SFOHeader));
 
-		int i;
-		for (i = 0; i < header->nitems; i++) {
+		for (int i = 0; i < header->nitems; i++) {
 			if (strcmp(sfo + header->fields_table_offs + entries[i].field_offs, "MEMSIZE") == 0) {
 				memcpy(&largememory, sfo + header->values_table_offs + entries[i].val_offs, 4);
 			}
@@ -188,8 +185,7 @@ void PatchLoadExec(u32 text_addr, u32 text_size) {
 	_sh(0x1000, text_addr + 0x241E);
 	_sh(0x1000, text_addr + 0x2622);
 
-	int i;
-	for (i = 0; i < text_size; i += 4) {
+	for (int i = 0; i < text_size; i += 4) {
 		u32 addr = text_addr + i;
 
 		// Allow loadexec in whatever user level. Make sceKernelGetUserLevel return 4

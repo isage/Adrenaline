@@ -57,7 +57,7 @@ int sceKernelCheckExecFilePatched(void *buf, SceLoadCoreExecFileInfo *execInfo) 
 	return res;
 }
 
-int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *execInfo) 
+int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *execInfo)
 {
 	Elf32_Ehdr *header = (Elf32_Ehdr *)buf;
 
@@ -73,8 +73,7 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 					Elf32_Shdr *section = (Elf32_Shdr *)((u32)header + header->e_shoff);
 					char *strtable = (char *)((u32)header + section[header->e_shstrndx].sh_offset);
 
-					int i;
-					for (i = 0; i < header->e_shnum; i++) {
+					for (int i = 0; i < header->e_shnum; i++) {
 						if (strcmp(strtable + section[i].sh_name, ".rodata.sceModuleInfo") == 0) {
 							execInfo->moduleInfoOffset = section[i].sh_offset;
 							break;

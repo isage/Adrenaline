@@ -44,7 +44,7 @@ static void clear_screen_32(uint32_t color)
 
   for(x = 0; x < (PSV_LINE_SIZE * PSV_SCREEN_HEIGHT); x++)
   {
-    *vram++ = color; 
+    *vram++ = color;
   }
 }
 
@@ -98,7 +98,7 @@ void psvDebugScreenInit()
   psvDebugScreenInitEx(NULL, SCE_DISPLAY_PIXELFORMAT_A8B8G8R8, 1);
 }
 
-void psvDebugScreenEnableBackColor(int enable) 
+void psvDebugScreenEnableBackColor(int enable)
 {
   bg_enable = enable;
 }
@@ -197,15 +197,15 @@ static void debug_put_char_32(int x, int y, uint32_t color, uint32_t bgc, uint8_
     for (j=0; j < 8; j++)
     {
       if ((*font & (128 >> j))) {
-        vram_ptr[0] = color; 
-        vram_ptr[1] = color; 
-        vram_ptr[0 + PSV_LINE_SIZE] = color; 
-        vram_ptr[1 + PSV_LINE_SIZE] = color; 
+        vram_ptr[0] = color;
+        vram_ptr[1] = color;
+        vram_ptr[0 + PSV_LINE_SIZE] = color;
+        vram_ptr[1 + PSV_LINE_SIZE] = color;
       } else if(bg_enable) {
-        vram_ptr[0] = bgc; 
-        vram_ptr[1] = bgc; 
-        vram_ptr[0 + PSV_LINE_SIZE] = bgc; 
-        vram_ptr[1 + PSV_LINE_SIZE] = bgc; 
+        vram_ptr[0] = bgc;
+        vram_ptr[1] = bgc;
+        vram_ptr[0 + PSV_LINE_SIZE] = bgc;
+        vram_ptr[1 + PSV_LINE_SIZE] = bgc;
       }
 
       vram_ptr += 2;
@@ -227,10 +227,9 @@ void  _psvDebugScreenClearLine( int Y)
 {
   if(clearline_en)
   {
-    int i;
     if(bg_enable)
     {
-      for (i=0; i < MX; i++)
+      for (int i=0; i < MX; i++)
       {
         psvDebugScreenPutChar( i*7 , Y * 8, bg_col, 219);
       }

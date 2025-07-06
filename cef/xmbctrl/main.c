@@ -624,8 +624,7 @@ void HijackContext(SceRcoEntry *src, char **options, int n) {
 		mlist_param[16] = 13;
 		mlist_param[18] = 6;
 
-		int i;
-		for (i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			sce_paf_private_memcpy(item, base, base->next_entry);
 
 			item_param[0] = 0xDEAD;
