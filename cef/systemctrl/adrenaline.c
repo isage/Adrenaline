@@ -85,7 +85,7 @@ int getSfoTitle(char *title, int n) {
 		char *filename = sceKernelInitFileName();
 		if (!filename)
 			return -1;
-		
+
 		fd = sceIoOpen(filename, PSP_O_RDONLY, 0);
 		if (fd < 0)
 			return fd;
@@ -170,12 +170,12 @@ int adrenaline_thread(SceSize args, void *argp) {
 			case ADRENALINE_PSP_CMD_REINSERT_MS:
 				sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
 				break;
-				
+
 			case ADRENALINE_PSP_CMD_SAVESTATE:
 				adrenaline->savestate_mode = SAVESTATE_MODE_SAVE;
 				_scePowerSuspendOperation(0x202);
 				break;
-				
+
 			case ADRENALINE_PSP_CMD_LOADSTATE:
 				adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
 				_scePowerSuspendOperation(0x202);
@@ -212,7 +212,7 @@ int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 		if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 			adrenaline->savestate_mode = SAVESTATE_MODE_NONE;
 			ReInitSasCore();
-			
+
 			if (adrenaline->pops_mode) {
 				int (* sceKermitPeripheralInitPops)() = (void *)FindProc("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
 				if (sceKermitPeripheralInitPops)
@@ -228,7 +228,7 @@ void VitaSyncPatched() {
 	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		void (* SaveStateBinary)() = (void *)0x00010000;
 		memcpy((void *)SaveStateBinary, binary, size_binary);
-		ClearCaches();
+		sctrlFlushCache();
 
 		SaveStateBinary();
 
@@ -251,7 +251,7 @@ int SetFlag1Patched() {
 	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
-	
+
 	return SetFlag1();
 }
 
@@ -259,7 +259,7 @@ int SetFlag2Patched() {
 	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
-	
+
 	return SetFlag2();
 }
 
@@ -267,7 +267,7 @@ int sceKermitSyncDisplayPatched() {
 	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
-	
+
 	return sceKermitSyncDisplay();
 }
 
@@ -277,14 +277,14 @@ void PatchSasCore() {
 
 	HIJACK_FUNCTION(FindProc("sceSAScore", "sceSasCore", 0x42778A9F), __sceSasInitPatched, __sceSasInit);
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 void PatchLowIODriver2(u32 text_addr) {
 	HIJACK_FUNCTION(text_addr + 0x880, SetFlag1Patched, SetFlag1);
 	HIJACK_FUNCTION(text_addr + 0xCD8, SetFlag2Patched, SetFlag2);
 	HIJACK_FUNCTION(FindProc("sceKermit_Driver", "sceKermit_driver", 0xD69C50BB), sceKermitSyncDisplayPatched, sceKermitSyncDisplay);
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 void PatchPowerService2(u32 text_addr) {
@@ -294,7 +294,7 @@ void PatchPowerService2(u32 text_addr) {
 
 	_scePowerSuspendOperation = (void *)text_addr + 0x1710;
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 int initAdrenaline() {

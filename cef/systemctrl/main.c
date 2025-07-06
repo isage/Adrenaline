@@ -83,7 +83,7 @@ int WriteFile(char *file, void *buf, int size) {
 	return written;
 }
 
-void ClearCaches() {
+void sctrlFlushCache() {
 	sceKernelIcacheInvalidateAll();
 	sceKernelDcacheWritebackInvalidateAll();
 }
@@ -301,7 +301,7 @@ void PatchVolatileMemBug() {
 	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 		sceKernelVolatileMemTryLock = (void *)FindProc("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
 		sctrlHENPatchSyscall((u32)sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
-		ClearCaches();
+		sctrlFlushCache();
 	}
 }
 
@@ -702,15 +702,15 @@ int OnModuleStart(SceModule2 *mod) {
 		PatchChkreg();
 	} else if (strcmp(modname, "sceMesgLed") == 0) {
 		REDIRECT_FUNCTION(FindProc("sceMesgLed", "sceResmgr_driver", 0x9DC14891), sceResmgrDecryptIndexPatched);
-		ClearCaches();
+		sctrlFlushCache();
 	} else if (strcmp(modname, "scePspNpDrm_Driver") == 0) {
 		PatchNpDrmDriver(text_addr);
 	} else if (strcmp(modname, "sceUmd_driver") == 0) {
 		REDIRECT_FUNCTION(text_addr + 0xC80, sceUmdRegisterUMDCallBackPatched);
-		ClearCaches();
+		sctrlFlushCache();
 	} else if(strcmp(modname, "sceMeCodecWrapper") == 0) {
 		HIJACK_FUNCTION(FindProc(modname, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, sceMeAudio_driver_C300D466);
-		ClearCaches();
+		sctrlFlushCache();
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
 	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
@@ -720,7 +720,7 @@ int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "sceNpSignupPlugin_Module") == 0) {
 		// ImageVersion = 0x10000000
 		_sw(0x3C041000, text_addr + 0x38CBC);
-		ClearCaches();
+		sctrlFlushCache();
 	} else if (strcmp(modname, "sceVshNpSignin_Module") == 0) {
 		// Kill connection error
 		_sw(0x10000008, text_addr + 0x6CF4);
@@ -728,7 +728,7 @@ int OnModuleStart(SceModule2 *mod) {
 		// ImageVersion = 0x10000000
 		_sw(0x3C041000, text_addr + 0x96C4);
 
-		ClearCaches();
+		sctrlFlushCache();
 	} else if (strcmp(modname, "sceSAScore") == 0) {
 		PatchSasCore();
 	} else if(strcmp(modname, "sceUSBCam_Driver") == 0) {
@@ -742,26 +742,26 @@ int OnModuleStart(SceModule2 *mod) {
 		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
 		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
 		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xB048A67D), sceUsbCamWaitReadMicEnd_Patched, _sceUsbCamWaitReadMicEnd);
-		ClearCaches();
+		sctrlFlushCache();
 //	} else if(strcmp(modname, "sceRegistry_Service") == 0) {
 //		HIJACK_FUNCTION(FindProc(modname, "sceReg_driver", 0x38415B9F), sceRegGetKeyValueByName_Patched, _sceRegGetKeyValueByName);
 //		HIJACK_FUNCTION(FindProc(modname, "sceReg_driver", 0x49C70163), sceRegSetKeyValueByName_Patched, _sceRegSetKeyValueByName);
-//		ClearCaches();
+//		sctrlFlushCache();
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		u32 func = sctrlHENFindImport(modname, "IoFileMgrForUser", 0xE3EB004C);
 		if (func) {
 			MAKE_DUMMY_FUNCTION(func, 0);
-			ClearCaches();
+			sctrlFlushCache();
 		}
 	} else if (strcmp(modname, "tekken") == 0) {
 		u32 func = sctrlHENFindImport(modname, "scePower", 0x34F9C463);
 		if (func) {
 			MAKE_DUMMY_FUNCTION(func, 222);
-			ClearCaches();
+			sctrlFlushCache();
 		}
 	} else if (strcmp(modname, "KHBBS_patch") == 0) {
 		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
-		ClearCaches();
+		sctrlFlushCache();
 	} else if (strcmp(modname, "VLF_Module") == 0) {
 		static u32 nids[] = { 0x2A245FE6, 0x7B08EAAB, 0x22050FC0, 0x158BE61A, 0xD495179F };
 
@@ -772,12 +772,12 @@ int OnModuleStart(SceModule2 *mod) {
 				MAKE_DUMMY_FUNCTION(vlf_function, 0);
 		}
 
-		ClearCaches();
+		sctrlFlushCache();
 	} else if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
 			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x9944F31F), sceKernelSuspendThreadPatched);
 			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x75156E8F), sceKernelResumeThreadPatched);
-			ClearCaches();
+			sctrlFlushCache();
 		}
 	}
 
@@ -800,7 +800,7 @@ int module_start(SceSize args, void *argp) {
 	PatchIoFileMgr();
 	PatchMemlmd();
 	PatchModuleMgr();
-	ClearCaches();
+	sctrlFlushCache();
 
 	sctrlHENSetStartModuleHandler((STMOD_HANDLER)OnModuleStart);
 

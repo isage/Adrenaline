@@ -237,10 +237,6 @@ static unsigned char usb_item[] __attribute__((aligned(16))) = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-void ClearCaches() {
-	sceKernelDcacheWritebackAll();
-	kuKernelIcacheInvalidateAll();
-}
 
 SceOff findPkgOffset(const char *filename, unsigned *size, const char *pkgpath) {
 	int pkg = sceIoOpen(pkgpath, PSP_O_RDONLY, 0777);
@@ -745,7 +741,7 @@ void PatchVshMain(u32 text_addr, u32 text_size) {
 			patches--;
 		}
 	}
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 void PatchAuthPlugin(u32 text_addr, u32 text_size) {
@@ -762,7 +758,7 @@ void PatchAuthPlugin(u32 text_addr, u32 text_size) {
 			break;
 		}
 	}
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 void PatchSysconfPlugin(u32 text_addr, u32 text_size) {
@@ -819,7 +815,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size) {
 		}
 	}
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 int OnModuleStart(SceModule2 *mod) {

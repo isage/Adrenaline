@@ -52,7 +52,7 @@ int sctrlHENRegisterHomebrewLoader(int (* handler)(const char *path, int flags, 
 	MAKE_JUMP(text_addr + 0x2E28, sceKernelLoadModuleMs2Leda);
 	MAKE_JUMP(init_addr + 0x1C84, sceKernelLoadModuleMs2Init);
 
-	ClearCaches();
+	sctrlFlushCache();
 
 	return 0;
 }
@@ -313,7 +313,7 @@ int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 
 	MAKE_JUMP(init_addr + 0x1C5C, sceKernelStartModulePatched);
 
-	ClearCaches();
+	sctrlFlushCache();
 
 	return module_bootstart(4, argp);
 }

@@ -176,6 +176,6 @@ int kuKernelCallExtendStack(void *func_addr, struct KernelCallArg *args, int sta
 
 void kuKernelIcacheInvalidateAll(void) {
     u32 k1 = pspSdkSetK1(0);
-    ClearCaches();
+    sctrlFlushCache();
     pspSdkSetK1(k1);
 }

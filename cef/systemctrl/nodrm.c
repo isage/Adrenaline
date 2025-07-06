@@ -174,7 +174,7 @@ void PatchNpDrmDriver(u32 text_addr) {
 
 			HIJACK_FUNCTION(FindProc("sceModuleManager", "ModuleMgrForUser", 0xF2D8D1B4), sceKernelLoadModuleNpDrmPatched, _sceKernelLoadModuleNpDrm);
 
-			ClearCaches();
+			sctrlFlushCache();
 		}
 	}
 }

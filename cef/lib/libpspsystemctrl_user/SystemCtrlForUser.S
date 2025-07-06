@@ -110,6 +110,9 @@
 #ifdef F_SystemCtrlForUser_0034
 	IMPORT_FUNC  "SystemCtrlForUser",0xCC9ADCF8,sctrlHENSetSpeed
 #endif
-#ifdef F_SystemCtrlForUser_0034
+#ifdef F_SystemCtrlForUser_0035
 	IMPORT_FUNC  "SystemCtrlForUser",0xC4D88D50,sctrlHENIsSystemBooted
+#endif
+#ifdef F_SystemCtrlForUser_0036
+	IMPORT_FUNC  "SystemCtrlForUser",0x17691875,sctrlFlushCache
 #endif

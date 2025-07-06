@@ -64,5 +64,5 @@ void PatchUtility() {
 		HIJACK_FUNCTION(FindProc("sceUtility_Driver", "sceUtility_private", 0x3B6D7CED), kermitUtilityOskInitStartPatched, _kermitUtilityOskInitStart);
 	}
 
-	ClearCaches();
+	sctrlFlushCache();
 }

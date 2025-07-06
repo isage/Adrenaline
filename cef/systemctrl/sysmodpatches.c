@@ -247,7 +247,7 @@ void PatchLoadExec(u32 text_addr, u32 text_size) {
 		}
 	}
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 int sceChkregGetPsCodePatched(u8 *pscode) {
@@ -274,7 +274,7 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 void PatchChkreg() {
 	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&sceChkregCheckRegion661), 1);
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceChkregGetPsCode661), sceChkregGetPsCodePatched, _sceChkregGetPsCode);
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 int SetIdleCallbackPatched(int flags) {
@@ -359,7 +359,7 @@ void PatchImposeDriver(u32 text_addr) {
 
 	REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 void PatchMediaSync(u32 text_addr) {
@@ -376,7 +376,7 @@ void PatchMediaSync(u32 text_addr) {
 
 	K_HIJACK_CALL(text_addr + 0x97C, sceSystemFileGetIndexPatched, sceSystemFileGetIndex);
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 void SetSpeed(int cpu, int bus) {
@@ -390,7 +390,7 @@ void SetSpeed(int cpu, int bus) {
 			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
 			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
 			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
-			ClearCaches();
+			sctrlFlushCache();
 		}
 	}
 }

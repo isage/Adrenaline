@@ -29,11 +29,6 @@ int original = 0;
 
 STMOD_HANDLER previous;
 
-void ClearCaches() {
-	sceKernelDcacheWritebackAll();
-	sceKernelIcacheClearAll();
-}
-
 int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 	if (destSize & 0x80000000)
 		return scePopsManExitVSHKernel(destSize);
@@ -113,7 +108,7 @@ int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id)
 			mac_type = 2;
 		}
 
-		// Generate the key from MAC 0x70 
+		// Generate the key from MAC 0x70
 		MAC_KEY mac_key;
 		sceDrmBBMacInit(&mac_key, mac_type);
 		sceDrmBBMacUpdate(&mac_key, pgd_buf, 0x70);
@@ -161,7 +156,7 @@ int OnModuleStart(SceModule2 *mod) {
 			_sw(0x10000014, mod->text_addr + 0x164E4);
 		}
 
-		ClearCaches();
+		sctrlFlushCache();
 	}
 
 	if (!previous)
@@ -241,7 +236,7 @@ int module_start(SceSize args, void *argp) {
 		_sw(0, text_addr + 0x53C);
 	}
 
-	ClearCaches();
+	sctrlFlushCache();
 
 	return 0;
 }

@@ -97,6 +97,4 @@ int sceChkregGetPsCode661(u8 *pscode);
 int ReadFile(char *file, void *buf, int size);
 int WriteFile(char *file, void *buf, int size);
 
-void ClearCaches();
-
 #endif
