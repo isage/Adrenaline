@@ -96,8 +96,7 @@ int is5Dnum(char *str) {
 	if (len != 5)
 		return 0;
 
-	int i;
-	for (i = 0; i < len; i++) {
+	for (int i = 0; i < len; i++) {
 		if (str[i] < '0' || str[i] > '9')
 			return 0;
 	}
@@ -126,7 +125,7 @@ void Installer() {
 	while (1) {
 		SceCtrlData pad;
 		sceCtrlPeekBufferPositive(&pad, 1);
-		
+
 		if (pad.Buttons & PSP_CTRL_CROSS)
 			break;
 
@@ -263,8 +262,7 @@ void Installer() {
 					if (num > 12) { //model 12g
 						int found = 0;
 
-						int i;
-						for (i = 1; i <= 3; i++) {
+						for (int i = 1; i <= 3; i++) {
 							if (flash_table_size[i] > 0) {
 								found = FindTablePath(flash_table[i], flash_table_size[i], name, name);
 								if (found)
@@ -274,8 +272,7 @@ void Installer() {
 
 						if (found) {
 							if (strncmp(name, "flash0", 6) == 0) {
-								int i;
-								for (i = 0; i < N_FILES; i++) {
+								for (int i = 0; i < N_FILES; i++) {
 									if (strcmp(name + 7, files[i]) == 0) {
 										char path[256];
 										sprintf(path, "ms0:/__ADRENALINE__/flash0/%s", name + 8);
@@ -315,7 +312,7 @@ void Installer() {
 	while (1) {
 		SceCtrlData pad;
 		sceCtrlPeekBufferPositive(&pad, 1);
-		
+
 		if (pad.Buttons & PSP_CTRL_CROSS)
 			break;
 

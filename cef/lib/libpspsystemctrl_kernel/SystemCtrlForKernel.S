@@ -149,3 +149,6 @@
 #ifdef F_SystemCtrlForKernel_0047
 	IMPORT_FUNC  "SystemCtrlForKernel",0xC4D88D50,sctrlHENIsSystemBooted
 #endif
+#ifdef F_SystemCtrlForKernel_0048
+	IMPORT_FUNC  "SystemCtrlForKernel",0x17691875,sctrlFlushCache
+#endif

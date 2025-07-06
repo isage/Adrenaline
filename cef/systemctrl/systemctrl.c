@@ -65,8 +65,7 @@ PspIoDrv *sctrlHENFindDriver(char *drvname) {
 
 	u32 *(* GetDevice)(char *) = NULL;
 
-	int i;
-	for (i = 0; i < mod->text_size; i += 4) {
+	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
 		if (_lw(addr) == 0xA2200000) {
 			GetDevice = (void *)K_EXTRACT_CALL(addr + 4);
@@ -151,8 +150,7 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr) {
 
 	u32 *syscalls = (u32 *)(ptr + 0x10);
 
-	int i;
-	for (i = 0; i < 0x1000; i++) {
+	for (int i = 0; i < 0x1000; i++) {
 		if ((syscalls[i] & 0x0FFFFFFF) == (addr & 0x0FFFFFFF)) {
 			syscalls[i] = (u32)newaddr;
 		}

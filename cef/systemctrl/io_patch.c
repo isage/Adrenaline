@@ -49,12 +49,11 @@ char *stristr(const char *str1, const char *str2) {
 	strncpy(temp1, str1, MAXLEN);
 	strncpy(temp2, str2, MAXLEN);
 
-	int i;
-	for (i = 0; i < MAXLEN && (temp1[i] != 0); i++) {
+	for (int i = 0; i < MAXLEN && (temp1[i] != 0); i++) {
 		temp1[i] = mytolower((int)temp1[i]);
 	}
 
-	for (i = 0; i < MAXLEN && (temp2[i] != 0); i++) {
+	for (int i = 0; i < MAXLEN && (temp2[i] != 0); i++) {
 		temp2[i] = mytolower((int)temp2[i]);
 	}
 
@@ -118,8 +117,7 @@ int IoDevctlReinsertMs() {
 	// Perform a MS reinsertion
 	static int ev_ids[] = { 0x102, 0x400, 0x10000, 0x100000 };
 
-	int i;
-	for (i = 0; i < (sizeof(ev_ids) / sizeof(int)); i++) {
+	for (int i = 0; i < (sizeof(ev_ids) / sizeof(int)); i++) {
 		MsfsSysEventHandler(ev_ids[i], NULL, NULL, NULL);
 	}
 
@@ -156,7 +154,7 @@ int _msIoDevctl(u32 *args) {
 				ScePspemuIoDevInfo *info = (ScePspemuIoDevInfo *)data;
 
 				u64 size = (u64)info->free_clusters * (u64)info->sector_size * (u64)info->sector_count;
-				if (size >= 0x7FFFFFFF) {					
+				if (size >= 0x7FFFFFFF) {
 					info->free_clusters = 0x7FFFFFFF / info->sector_size / info->sector_count;
 				}
 			}
@@ -237,7 +235,7 @@ int _flashIoOpen(u32 *args) {
 
 	arg->fs_num = fs_num;
 
-	return flash_funcs.IoOpen(arg, file, flags, mode);	
+	return flash_funcs.IoOpen(arg, file, flags, mode);
 }
 
 int _flashIoClose(PspIoDrvFileArg *arg) {

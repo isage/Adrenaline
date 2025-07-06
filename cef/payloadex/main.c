@@ -49,8 +49,7 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 int PatchSysMem(void *a0, void *sysmem_config) {
 	int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)_lw((u32)a0 + 0x28);
 
-	u32 i;
-	for (i = 0; i < 0x14000; i += 4) {
+	for (u32 i = 0; i < 0x14000; i += 4) {
 		u32 addr = 0x88000000 + i;
 
 		// Patch to add new partition
@@ -78,8 +77,7 @@ int DecryptExecutablePatched(void *buf, int size, int *retSize) {
 int PatchLoadCore(int (* module_bootstart)(SceSize args, void *argp), void *argp) {
 	u32 text_addr = ((u32)module_bootstart) - 0xAF8;
 
-	u32 i;
-	for (i = 0; i < 0x8000; i += 4) {
+	for (u32 i = 0; i < 0x8000; i += 4) {
 		u32 addr = text_addr + i;
 
 		// Allow custom modules
@@ -108,7 +106,7 @@ int InsertModule(void *buf, char *new_module, char *module_after, int flags) {
 		return -1;
 
 	int i;
-	for (i = 0; i < header->nmodules; i++) {
+	for (int i = 0; i < header->nmodules; i++) {
 		if (_strcmp(modnamestart + modules[i].stroffset, module_after) == 0) {
 			break;
 		}
@@ -224,8 +222,7 @@ int _start(void *a0, void *a1, void *a2) {
 	*(u32 *)0x89FF0000 = 0x200;
 	*(u32 *)0x89FF0004 = 0x2;
 
-	u32 i;
-	for (i = 0; i < 0x4000; i += 4) {
+	for (u32 i = 0; i < 0x4000; i += 4) {
 		u32 addr = 0x88600000 + i;
 
 		// Find sceBoot

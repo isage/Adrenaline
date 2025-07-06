@@ -29,8 +29,7 @@ static inline int SizeToSectors(int size) {
 
 __attribute__((noinline)) int GetFreeHandle() {
 	// Lets ignore handler 0 to avoid problems with bad code...
-	int i;
-	for (i = 1; i < MAX_HANDLERS; i++) {
+	for (int i = 1; i < MAX_HANDLERS; i++) {
 		if (handlers[i].opened == 0) return i;
 	}
 
@@ -158,7 +157,7 @@ int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660Director
 		p += record->len_dr;
 		oldDirLen = record->len_dr;
 		record = (Iso9660DirectoryRecord *)p;
-		
+
 		if (remaining > 0) {
 			int offset = (p - sectors);
 
@@ -213,14 +212,14 @@ int FindPathLBA(char *path, Iso9660DirectoryRecord *retRecord) {
 		if (level > 8) {
 			return SCE_ERROR_ERRNO_EINVAL;
 		}
-		
+
 		lba = FindFileLBA(curdir, lba, retRecord->lsbDataLength, 1, retRecord);
 		if (lba < 0) return lba;
-		
+
 		curpath = p+1;
 		p = strchr(curpath, '/');
 	}
-	
+
 	return lba;
 }
 
@@ -312,10 +311,10 @@ int isofs_open(char *file, int flags, SceMode mode) {
 	}
 
 	if (strlen(fullpath)+1 > 256) {
-		// path too big for ISO9660 
+		// path too big for ISO9660
 		return SCE_ERROR_ERRNO_ENAMETOOLONG;
 	}
-	
+
 	if (flags & notallowedflags) return SCE_ERROR_ERRNO_EFLAG;
 
 	if (strncmp(fullpath, "/sce_lbn", 8) != 0) {
@@ -335,7 +334,7 @@ int isofs_open(char *file, int flags, SceMode mode) {
 
 		lba = FindFileLBA(filename, lba, record.lsbDataLength, 0, &record);
 		if (lba < 0) return lba;
-		
+
 		i = GetFreeHandle();
 		if (i < 0) return i;
 
@@ -347,7 +346,7 @@ int isofs_open(char *file, int flags, SceMode mode) {
 	{
 		// lba  access
 		char str[11];
-		
+
 		char *p = strstr(fullpath, "_size");
 		if (!p) return SCE_ERROR_ERRNO_EINVAL;
 
@@ -357,7 +356,7 @@ int isofs_open(char *file, int flags, SceMode mode) {
 
 		memset(str, 0, 11);
 		strncpy(str, fullpath+8, p-(fullpath+8));
-		
+
 		lba = strtol(str, NULL, 0);
 		if (lba < 0) return SCE_ERROR_ERRNO_EINVAL;
 
@@ -379,12 +378,12 @@ int isofs_open(char *file, int flags, SceMode mode) {
 		handlers[i].filesize = size;
 		handlers[i].filepointer = 0;
 	}
-	
+
 	return i;
 }
 
 int isofs_close(SceUID fd) {
-	
+
 	if (fd < 0 || fd >= MAX_HANDLERS) {
 		return SCE_ERROR_ERRNO_EBADF;
 	}
@@ -392,9 +391,9 @@ int isofs_close(SceUID fd) {
 	if (!handlers[fd].opened) {
 		return SCE_ERROR_ERRNO_EBADF;
 	}
-	
+
 	handlers[fd].opened = 0;
-	
+
 	return 0;
 }
 
@@ -416,13 +415,13 @@ int isofs_read(SceUID fd, char *data, int len) {
 	if (remaining <= 0) return 0;
 
 	int nextsector = handlers[fd].lba + (handlers[fd].filepointer / SECTOR_SIZE);
-	
+
 	if ((handlers[fd].filepointer % SECTOR_SIZE) != 0) {
 		res = IsofsReadSectors(nextsector, 1, sectors);
 		if (res != 1) return res;
 
 		read = SECTOR_SIZE-(handlers[fd].filepointer % SECTOR_SIZE);
-		
+
 		if (read > remaining) {
 			read = remaining;
 		}
@@ -436,7 +435,7 @@ int isofs_read(SceUID fd, char *data, int len) {
 	}
 
 	if (remaining <= 0) return read;
-	
+
 	int sectorstoread = SizeToSectors(remaining);
 
 	if ((remaining % SECTOR_SIZE) != 0) {
@@ -458,7 +457,7 @@ int isofs_read(SceUID fd, char *data, int len) {
 	}
 
 	if (remaining <= 0) return read;
-	
+
 	res = IsofsReadSectors(nextsector, 1, sectors);
 	if (res < 0) return res;
 
@@ -466,9 +465,9 @@ int isofs_read(SceUID fd, char *data, int len) {
 	read += (remaining % SECTOR_SIZE);
 	handlers[fd].filepointer += (remaining % SECTOR_SIZE);
 	remaining -= (remaining % SECTOR_SIZE);
-	
+
 	if (remaining > 0) return SCE_ERROR_ERRNO_EIO;
-	
+
 	return read;
 }
 
@@ -503,7 +502,7 @@ int isofs_getstat(const char *file, SceIoStat *stat) {
 	if (!file || !stat) return SCE_ERROR_ERRNO_EINVAL;
 
 	if (strlen(file)+1 > 256) {
-		// path too big for ISO9660 
+		// path too big for ISO9660
 		return SCE_ERROR_ERRNO_ENAMETOOLONG;
 	}
 
@@ -520,7 +519,7 @@ int isofs_getstat(const char *file, SceIoStat *stat) {
 		}
 
 		if (path[0]) {
-			lba = FindPathLBA(path, &record); 
+			lba = FindPathLBA(path, &record);
 		} else
 		{
 			memcpy(&record, &main_record, sizeof(Iso9660DirectoryRecord));

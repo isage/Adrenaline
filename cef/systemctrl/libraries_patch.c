@@ -52,11 +52,9 @@ MissingNidList missing_nid_list[] = {
 };
 
 void *ResolveMissingNIDs(const char *libname, u32 nid) {
-	int i;
-	for (i = 0; i < N_MISSING_NID_LIST; i++) {
+	for (int i = 0; i < N_MISSING_NID_LIST; i++) {
 		if (strcmp(missing_nid_list[i].libname, libname) == 0) {
-			int j;
-			for (j = 0; j < missing_nid_list[i].n_nid; j++) {
+			for (int j = 0; j < missing_nid_list[i].n_nid; j++) {
 				if (missing_nid_list[i].nid[j].nid == nid) {
 					return missing_nid_list[i].nid[j].function;
 				}
@@ -68,11 +66,9 @@ void *ResolveMissingNIDs(const char *libname, u32 nid) {
 }
 
 u32 ResolveOldNIDs(const char *libname, u32 nid) {
-	int i;
-	for (i = 0; i < N_NID_TABLE; i++) {
+	for (int i = 0; i < N_NID_TABLE; i++) {
 		if (strcmp(nid_table[i].libname, libname) == 0) {
-			int j;
-			for (j = 0; j < nid_table[i].n_nid; j++) {
+			for (int j = 0; j < nid_table[i].n_nid; j++) {
 				if (nid_table[i].nid[j].old_nid == nid) {
 					return nid_table[i].nid[j].new_nid;
 				}

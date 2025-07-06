@@ -119,27 +119,27 @@ void readPad() {
   memset(&current_pad, 0, sizeof(Pad));
 
   if (pad.buttons & SCE_CTRL_UP)
-    current_pad[PAD_UP] = 1;  
+    current_pad[PAD_UP] = 1;
   if (pad.buttons & SCE_CTRL_DOWN)
-    current_pad[PAD_DOWN] = 1;  
+    current_pad[PAD_DOWN] = 1;
   if (pad.buttons & SCE_CTRL_LEFT)
-    current_pad[PAD_LEFT] = 1; 
+    current_pad[PAD_LEFT] = 1;
   if (pad.buttons & SCE_CTRL_RIGHT)
-    current_pad[PAD_RIGHT] = 1;  
+    current_pad[PAD_RIGHT] = 1;
   if (pad.buttons & SCE_CTRL_LTRIGGER)
-    current_pad[PAD_LTRIGGER] = 1;  
+    current_pad[PAD_LTRIGGER] = 1;
   if (pad.buttons & SCE_CTRL_RTRIGGER)
-    current_pad[PAD_RTRIGGER] = 1;  
+    current_pad[PAD_RTRIGGER] = 1;
   if (pad.buttons & SCE_CTRL_TRIANGLE)
-    current_pad[PAD_TRIANGLE] = 1;  
+    current_pad[PAD_TRIANGLE] = 1;
   if (pad.buttons & SCE_CTRL_CIRCLE)
-    current_pad[PAD_CIRCLE] = 1;  
+    current_pad[PAD_CIRCLE] = 1;
   if (pad.buttons & SCE_CTRL_CROSS)
-    current_pad[PAD_CROSS] = 1;  
+    current_pad[PAD_CROSS] = 1;
   if (pad.buttons & SCE_CTRL_SQUARE)
     current_pad[PAD_SQUARE] = 1;
   if (pad.buttons & SCE_CTRL_START)
-    current_pad[PAD_START] = 1;  
+    current_pad[PAD_START] = 1;
   if (pad.buttons & SCE_CTRL_SELECT)
     current_pad[PAD_SELECT] = 1;
   if (pad.buttons & SCE_CTRL_PSBUTTON)
@@ -168,15 +168,14 @@ void readPad() {
   } else if (pad.rx > ANALOG_CENTER + ANALOG_THRESHOLD) {
     current_pad[PAD_RIGHT_ANALOG_RIGHT] = 1;
   }
-  
-  int i;
-  for (i = 0; i < PAD_N_BUTTONS; i++) {
+
+  for (int i = 0; i < PAD_N_BUTTONS; i++) {
     pressed_pad[i] = current_pad[i] & ~old_pad[i];
     released_pad[i] = ~current_pad[i] & old_pad[i];
-    
+
     hold_pad[i] = pressed_pad[i];
     hold2_pad[i] = pressed_pad[i];
-    
+
     if (current_pad[i]) {
       if (hold_count[i] >= 10) {
         hold_pad[i] = 1;
@@ -195,7 +194,7 @@ void readPad() {
       hold2_count[i] = 0;
     }
   }
-  
+
   if (enter_button == SCE_SYSTEM_PARAM_ENTER_BUTTON_CIRCLE) {
     old_pad[PAD_ENTER] = old_pad[PAD_CIRCLE];
     current_pad[PAD_ENTER] = current_pad[PAD_CIRCLE];
@@ -203,7 +202,7 @@ void readPad() {
     released_pad[PAD_ENTER] = released_pad[PAD_CIRCLE];
     hold_pad[PAD_ENTER] = hold_pad[PAD_CIRCLE];
     hold2_pad[PAD_ENTER] = hold2_pad[PAD_CIRCLE];
-    
+
     old_pad[PAD_CANCEL] = old_pad[PAD_CROSS];
     current_pad[PAD_CANCEL] = current_pad[PAD_CROSS];
     pressed_pad[PAD_CANCEL] = pressed_pad[PAD_CROSS];
@@ -217,7 +216,7 @@ void readPad() {
     released_pad[PAD_ENTER] = released_pad[PAD_CROSS];
     hold_pad[PAD_ENTER] = hold_pad[PAD_CROSS];
     hold2_pad[PAD_ENTER] = hold2_pad[PAD_CROSS];
-    
+
     old_pad[PAD_CANCEL] = old_pad[PAD_CIRCLE];
     current_pad[PAD_CANCEL] = current_pad[PAD_CIRCLE];
     pressed_pad[PAD_CANCEL] = pressed_pad[PAD_CIRCLE];

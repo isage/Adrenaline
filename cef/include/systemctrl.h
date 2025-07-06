@@ -290,6 +290,11 @@ int sctrlHENSetMemory(u32 p2, u32 p11);
 int sctrlHENIsSystemBooted();
 
 /**
+ * Flush/Cleans Instruction and Data Caches
+ */
+void sctrlFlushCache(void);
+
+/**
  * Loads a module on next reboot. Only kernel mode.
  *
  * @param module_after - The path of the module which is loaded after the module to be loaded.

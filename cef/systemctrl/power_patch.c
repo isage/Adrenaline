@@ -113,7 +113,7 @@ float sceSysregPllGetFrequencyPatched() {
 
 void PatchPowerService(u32 text_addr) {
 	// Redirect to similar functions
-	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestStandby661), K_EXTRACT_IMPORT(&scePowerRequestSuspend661)); 
+	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestStandby661), K_EXTRACT_IMPORT(&scePowerRequestSuspend661));
 	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestColdReset661), scePowerRequestColdResetPatched);
 
 	// Patch to fix charging status
@@ -160,5 +160,5 @@ void PatchPowerService(u32 text_addr) {
 	MAKE_CALL(mod->text_addr + 0x2B60, sceSysregPllGetFrequencyPatched);
 	MAKE_CALL(mod->text_addr + 0x2BC4, sceSysregPllGetFrequencyPatched);
 
-	ClearCaches();
+	sctrlFlushCache();
 }

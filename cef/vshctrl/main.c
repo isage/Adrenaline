@@ -45,11 +45,6 @@ AdrenalineConfig config;
 
 void *sceKernelGetGameInfo();
 
-void ClearCaches() {
-	sceKernelDcacheWritebackAll();
-	sceKernelIcacheClearAll();
-}
-
 void KXploitString(char *str) {
 	if (str) {
 		char *perc = strchr(str, '%');
@@ -310,8 +305,7 @@ int SaveCache() {
 }
 
 int IsCached(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
-	int i;
-	for (i = 0; i < MAX_FILES; i++) {
+	for (int i = 0; i < MAX_FILES; i++) {
 		if (cache[i].isofile[0] != 0) {
 			if (strcmp(cache[i].isofile, isofile) == 0) {
 				if (memcmp(mtime, &cache[i].mtime, sizeof(ScePspDateTime)) == 0) {
@@ -326,8 +320,7 @@ int IsCached(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 }
 
 int Cache(VirtualPbp *pbp) {
-	int i;
-	for (i = 0; i < MAX_FILES; i++) {
+	for (int i = 0; i < MAX_FILES; i++) {
 		if (cache[i].isofile[0] == 0) {
 			memcpy(&cache[i], pbp, sizeof(VirtualPbp));
 			cachechanged = 1;
@@ -800,8 +793,7 @@ ImportPatch import_patch[] = {
 };
 
 void IoPatches() {
-	int i;
-	for (i = 0; i < (sizeof(import_patch) / sizeof(ImportPatch)); i++) {
+	for (int i = 0; i < (sizeof(import_patch) / sizeof(ImportPatch)); i++) {
 		sctrlHENPatchSyscall(K_EXTRACT_IMPORT(import_patch[i].import), import_patch[i].patched);
 	}
 }
@@ -832,8 +824,7 @@ void PatchVshMain(u32 text_addr) {
 		_sh(0x1000, text_addr + 0x3174A);
 	}
 
-
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 //wchar_t verinfo[] = L"6.61 Adrenaline-     ";
@@ -930,7 +921,7 @@ void PatchSysconfPlugin(u32 text_addr) {
 	// Do not set nickname to PXXX on initial setup/reset
 	REDIRECT_FUNCTION(text_addr + 0x1520, MakeSyscallStub(SetDefaultNicknamePatched));
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 void PatchGamePlugin(u32 text_addr) {
@@ -956,7 +947,7 @@ void PatchGamePlugin(u32 text_addr) {
 		_sw(0x24040002, text_addr + 0x19134);
 	}
 
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 int sceUpdateDownloadSetVersionPatched(int version) {
@@ -974,7 +965,7 @@ int sceUpdateDownloadSetVersionPatched(int version) {
 
 void PatchUpdatePlugin(u32 text_addr) {
 	MAKE_CALL(text_addr + 0x82A8, MakeSyscallStub(sceUpdateDownloadSetVersionPatched));
-	ClearCaches();
+	sctrlFlushCache();
 }
 
 int OnModuleStart(SceModule2 *mod) {
@@ -1011,7 +1002,7 @@ int module_start(SceSize args, void *argp) {
 		firsttick = sceKernelGetSystemTimeLow();
 	}
 
-	ClearCaches();
+	sctrlFlushCache();
 
 	previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 

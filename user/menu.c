@@ -444,8 +444,7 @@ int AdrenalineDraw(SceSize args, void *argp) {
     NULL);
   uint16_t *flux_indices;
   sceKernelGetMemBlockBase(flux_indices_id, (void **)&flux_indices);
-  int i;
-  for (i=0;i<4;i++){
+  for (int i=0;i<4;i++){
     flux_indices[i] = i;
   }
   sceGxmMapMemory(flux_indices, ALIGN(sizeof(uint16_t)*4, 4 * 1024), SCE_GXM_MEMORY_ATTRIB_READ);

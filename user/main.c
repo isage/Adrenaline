@@ -1107,8 +1107,7 @@ int module_start(SceSize args, void *argp) {
 }
 
 int module_stop(SceSize args, void *argp) {
-  int i;
-  for (i = n_uids - 1; i >= 0; i++) {
+  for (int i = n_uids - 1; i >= 0; i++) {
     taiInjectRelease(uids[i]);
   }
 
