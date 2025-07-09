@@ -105,6 +105,11 @@ void ApplyMemory() {
 	}
 }
 
+void ApplyAndResetMemory() {
+	ApplyMemory();
+	rebootex_config.ram2 = 0;
+}
+
 void UnprotectExtraMemory() {
 	u32 *prot = (u32 *)0xBC000040;
 
