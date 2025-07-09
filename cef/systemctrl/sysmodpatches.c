@@ -335,7 +335,7 @@ int CallbackThread(SceSize args, void *argp) {
 	if (cbid < 0)
 		return cbid;
 
-	int (* sceKernelRegisterExitCallback)() = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
+	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
 	sceKernelRegisterExitCallback(cbid);
 
 	sceKernelSleepThreadCB();

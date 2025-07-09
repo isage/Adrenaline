@@ -73,7 +73,7 @@ void RestartVSH() {
 	sctrlKernelExitVSH(NULL);
 }
 
-int VshMenu_Thread() {
+int VshMenu_Thread(SceSize _args, void *_argp) {
 	sceKernelChangeThreadPriority(0, 8);
 	sctrlSEGetConfig(&config);
 	vctrlVSHRegisterVshMenu(ctrl_handler);
