@@ -25,6 +25,10 @@ void *user_malloc(SceSize size);
 void *user_memalign(SceSize align, SceSize size);
 void user_free(void *ptr);
 
+#define malloc(size) user_malloc(size);
+#define memalign(align, size) user_memalign(align, size);
+#define free(ptr) user_free(ptr);
+
 // ARK-4 compat
 void oe_free(void *ptr);
 
@@ -59,8 +63,8 @@ char *strcpy(char *dest, const char *src);
 unsigned long strtoul(const char* str, char** str_end, int base );
 char *strpbrk(const char *dest, const char *breakset);
 
-// int toupper(int ch);
-// int tolower(int ch);
+int toupper(int ch);
+int tolower(int ch);
 
 void atob(char *a0, int *a1);
 

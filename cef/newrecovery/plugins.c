@@ -15,8 +15,9 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+#define COMMON_H_SYSCLIB_USER
 #include <common.h>
+#include <stdio.h>
 
 #include "main.h"
 #include "menu.h"
