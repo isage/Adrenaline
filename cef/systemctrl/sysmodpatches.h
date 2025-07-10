@@ -19,7 +19,15 @@
 #ifndef __SYSMODPATCHES_H__
 #define __SYSMODPATCHES_H__
 
+/**
+ * Apply the partition 2 and 11 memory configured by ::sctrlHENSetMemory.
+*/
 void ApplyMemory();
+/**
+ * Apply the partition 2 and 11 memory configured by ::sctrlHENSetMemory and
+ * resets the rebootex config so a game can request large memory.
+*/
+void ApplyAndResetMemory();
 void UnprotectExtraMemory();
 
 void PatchLoadExec(u32 text_addr, u32 text_size);

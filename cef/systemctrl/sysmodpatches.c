@@ -56,6 +56,23 @@ typedef struct SysMemPartition {
 	PartitionData *data;
 } SysMemPartition;
 
+static int protect_pspemu_mem() {
+	u32 ram2 = rebootex_config.ram2;
+	u32 ram11 = rebootex_config.ram11;
+
+	// Needs to protect FLASH0 VRAM
+	if (ram2 + ram11 >= 49) {
+		int partition = (ram2 >= 49) ? PSP_MEMORY_PARTITION_USER : 11;
+		int res = sceKernelAllocPartitionMemory(partition, "SCE_PSPEMU_FLASH0", PSP_SMEM_Addr, 1024*1024, (void*)SCE_PSPEMU_FLASH0_RAMFS);
+
+		if (res < 0) {
+			return res;
+		}
+	}
+
+	return 0;
+}
+
 void ApplyMemory() {
 	if (rebootex_config.ram2 != 0 && (rebootex_config.ram2 + rebootex_config.ram11) <= 52) {
 		SysMemPartition *(* GetPartition)(int partition) = NULL;
@@ -84,10 +101,13 @@ void ApplyMemory() {
 		partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
 
 		// Protects the regions with pspemu addresses
-		sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "SCE_PSPEMU_FLASH0", PSP_SMEM_Addr, 1024*1024, (void*)SCE_PSPEMU_FLASH0_RAMFS);
-		sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "SCE_PSPEMU_SCRATCHPAD", PSP_SMEM_Addr, 1024*1024, (void*)SCE_PSPEMU_SCRATCHPAD);
-		sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "SCE_PSPEMU_VRAM", PSP_SMEM_Addr, 2*1024*1024, (void*)SCE_PSPEMU_VRAM);
+		protect_pspemu_mem();
 	}
+}
+
+void ApplyAndResetMemory() {
+	ApplyMemory();
+	rebootex_config.ram2 = 0;
 }
 
 void UnprotectExtraMemory() {
@@ -315,7 +335,7 @@ int CallbackThread(SceSize args, void *argp) {
 	if (cbid < 0)
 		return cbid;
 
-	int (* sceKernelRegisterExitCallback)() = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
+	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
 	sceKernelRegisterExitCallback(cbid);
 
 	sceKernelSleepThreadCB();

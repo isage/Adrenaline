@@ -690,6 +690,12 @@ int OnModuleStart(SceModule2 *mod) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_GAME  && config.forcehighmemory) {
 			sctrlHENSetMemory(52, 0);
 			ApplyMemory();
+		} else {
+			// If not force-high-memory. Make sure to make p11 as big as
+			// possible, but in a state that if a game request high-memory,
+			// re-setting and re-applying is possible.
+			sctrlHENSetMemory(24, 28);
+			ApplyAndResetMemory();
 		}
 
 		PatchPowerService(text_addr);

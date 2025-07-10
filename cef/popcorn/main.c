@@ -196,7 +196,7 @@ int module_start(SceSize args, void *argp) {
 	if (((u32 *)pgd_buf)[0] == 0x44475000)
 		original = 1;
 
-	int (* SetCompiledSdkVersion)() = (void *)FindProc("sceSystemMemoryManager", "SysMemUserForUser", 0x358CA1BB);
+	int (* SetCompiledSdkVersion)(int ver) = (void *)FindProc("sceSystemMemoryManager", "SysMemUserForUser", 0x358CA1BB);
 	if (!SetCompiledSdkVersion)
 		return 1;
 

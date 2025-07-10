@@ -38,7 +38,7 @@ SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 SceUID adrenaline_semaid = -1;
 
-int (* _scePowerSuspendOperation)();
+int (* _scePowerSuspendOperation)(int a1);
 
 int (* SetFlag1)();
 int (* SetFlag2)();
