@@ -4,18 +4,7 @@ OBJS = \
 	VshCtrl_0001.o \
 	VshCtrl_0002.o \
 	VshCtrl_0003.o \
-	VshCtrl_0004.o \
-	VshCtrl_0005.o \
-	VshCtrl_0006.o \
-	# VshCtrl_0007.o \
-	# VshCtrl_0008.o \
-	# VshCtrl_0009.o \
-	# VshCtrl_0010.o \
-	# VshCtrl_0011.o \
-	# VshCtrl_0012.o \
-	# VshCtrl_0013.o \
-	# VshCtrl_0014.o \
-	# VshCtrl_0015.o \
+	VshCtrl_0004.o
 
 
 %.o: VshCtrl.S

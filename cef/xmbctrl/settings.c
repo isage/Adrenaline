@@ -132,7 +132,7 @@ void ProcessConfigFile(char* path, int (process_line)(char*, char*), void (*proc
 		int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
 		sceIoLseek(fd, 0, PSP_SEEK_SET);
 
-		u8* buf = vsh_malloc(fsize+1);
+		u8* buf = user_malloc(fsize+1);
 		if (buf == NULL){
 			sceIoClose(fd);
 			return;
@@ -153,16 +153,16 @@ void ProcessConfigFile(char* path, int (process_line)(char*, char*), void (*proc
 			while ((nread=readLine((char*)buf+total_read, line)) > 0) {
 				total_read += nread;
 				if (line[0] == 0) continue; // empty line
-				char* dupline = vsh_malloc(strlen(line)+1);
+				char* dupline = user_malloc(strlen(line)+1);
 				strcpy(dupline, line);
 				// Process Line
 				if (processLine(strtrim(line), process_line)) {
-					vsh_free(dupline);
+					user_free(dupline);
 				} else {
 					process_custom(dupline);
 				}
 			}
-			vsh_free(line);
+			user_free(line);
 		}
 		// Close Plugin Config
 		sceIoClose(fd);
