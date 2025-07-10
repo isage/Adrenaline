@@ -198,8 +198,34 @@ void sctrlSESetBootConfFileIndex(int index);
 void sctrlSEApplyConfig(AdrenalineConfig *conf);
 void SetSpeed(int cpu, int bus);
 
+/**
+ * Deallocate memory allocated by oe_malloc.
+ *
+ * @param ptr - pointer to the allocated memory.
+ */
 void oe_free(void *ptr);
+/**
+ * Helper function to allocate memory on P1 (kernel memory).
+ *
+ * @param size - amount of bytes to allocate.
+ *
+ * @returns pointer to allocated buffer, or NULL on error.
+ */
 void *oe_malloc(SceSize size);
+/**
+ * Deallocate memory allocated by user_malloc.
+ *
+ * @param ptr - pointer to the allocated memory.
+ */
+void user_free(void *ptr);
+/**
+ * Helper function to allocate memory on P2 (user memory).
+ *
+ * @param size - amount of bytes to allocate.
+ *
+ * @returns pointer to allocated buffer, or NULL on error.
+ */
+void *user_malloc(SceSize size);
 int mallocinit();
 
 #endif
