@@ -226,6 +226,15 @@ void user_free(void *ptr);
  * @returns pointer to allocated buffer, or NULL on error.
  */
 void *user_malloc(SceSize size);
+/**
+ * Helper function to allocate aligned memory on P2 (user memory).
+ *
+ * @param align - The alignment
+ * @param size - amount of bytes to allocate.
+ *
+ * @returns pointer to allocated buffer, or NULL on error.
+ */
+void *user_memalign(SceSize align, SceSize size);
 int mallocinit();
 
 #endif
