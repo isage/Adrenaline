@@ -213,9 +213,6 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			}
 
 			if (sceKernelFindModuleByName661(waitmodule)) {
-				if (config.enablexmbctrl) {
-					loadXmbControl();
-				}
 				char plugin[64];
 				int i, size;
 				SceUID fd;
@@ -223,6 +220,10 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 				plugindone = 1;
 
 				int type = sceKernelInitKeyConfig();
+
+				if (type == PSP_INIT_KEYCONFIG_VSH && config.enablexmbctrl) {
+					loadXmbControl();
+				}
 
 				if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName661("scePspNpDrm_Driver")) {
 					goto START_MODULE;
