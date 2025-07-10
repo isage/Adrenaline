@@ -20,14 +20,46 @@
 
 #include "main.h"
 
-SceUID heapid = -1;
+// SceUID heapid = -1;
+
+static void* malloc_impl(SceUID partition, SceSize size) {
+	SceUID uid = sceKernelAllocPartitionMemory661(partition, "", 1, size+sizeof(SceUID), NULL);
+	int* ptr = sceKernelGetBlockHeadAddr661(uid);
+	if (ptr){
+		ptr[0] = uid;
+		return &(ptr[1]);
+	}
+	return NULL;
+}
 
 void oe_free(void *ptr) {
-	sceKernelFreeHeapMemory661(heapid, ptr);
+	if (ptr != NULL) {
+		SceUID uid = ((SceUID*)ptr)[-1];
+		sceKernelFreePartitionMemory661(uid);
+	}
+}
+
+void user_free(void* ptr) {
+	oe_free(ptr);
 }
 
 void *oe_malloc(SceSize size) {
-	return sceKernelAllocHeapMemory661(heapid, size);
+	return malloc_impl(PSP_MEMORY_PARTITION_KERNEL, size);
+}
+
+void* user_malloc(SceSize size) {
+	return malloc_impl(PSP_MEMORY_PARTITION_USER, size);
+}
+
+void* user_memalign(SceSize align, SceSize size) {
+	SceUID uid = sceKernelAllocPartitionMemory661(PSP_MEMORY_PARTITION_USER, "", 1, size+sizeof(SceUID)+align, NULL);
+	int* ptr = sceKernelGetBlockHeadAddr(uid);
+	if (ptr){
+		ptr = (void*)(((u32)ptr & (~(align-1))) + 64);
+		ptr[-1] = uid;
+		return ptr;
+	}
+	return NULL;
 }
 
 int mallocinit() {
@@ -36,7 +68,8 @@ int mallocinit() {
 		return 0;
 	}
 
-	heapid = sceKernelCreateHeap661(PSP_MEMORY_PARTITION_KERNEL, 256 * 1024, 1, "");
+	// heapid = sceKernelCreateHeap661(PSP_MEMORY_PARTITION_KERNEL, 256 * 1024, 1, "");
 
-	return (heapid < 0) ? heapid : 0;
+	// return (heapid < 0) ? heapid : 0;
+	return 0;
 }
