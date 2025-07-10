@@ -1,4 +1,5 @@
 #include <psptypes.h>
+#include <sysclib_user.h>
 
 void lowerString(char* orig, char* ret, int strSize) {
 	int i=0;
@@ -9,14 +10,6 @@ void lowerString(char* orig, char* ret, int strSize) {
 		i++;
 	}
 	*(ret+i) = 0;
-}
-
-static int tolower(int s) {
-	if((s >= 'A') && (s <= 'Z')) {
-		s = 'a' + (s - 'A');
-	}
-
-	return s;
 }
 
 int strncasecmp(const char *s1, const char *s2, SceSize n) {
@@ -49,4 +42,45 @@ int strncasecmp(const char *s1, const char *s2, SceSize n) {
 
 int strcasecmp(const char *s1, const char *s2) {
 	return strncasecmp(s1, s2, 2147483647);
+}
+
+char *strncat(char *dest, const char *src, SceSize count) {
+	char *res = dest;
+	dest += strlen(dest);
+	while (count && *src) {
+		count--;
+		*dest++ = *src++;
+	}
+	*dest++ = 0;
+	return res;
+}
+
+SceSize strncat_s(char *strDest, SceSize numberOfElements, const char *strSource, SceSize count) {
+	SceSize rest;
+
+	if (!strDest || !strSource || numberOfElements == 0) {
+		return 0;
+	}
+
+	rest = numberOfElements - strnlen(strDest, numberOfElements);
+
+	if (rest == 0) {
+		return 0;
+	}
+
+	rest--;
+	strncat(strDest, strSource, rest < count ? rest : count);
+
+	return strnlen(strDest, numberOfElements);
+}
+
+SceSize strncpy_s(char *strDest, SceSize numberOfElements, const char *strSource, SceSize count) {
+	if (!strDest || !strSource || numberOfElements == 0) {
+		return 0;
+	}
+
+	strncpy(strDest, strSource, numberOfElements < count ? numberOfElements : count);
+	strDest[numberOfElements - 1] = '\0';
+
+	return strnlen(strDest, numberOfElements);
 }

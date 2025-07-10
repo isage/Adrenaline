@@ -122,3 +122,12 @@
 #ifdef F_SysclibForUser_0038
 	IMPORT_FUNC  "SysclibForUser",0xC2145E80,snprintf
 #endif
+#ifdef F_SysclibForUser_0039
+	IMPORT_FUNC  "SysclibForUser",0xD3D1A3B9,strncat
+#endif
+#ifdef F_SysclibForUser_0040
+	IMPORT_FUNC  "SysclibForUser",0xEFB593C9,strncat_s
+#endif
+#ifdef F_SysclibForUser_0041
+	IMPORT_FUNC  "SysclibForUser",0x5ABF13F5,strncpy_s
+#endif
