@@ -144,9 +144,9 @@ static void loadXmbControl(){
 	int apitype = sceKernelInitApitype();
 	if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
 		// load XMB Control Module
-		int modid = sceKernelLoadModule661("ms0:/__ADRENALINE__/flash0/kd/xmbctrl.prx", 0, NULL);
+		int modid = sceKernelLoadModule661("ms0:/__ADRENALINE__/flash0/vsh/module/xmbctrl.prx", 0, NULL);
 		if (modid < 0) {
-		  	modid = sceKernelLoadModule661("flash0:/kd/xmbctrl.prx", 0, NULL);
+		  	modid = sceKernelLoadModule661("flash0:/vsh/module/xmbctrl.prx", 0, NULL);
 		}
 		sceKernelStartModule661(modid, 0, NULL, NULL, NULL);
 	}
