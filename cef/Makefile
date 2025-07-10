@@ -105,7 +105,7 @@ _xmbctrl:
 	make -C xmbctrl clean
 	make -C xmbctrl
 	psp-packer xmbctrl/xmbctrl.prx
-	cp "xmbctrl/xmbctrl.prx" "../user/flash0/kd/xmbctrl.prx"
+	cp "xmbctrl/xmbctrl.prx" "../user/flash0/vsh/module/xmbctrl.prx"
 	make -C xmbctrl clean
 
 _satelite:

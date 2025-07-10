@@ -144,9 +144,9 @@ static void loadXmbControl(){
 	int apitype = sceKernelInitApitype();
 	if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
 		// load XMB Control Module
-		int modid = sceKernelLoadModule661("ms0:/__ADRENALINE__/flash0/kd/xmbctrl.prx", 0, NULL);
+		int modid = sceKernelLoadModule661("ms0:/__ADRENALINE__/flash0/vsh/module/xmbctrl.prx", 0, NULL);
 		if (modid < 0) {
-		  	modid = sceKernelLoadModule661("flash0:/kd/xmbctrl.prx", 0, NULL);
+		  	modid = sceKernelLoadModule661("flash0:/vsh/module/xmbctrl.prx", 0, NULL);
 		}
 		sceKernelStartModule661(modid, 0, NULL, NULL, NULL);
 	}
@@ -213,9 +213,6 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			}
 
 			if (sceKernelFindModuleByName661(waitmodule)) {
-				if (config.enablexmbctrl) {
-					loadXmbControl();
-				}
 				char plugin[64];
 				int i, size;
 				SceUID fd;
@@ -223,6 +220,10 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 				plugindone = 1;
 
 				int type = sceKernelInitKeyConfig();
+
+				if (type == PSP_INIT_KEYCONFIG_VSH && config.enablexmbctrl) {
+					loadXmbControl();
+				}
 
 				if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName661("scePspNpDrm_Driver")) {
 					goto START_MODULE;
