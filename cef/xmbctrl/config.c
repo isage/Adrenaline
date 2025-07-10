@@ -4,8 +4,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <kubridge.h>
-#include <stddef.h>
-#include <string.h>
+#include <sysclib_user.h>
 
 #include "main.h"
 #include "list.h"

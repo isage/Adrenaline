@@ -29,8 +29,7 @@
 #include <systemctrl_se.h>
 #include <vshctrl.h>
 #include <common.h>
-#include <stddef.h>
-#include <string.h>
+#include <sysclib_user.h>
 
 #include "main.h"
 #include "utils.h"

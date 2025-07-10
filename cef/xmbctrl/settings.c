@@ -4,9 +4,7 @@
 #include <systemctrl.h>
 #include <vshctrl.h>
 #include <kubridge.h>
-#include <stddef.h>
-#include <strings.h>
-#include <string.h>
+#include <sysclib_user.h>
 
 #include "settings.h"
 #include "list.h"
@@ -145,7 +143,7 @@ void ProcessConfigFile(char* path, int (process_line)(char*, char*), void (*proc
 		buf[fsize] = 0;
 
 		// Allocate Line Buffer
-		char* line = my_malloc(LINE_BUFFER_SIZE);
+		char* line = user_malloc(LINE_BUFFER_SIZE);
 		// Buffer Allocation Success
 		if (line != NULL) {
 			// Read Lines
