@@ -20,12 +20,6 @@
 #ifdef F_VshCtrl_0004
 	IMPORT_FUNC  "VshCtrlLib",0x3A65060D,vctrlSetRegistryValue
 #endif
-#ifdef F_VshCtrl_0005
-	IMPORT_FUNC  "VshCtrlLib",0x80E2343C,vsh_malloc
-#endif
-#ifdef F_VshCtrl_0006
-	IMPORT_FUNC  "VshCtrlLib",0xA4247A28,vsh_free
-#endif
 
 
 // #ifdef F_VshCtrl_0003

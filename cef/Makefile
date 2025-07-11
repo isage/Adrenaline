@@ -21,6 +21,11 @@ _libs:
 	cp "lib/libpspvshctrl/libpspvshctrl.a" "lib/"
 	make -C lib/libpspvshctrl clean
 
+	make -C lib/libpspsysc_user clean
+	make -C lib/libpspsysc_user
+	cp "lib/libpspsysc_user/libpspsysc_user.a" "lib/"
+	make -C lib/libpspsysc_user clean
+
 
 _btcnf:
 	make -C btcnf/pspbtcnf_inferno clean
@@ -127,6 +132,7 @@ clean:
 	make -C lib/libpspsystemctrl_kernel clean
 	make -C lib/libpspsystemctrl_user clean
 	make -C lib/libpspvshctrl clean
+	make -C lib/libpspsysc_user clean
 	make -C btcnf/pspbtcnf_inferno clean
 	make -C btcnf/pspbtcnf_march33 clean
 	make -C btcnf/pspbtcnf_normal clean

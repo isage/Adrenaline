@@ -18,7 +18,4 @@ void add_list(List* list, void* item);
 
 void clear_list(List* list, void (*cleaner)(void*));
 
-void *my_malloc(size_t size);
-void my_free(void *ptr);
-
 #endif

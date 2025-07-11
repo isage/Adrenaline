@@ -20,17 +20,11 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include <kubridge.h>
-#include <pspkernel.h>
-#include <pspsdk.h>
-#include <psputility_sysparam.h>
-#include <systemctrl.h>
-#include <systemctrl_se.h>
-#include <vshctrl.h>
+#define COMMON_H_SYSCLIB_USER
 #include <common.h>
-#include <stddef.h>
-#include <string.h>
+#include <vshctrl.h>
+#include <psputility_sysparam.h>
+
 
 #include "main.h"
 #include "utils.h"

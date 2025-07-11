@@ -9,6 +9,7 @@ cef/lib/libpspkubridge.a
 cef/lib/libpspsystemctrl_kernel.a
 cef/lib/libpspsystemctrl_user.a
 cef/lib/libpspvshctrl.a
+cef/lib/libpspsysc_user.a
 
 cef/updater/version
 cef/updater/updater.elf

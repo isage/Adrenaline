@@ -1,9 +1,7 @@
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <stdio.h>
-#include <string.h>
-#include <strings.h>
+#include <sysclib_user.h>
 
 #include "list.h"
 #include "plugins.h"
@@ -19,14 +17,14 @@ int cur_place = 0;
 
 static void list_cleaner(void* item){
 	Plugin* plugin = (Plugin*)item;
-	my_free(plugin->path);
-	if (plugin->name) my_free(plugin->name);
-	if (plugin->surname) my_free(plugin->surname);
-	my_free(plugin);
+	user_free(plugin->path);
+	if (plugin->name) user_free(plugin->name);
+	if (plugin->surname) user_free(plugin->surname);
+	user_free(plugin);
 }
 
 static void processCustomLine(char* line){
-	Plugin* plugin = (Plugin*)my_malloc(sizeof(Plugin));
+	Plugin* plugin = (Plugin*)user_malloc(sizeof(Plugin));
 	memset(plugin, 0, sizeof(Plugin));
 	plugin->path = line;
 	plugin->place = cur_place;
@@ -35,17 +33,17 @@ static void processCustomLine(char* line){
 
 static void processPlugin(char* path, char* enabled) {
 	int n = plugins.count;
-	char* name = my_malloc(20);
+	char* name = user_malloc(20);
 	snprintf(name, 20, "plugin_%d", n);
 
-	char* surname = my_malloc(20);
+	char* surname = user_malloc(20);
 	snprintf(surname, 20, "plugins%d", n);
 
 	int path_len = strlen(path) + 10;
-	char* full_path = (char*)my_malloc(path_len);
+	char* full_path = (char*)user_malloc(path_len);
 	snprintf(full_path, path_len, "%s", path);
 
-	Plugin* plugin = (Plugin*)my_malloc(sizeof(Plugin));
+	Plugin* plugin = (Plugin*)user_malloc(sizeof(Plugin));
 	plugin->name = name;
 	plugin->surname = surname;
 	plugin->path = full_path;
@@ -76,10 +74,10 @@ void loadPlugins(){
 
 	if (plugins.count == 0){
 		// Add example plugin
-		Plugin* plugin = (Plugin*)my_malloc(sizeof(Plugin));
-		plugin->name = (char*)my_malloc(20);
-		plugin->surname = (char*)my_malloc(20);
-		plugin->path = (char*)my_malloc(strlen(sample_plugin_path)+1);
+		Plugin* plugin = (Plugin*)user_malloc(sizeof(Plugin));
+		plugin->name = (char*)user_malloc(20);
+		plugin->surname = (char*)user_malloc(20);
+		plugin->path = (char*)user_malloc(strlen(sample_plugin_path)+1);
 		plugin->active = 1;
 		plugin->place = 0;
 		strcpy(plugin->name, "plugin_0");

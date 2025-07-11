@@ -29,12 +29,19 @@
 #include <pspdisplay_kernel.h>
 #include <psputility.h>
 
+// If COMMON_H_SYSCLIB_USER is defined, it includes the sysclib_user.h definitions
+// And other other headers from STD C must be manually included if necessary
+#ifdef COMMON_H_SYSCLIB_USER
+#include <sysclib_user.h>
+#include <stdarg.h>
+#else
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
 #include <malloc.h>
+#endif
 
 #include "../../adrenaline_compat.h"
 

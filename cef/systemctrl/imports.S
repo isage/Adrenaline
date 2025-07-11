@@ -1,6 +1,7 @@
 	.set noreorder
 
 #include "pspimport.s"
+#include "pspstub.s"
 
 	IMPORT_START "SysMemForKernel",0x00010011
 	IMPORT_FUNC  "SysMemForKernel",0x58148F07,sceKernelCreateHeap661
@@ -69,3 +70,7 @@
 	IMPORT_START "sceUsb_driver",0x00090011
 	IMPORT_FUNC  "sceUsb_driver",0x63E55EBE,sceUsb_driver_0x63E55EBE
 	IMPORT_FUNC  "sceUsb_driver",0xED8C8695,sceUsb_driver_0xED8C8695
+
+	STUB_START "SysclibForKernel", 0x00010000, 0x00010005
+	STUB_FUNC 0xC2145E80, snprintf
+	STUB_END

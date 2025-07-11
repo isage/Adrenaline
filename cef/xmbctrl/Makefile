@@ -11,10 +11,10 @@ PRX_EXPORTS = exports.exp
 INCDIR = ../include
 LIBDIR = ../lib
 
-USE_PSPSDK_LIBS = 1
-USE_PSPSDK_LIBC = 1
+USE_PSPSDK_LIBS = 0
+USE_PSPSDK_LIBC = 0
 
-LIBS = -lpspsystemctrl_user -lpspkubridge -lpspvshctrl -lpspreg
+LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspkubridge -lpspvshctrl -lpspreg
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
