@@ -170,6 +170,11 @@ int sctrlKernelSetUserLevel(int level);
 int sctrlKernelSetDevkitVersion(int version);
 
 /**
+ *  Calculate Random Number via KIRK
+ */
+unsigned int sctrlKernelRand(void);
+
+/**
  * Checks if we are in SE.
  *
  * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,

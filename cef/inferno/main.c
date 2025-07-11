@@ -29,8 +29,6 @@
 #include "printk.h"
 #include "libs.h"
 #include "utils.h"
-#include "systemctrl.h"
-#include "systemctrl_se.h"
 #include "inferno.h"
 
 PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 2, 1);

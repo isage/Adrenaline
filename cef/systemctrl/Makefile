@@ -14,6 +14,9 @@ ASFLAGS = $(CFLAGS)
 BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
+LIBDIR = ../lib
+LIBS = -lpspsemaphore
+
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
