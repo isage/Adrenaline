@@ -1,5 +1,5 @@
 TARGET = inferno
-OBJS = main.o iodrv_funcs.o umd.o isoread.o isocache.o imports.o utils.o sctrlrand.o exports.o
+OBJS = main.o iodrv_funcs.o umd.o isoread.o isocache.o imports.o utils.o exports.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
@@ -16,7 +16,7 @@ USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_kernel -lpspsemaphore -lgcc
+LIBS = -lpspsystemctrl_kernel -lpspsemaphore
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak

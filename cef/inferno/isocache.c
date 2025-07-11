@@ -4,14 +4,13 @@
 #include <psputilsforkernel.h>
 #include <pspsysevent.h>
 #include <pspiofilemgr.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <stdio.h>
 #include <string.h>
 #include "printk.h"
 #include "utils.h"
 #include "inferno.h"
-#include "systemctrl.h"
-#include "systemctrl_se.h"
-#include "sctrlrand.h"
 
 static u32 read_call = 0;
 static u32 read_hit = 0;

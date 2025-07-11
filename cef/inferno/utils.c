@@ -19,9 +19,9 @@
 #include <psputilsforkernel.h>
 #include <pspsysevent.h>
 #include <pspiofilemgr.h>
+#include <systemctrl.h>
 #include <stdio.h>
 #include <string.h>
-#include "systemctrl.h"
 #include "utils.h"
 #include "printk.h"
 
@@ -53,7 +53,7 @@ void hexdump(void *addr, int size)
 
 	if (size == 0) {
 		printk("hexdump: size 0\n");
-		
+
 		return;
 	}
 
@@ -61,7 +61,7 @@ void hexdump(void *addr, int size)
 	i=0; for(;i<16; ++i) {
 		if (i == 8)
 			printk("- ");
-		
+
 		printk("%02X ", i);
 	}
 
@@ -73,7 +73,7 @@ void hexdump(void *addr, int size)
 
 	i=0;
 	printk("0x%08X ", i);
-	
+
 	for(; i<size; ++i) {
 		if (i != 0 && i % 16 == 0) {
 			int j;

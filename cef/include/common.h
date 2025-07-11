@@ -28,6 +28,7 @@
 #include <pspdisplay.h>
 #include <pspdisplay_kernel.h>
 #include <psputility.h>
+#include <pspcrypt.h>
 
 // If COMMON_H_SYSCLIB_USER is defined, it includes the sysclib_user.h definitions
 // And other other headers from STD C must be manually included if necessary

@@ -29,8 +29,6 @@
 #include "printk.h"
 #include "libs.h"
 #include "utils.h"
-#include "systemctrl.h"
-#include "systemctrl_se.h"
 #include "inferno.h"
 #include "lz4.h"
 
