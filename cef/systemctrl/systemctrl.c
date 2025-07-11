@@ -215,3 +215,30 @@ int sctrlRebootDevice() {
 	SendAdrenalineCmd(ADRENALINE_VITA_CMD_UPDATE);
 	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT);
 }
+
+unsigned int sctrlKernelRand(void) {
+    u32 k1 = pspSdkSetK1(0);
+
+    unsigned char * alloc = oe_malloc(20 + 4);
+
+    // Allocation Error
+    if(alloc == NULL) __asm__ volatile ("break");
+
+    // Align Buffer to 4 Bytes
+    unsigned char * buffer = (void *)(((unsigned int)alloc & (~(4-1))) + 4);
+
+    // KIRK Random Generator Opcode
+    enum {
+        KIRK_PRNG_CMD=0xE,
+    };
+
+    // Create 20 Random Bytes
+    sceUtilsBufferCopyWithRange(buffer, 20, NULL, 0, KIRK_PRNG_CMD);
+
+    unsigned int random = *(unsigned int *)buffer;
+
+    oe_free(alloc);
+    pspSdkSetK1(k1);
+
+    return random;
+}
