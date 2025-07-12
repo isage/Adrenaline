@@ -96,7 +96,7 @@ int sctrlSEGetConfig(AdrenalineConfig *config);
 int sctrlSEGetConfigEx(AdrenalineConfig *config, int size);
 
 /**
- * Sets the SE configuration
+ * Sets the SE configuration.
  * This function can corrupt the configuration in flash, use
  * sctrlSESetConfigEx instead.
  *
@@ -106,7 +106,7 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size);
 int sctrlSESetConfig(AdrenalineConfig *config);
 
 /**
- * Sets the SE configuration
+ * Sets the SE configuration.
  *
  * @param config - pointer to a AdrenalineConfig structure that has the SE configuration to set
  * @param size - the size of the structure
@@ -175,6 +175,15 @@ void sctrlSESetDiscType(int type);
 int sctrlSEGetDiscType(void);
 
 /**
+ * Sets the boot config file for next reboot
+ *
+ * @param index - The index identifying the file (0 -> normal bootconf, 1 -> inferno driver bootconf, 2 -> march33 driver bootconf, 3 -> np9660 bootcnf, 4 -> recovery bootconf)
+*/
+void sctrlSESetBootConfFileIndex(int index);
+
+#ifdef __KERNEL__
+
+/**
  * Gets the current umd file (kernel only)
 */
 char *sctrlSEGetUmdFile();
@@ -189,13 +198,28 @@ void sctrlSESetUmdFile(char *file);
 void SetUmdFile(char *file);
 
 /**
- * Sets the boot config file for next reboot (kernel only)
+ * Immediately sets the SE configuration in memory without saving to flash.
+ * This function can corrupt the configuration in memory, use
+ * sctrlSEApplyConfigEX instead.
  *
- * @param index - The index identifying the file (0 -> normal bootconf, 1 -> march33 driver bootconf, 2 -> np9660 bootcnf)
+ * @param config - pointer to a SEConfig structure that has the SE configuration to set
 */
-void sctrlSESetBootConfFileIndex(int index);
-
 void sctrlSEApplyConfig(AdrenalineConfig *conf);
+
+/**
+ * Immediately sets the SE configuration in memory without saving to flash.
+ *
+ * @param config - pointer to a SEConfig structure that has the SE configuration to set
+ * @returns 0 on success, and -1 on error
+*/
+int sctrlSEApplyConfigEX(AdrenalineConfig *conf, int size);
+
+/**
+ * Sets the speed for the cpu and bus.
+ *
+ * @param cpu - The cpu speed
+ * @param bus - The bus speed
+*/
 void SetSpeed(int cpu, int bus);
 
 /**
@@ -236,5 +260,7 @@ void *user_malloc(SceSize size);
  */
 void *user_memalign(SceSize align, SceSize size);
 int mallocinit();
+
+#endif // __KERNEL__
 
 #endif

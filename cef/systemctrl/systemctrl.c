@@ -133,10 +133,6 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC_UPDATER, file, param);
 }
 
-void sctrlSEApplyConfig(AdrenalineConfig *conf) {
-	memcpy(&config, conf, sizeof(AdrenalineConfig));
-}
-
 int sctrlKernelQuerySystemCall(void *function) {
 	int k1 = pspSdkSetK1(0);
 	int res = sceKernelQuerySystemCall661(function);
@@ -157,11 +153,14 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr) {
 	}
 }
 
-void SetUmdFile(char *file) {
+void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
+void sctrlSESetUmdFile(char *file) {
 	strncpy(rebootex_config.umdfilename, file, 255);
 }
 
-char *GetUmdFile() {
+
+char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
+char *sctrlSEGetUmdFile() {
 	return rebootex_config.umdfilename;
 }
 

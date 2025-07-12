@@ -21,7 +21,7 @@
 
 int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 	int k1 = pspSdkSetK1(0);
-	
+
 	memset(config, 0, size);
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
 	if (fd < 0) {
@@ -39,7 +39,7 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 
 int sctrlSESetConfigEx(AdrenalineConfig *config, int size) {
 	int k1 = pspSdkSetK1(0);
-		
+
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 	if (fd < 0) {
 		pspSdkSetK1(k1);
@@ -67,4 +67,16 @@ int sctrlSEGetConfig(AdrenalineConfig *config) {
 
 int sctrlSESetConfig(AdrenalineConfig *config) {
 	return sctrlSESetConfigEx(config, sizeof(AdrenalineConfig));
+}
+
+int sctrlSEApplyConfigEX(AdrenalineConfig *conf, int size) {
+	if (size == sizeof(AdrenalineConfig)){
+		memcpy(&config, conf, size);
+		return 0;
+	}
+	return -1;
+}
+
+void sctrlSEApplyConfig(AdrenalineConfig *conf) {
+	memcpy(&config, conf, sizeof(AdrenalineConfig));
 }

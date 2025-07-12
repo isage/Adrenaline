@@ -29,8 +29,6 @@ PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
 
 #define printf pspDebugScreenPrintf
 
-int sctrlRebootDevice();
-
 typedef struct {
 	char *path;
 	void *buf;

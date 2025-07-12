@@ -1,10 +1,12 @@
 #ifndef __SCTRLLIBRARY_H__
 #define __SCTRLLIBRARY_H__
 
+// COMMON
+
 #include <pspsdk.h>
-#include <pspkernel.h>
+#include <psptypes.h>
+#include <pspiofilemgr_kernel.h>
 #include <psploadexec_kernel.h>
-#include <pspinit.h>
 #include <psploadcore.h>
 
 enum BootModes
@@ -36,6 +38,8 @@ enum {
     PSP_9000 = 8,   // 09g
     PSP_11000 = 10, // 11g
 };
+
+typedef int (* STMOD_HANDLER)(SceModule2 *);
 
 /**
  * Restart the vsh.
@@ -126,31 +130,18 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param);
 
 /**
- * Sets the api type
+ * Obtain the syscall number of a given user-exported kernel function.
  *
- * @param apitype - The apitype to set
- * @returns the previous apitype
+ * @param func_addr: absolute address of kernel function.
  *
- * @Note - this will modify also the value of sceKernelBootFrom, since the value of
- * bootfrom is calculated from the apitype
-*/
-int sctrlKernelSetInitApitype(int apitype);
+ * @returns syscall number on success, <0 on error.
+ */
+int sctrlKernelQuerySystemCall(void *func_addr);
 
 /**
- * Sets the filename of the launched executable.
- *
- * @param filename - The filename to set
- * @returns 0 on success
-*/
-int sctrlKernelSetInitFileName(char *filename);
-
-/**
- * Sets the init key config
- *
- * @param key - The key code
- * @returns the previous key config
-*/
-int sctrlKernelSetInitKeyConfig(int key);
+ *  Calculate Random Number via KIRK
+ */
+unsigned int sctrlKernelRand(void);
 
 /**
  * Sets the user level of the current thread
@@ -160,44 +151,7 @@ int sctrlKernelSetInitKeyConfig(int key);
  */
 int sctrlKernelSetUserLevel(int level);
 
-/**
- * Sets the devkit version
- *
- * @param version - The devkit version to set
- * @return the previous devkit version
- *
-*/
-int sctrlKernelSetDevkitVersion(int version);
 
-/**
- *  Calculate Random Number via KIRK
- */
-unsigned int sctrlKernelRand(void);
-
-/**
- * Checks if we are in SE.
- *
- * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
- * and < 0 (a kernel error code) in any other case
-*/
-int	sctrlHENIsSE();
-
-/**
- * Checks if we are in Devhook.
- *
- * @returns 1 if we are in SE-C/HEN-D for devhook  or later, 0 if we are in normal SE-C/HEN-D or later,
- * and < 0 (a kernel error code) in any other case
-*/
-int	sctrlHENIsDevhook();
-
-/**
- * Gets the HEN version
- *
- * @returns - The HEN version
- *
- * HEN D / SE-C :  0x00000400
- */
-int sctrlHENGetVersion();
 
 /**
  * Finds a driver
@@ -220,10 +174,60 @@ PspIoDrv *sctrlHENFindDriver(char *drvname);
  *
 */
 u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
-
 #define FindProc sctrlHENFindFunction
 
-typedef int (* STMOD_HANDLER)(SceModule2 *);
+/**
+ * Gets the HEN version
+ *
+ * @returns - The HEN version
+ *
+ * HEN D / SE-C :  0x00000400
+ */
+int sctrlHENGetVersion();
+
+/**
+ * Checks if we are in Devhook.
+ *
+ * @returns 1 if we are in SE-C/HEN-D for devhook  or later, 0 if we are in normal SE-C/HEN-D or later,
+ * and < 0 (a kernel error code) in any other case
+*/
+int	sctrlHENIsDevhook();
+
+/**
+ * Checks if we are in SE.
+ *
+ * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
+ * and < 0 (a kernel error code) in any other case
+*/
+int	sctrlHENIsSE();
+
+/**
+ * Checks if the system already started.
+ *
+ * @returns 1 if system has started, 0 otherwise.
+*/
+int sctrlHENIsSystemBooted();
+
+/**
+ * Sets the partition 2 and 11 memory for next loadexec.
+ *
+ * @param p2 - The size in MB for the user partition. Must be > 0
+ * @param p11 - The size in MB for partition 8. Can be 0.
+ *
+ * @returns 0 on success, < 0 on error.
+ * The function will fail if p2+p8 > 52 or p2 == 0
+ * The function will fail with -1 if can't unlock (i.e. pops, vsh),
+ * -2 if already unlocked, -3 if too late to unlock.
+*/
+int sctrlHENSetMemory(u32 p2, u32 p11);
+
+/**
+ * Sets the speed for the cpu and bus.
+ *
+ * @param cpu - The cpu speed
+ * @param bus - The bus speed
+*/
+void sctrlHENSetSpeed(int cpu, int bus);
 
 /**
  * Sets a function to be called just before module_start of a module is gonna be called (useful for patching purposes)
@@ -266,38 +270,43 @@ typedef int (* STMOD_HANDLER)(SceModule2 *);
 */
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
 
-/**
- * Sets the speed for the cpu and bus.
- *
- * @param cpu - The cpu speed
- * @param bus - The bus speed
-*/
-void sctrlHENSetSpeed(int cpu, int bus);
 
-/**
- * Sets the partition 2 and 11 memory for next loadexec.
- *
- * @param p2 - The size in MB for the user partition. Must be > 0
- * @param p11 - The size in MB for partition 8. Can be 0.
- *
- * @returns 0 on success, < 0 on error.
- * The function will fail if p2+p8 > 52 or p2 == 0
- * The function will fail with -1 if can't unlock (i.e. pops, vsh),
- * -2 if already unlocked, -3 if too late to unlock.
-*/
-int sctrlHENSetMemory(u32 p2, u32 p11);
-
-/**
- * Checks if the system already started.
- *
- * @returns 1 if system has started, 0 otherwise.
-*/
-int sctrlHENIsSystemBooted();
 
 /**
  * Flush/Cleans Instruction and Data Caches
  */
 void sctrlFlushCache(void);
+
+
+int sctrlGetUsbState();
+int sctrlStartUsb();
+int sctrlStopUsb();
+
+#ifdef __UPDATER__
+int sctrlRebootDevice();
+#endif
+
+/**
+ * LZ4 decompress
+ */
+int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+
+/**
+ * LZO decompress
+ */
+int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
+
+
+// USER ONLY
+#ifdef __USER__
+
+#endif // __USER__
+
+// KERNEL ONLY
+#ifdef __KERNEL__
+
+#include <pspkernel.h>
+#include <pspinit.h>
 
 /**
  * Loads a module on next reboot. Only kernel mode.
@@ -320,7 +329,6 @@ void sctrlFlushCache(void);
  * sctrlHENLoadModuleOnReboot on module_start, a prx can cause itself to be resident in the modes choosen by flags.
  * If all flags are selected, the module will stay resident until a psp shutdown, or until sctrlHENLoadModuleOnReboot is not called.
 */
-
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags);
 
 /** Changes a syscall to another function
@@ -330,10 +338,17 @@ void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int fla
 */
 void sctrlHENPatchSyscall(u32 addr, void *newaddr);
 
-// LZ4 decompress
-int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+typedef int (* HEN_REG_HOMEBREW_LOADER_HANDLER)(const char *path, int flags, SceKernelLMOption *option);
+int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
 
-// LZO decompress
-int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
+void lowerString(char *orig, char *ret, int strSize);
+int strncasecmp(const char *s1, const char *s2, SceSize n);
+int strcasecmp(const char *s1, const char *s2);
+char *strncat(char *dest, const char *src, SceSize count);
+SceSize strncat_s(char *dest, SceSize numberOfElements, const char *src, SceSize count);
+SceSize strncpy_s(char *dest, SceSize numberOfElements, const char *src, SceSize count);
 
-#endif
+#endif // __KERNEL__
+
+
+#endif // __SCTRLLIBRARY_H__

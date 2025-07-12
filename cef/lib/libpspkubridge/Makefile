@@ -14,11 +14,7 @@ OBJS = \
 	KUBridge_0011.o \
 	KUBridge_0012.o \
 	KUBridge_0013.o \
-	# KUBridge_0014.o \
-	# KUBridge_0015.o \
-	# KUBridge_0016.o \
-	# KUBridge_0017.o \
-	# KUBridge_0018.o \
+	KUBridge_0014.o
 
 
 CC=psp-gcc
