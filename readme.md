@@ -217,14 +217,13 @@ offical settings, then apply the custom screen mode. On the other hand, if you w
 - python3
 
 ## Building
-- `cd cef && make && cd ..`
+- `make -C cef`
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`
 - `cmake --build build`
 - grab VKP from `build/bubble/`
 
 ## Building updater
 - Build adrenaline (sse above)
-- `cmake --build build --target updater`
 - (optionally) modify `cef/updater/psp-updatelist.template`
-- `cd cef/updater && make`
-- resulting files are `EBOOT.PBP` and `psp-updatelist.txt`
+- `cmake --build build --target updater`
+- resulting files are `EBOOT.PBP` and `psp-updatelist.txt` at `build/updater`
