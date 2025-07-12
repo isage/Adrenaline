@@ -19,7 +19,7 @@ BUILD_PRX = 1
 
 #LIBDIR = ../lib
 LIBS = ../lib/libpspsystemctrl_user.a
-EXTRA_TARGETS = version psp-updatelist.txt
+EXTRA_TARGETS = version psp-updatelist.txt adrenaline_kernel.h adrenaline_user.h adrenaline_vsh.h frame_xml.h template_xml.h
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
