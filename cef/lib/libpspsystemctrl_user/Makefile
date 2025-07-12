@@ -36,7 +36,8 @@ OBJS = \
 	SystemCtrlForUser_0033.o \
 	SystemCtrlForUser_0034.o \
 	SystemCtrlForUser_0035.o \
-	SystemCtrlForUser_0036.o
+	SystemCtrlForUser_0036.o \
+	SystemCtrlForUser_0037.o
 
 
 %.o: SystemCtrlForUser.S

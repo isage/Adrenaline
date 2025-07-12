@@ -177,6 +177,23 @@ u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
 #define FindProc sctrlHENFindFunction
 
 /**
+ * Replace import function stub with a function or dummy value.
+ *
+ * @param mod - The module where to search the function
+ * @param library - The library name
+ * @param nid - The nid of the function
+ * @param func - The function to replace the stub. If NULL, use dummy value
+ * @param dummy - The dummy value to replace the stub
+ *
+ * @returns 0 if successful,
+ * -1 if `mod` or `library` are NULL,
+ * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
+ * -3 if failed to find import by NID after successful resolve to older firmware version
+ *
+*/
+int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func, int dummy);
+
+/**
  * Gets the HEN version
  *
  * @returns - The HEN version
