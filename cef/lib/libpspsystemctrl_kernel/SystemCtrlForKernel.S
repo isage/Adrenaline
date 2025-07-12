@@ -132,16 +132,16 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0x5A35C948,sctrlSESetUmdFile
 #endif
 #ifdef F_SystemCtrlForKernel_0042
-	IMPORT_FUNC  "SystemCtrlForKernel",0x16100529,LZ4_decompress_fast
-#endif
-#ifdef F_SystemCtrlForKernel_0043
-	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
-#endif
-#ifdef F_SystemCtrlForKernel_0044
 	IMPORT_FUNC  "SystemCtrlForKernel",0x17691875,sctrlFlushCache
 #endif
-#ifdef F_SystemCtrlForKernel_0045
+#ifdef F_SystemCtrlForKernel_0043
 	IMPORT_FUNC  "SystemCtrlForKernel",0x05D8E209,sctrlGetUsbState
+#endif
+#ifdef F_SystemCtrlForKernel_0044
+	IMPORT_FUNC  "SystemCtrlForKernel",0xFE84B359,sctrlLZ4Decompress
+#endif
+#ifdef F_SystemCtrlForKernel_0045
+	IMPORT_FUNC  "SystemCtrlForKernel",0xCF03305A,sctrlLzoDecompress
 #endif
 #ifdef F_SystemCtrlForKernel_0046
 	IMPORT_FUNC  "SystemCtrlForKernel",0x053172F8,sctrlRebootDevice

@@ -32,7 +32,6 @@
 #include "inferno.h"
 #include "lz4.h"
 
-int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
 
 #define CSO_MAGIC 0x4F534943 // CISO
 #define ZSO_MAGIC 0x4F53495A // ZISO
@@ -375,7 +374,7 @@ static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 
 static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // while JISO allows for DAX-like NCarea, it by default uses compressed size check
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
-    else lzo1x_decompress(src, src_len, dst, &dst_len, 0); // use lzo
+	else sctrlLzoDecompress(dst, &dst_len, src, src_len); // use lzo
 }
 
 // Decompress CISO v1
@@ -387,14 +386,14 @@ static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 
 // Decompress ZISO
 static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     if (topbit) memcpy(dst, src, dst_len); // check for NC area
-    else LZ4_decompress_fast(src, dst, dst_len);
+    else sctrlLZ4Decompress(dst, src, dst_len);
 }
 
 // Decompress CISO v2
 static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 topbit){
     // in CSOv2, top bit represents compression method instead of NCarea
     if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area (JSO-like, but considering padding, thus >=)
-    else if (topbit) LZ4_decompress_fast(src, dst, dst_len);
+    else if (topbit) sctrlLZ4Decompress(dst, src, dst_len);
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 

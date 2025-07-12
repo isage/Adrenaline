@@ -304,18 +304,48 @@ int sctrlRebootDevice();
 #endif
 
 /**
- * LZ4 decompress
+ * LZ4 decompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param src source buffer with the compressed data
+ * @param size size of the decompressed data
  */
-int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+int sctrlLZ4Decompress(void* dest, const void* src, int size);
 
 /**
- * LZO decompress
+ * LZO decompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param dst_size return size of the decompressed data
+ * @param src source buffer with the compressed data
+ * @param src_size size of the compressed data
  */
-int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
+int sctrlLzoDecompress(void* dest, unsigned* dst_size, void* src, unsigned src_size);
 
 
 // USER ONLY
 #ifdef __USER__
+
+/**
+ * Wrapper for sceKernelDeflateDecompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param src source buffer with the compressed data
+ * @param size size of the decompressed data
+ *
+ */
+int sctrlDeflateDecompress(void* dest, void* src, int size);
+
+/**
+ * GZIP decompress.
+ * Wrapper for sceKernelGzipDecompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param src source buffer with the compressed data
+ * @param size size of the decompressed data
+ *
+ */
+int sctrlGzipDecompress(void* dest, void* src, int size);
 
 #endif // __USER__
 

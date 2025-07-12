@@ -105,17 +105,23 @@
 	IMPORT_FUNC  "SystemCtrlForUser",0x5CB025F0,sctrlSESetBootConfFileIndex
 #endif
 #ifdef F_SystemCtrlForUser_0033
-	IMPORT_FUNC  "SystemCtrlForUser",0x16100529,LZ4_decompress_fast
-#endif
-#ifdef F_SystemCtrlForUser_0034
-	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
-#endif
-#ifdef F_SystemCtrlForUser_0035
 	IMPORT_FUNC  "SystemCtrlForUser",0x17691875,sctrlFlushCache
 #endif
-#ifdef F_SystemCtrlForUser_0036
+#ifdef F_SystemCtrlForUser_0034
 	IMPORT_FUNC  "SystemCtrlForUser",0x05D8E209,sctrlGetUsbState
+#endif
+#ifdef F_SystemCtrlForUser_0035
+	IMPORT_FUNC  "SystemCtrlForUser",0xFE84B359,sctrlLZ4Decompress
+#endif
+#ifdef F_SystemCtrlForUser_0036
+	IMPORT_FUNC  "SystemCtrlForUser",0xCF03305A,sctrlLzoDecompress
 #endif
 #ifdef F_SystemCtrlForUser_0037
 	IMPORT_FUNC  "SystemCtrlForUser",0x053172F8,sctrlRebootDevice
+#endif
+#ifdef F_SystemCtrlForUser_0038
+	IMPORT_FUNC  "SystemCtrlForUser",0xF462EE55,sctrlDeflateDecompress
+#endif
+#ifdef F_SystemCtrlForUser_0039
+	IMPORT_FUNC  "SystemCtrlForUser",0x5D665044,sctrlGzipDecompress
 #endif
