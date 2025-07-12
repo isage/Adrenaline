@@ -2,7 +2,7 @@ TARGET = inferno
 OBJS = main.o iodrv_funcs.o umd.o isoread.o isocache.o imports.o utils.o exports.o
 
 INCDIR = ../include
-CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
+CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 

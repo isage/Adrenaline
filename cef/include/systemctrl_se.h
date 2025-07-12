@@ -175,6 +175,15 @@ void sctrlSESetDiscType(int type);
 int sctrlSEGetDiscType(void);
 
 /**
+ * Sets the boot config file for next reboot
+ *
+ * @param index - The index identifying the file (0 -> normal bootconf, 1 -> inferno driver bootconf, 2 -> march33 driver bootconf, 3 -> np9660 bootcnf, 4 -> recovery bootconf)
+*/
+void sctrlSESetBootConfFileIndex(int index);
+
+#ifdef __KERNEL__
+
+/**
  * Gets the current umd file (kernel only)
 */
 char *sctrlSEGetUmdFile();
@@ -189,13 +198,19 @@ void sctrlSESetUmdFile(char *file);
 void SetUmdFile(char *file);
 
 /**
- * Sets the boot config file for next reboot (kernel only)
+ * Sets the SE configuration.
  *
- * @param index - The index identifying the file (0 -> normal bootconf, 1 -> march33 driver bootconf, 2 -> np9660 bootcnf)
+ * @param config - pointer to a SEConfig structure that has the SE configuration to set
+ * @returns 0 on success
 */
-void sctrlSESetBootConfFileIndex(int index);
-
 void sctrlSEApplyConfig(AdrenalineConfig *conf);
+
+/**
+ * Sets the speed for the cpu and bus.
+ *
+ * @param cpu - The cpu speed
+ * @param bus - The bus speed
+*/
 void SetSpeed(int cpu, int bus);
 
 /**
@@ -236,5 +251,7 @@ void *user_malloc(SceSize size);
  */
 void *user_memalign(SceSize align, SceSize size);
 int mallocinit();
+
+#endif // __KERNEL__
 
 #endif
