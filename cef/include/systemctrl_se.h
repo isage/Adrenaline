@@ -96,7 +96,7 @@ int sctrlSEGetConfig(AdrenalineConfig *config);
 int sctrlSEGetConfigEx(AdrenalineConfig *config, int size);
 
 /**
- * Sets the SE configuration
+ * Sets the SE configuration.
  * This function can corrupt the configuration in flash, use
  * sctrlSESetConfigEx instead.
  *
@@ -106,7 +106,7 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size);
 int sctrlSESetConfig(AdrenalineConfig *config);
 
 /**
- * Sets the SE configuration
+ * Sets the SE configuration.
  *
  * @param config - pointer to a AdrenalineConfig structure that has the SE configuration to set
  * @param size - the size of the structure
@@ -198,12 +198,21 @@ void sctrlSESetUmdFile(char *file);
 void SetUmdFile(char *file);
 
 /**
- * Sets the SE configuration.
+ * Immediately sets the SE configuration in memory without saving to flash.
+ * This function can corrupt the configuration in memory, use
+ * sctrlSEApplyConfigEX instead.
  *
  * @param config - pointer to a SEConfig structure that has the SE configuration to set
- * @returns 0 on success
 */
 void sctrlSEApplyConfig(AdrenalineConfig *conf);
+
+/**
+ * Immediately sets the SE configuration in memory without saving to flash.
+ *
+ * @param config - pointer to a SEConfig structure that has the SE configuration to set
+ * @returns 0 on success, and -1 on error
+*/
+int sctrlSEApplyConfigEX(AdrenalineConfig *conf, int size);
 
 /**
  * Sets the speed for the cpu and bus.

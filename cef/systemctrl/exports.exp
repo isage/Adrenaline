@@ -161,6 +161,9 @@ PSP_EXPORT_FUNC_NID(sctrlSESetBootConfFileIndex, 0x5CB025F0)
 PSP_EXPORT_FUNC(GetUmdFile)
 PSP_EXPORT_FUNC(SetUmdFile)
 PSP_EXPORT_FUNC(sctrlSEApplyConfig)
+PSP_EXPORT_FUNC(sctrlSEApplyConfigEX)
+PSP_EXPORT_FUNC(sctrlSEGetUmdFile)
+PSP_EXPORT_FUNC(sctrlSESetUmdFile)
 
 # sctrl - COMMON
 PSP_EXPORT_FUNC(LZ4_decompress_fast)

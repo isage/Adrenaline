@@ -120,62 +120,71 @@
 	IMPORT_FUNC  "SystemCtrlForKernel",0xFFE1D172,sctrlSEApplyConfig
 #endif
 #ifdef F_SystemCtrlForKernel_0038
-	IMPORT_FUNC  "SystemCtrlForKernel",0x16100529,LZ4_decompress_fast
+	IMPORT_FUNC  "SystemCtrlForKernel",0x373D2D2E,sctrlSEApplyConfigEX
 #endif
 #ifdef F_SystemCtrlForKernel_0039
-	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
+	IMPORT_FUNC  "SystemCtrlForKernel",0xBA21998E,sctrlSEGetUmdFile
 #endif
 #ifdef F_SystemCtrlForKernel_0040
-	IMPORT_FUNC  "SystemCtrlForKernel",0x17691875,sctrlFlushCache
+	IMPORT_FUNC  "SystemCtrlForKernel",0x5A35C948,sctrlSESetUmdFile
 #endif
 #ifdef F_SystemCtrlForKernel_0041
-	IMPORT_FUNC  "SystemCtrlForKernel",0x05D8E209,sctrlGetUsbState
+	IMPORT_FUNC  "SystemCtrlForKernel",0x16100529,LZ4_decompress_fast
 #endif
 #ifdef F_SystemCtrlForKernel_0042
-	IMPORT_FUNC  "SystemCtrlForKernel",0x053172F8,sctrlRebootDevice
+	IMPORT_FUNC  "SystemCtrlForKernel",0x76C382FF,lzo1x_decompress
 #endif
 #ifdef F_SystemCtrlForKernel_0043
-	IMPORT_FUNC  "SystemCtrlForKernel",0x80C0ED7B,sctrlStartUsb
+	IMPORT_FUNC  "SystemCtrlForKernel",0x17691875,sctrlFlushCache
 #endif
 #ifdef F_SystemCtrlForKernel_0044
-	IMPORT_FUNC  "SystemCtrlForKernel",0x5FC12767,sctrlStopUsb
+	IMPORT_FUNC  "SystemCtrlForKernel",0x05D8E209,sctrlGetUsbState
 #endif
 #ifdef F_SystemCtrlForKernel_0045
-	IMPORT_FUNC  "SystemCtrlForKernel",0xB86E36D1,ApplyMemory
+	IMPORT_FUNC  "SystemCtrlForKernel",0x053172F8,sctrlRebootDevice
 #endif
 #ifdef F_SystemCtrlForKernel_0046
-	IMPORT_FUNC  "SystemCtrlForKernel",0x98012538,SetSpeed
+	IMPORT_FUNC  "SystemCtrlForKernel",0x80C0ED7B,sctrlStartUsb
 #endif
 #ifdef F_SystemCtrlForKernel_0047
-	IMPORT_FUNC  "SystemCtrlForKernel",0x983B00FB,lowerString
+	IMPORT_FUNC  "SystemCtrlForKernel",0x5FC12767,sctrlStopUsb
 #endif
 #ifdef F_SystemCtrlForKernel_0048
-	IMPORT_FUNC  "SystemCtrlForKernel",0xA65E8BC4,oe_free
+	IMPORT_FUNC  "SystemCtrlForKernel",0xB86E36D1,ApplyMemory
 #endif
 #ifdef F_SystemCtrlForKernel_0049
-	IMPORT_FUNC  "SystemCtrlForKernel",0xF9584CAD,oe_malloc
+	IMPORT_FUNC  "SystemCtrlForKernel",0x98012538,SetSpeed
 #endif
 #ifdef F_SystemCtrlForKernel_0050
-	IMPORT_FUNC  "SystemCtrlForKernel",0x3EB35691,strcasecmp
+	IMPORT_FUNC  "SystemCtrlForKernel",0x983B00FB,lowerString
 #endif
 #ifdef F_SystemCtrlForKernel_0051
-	IMPORT_FUNC  "SystemCtrlForKernel",0x7BA27B01,strncasecmp
+	IMPORT_FUNC  "SystemCtrlForKernel",0xA65E8BC4,oe_free
 #endif
 #ifdef F_SystemCtrlForKernel_0052
-	IMPORT_FUNC  "SystemCtrlForKernel",0xD3D1A3B9,strncat
+	IMPORT_FUNC  "SystemCtrlForKernel",0xF9584CAD,oe_malloc
 #endif
 #ifdef F_SystemCtrlForKernel_0053
-	IMPORT_FUNC  "SystemCtrlForKernel",0xEFB593C9,strncat_s
+	IMPORT_FUNC  "SystemCtrlForKernel",0x3EB35691,strcasecmp
 #endif
 #ifdef F_SystemCtrlForKernel_0054
-	IMPORT_FUNC  "SystemCtrlForKernel",0x5ABF13F5,strncpy_s
+	IMPORT_FUNC  "SystemCtrlForKernel",0x7BA27B01,strncasecmp
 #endif
 #ifdef F_SystemCtrlForKernel_0055
-	IMPORT_FUNC  "SystemCtrlForKernel",0x12BC667F,user_free
+	IMPORT_FUNC  "SystemCtrlForKernel",0xD3D1A3B9,strncat
 #endif
 #ifdef F_SystemCtrlForKernel_0056
-	IMPORT_FUNC  "SystemCtrlForKernel",0x4C0FE24C,user_malloc
+	IMPORT_FUNC  "SystemCtrlForKernel",0xEFB593C9,strncat_s
 #endif
 #ifdef F_SystemCtrlForKernel_0057
+	IMPORT_FUNC  "SystemCtrlForKernel",0x5ABF13F5,strncpy_s
+#endif
+#ifdef F_SystemCtrlForKernel_0058
+	IMPORT_FUNC  "SystemCtrlForKernel",0x12BC667F,user_free
+#endif
+#ifdef F_SystemCtrlForKernel_0059
+	IMPORT_FUNC  "SystemCtrlForKernel",0x4C0FE24C,user_malloc
+#endif
+#ifdef F_SystemCtrlForKernel_0060
 	IMPORT_FUNC  "SystemCtrlForKernel",0xB19C939A,user_memalign
 #endif
