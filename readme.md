@@ -214,7 +214,7 @@ offical settings, then apply the custom screen mode. On the other hand, if you w
 - [vitasdk](https://vitasdk.org/)
 - [vita2dlib-fbo](https://github.com/frangarcj/vita2dlib/tree/fbo)
 - [vita-shader-collection](https://github.com/frangarcj/vita-shader-collection)
-- python3
+- [python3](https://www.python.org/downloads/)
 
 ## Building
 - `make -C cef`
