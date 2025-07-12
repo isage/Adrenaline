@@ -41,7 +41,9 @@ OBJS = \
 	SysclibForUser_0038.o \
 	SysclibForUser_0039.o \
 	SysclibForUser_0040.o \
-	SysclibForUser_0041.o
+	SysclibForUser_0041.o \
+	SysclibForUser_0042.o \
+	SysclibForUser_0043.o
 
 
 CC=psp-gcc
