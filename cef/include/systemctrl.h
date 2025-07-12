@@ -179,6 +179,9 @@ u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
 /**
  * Replace import function stub with a function or dummy value.
  *
+ * This function autodetects whether Syscalls are used or not, but manually
+ * exporting in exports.exp is still required for Syscalls to work.
+ *
  * @param mod - The module where to search the function
  * @param library - The library name
  * @param nid - The nid of the function
