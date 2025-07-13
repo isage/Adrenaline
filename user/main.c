@@ -57,8 +57,6 @@
 
 INCLUDE_EXTERN_RESOURCE(payloadex_bin);
 
-int _newlib_heap_size_user = 8 * 1024 * 1024;
-
 int (* ScePspemuDivide)(uint64_t x, uint64_t y);
 int (* ScePspemuErrorExit)(int error);
 int (* ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
@@ -574,9 +572,6 @@ int module_start(SceSize args, void *argp) {
     );
     sceSysmoduleUnloadModule(SCE_SYSMODULE_LIVEAREA);
   }
-  // Init vita newlib
-
-  _init_vita_newlib();
 
   // Read config
   memset(&config, 0, sizeof(AdrenalineConfig));

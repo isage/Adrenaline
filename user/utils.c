@@ -40,31 +40,6 @@ Pad hold_count, hold2_count;
 
 int SCE_CTRL_ENTER = SCE_CTRL_CROSS, SCE_CTRL_CANCEL = SCE_CTRL_CIRCLE;
 
-void _init_vita_heap(void);
-void _init_vita_reent(void);
-void _init_vita_malloc(void);
-void _init_vita_io(void);
-
-void _free_vita_heap(void);
-void _free_vita_reent(void);
-void _free_vita_malloc(void);
-void _free_vita_io(void);
-
-void _init_vita_newlib(void) {
-  _init_vita_heap();
-  _init_vita_reent();
-  _init_vita_malloc();
-  _init_vita_io();
-}
-
-void _free_vita_newlib(void)
-{
-  _free_vita_io();
-  _free_vita_malloc();
-  _free_vita_reent();
-  _free_vita_heap();
-}
-
 int debugPrintf(char *text, ...) {
   va_list list;
   char string[512];
@@ -259,16 +234,14 @@ int doubleClick(uint32_t buttons, uint64_t max_time) {
 }
 
 void getSizeString(char string[16], uint64_t size) {
-  double double_size = (double)size;
-
   int i = 0;
   static char *units[] = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
-  while (double_size >= 1024.0) {
-    double_size /= 1024.0;
+  while (size > 1024) {
+    size >>= 10;
     i++;
   }
 
-  snprintf(string, 16, "%.*f %s", (i == 0) ? 0 : 2, double_size, units[i]);
+  snprintf(string, 16, "%.*lld %s", (i == 0) ? 0 : 2, size, units[i]);
 }
 
 void convertUtcToLocalTime(SceDateTime *time_local, SceDateTime *time_utc) {
