@@ -388,10 +388,8 @@ static char log_memory_log[1024*4] __attribute__((aligned(64)));
 static char *log_memory_log_ptr = log_memory_log;
 
 static void flushLogMemoryLog(int fd, int kout) {
-	int ret;
-
 	sceIoWrite(fd, log_memory_log, log_memory_log_ptr - log_memory_log);
-	ret = sceIoWrite(kout, log_memory_log, log_memory_log_ptr - log_memory_log);
+	int ret = sceIoWrite(kout, log_memory_log, log_memory_log_ptr - log_memory_log);
 
 	if (ret >= 0) {
 		memset(log_memory_log, 0, sizeof(log_memory_log));
@@ -407,25 +405,21 @@ static void appendToMemoryLog(int printed_len) {
 }
 
 static int logOpenOutput(void) {
-	int fd;
-
 	if (log_output_fn == NULL) {
 		strcpy(default_path, "ms0:/");
 		strcat(default_path, "LOG.TXT");
 		log_output_fn = default_path;
 	}
 
-	fd = sceIoOpen(log_output_fn, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
+	int fd = sceIoOpen(log_output_fn, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_APPEND, 0777);
 
 	return fd;
 }
 
 static void logOutput(int printed_len) {
-	int fd, kout;
-
-	kout = sceKernelStdout();
+	int kout = sceKernelStdout();
 	sceIoWrite(kout, log_buf, printed_len);
-	fd = logOpenOutput();
+	int fd = logOpenOutput();
 
 	if (fd >= 0) {
 		if (log_memory_log_ptr > log_memory_log) {
@@ -474,16 +468,14 @@ int isCpuIntrEnabled(void) {
 
 int _logCached(char *fmt, ...) {
 	va_list args;
-	int printed_len;
-	u32 k1;
 
 	if ( 0 )
 		return 0;
 
-	k1 = pspSdkSetK1(0);
+	u32 k1 = pspSdkSetK1(0);
 
 	va_start(args, fmt);
-	printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+	int printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
 	va_end(args);
 	printed_len--;
 	appendToMemoryLog(printed_len);
@@ -496,9 +488,8 @@ int _logCached(char *fmt, ...) {
 int _logmsg(char *fmt, ...) {
 	va_list args;
 	int printed_len;
-	u32 k1;
 
-	k1 = pspSdkSetK1(0);
+	u32 k1 = pspSdkSetK1(0);
 
 	if (0 == isCpuIntrEnabled()) {
 		// interrupt disabled, let's do the work quickly before the watchdog bites
@@ -590,10 +581,8 @@ int _logInit(const char *output) {
 }
 
 int _logSync(void) {
-	int fd, kout;
-
-	kout = sceKernelStdout();
-	fd = logOpenOutput();
+	int kout = sceKernelStdout();
+	int fd = logOpenOutput();
 
 	if (fd >= 0) {
 		if (log_memory_log_ptr > log_memory_log) {
