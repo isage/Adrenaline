@@ -53,6 +53,7 @@ PSP_EXPORT_START(SystemCtrlForUser, 0, 0x4001)
 PSP_EXPORT_FUNC(sctrlHENFindDriver)
 PSP_EXPORT_FUNC(sctrlHENFindFunction)
 PSP_EXPORT_FUNC(sctrlHENGetVersion)
+PSP_EXPORT_FUNC(sctrlHENHookImportByNID)
 PSP_EXPORT_FUNC(sctrlHENIsDevhook)
 PSP_EXPORT_FUNC(sctrlHENIsSE)
 PSP_EXPORT_FUNC(sctrlHENIsSystemBooted)
@@ -94,11 +95,15 @@ PSP_EXPORT_FUNC_NID(sctrlSESetBootConfFileIndex, 0x5CB025F0)
 #PSP_EXPORT_FUNC(sctrlSEUmountUmd)
 
 # sctrl - other
-PSP_EXPORT_FUNC(LZ4_decompress_fast)
-PSP_EXPORT_FUNC(lzo1x_decompress)
 PSP_EXPORT_FUNC(sctrlFlushCache)
 PSP_EXPORT_FUNC(sctrlGetUsbState)
+PSP_EXPORT_FUNC(sctrlLZ4Decompress)
+PSP_EXPORT_FUNC(sctrlLzoDecompress)
 PSP_EXPORT_FUNC(sctrlRebootDevice)
+
+# sctrl - other USER EXCLUSIVE
+PSP_EXPORT_FUNC(sctrlDeflateDecompress)
+PSP_EXPORT_FUNC(sctrlGzipDecompress)
 
 PSP_EXPORT_END
 # END SystemCtrlForUser
@@ -108,12 +113,14 @@ PSP_EXPORT_START(SystemCtrlForKernel, 0, 0x0001)
 PSP_EXPORT_FUNC(sctrlHENFindDriver)
 PSP_EXPORT_FUNC(sctrlHENFindFunction)
 PSP_EXPORT_FUNC(sctrlHENGetVersion)
+PSP_EXPORT_FUNC(sctrlHENHookImportByNID)
 PSP_EXPORT_FUNC(sctrlHENIsDevhook)
 PSP_EXPORT_FUNC(sctrlHENIsSE)
 PSP_EXPORT_FUNC(sctrlHENIsSystemBooted)
 PSP_EXPORT_FUNC(sctrlHENSetMemory)
 PSP_EXPORT_FUNC(sctrlHENSetSpeed)
 PSP_EXPORT_FUNC(sctrlHENSetStartModuleHandler)
+
 # sctrlHEN - KERNEL PRIVATE
 PSP_EXPORT_FUNC(sctrlHENLoadModuleOnReboot)
 PSP_EXPORT_FUNC(sctrlHENPatchSyscall)
@@ -166,10 +173,10 @@ PSP_EXPORT_FUNC(sctrlSEGetUmdFile)
 PSP_EXPORT_FUNC(sctrlSESetUmdFile)
 
 # sctrl - COMMON
-PSP_EXPORT_FUNC(LZ4_decompress_fast)
-PSP_EXPORT_FUNC(lzo1x_decompress)
 PSP_EXPORT_FUNC(sctrlFlushCache)
 PSP_EXPORT_FUNC(sctrlGetUsbState)
+PSP_EXPORT_FUNC(sctrlLZ4Decompress)
+PSP_EXPORT_FUNC(sctrlLzoDecompress)
 PSP_EXPORT_FUNC(sctrlRebootDevice)
 PSP_EXPORT_FUNC(sctrlStartUsb)
 PSP_EXPORT_FUNC(sctrlStopUsb)

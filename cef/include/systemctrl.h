@@ -141,7 +141,7 @@ int sctrlKernelQuerySystemCall(void *func_addr);
 /**
  *  Calculate Random Number via KIRK
  */
-unsigned int sctrlKernelRand(void);
+u32 sctrlKernelRand(void);
 
 /**
  * Sets the user level of the current thread
@@ -175,6 +175,26 @@ PspIoDrv *sctrlHENFindDriver(char *drvname);
 */
 u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
 #define FindProc sctrlHENFindFunction
+
+/**
+ * Replace import function stub with a function or dummy value.
+ *
+ * This function autodetects whether Syscalls are used or not, but manually
+ * exporting in exports.exp is still required for Syscalls to work.
+ *
+ * @param mod - The module where to search the function
+ * @param library - The library name
+ * @param nid - The nid of the function
+ * @param func - The function to replace the stub. If NULL, use dummy value
+ * @param dummy - The dummy value to replace the stub
+ *
+ * @returns 0 if successful,
+ * -1 if `mod` or `library` are NULL,
+ * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
+ * -3 if failed to find import by NID after successful resolve to older firmware version
+ *
+*/
+int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func, int dummy);
 
 /**
  * Gets the HEN version
@@ -287,18 +307,48 @@ int sctrlRebootDevice();
 #endif
 
 /**
- * LZ4 decompress
+ * LZ4 decompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param src source buffer with the compressed data
+ * @param size size of the decompressed data
  */
-int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+int sctrlLZ4Decompress(void* dest, const void* src, int size);
 
 /**
- * LZO decompress
+ * LZO decompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param dst_size return size of the decompressed data
+ * @param src source buffer with the compressed data
+ * @param src_size size of the compressed data
  */
-int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
+int sctrlLzoDecompress(void* dest, unsigned* dst_size, void* src, unsigned src_size);
 
 
 // USER ONLY
 #ifdef __USER__
+
+/**
+ * Wrapper for sceKernelDeflateDecompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param src source buffer with the compressed data
+ * @param size size of the decompressed data
+ *
+ */
+int sctrlDeflateDecompress(void* dest, void* src, int size);
+
+/**
+ * GZIP decompress.
+ * Wrapper for sceKernelGzipDecompress.
+ *
+ * @param dest out buffer where the decompressed data will be
+ * @param src source buffer with the compressed data
+ * @param size size of the decompressed data
+ *
+ */
+int sctrlGzipDecompress(void* dest, void* src, int size);
 
 #endif // __USER__
 

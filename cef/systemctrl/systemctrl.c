@@ -21,6 +21,10 @@
 #include "main.h"
 #include "adrenaline.h"
 
+int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
+int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+
+
 int sctrlKernelSetUserLevel(int level) {
 	int k1 = pspSdkSetK1(0);
 	int res = sceKernelGetUserLevel();
@@ -182,11 +186,11 @@ void sctrlSESetBootConfFileIndex(int index) {
 }
 
 void sctrlSESetDiscType(int type) {
-    rebootex_config.iso_disc_type = type;
+	rebootex_config.iso_disc_type = type;
 }
 
 int sctrlSEGetDiscType(void) {
-    return rebootex_config.iso_disc_type;
+	return rebootex_config.iso_disc_type;
 }
 
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags) {
@@ -215,29 +219,52 @@ int sctrlRebootDevice() {
 	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT);
 }
 
-unsigned int sctrlKernelRand(void) {
+u32 sctrlKernelRand(void) {
+	u32 k1 = pspSdkSetK1(0);
+
+	unsigned char * alloc = oe_malloc(20 + 4);
+
+	// Allocation Error
+	if(alloc == NULL) __asm__ volatile ("break");
+
+	// Align Buffer to 4 Bytes
+	unsigned char * buffer = (void *)(((u32)alloc & (~(4-1))) + 4);
+
+	// KIRK Random Generator Opcode
+	enum {
+		KIRK_PRNG_CMD=0xE,
+	};
+
+	// Create 20 Random Bytes
+	sceUtilsBufferCopyWithRange(buffer, 20, NULL, 0, KIRK_PRNG_CMD);
+
+	u32 random = *(u32 *)buffer;
+
+	oe_free(alloc);
+	pspSdkSetK1(k1);
+
+	return random;
+}
+
+
+int sctrlDeflateDecompress(void* dest, void* src, int size){
     u32 k1 = pspSdkSetK1(0);
-
-    unsigned char * alloc = oe_malloc(20 + 4);
-
-    // Allocation Error
-    if(alloc == NULL) __asm__ volatile ("break");
-
-    // Align Buffer to 4 Bytes
-    unsigned char * buffer = (void *)(((unsigned int)alloc & (~(4-1))) + 4);
-
-    // KIRK Random Generator Opcode
-    enum {
-        KIRK_PRNG_CMD=0xE,
-    };
-
-    // Create 20 Random Bytes
-    sceUtilsBufferCopyWithRange(buffer, 20, NULL, 0, KIRK_PRNG_CMD);
-
-    unsigned int random = *(unsigned int *)buffer;
-
-    oe_free(alloc);
+    int ret = sceKernelDeflateDecompress(dest, size, src, 0);
     pspSdkSetK1(k1);
+    return ret;
+}
 
-    return random;
+int sctrlGzipDecompress(void* dest, void* src, int size){
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceKernelGzipDecompress(dest, size, src, 0);
+	pspSdkSetK1(k1);
+	return ret;
+}
+
+int sctrlLZ4Decompress(void* dest, const void* src, int size) {
+	return LZ4_decompress_fast(src, dest, size);
+}
+
+int sctrlLzoDecompress(void* dest, unsigned* dst_size, void* src, unsigned src_size) {
+	return lzo1x_decompress(src, src_size, dest, dst_size, 0);
 }

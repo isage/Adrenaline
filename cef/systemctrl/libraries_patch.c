@@ -202,6 +202,86 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 	return res;
 }
 
+static u32 sctrlHENFindImportByNID(SceModule2 * mod, const char *szLib, u32 nid) {
+	int i = 0;
+	while (i < mod->stub_size) {
+		SceLibraryStubTable *stub = (SceLibraryStubTable *)(mod->stub_top + i);
+
+		if (stub->libname && strcmp(stub->libname, szLib) == 0) {
+			u32 *table = (u32 *)stub->nidtable;
+
+			int j;
+			for (j = 0; j < stub->stubcount; j++) {
+				if (table[j] == nid) {
+					return ((u32)stub->stubtable + (j * 8));
+				}
+			}
+		}
+
+		i += (stub->len * 4);
+	}
+
+	return 0;
+}
+
+// Replace Import Function Stub
+int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *func, int dummy) {
+	// Invalid Arguments
+	if(pMod == NULL || library == NULL) return -1;
+
+	u32 stub = sctrlHENFindImportByNID(pMod, library, nid);
+
+	if (stub == 0) {
+
+		u32 old_nid = ResolveOldNIDs(library, nid);
+
+		// resolver fail
+		if (old_nid == 0) {
+			return -2;
+		}
+
+		stub = sctrlHENFindImportByNID(pMod, library, old_nid);
+
+		// Stub not found again...
+		if (stub == 0) {
+			return -3;
+		}
+	}
+
+	// Function as 16-Bit Unsigned Integer
+	unsigned int func_int = (unsigned int)func;
+
+	// Dummy Return
+	if (func == NULL) {
+		// Create Dummy Return
+		MAKE_DUMMY_FUNCTION_RETURN(stub, dummy);
+	} else if (func_int <= 0xFFFF) {
+		// Create Dummy Return
+		MAKE_DUMMY_FUNCTION_RETURN(stub, func_int);
+	} else { // Normal Hook
+		// Syscall Hook
+		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
+			// Query Syscall Number
+			int syscall = sceKernelQuerySystemCall661(func);
+
+			// Not properly exported in exports.exp
+			if(syscall < 0) return -3;
+
+			// Create Syscall Hook
+			MAKE_SYSCALL_FUNCTION(stub, syscall);
+		} else {
+			// Create Direct Jump Hook
+			MAKE_JUMP_NOP(stub, func);
+		}
+	}
+
+	// Invalidate Cache
+	sceKernelDcacheWritebackInvalidateRange((void *)stub, 8);
+	sceKernelIcacheInvalidateRange((void *)stub, 8);
+
+	return 0;
+}
+
 int sctrlHENIsSystemBooted() {
 	int res = sceKernelGetSystemStatus661();
 
