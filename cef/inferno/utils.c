@@ -22,8 +22,10 @@
 #include <systemctrl.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <adrenaline_log.h>
+
 #include "utils.h"
-#include "printk.h"
 
 void sync_cache(void)
 {
@@ -46,33 +48,33 @@ void hexdump(void *addr, int size)
 	u8 *p = (u8*)addr;
 
 	if (addr == NULL) {
-		printk("hexdump: <NULL>\n");
+		logmsg("hexdump: <NULL>\n");
 
 		return;
 	}
 
 	if (size == 0) {
-		printk("hexdump: size 0\n");
+		logmsg("hexdump: size 0\n");
 
 		return;
 	}
 
-	printk("Address:   ");
+	logmsg("Address:   ");
 	i=0; for(;i<16; ++i) {
 		if (i == 8)
-			printk("- ");
+			logmsg("- ");
 
-		printk("%02X ", i);
+		logmsg("%02X ", i);
 	}
 
 	i=0; for(;i<16; ++i) {
-		printk("%1X", i);
+		logmsg("%1X", i);
 	}
 
-	printk("\n-----------------------------------------------------------------------------\n");
+	logmsg("\n-----------------------------------------------------------------------------\n");
 
 	i=0;
-	printk("0x%08X ", i);
+	logmsg("0x%08X ", i);
 
 	for(; i<size; ++i) {
 		if (i != 0 && i % 16 == 0) {
@@ -80,19 +82,19 @@ void hexdump(void *addr, int size)
 
 			for(j=16; j>0; --j) {
 				if(ownisgraph(p[i-j])) {
-					printk("%c", p[i-j]);
+					logmsg("%c", p[i-j]);
 				} else {
-					printk(".");
+					logmsg(".");
 				}
 			}
-			printk("\n0x%08X ", i);
+			logmsg("\n0x%08X ", i);
 		}
 
 		if (i != 0 && i % 8 == 0 && i % 16 != 0) {
-			printk("- ");
+			logmsg("- ");
 		}
 
-		printk("%02X ", p[i]);
+		logmsg("%02X ", p[i]);
 	}
 
 	int rest = (16-(i%16));
@@ -100,8 +102,8 @@ void hexdump(void *addr, int size)
 	rest = rest == 16 ? 0 : rest;
 	int j; for(j=0; j<rest; j++) {
 		if (j+(i%16) == 8)
-			printk("  ");
-		printk("   ");
+			logmsg("  ");
+		logmsg("   ");
 	}
 
 	rest = i % 16;
@@ -109,13 +111,13 @@ void hexdump(void *addr, int size)
 
 	for(j=rest; j>0; --j) {
 		if(ownisgraph(p[i-j])) {
-			printk("%c", p[i-j]);
+			logmsg("%c", p[i-j]);
 		} else {
-			printk(".");
+			logmsg(".");
 		}
 	}
 
-	printk("\n");
+	logmsg("\n");
 }
 
 void fill_vram(u32 color)

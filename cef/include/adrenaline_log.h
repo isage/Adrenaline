@@ -53,7 +53,6 @@
 #ifndef __ADRENALINE_LOG_H__
 #define __ADRENALINE_LOG_H__
 
-#define DEBUG 4
 #ifdef DEBUG
 // Initialize log
 int _logInit(const char* filename);

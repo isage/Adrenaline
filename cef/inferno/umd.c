@@ -25,8 +25,10 @@
 #include <pspthreadman_kernel.h>
 #include <pspumd.h>
 #include <psprtc.h>
+
+#include <adrenaline_log.h>
+
 #include "utils.h"
-#include "printk.h"
 #include "libs.h"
 #include "utils.h"
 #include "inferno.h"
@@ -69,27 +71,19 @@ int sceUmdCheckMedium(void) {
 	}
 
 	ret = 1;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmdReplacePermit(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmdReplaceProhibit(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -177,9 +171,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	pspSdkSetK1(k1);
 
 exit:
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -195,17 +187,13 @@ int sceUmdCancelWaitDriveStat(void) {
 }
 
 u32 sceUmdGetErrorStatus(void) {
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, g_umd_error_status);
-	#endif
+	logmsg("%s: -> 0x%08X\n", __func__, g_umd_error_status);
 	return g_umd_error_status;
 }
 
 void sceUmdSetErrorStatus(u32 status) {
 	g_umd_error_status = status;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, g_umd_error_status);
-	#endif
+	logmsg("%s: -> 0x%08X\n", __func__, g_umd_error_status);
 }
 
 int sceUmdGetDriveStat(void) {
@@ -213,27 +201,19 @@ int sceUmdGetDriveStat(void) {
 }
 
 u32 sceUmdGetDriveStatus(u32 status) {
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, g_drive_status);
-	#endif
+	logmsg("%s: -> 0x%08X\n", __func__, g_drive_status);
 	return g_drive_status;
 }
 
 int sceUmdMan_driver_D37B6422(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmdMan_driver_6A1FB0DD(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -251,24 +231,21 @@ int sceUmdMan_driver_7DF4C4DA(u32 a0) {
 }
 
 int sceUmdMan_driver_F7A0D0D9(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 static inline u32 get_gp(void) {
 	u32 gp;
 
-	__asm__ volatile ("move %0, $gp;" : "=r"(gp));
+	__asm__ volatile ("move %0, $gp" : "=r"(gp));
 
 	return gp;
 }
 
 static inline void set_gp(u32 gp) {
-	__asm__ volatile ("move $gp, %0;" : :"r"(gp));
+	__asm__ volatile ("move $gp, %0" : :"r"(gp));
 }
 
 // for now 6.20/6.35 share the same patch
@@ -321,9 +298,7 @@ int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2) {
 
 // 0x000014F0
 void sceUmdClearDriveStatus(u32 mask) {
-	int intr;
-
-	intr = sceKernelCpuSuspendIntr();
+	int intr = sceKernelCpuSuspendIntr();
 	sceKernelClearEventFlag(g_drive_status_evf, mask);
 	g_drive_status &= mask;
 	sceKernelCpuResumeIntr(intr);
@@ -331,29 +306,20 @@ void sceUmdClearDriveStatus(u32 mask) {
 }
 
 int sceUmd9660_driver_63342C0F(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmd9660_driver_6FFFEE54(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmd9660_driver_7CB291E3(void) {
-	int ret;
-	ret = 0;
-	#ifdef DEBUG
-	printk("%s: -> 0x%08X\n", __func__, ret);
-	#endif
+	int ret = 0;
+	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
