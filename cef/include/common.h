@@ -54,6 +54,8 @@
 #define FW_TO_FIRMWARE(f) ((((f >> 8) & 0xF) << 24) | (((f >> 4) & 0xF) << 16) | ((f & 0xF) << 8) | 0x10)
 #define FIRMWARE_TO_FW(f) ((((f >> 24) & 0xF) << 8) | (((f >> 16) & 0xF) << 4) | ((f >> 8) & 0xF))
 
+#define LI_V0(n) ((0x2402 << 16) | ((n) & 0xFFFF))
+
 #define MAKE_JUMP(a, f) _sw(0x08000000 | (((u32)(f) & 0x0FFFFFFC) >> 2), a);
 #define MAKE_CALL(a, f) _sw(0x0C000000 | (((u32)(f) >> 2) & 0x03FFFFFF), a);
 
@@ -81,6 +83,20 @@
 		_sw(0x03E00008, _func_); \
 		_sw(0x24020000 | r, _func_ + 4); \
 	} \
+}
+
+#define MAKE_DUMMY_FUNCTION_RETURN(f, ret) \
+{ \
+	u32 _func_ = f; \
+	_sw(0x03E00008, _func_); \
+    _sw(LI_V0(ret), _func_ + 4); \
+}
+
+#define MAKE_JUMP_NOP(a, f) \
+{ \
+	u32 _func_ = a; \
+	_sw(0x03E00008, _func_); \
+    _sw(0, _func_ + 4); \
 }
 
 //by Davee

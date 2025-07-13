@@ -254,12 +254,10 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 	// Dummy Return
 	if (func == NULL) {
 		// Create Dummy Return
-		_sw(JR_RA, stub);
-		_sw(LI_V0(dummy), stub + 4);
+		MAKE_DUMMY_FUNCTION_RETURN(stub, dummy);
 	} else if (func_int <= 0xFFFF) {
 		// Create Dummy Return
-		_sw(JR_RA, stub);
-		_sw(LI_V0(func_int), stub + 4);
+		MAKE_DUMMY_FUNCTION_RETURN(stub, func_int);
 	} else { // Normal Hook
 		// Syscall Hook
 		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
@@ -270,12 +268,10 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 			if(syscall < 0) return -3;
 
 			// Create Syscall Hook
-			_sw(JR_RA, stub);
-			_sw(SYSCALL(syscall), stub + 4);
-		} else { // Direct Jump Hook
+			MAKE_SYSCALL_FUNCTION(stub, syscall);
+		} else {
 			// Create Direct Jump Hook
-			_sw(JUMP(func), stub);
-			_sw(NOP, stub + 4);
+			MAKE_JUMP_NOP(stub, func);
 		}
 	}
 
