@@ -141,7 +141,7 @@ int sctrlKernelQuerySystemCall(void *func_addr);
 /**
  *  Calculate Random Number via KIRK
  */
-unsigned int sctrlKernelRand(void);
+u32 sctrlKernelRand(void);
 
 /**
  * Sets the user level of the current thread

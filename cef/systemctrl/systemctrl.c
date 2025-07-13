@@ -21,6 +21,10 @@
 #include "main.h"
 #include "adrenaline.h"
 
+int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
+int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+
+
 int sctrlKernelSetUserLevel(int level) {
 	int k1 = pspSdkSetK1(0);
 	int res = sceKernelGetUserLevel();
@@ -215,7 +219,7 @@ int sctrlRebootDevice() {
 	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT);
 }
 
-unsigned int sctrlKernelRand(void) {
+u32 sctrlKernelRand(void) {
 	u32 k1 = pspSdkSetK1(0);
 
 	unsigned char * alloc = oe_malloc(20 + 4);
@@ -224,7 +228,7 @@ unsigned int sctrlKernelRand(void) {
 	if(alloc == NULL) __asm__ volatile ("break");
 
 	// Align Buffer to 4 Bytes
-	unsigned char * buffer = (void *)(((unsigned int)alloc & (~(4-1))) + 4);
+	unsigned char * buffer = (void *)(((u32)alloc & (~(4-1))) + 4);
 
 	// KIRK Random Generator Opcode
 	enum {
@@ -234,7 +238,7 @@ unsigned int sctrlKernelRand(void) {
 	// Create 20 Random Bytes
 	sceUtilsBufferCopyWithRange(buffer, 20, NULL, 0, KIRK_PRNG_CMD);
 
-	unsigned int random = *(unsigned int *)buffer;
+	u32 random = *(u32 *)buffer;
 
 	oe_free(alloc);
 	pspSdkSetK1(k1);
