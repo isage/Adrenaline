@@ -14,6 +14,7 @@ INCDIR = ../include
 CFLAGS = -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -D__UPDATER__
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
+PSP_FW_VERSION = 661
 
 BUILD_PRX = 1
 
