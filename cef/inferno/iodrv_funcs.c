@@ -26,8 +26,10 @@
 #include <pspumd.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
+
+#include <adrenaline_log.h>
+
 #include "utils.h"
-#include "printk.h"
 #include "libs.h"
 #include "utils.h"
 #include "systemctrl.h"
@@ -320,9 +322,7 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len)
 	ret = retv;
 
 exit:
-	#ifdef DEBUG
-	printk("%s: len 0x%08X -> 0x%08X\n", __func__, len, ret);
-	#endif
+	logmsg("%s: len 0x%08X -> 0x%08X\n", __func__, len, ret);
 	return ret;
 }
 
@@ -378,9 +378,7 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
 	ret = g_open_slot[idx].offset;
 
 exit:
-	#ifdef DEBUG
-	printk("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
-	#endif
+	logmsg("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
 
 	if (ret>=0) cur_offset = ret;
 
@@ -452,14 +450,11 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 		ret = IoRead(arg, outdata, len);
 		goto exit;
 	}
-	#ifdef DEBUG
-	printk("%s: Unknown ioctl 0x%08X\n", __func__, cmd);
-	#endif
+
+	logmsg("%s: Unknown ioctl 0x%08X\n", __func__, cmd);
 	ret = 0x80010086;
 exit:
-	#ifdef DEBUG
-	printk("%s: cmd:0x%08X -> 0x%08X\n", __func__, cmd, ret);
-	#endif
+	logmsg("%s: cmd:0x%08X -> 0x%08X\n", __func__, cmd, ret);
 	return ret;
 }
 
@@ -644,9 +639,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		ret = 0;
 		goto exit;
 	} else {
-		#ifdef DEBUG
-		printk("%s: Unknown cmd 0x%08X\n", __func__, cmd);
-		#endif
+		logmsg("%s: Unknown cmd 0x%08X\n", __func__, cmd);
 		ret = 0x80010086;
 	}
 

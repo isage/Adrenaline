@@ -25,8 +25,10 @@
 #include <psprtc.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
+
+#include <adrenaline_log.h>
+
 #include "utils.h"
-#include "printk.h"
 #include "libs.h"
 #include "utils.h"
 #include "inferno.h"
@@ -175,9 +177,7 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
             i = 0;
             break;
         } else {
-            #ifdef DEBUG
-            printk("%s: lseek retry %d error 0x%08X\n", __func__, i, (int)ofs);
-            #endif
+            logmsg("%s: lseek retry %d error 0x%08X\n", __func__, i, (int)ofs);
             iso_open();
         }
     } while(i < 16);
@@ -194,9 +194,7 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
             i = 0;
             break;
         } else {
-            #ifdef DEBUG
-            printk("%s: read retry %d error 0x%08X\n", __func__, i, ret);
-            #endif
+            logmsg("%s: read retry %d error 0x%08X\n", __func__, i, ret);
             iso_open();
         }
     }

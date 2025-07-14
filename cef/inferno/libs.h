@@ -18,8 +18,7 @@
 #ifndef LIBS_H
 #define LIBS_H
 
-typedef struct
-{
+typedef struct {
 	const char *name;
 	unsigned short version;
 	unsigned short attribute;
@@ -30,7 +29,7 @@ typedef struct
 	unsigned int *funcs;
 	unsigned int *vnids;
 	unsigned int *vars;
-}PspModuleImport;
+} PspModuleImport;
 
 PspModuleImport *find_import_lib(SceModule *pMod, char *library);
 

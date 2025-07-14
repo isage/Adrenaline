@@ -25,8 +25,11 @@
 #include <pspsysevent.h>
 #include <pspumd.h>
 #include <psprtc.h>
+
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 #include "utils.h"
-#include "printk.h"
 #include "libs.h"
 #include "utils.h"
 #include "inferno.h"
@@ -92,15 +95,11 @@ int init_inferno(void)
 }
 
 // 0x00000000
-int module_start(SceSize args, void* argp)
-{
-	int ret;
+int module_start(SceSize args, void* argp) {
+	logInit("ms0:/log_inferno.txt");
+	logmsg("Inferno driver started...\n")
 
-	#ifdef DEBUG
-	printk("Inferno started\n");
-	#endif
-
-	ret = setup_umd_device();
+	int ret = setup_umd_device();
 
 	if (ret < 0) {
 		return ret;

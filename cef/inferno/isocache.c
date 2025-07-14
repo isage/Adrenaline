@@ -8,7 +8,9 @@
 #include <systemctrl_se.h>
 #include <stdio.h>
 #include <string.h>
-#include "printk.h"
+
+#include <adrenaline_log.h>
+
 #include "utils.h"
 #include "inferno.h"
 
@@ -180,9 +182,7 @@ static void reorder_iso_cache(int idx)
 	int i;
 
 	if(idx < 0 && idx >= g_caches_num) {
-		#ifdef DEBUG
-		printk("%s: wrong idx\n", __func__);
-		#endif
+		logmsg("%s: wrong idx\n", __func__);
 		return;
 	}
 
@@ -225,9 +225,7 @@ static int add_cache(struct IoReadArg *arg)
 
 		if(last_cache != NULL) {
 			if(pos + len <= last_cache->pos + last_cache->bufsize) {
-				#ifdef DEBUG
-				printk("%s: error pos\n", __func__);
-				#endif
+				logmsg("%s: error pos\n", __func__);
 				asm("break");
 			}
 
@@ -261,9 +259,7 @@ static int add_cache(struct IoReadArg *arg)
 			break;
 		} else {
 			reorder_iso_cache(cache - g_caches);
-			#ifdef DEBUG
-			printk("%s: read -> 0x%08X\n", __func__, ret);
-			#endif
+			logmsg("%s: read -> 0x%08X\n", __func__, ret);
 			return ret;
 		}
 	}
@@ -428,9 +424,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
     cache_ctrl = memid;
 
 	if(memid < 0) {
-		#ifdef DEBUG
-		printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
-		#endif
+		logmsg("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
 		return -2;
 	}
 
@@ -444,9 +438,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
     cache_mem = memid;
 
 	if(memid < 0) {
-		#ifdef DEBUG
-		printk("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
-		#endif
+		logmsg("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
 		return -4;
 	}
 
