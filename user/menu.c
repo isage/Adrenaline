@@ -388,7 +388,7 @@ int AdrenalineDraw(SceSize args, void *argp) {
   vita2d_init();
   font = vita2d_load_default_pgf();
 
-  vita2d_texture *native_tex = vita2d_create_empty_texture_data(SCREEN_WIDTH, SCREEN_HEIGHT, CONVERT_ADDRESS(NATIVE_FRAMEBUFFER), SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
+  vita2d_texture *native_tex = vita2d_create_empty_texture_data(SCREEN_WIDTH, SCREEN_HEIGHT, (void *)CONVERT_ADDRESS(NATIVE_FRAMEBUFFER), SCE_GXM_TEXTURE_FORMAT_U5U6U5_BGR);
   if (!native_tex)
     return -1;
 
@@ -466,9 +466,9 @@ int AdrenalineDraw(SceSize args, void *argp) {
     return settings_semaid;
 
   // FPS counting
-  SceUInt64 cur_micros = 0, delta_micros = 0, last_micros = 0;
-  uint32_t frames = 0;
-  float fps = 0.0f;
+  // SceUInt64 cur_micros = 0, delta_micros = 0, last_micros = 0;
+  // uint32_t frames = 0;
+  // float fps = 0.0f;
 
   // keep track of entering pops mode
   int lastPops = 0;
@@ -647,18 +647,20 @@ int AdrenalineDraw(SceSize args, void *argp) {
     // pgf_draw_textf(0.0f, 0.0f, WHITE, FONT_SIZE, "FPS: %.2f", fps);
 
     // Calculate FPS
-    cur_micros = sceKernelGetProcessTimeWide();
-    if (cur_micros >= (last_micros + 1000000)) {
-      delta_micros = cur_micros - last_micros;
-      last_micros = cur_micros;
-      fps = (frames / (double)delta_micros) * 1000000.0f;
-      frames = 0;
-    }
+    // cur_micros = sceKernelGetProcessTimeWide();
+    // if (cur_micros >= (last_micros + 1000000)) {
+    //   delta_micros = cur_micros - last_micros;
+    //   last_micros = cur_micros;
+    //   fps = (frames / (double)delta_micros) * 1000000.0f;
+    //   frames = 0;
+    // }
 
     // End drawing
     vita2d_end_drawing();
     vita2d_swap_buffers();
-    frames++;
+
+	// Update FPS frames
+	// frames++;
 
     // Sync
     if ((!adrenaline->pops_mode && !draw_native) || adrenaline->draw_psp_screen_in_pops)
