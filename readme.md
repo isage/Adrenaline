@@ -217,7 +217,7 @@ offical settings, then apply the custom screen mode. On the other hand, if you w
 - [python3](https://www.python.org/downloads/)
 
 ## Building
-- `make -C cef`
+- `make -j1 -C cef`
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`
 - `cmake --build build`
 - grab VKP from `build/bubble/`
