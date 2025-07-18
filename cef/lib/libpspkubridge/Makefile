@@ -27,12 +27,14 @@ LDFLAGS=-nodefaultlibs
 LIBDIR =
 
 %.o: KUBridge.S
-	psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
+	@psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
 
 all: $(OBJS)
-	psp-ar cru libpspkubridge.a $(OBJS)
-	psp-ranlib libpspkubridge.a
+	@psp-ar cru libpspkubridge.a $(OBJS)
+	@psp-ranlib libpspkubridge.a
+	@echo Finished creating stubs for KUBridge
 
 clean:
-	rm -f *.o
-	rm -f *.a
+	@rm -f *.o
+	@rm -f *.a
+	@echo KUBridge cleaning done

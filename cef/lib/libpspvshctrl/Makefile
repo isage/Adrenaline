@@ -8,12 +8,14 @@ OBJS = \
 
 
 %.o: VshCtrl.S
-	psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
+	@psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
 
 all: $(OBJS)
-	psp-ar cru libpspvshctrl.a $(OBJS)
-	psp-ranlib libpspvshctrl.a
+	@psp-ar cru libpspvshctrl.a $(OBJS)
+	@psp-ranlib libpspvshctrl.a
+	@echo Finished creating stubs for VshCtrl
 
 clean:
-	rm -f *.o
-	rm -f *.a
+	@rm -f *.o
+	@rm -f *.a
+	@echo VshCtrl cleaning done

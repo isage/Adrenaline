@@ -65,12 +65,14 @@ OBJS = \
 
 
 %.o: SystemCtrlForKernel.S
-	psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
+	@psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
 
 all: $(OBJS)
-	psp-ar cru libpspsystemctrl_kernel.a $(OBJS)
-	psp-ranlib libpspsystemctrl_kernel.a
+	@psp-ar cru libpspsystemctrl_kernel.a $(OBJS)
+	@psp-ranlib libpspsystemctrl_kernel.a
+	@echo Finished creating stubs for SystemCtrlForKernel
 
 clean:
-	rm -f *.o
-	rm -f *.a
+	@rm -f *.o
+	@rm -f *.a
+	@echo SystemCtrlForKernel cleaning done

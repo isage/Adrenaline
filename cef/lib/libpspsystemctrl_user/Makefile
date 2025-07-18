@@ -43,12 +43,14 @@ OBJS = \
 
 
 %.o: SystemCtrlForUser.S
-	psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
+	@psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
 
 all: $(OBJS)
-	psp-ar cru libpspsystemctrl_user.a $(OBJS)
-	psp-ranlib libpspsystemctrl_user.a
+	@psp-ar cru libpspsystemctrl_user.a $(OBJS)
+	@psp-ranlib libpspsystemctrl_user.a
+	@echo Finished creating stubs for SystemCtrlForUser
 
 clean:
-	rm -f *.o
-	rm -f *.a
+	@rm -f *.o
+	@rm -f *.a
+	@echo SystemCtrlForUser cleaning done
