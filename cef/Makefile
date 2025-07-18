@@ -1,31 +1,38 @@
 all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
+SYSTEM_STUBS = pspamctrl_driver pspsemaphore pspvshbridge_user
+
 _libs:
+	make -C lib/system_stubs clean
+	make -C lib/system_stubs -j $(SYSTEM_STUBS:%=.%)
+	cp lib/system_stubs/*.a "lib/"
+
 	make -C lib/libpspkubridge clean
 	make -C lib/libpspkubridge
 	cp "lib/libpspkubridge/libpspkubridge.a" "lib/"
-	make -C lib/libpspkubridge clean
 
 	make -C lib/libpspsystemctrl_kernel clean
 	make -C lib/libpspsystemctrl_kernel
 	cp "lib/libpspsystemctrl_kernel/libpspsystemctrl_kernel.a" "lib/"
-	make -C lib/libpspsystemctrl_kernel clean
 
 	make -C lib/libpspsystemctrl_user clean
 	make -C lib/libpspsystemctrl_user
 	cp "lib/libpspsystemctrl_user/libpspsystemctrl_user.a" "lib/"
-	make -C lib/libpspsystemctrl_user clean
 
 	make -C lib/libpspvshctrl clean
 	make -C lib/libpspvshctrl
 	cp "lib/libpspvshctrl/libpspvshctrl.a" "lib/"
-	make -C lib/libpspvshctrl clean
 
 	make -C lib/libpspsysc_user clean
 	make -C lib/libpspsysc_user
 	cp "lib/libpspsysc_user/libpspsysc_user.a" "lib/"
-	make -C lib/libpspsysc_user clean
 
+	make -C lib/system_stubs clean
+	make -C lib/libpspkubridge clean
+	make -C lib/libpspsystemctrl_kernel clean
+	make -C lib/libpspsystemctrl_user clean
+	make -C lib/libpspvshctrl clean
+	make -C lib/libpspsysc_user clean
 
 _btcnf:
 	make -C btcnf/pspbtcnf_inferno clean
@@ -71,56 +78,56 @@ _binary:
 	bin2c binary/binary.bin systemctrl/binary.h binary
 	make -C binary clean
 
-_systemctrl:
+_systemctrl: | _libs _rebootex _binary
 	make -C systemctrl clean
 	make -C systemctrl
 	psp-packer systemctrl/systemctrl.prx
 	cp "systemctrl/systemctrl.prx" "../user/flash0/kd/systemctrl.prx"
 	make -C systemctrl clean
 
-_popcorn:
+_popcorn: | _libs
 	make -C popcorn clean
 	make -C popcorn
 	psp-packer popcorn/popcorn.prx
 	cp "popcorn/popcorn.prx" "../user/flash0/kd/popcorn.prx"
 	make -C popcorn clean
 
-_inferno:
+_inferno: | _libs
 	make -C inferno clean
 	make -C inferno
 	psp-packer inferno/inferno.prx
 	cp "inferno/inferno.prx" "../user/flash0/kd/inferno.prx"
 	make -C inferno clean
 
-_vshctrl:
+_vshctrl: | _libs
 	make -C vshctrl clean
 	make -C vshctrl
 	psp-packer vshctrl/vshctrl.prx
 	cp "vshctrl/vshctrl.prx" "../user/flash0/kd/vshctrl.prx"
 	make -C vshctrl clean
 
-_kermit_idstorage:
+_kermit_idstorage: | _libs
 	make -C kermit_idstorage clean
 	make -C kermit_idstorage
 	psp-packer kermit_idstorage/kermit_idstorage.prx
 	cp "kermit_idstorage/kermit_idstorage.prx" "../user/flash0/kd/kermit_idstorage.prx"
 	make -C kermit_idstorage clean
 
-_xmbctrl:
+_xmbctrl: | _libs
 	make -C xmbctrl clean
 	make -C xmbctrl
 	psp-packer xmbctrl/xmbctrl.prx
 	cp "xmbctrl/xmbctrl.prx" "../user/flash0/vsh/module/xmbctrl.prx"
 	make -C xmbctrl clean
 
-_satelite:
+_satelite: | _libs
 	make -C satelite clean
 	make -C satelite
 	psp-packer satelite/satelite.prx
 	cp "satelite/satelite.prx" "../user/flash0/vsh/module/satelite.prx"
 	make -C satelite clean
 
-_recovery:
+_recovery: | _libs
 	make -C newrecovery clean
 	make -C newrecovery
 	psp-packer newrecovery/recovery.prx

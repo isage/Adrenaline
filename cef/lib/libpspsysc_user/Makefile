@@ -57,12 +57,14 @@ LDFLAGS=-nodefaultlibs
 LIBDIR =
 
 %.o: SysclibForUser.S
-	psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
+	@psp-gcc -g -O2 -G0 -Wall -I${PSPSDK}/include -DF_$* $< -c -o $@
 
 all: $(OBJS)
-	psp-ar cru libpspsysc_user.a $(OBJS)
-	psp-ranlib libpspsysc_user.a
+	@psp-ar cru libpspsysc_user.a $(OBJS)
+	@psp-ranlib libpspsysc_user.a
+	@echo Finished creating stubs for SysclibForUser
 
 clean:
-	rm -f *.o
-	rm -f *.a
+	@rm -f *.o
+	@rm -f *.a
+	@echo SysclibForUser cleaning done
