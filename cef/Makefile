@@ -1,29 +1,37 @@
 all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
+SYSTEM_STUBS = pspamctrl_driver pspsemaphore pspvshbridge_user
+
 _libs:
+	make -C lib/system_stubs clean
+	make -C lib/system_stubs -j $(SYSTEM_STUBS:%=.%)
+	cp lib/system_stubs/*.a "lib/"
+
 	make -C lib/libpspkubridge clean
 	make -C lib/libpspkubridge
 	cp "lib/libpspkubridge/libpspkubridge.a" "lib/"
-	make -C lib/libpspkubridge clean
 
 	make -C lib/libpspsystemctrl_kernel clean
 	make -C lib/libpspsystemctrl_kernel
 	cp "lib/libpspsystemctrl_kernel/libpspsystemctrl_kernel.a" "lib/"
-	make -C lib/libpspsystemctrl_kernel clean
 
 	make -C lib/libpspsystemctrl_user clean
 	make -C lib/libpspsystemctrl_user
 	cp "lib/libpspsystemctrl_user/libpspsystemctrl_user.a" "lib/"
-	make -C lib/libpspsystemctrl_user clean
 
 	make -C lib/libpspvshctrl clean
 	make -C lib/libpspvshctrl
 	cp "lib/libpspvshctrl/libpspvshctrl.a" "lib/"
-	make -C lib/libpspvshctrl clean
 
 	make -C lib/libpspsysc_user clean
 	make -C lib/libpspsysc_user
 	cp "lib/libpspsysc_user/libpspsysc_user.a" "lib/"
+
+	make -C lib/system_stubs clean
+	make -C lib/libpspkubridge clean
+	make -C lib/libpspsystemctrl_kernel clean
+	make -C lib/libpspsystemctrl_user clean
+	make -C lib/libpspvshctrl clean
 	make -C lib/libpspsysc_user clean
 
 _btcnf:
