@@ -25,11 +25,10 @@
 #include <pspthreadman_kernel.h>
 #include <pspumd.h>
 #include <psprtc.h>
+#include <macros.h>
 
 #include <adrenaline_log.h>
 
-#include "utils.h"
-#include "libs.h"
 #include "utils.h"
 #include "inferno.h"
 
@@ -60,17 +59,15 @@ int g_disc_type = PSP_UMD_TYPE_GAME;
 extern int sceKernelCancelSema(SceUID semaid, int newcount, int *num_wait_threads);
 
 int sceUmdCheckMedium(void) {
-	int ret;
-
     if (g_iso_fn[0] == '\0'){
         return 0;
     }
 
-	while(!g_iso_opened) {
+	while (!g_iso_opened) {
 		sceKernelDelayThread(10000);
 	}
 
-	ret = 1;
+	int ret = 1;
 	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
@@ -89,7 +86,7 @@ int sceUmdReplaceProhibit(void) {
 
 // 0x00001A14
 static void do_umd_notify(int arg) {
-	if(g_umd_cbid < 0) {
+	if (g_umd_cbid < 0) {
 		return;
 	}
 
@@ -97,18 +94,15 @@ static void do_umd_notify(int arg) {
 }
 
 int sceUmdRegisterUMDCallBack(int cbid) {
-	int ret, intr;
-	u32 k1;
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceKernelGetThreadmanIdType(cbid);
 
-	k1 = pspSdkSetK1(0);
-	ret = sceKernelGetThreadmanIdType(cbid);
-
-	if(ret != SCE_KERNEL_TMID_Callback) {
+	if (ret != SCE_KERNEL_TMID_Callback) {
 		ret = 0x80010016;
 		goto exit;
 	}
 
-	intr = sceKernelCpuSuspendIntr();
+	int intr = sceKernelCpuSuspendIntr();
 	g_umd_cbid = cbid;
 	sceKernelCpuResumeIntr(intr);
 	ret = 0;
@@ -120,15 +114,13 @@ exit:
 }
 
 int sceUmdUnRegisterUMDCallBack(int cbid) {
-	u32 k1;
-	int ret, intr;
+	u32 k1 = pspSdkSetK1(0);
+	int ret = 0x80010016;
+
+	int intr;
 	uidControlBlock *type;
-
-	k1 = pspSdkSetK1(0);
-	ret = 0x80010016;
-
-	if(sceKernelGetUIDcontrolBlock(cbid, &type) == 0) {
-		if(g_umd_cbid == cbid) {
+	if (sceKernelGetUIDcontrolBlock(cbid, &type) == 0) {
+		if (g_umd_cbid == cbid) {
 			intr = sceKernelCpuSuspendIntr();
 			g_umd_cbid = -1;
 			sceKernelCpuResumeIntr(intr);
@@ -142,9 +134,7 @@ int sceUmdUnRegisterUMDCallBack(int cbid) {
 }
 
 int infernoSetDiscType(int type) {
-	int oldtype;
-
-	oldtype = g_disc_type;
+	int oldtype = g_disc_type;
 	g_disc_type = type;
 
 	return oldtype;
@@ -152,16 +142,15 @@ int infernoSetDiscType(int type) {
 
 int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	int ret;
-	u32 k1;
 
-	if(!check_memory(info, sizeof(*info))) {
+	if (!check_memory(info, sizeof(*info))) {
 		ret = 0x80010016;
 		goto exit;
 	}
 
-	k1 = pspSdkSetK1(0);
+	u32 k1 = pspSdkSetK1(0);
 
-	if(info != NULL && sizeof(*info) == info->size) {
+	if (info != NULL && sizeof(*info) == info->size) {
 		info->type = g_disc_type;
 		ret = 0;
 	} else {
@@ -176,11 +165,8 @@ exit:
 }
 
 int sceUmdCancelWaitDriveStat(void) {
-	int ret;
-	u32 k1;
-
-	k1 = pspSdkSetK1(0);
-	ret = sceKernelCancelEventFlag(g_drive_status_evf, g_drive_status, NULL);
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceKernelCancelEventFlag(g_drive_status_evf, g_drive_status, NULL);
 	pspSdkSetK1(k1);
 
 	return ret;
@@ -218,7 +204,7 @@ int sceUmdMan_driver_6A1FB0DD(void) {
 }
 
 int sceUmdMan_driver_7DF4C4DA(u32 a0) {
-	if(g_0000279C != a0) {
+	if (g_0000279C != a0) {
 		return 0x80010002;
 	}
 
@@ -250,7 +236,7 @@ static inline void set_gp(u32 gp) {
 
 // for now 6.20/6.35 share the same patch
 int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2) {
-	if(0 != g_0000279C) {
+	if (0 != g_0000279C) {
 		return 0x8001000C;
 	}
 
@@ -266,27 +252,27 @@ int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2) {
 	int patches = 4;
     u32 top_addr = text_addr+mod->text_size;
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
-        u32 data = _lw(addr);
+        u32 data = VREAD32(addr);
         if (data == 0x86430048){
-            _sw(intr, addr-16);
+			VWRITE32(addr-16, intr);
             patches--;
         }
         else if (data == 0x3C147FDE){
-            _sw(intr, addr+8);
+			VWRITE32(addr+8, intr);
             patches--;
         }
         else if (data == 0x8D240018){
-            _sw(intr, addr+4);
+			VWRITE32(addr+4, intr);
             patches--;
         }
         else if (data == 0x34C30016){
-            _sw(intr, addr-16);
+			VWRITE32(addr-16, intr);
             patches--;
         }
     }
-	sync_cache();
+	sctrlFlushCache();
 
-	if(0 == g_00002798) {
+	if (0 == g_00002798) {
 		return 0;
 	}
 
@@ -324,82 +310,73 @@ int sceUmd9660_driver_7CB291E3(void) {
 }
 
 int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout) {
-	int ret;
-	u32 k1, result;
-
-	if(!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
+	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
 		return 0x80010016;
 	}
 
-	k1 = pspSdkSetK1(0);
-	ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
-	pspSdkSetK1(0);
+	u32 result;
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
+	pspSdkSetK1(k1);
 
 	return ret;
 }
 
 int sceUmdWaitDriveStatCB(int stat, SceUInt timeout) {
-	int ret;
-	u32 k1, result;
-
-	if(!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
+	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
 		return 0x80010016;
 	}
 
-	k1 = pspSdkSetK1(0);
-	ret = sceKernelWaitEventFlagCB(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
-	pspSdkSetK1(0);
+	u32 result;
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceKernelWaitEventFlagCB(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
+	pspSdkSetK1(k1);
 
 	return ret;
 }
 
 int sceUmdWaitDriveStat(int stat) {
-	int ret;
-	u32 k1, result;
-
-	if(!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
+	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
 		return 0x80010016;
 	}
 
-	k1 = pspSdkSetK1(0);
-	ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, NULL);
-	pspSdkSetK1(0);
+	u32 result;
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, NULL);
+	pspSdkSetK1(k1);
 
 	return ret;
 }
 
 int sceUmdActivate(int unit, const char* drive) {
-	u32 k1;
-	int value;
-
-	if(!g_iso_opened) {
+	if (!g_iso_opened) {
 		return 0x80010016;
 	}
 
-	if(drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
+	if (drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
 		return 0x80010016;
 	}
 
-	k1 = pspSdkSetK1(0);
+	u32 k1 = pspSdkSetK1(0);
 
-	if(0 != strcmp(drive, "disc0:")) {
+	if (0 != strcmp(drive, "disc0:")) {
 		pspSdkSetK1(k1);
 
 		return 0x80010016;
 	}
 
-	value = 1;
+	int value = 1;
 	sceIoAssign(drive, "umd0:", "isofs0:", 1, &value, sizeof(value));
 	sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY);
 
-	if(g_game_fix_type == 1) {
+	if (g_game_fix_type == 1) {
 		do_umd_notify(PSP_UMD_PRESENT | PSP_UMD_READY);
 		pspSdkSetK1(k1);
 
 		return 0;
 	}
 
-	if(g_drive_status & PSP_UMD_READY) {
+	if (g_drive_status & PSP_UMD_READY) {
 		pspSdkSetK1(k1);
 
 		return 0;
@@ -412,17 +389,14 @@ int sceUmdActivate(int unit, const char* drive) {
 }
 
 int sceUmdDeactivate(int unit, const char *drive) {
-	int ret;
-	u32 k1;
-
-	if(drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
+	if (drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
 		return 0x80010016;
 	}
 
-	k1 = pspSdkSetK1(0);
-	ret = sceIoUnassign(drive);
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceIoUnassign(drive);
 
-	if(ret < 0) {
+	if (ret < 0) {
 		pspSdkSetK1(k1);
 
 		return ret;
@@ -435,11 +409,8 @@ int sceUmdDeactivate(int unit, const char *drive) {
 }
 
 int sceUmdGetErrorStat(void) {
-	u32 k1;
-	int ret;
-
-	k1 = pspSdkSetK1(0);
-	ret = g_umd_error_status;
+	u32 k1 = pspSdkSetK1(0);
+	int ret = g_umd_error_status;
 	pspSdkSetK1(k1);
 
 	return ret;
@@ -448,37 +419,35 @@ int sceUmdGetErrorStat(void) {
 // 0x000018A4
 // call @PRO_Inferno_Driver:sceUmd,0xF60013F8@
 void sceUmdSetDriveStatus(int status) {
-	int intr;
+	int intr = sceKernelCpuSuspendIntr();
 
-	intr = sceKernelCpuSuspendIntr();
-
-	if(!(status & PSP_UMD_NOT_PRESENT)) {
-		if(status & (PSP_UMD_PRESENT | PSP_UMD_CHANGED | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY)) {
+	if (!(status & PSP_UMD_NOT_PRESENT)) {
+		if (status & (PSP_UMD_PRESENT | PSP_UMD_CHANGED | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY)) {
 			g_drive_status &= ~PSP_UMD_NOT_PRESENT;
 		}
 	} else {
 		g_drive_status &= ~(PSP_UMD_PRESENT | PSP_UMD_CHANGED | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY);
 	}
 
-	if(!(status & PSP_UMD_INITING)) {
-		if(status & (PSP_UMD_INITED | PSP_UMD_READY)) {
+	if (!(status & PSP_UMD_INITING)) {
+		if (status & (PSP_UMD_INITED | PSP_UMD_READY)) {
 			g_drive_status &= ~PSP_UMD_INITING;
 		}
 	} else {
 		g_drive_status &= ~(PSP_UMD_INITED | PSP_UMD_READY);
 	}
 
-	if(!(status & PSP_UMD_READY)) {
+	if (!(status & PSP_UMD_READY)) {
 		g_drive_status &= ~PSP_UMD_READY;
 	}
 
 	g_drive_status |= status;
 
-	if(g_drive_status & PSP_UMD_READY) {
+	if (g_drive_status & PSP_UMD_READY) {
 		g_drive_status |= PSP_UMD_INITED;
 	}
 
-	if(g_drive_status & PSP_UMD_INITED) {
+	if (g_drive_status & PSP_UMD_INITED) {
 		g_drive_status |= PSP_UMD_PRESENT;
 		sceUmdSetErrorStatus(0);
 	}
@@ -492,26 +461,26 @@ int sceUmd_004F4BE5(int orig_error_code) {
 	u32 compiled_version;
 	int error_code = orig_error_code;
 
-	if(error_code == 0) {
+	if (error_code == 0) {
 		goto exit;
 	}
 
 	compiled_version = sceKernelGetCompiledSdkVersion();
 
-	if(compiled_version == 0) {
-		if(error_code == 0x80010074) {
+	if (compiled_version == 0) {
+		if (error_code == 0x80010074) {
 			error_code = 0x8001006E;
-		} else if(error_code == 0x80010070) {
+		} else if (error_code == 0x80010070) {
 			error_code = 0x80010062;
-		} else if(error_code == 0x8001005B) {
+		} else if (error_code == 0x8001005B) {
 			error_code = 0x80010062;
-		} else if(error_code == 0x80010071) {
+		} else if (error_code == 0x80010071) {
 			error_code = 0x80010067;
-		} else if(error_code == 0x80010086) {
+		} else if (error_code == 0x80010086) {
 			error_code = 0x8001B000;
-		} else if(error_code == 0x80010087) {
+		} else if (error_code == 0x80010087) {
 			error_code = 0x8001007B;
-		} else if(error_code == 0x8001B006) {
+		} else if (error_code == 0x8001B006) {
 			error_code = 0x8001007C;
 		}
 	}
