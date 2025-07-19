@@ -27,7 +27,6 @@
 #include <psprtc.h>
 #include <macros.h>
 
-
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 

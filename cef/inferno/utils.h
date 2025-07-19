@@ -50,35 +50,6 @@ typedef unsigned int uint;
 #define FW_303 0x03000310
 #define FW_302 0x03000210
 
-#define SYSMEM_TEXT_ADDR 0x88000000
-
-#define MAKE_JUMP(f) (0x08000000 | (((u32)(f) >> 2) & 0x03ffffff))
-#define MAKE_CALL(f) (0x0C000000 | (((u32)(f) >> 2) & 0x03ffffff))
-#define MAKE_SYSCALL(n) ((n<<6)|12)
-#define NOP 0
-
-#define REDIRECT_FUNCTION(new_func, original) \
-	do { \
-		_sw(MAKE_JUMP(new_func), (original)); \
-		_sw(NOP, (original)+4); \
-	} while ( 0 );
-
-#define MAKE_DUMMY_FUNCTION_RETURN_0(a) do {\
-	_sw(0x03E00008, a);\
-	_sw(0x00001021, a + 4);\
-} while (0)
-
-#define MAKE_DUMMY_FUNCTION_RETURN_1(a) do {\
-	_sw(0x03E00008, a);\
-	_sw(0x24020001, a + 4);\
-} while (0)
-
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-
-#define NELEMS(a) (sizeof(a) / sizeof(a[0]))
-
-#define PTR_ALIGN_64(p) ((void*)((((u32)p)+64-1)&(~(64-1))))
 
 int sceKernelGetModel(void);
 

@@ -22,20 +22,15 @@
 #include <systemctrl.h>
 #include <stdio.h>
 #include <string.h>
+#include <macros.h>
 
 #include <adrenaline_log.h>
 
 #include "utils.h"
 
-void sync_cache(void)
-{
-	sceKernelIcacheInvalidateAll();
-	sceKernelDcacheWritebackInvalidateAll();
-}
 
 #ifdef DEBUG
-char ownisgraph (u8 c)
-{
+char ownisgraph (u8 c) {
     if ( c >= 0x21 && c <= 0x7e )
         return 1;
 
@@ -44,7 +39,6 @@ char ownisgraph (u8 c)
 
 void hexdump(void *addr, int size)
 {
-	int i;
 	u8 *p = (u8*)addr;
 
 	if (addr == NULL) {
@@ -60,14 +54,15 @@ void hexdump(void *addr, int size)
 	}
 
 	logmsg("Address:   ");
-	i=0; for(;i<16; ++i) {
+	int i=0; for (;i<16; ++i) {
 		if (i == 8)
 			logmsg("- ");
 
 		logmsg("%02X ", i);
 	}
 
-	i=0; for(;i<16; ++i) {
+	i=0;
+	for (;i<16; ++i) {
 		logmsg("%1X", i);
 	}
 
@@ -76,12 +71,12 @@ void hexdump(void *addr, int size)
 	i=0;
 	logmsg("0x%08X ", i);
 
-	for(; i<size; ++i) {
+	for (; i<size; ++i) {
 		if (i != 0 && i % 16 == 0) {
 			int j;
 
-			for(j=16; j>0; --j) {
-				if(ownisgraph(p[i-j])) {
+			for (j=16; j>0; --j) {
+				if (ownisgraph(p[i-j])) {
 					logmsg("%c", p[i-j]);
 				} else {
 					logmsg(".");
@@ -100,7 +95,7 @@ void hexdump(void *addr, int size)
 	int rest = (16-(i%16));
 
 	rest = rest == 16 ? 0 : rest;
-	int j; for(j=0; j<rest; j++) {
+	int j; for (j=0; j<rest; j++) {
 		if (j+(i%16) == 8)
 			logmsg("  ");
 		logmsg("   ");
@@ -109,8 +104,8 @@ void hexdump(void *addr, int size)
 	rest = i % 16;
 	rest = rest == 0 ? 16 : rest;
 
-	for(j=rest; j>0; --j) {
-		if(ownisgraph(p[i-j])) {
+	for (j=rest; j>0; --j) {
+		if (ownisgraph(p[i-j])) {
 			logmsg("%c", p[i-j]);
 		} else {
 			logmsg(".");
@@ -120,8 +115,7 @@ void hexdump(void *addr, int size)
 	logmsg("\n");
 }
 
-void fill_vram(u32 color)
-{
+void fill_vram(u32 color) {
 	u32 *p = (u32*)0x44000000;
 
 	while (p < (u32*)0x44200000)
@@ -129,8 +123,7 @@ void fill_vram(u32 color)
 }
 #endif
 
-int is_cpu_intr_enable(void)
-{
+int is_cpu_intr_enable(void) {
 	int ret;
 
 	asm volatile ("mfic	%0, $0\n"
@@ -161,8 +154,7 @@ int is_cpu_intr_enable(void)
 	return ret;
 }
 
-int get_device_name(char *device, int size, const char* path)
-{
+int get_device_name(char *device, int size, const char* path) {
 	const char *p;
 
 	if (path == NULL || device == NULL) {
@@ -181,28 +173,27 @@ int get_device_name(char *device, int size, const char* path)
 	return 0;
 }
 
-SceUID get_thread_id(const char *name)
-{
+SceUID get_thread_id(const char *name) {
 	int ret, count, i;
 	SceUID ids[128];
 
 	ret = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, sizeof(ids), &count);
 
-	if(ret < 0) {
+	if (ret < 0) {
 		return -1;
 	}
 
-	for(i=0; i<count; ++i) {
+	for (i = 0; i < count; ++i) {
 		SceKernelThreadInfo info;
 
 		info.size = sizeof(info);
 		ret = sceKernelReferThreadStatus(ids[i], &info);
 
-		if(ret < 0) {
+		if (ret < 0) {
 			continue;
 		}
 
-		if(0 == strcmp(info.name, name)) {
+		if (0 == strcmp(info.name, name)) {
 			return ids[i];
 		}
 	}
@@ -210,15 +201,11 @@ SceUID get_thread_id(const char *name)
 	return -2;
 }
 
-int check_memory(const void *addr, int size)
-{
-	const void *end_addr;
-	u32 k1;
+int check_memory(const void *addr, int size) {
+	u32 k1 = pspSdkGetK1();
+	const void *end_addr = addr + size - 1;
 
-	k1 = pspSdkGetK1();
-	end_addr = addr + size - 1;
-
-	if((int)(((u32)end_addr | (u32)addr) & (k1 << 11)) < 0) {
+	if ((int)(((u32)end_addr | (u32)addr) & (k1 << 11)) < 0) {
 		return 0;
 	}
 
