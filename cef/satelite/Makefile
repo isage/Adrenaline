@@ -1,5 +1,5 @@
 TARGET = satelite
-OBJS = main.o menu.o blit.o scePaf.o exports.o
+OBJS = main.o menu.o blit.o exports.o
 
 INCDIR = ../include
 CFLAGS = -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
@@ -22,7 +22,7 @@ USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_user -lpspvshctrl -lpsppower
+LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspvshctrl -lpsppower_user
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build_prx.mak
