@@ -686,10 +686,10 @@ int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2,
 
 void PatchVshMain(u32 text_addr, u32 text_size) {
 	int patches = 13;
-	u32 scePafGetText_call = _lw((u32)&scePafGetText);
+	u32 scePafGetText_call = VREAD32((u32)&scePafGetText);
 
 	for (u32 addr = text_addr; addr < text_addr + text_size && patches; addr += 4) {
-		u32 data = _lw(addr);
+		u32 data = VREAD32(addr);
 		if (data == 0x00063100) {
 			AddVshItem = (int (*)(void *, int,  SceVshItem *))U_EXTRACT_CALL(addr + 12);
 			MAKE_CALL(addr + 12, AddVshItemPatched);
@@ -719,18 +719,18 @@ void PatchVshMain(u32 text_addr, u32 text_size) {
 		} else if (data == 0xAC520124) {
 			MAKE_CALL(addr + 4, UnloadModulePatched);
 			patches--;
-		} else if (data == 0x24040010 && _lw(addr + 20) == 0x0040F809) {
-			_sw(0x8C48000C, addr + 16); // lw $t0, 12($v0)
+		} else if (data == 0x24040010 && VREAD32(addr + 20) == 0x0040F809) {
+			MAKE_INSTRUCTION(addr + 16, 0x8C48000C); // lw $t0, 12($v0)
 			MAKE_CALL(addr + 20, OnInitAuthPatched);
 			patches--;
 		} else if (data == scePafGetText_call) {
 			REDIRECT_FUNCTION(addr, scePafGetTextPatched);
 			patches--;
 		} else if (data == (u32)OnXmbPush && OnXmbPush != NULL && addr > text_addr + 0x50000) {
-			_sw((u32)OnXmbPushPatched, addr);
+			VWRITE32(addr, (u32)OnXmbPushPatched);
 			patches--;
 		} else if (data == (u32)OnXmbContextMenu && OnXmbContextMenu != NULL && addr > text_addr + 0x50000) {
-			_sw((u32)OnXmbContextMenuPatched, addr);
+			VWRITE32(addr, (u32)OnXmbContextMenuPatched);
 			patches--;
 		}
 	}
@@ -739,14 +739,14 @@ void PatchVshMain(u32 text_addr, u32 text_size) {
 
 void PatchAuthPlugin(u32 text_addr, u32 text_size) {
 	for (u32 addr = text_addr; addr < text_addr + text_size; addr += 4) {
-		u32 data = _lw(addr);
+		u32 data = VREAD32(addr);
 		if (data == 0x27BE0040) {
 			u32 a = addr - 4;
 			do {
 				a -= 4;
-			} while (_lw(a) != 0x27BDFFF0);
+			} while (VREAD32(a) != 0x27BDFFF0);
 			OnRetry = (void *)a;
-		} else if (data == 0x44816000 && _lw(addr - 4) == 0x3C0141F0) {
+		} else if (data == 0x44816000 && VREAD32(addr - 4) == 0x3C0141F0) {
 			MAKE_CALL(addr + 4, sceVshCommonGuiBottomDialogPatched);
 			break;
 		}
@@ -755,32 +755,32 @@ void PatchAuthPlugin(u32 text_addr, u32 text_size) {
 }
 
 void PatchSysconfPlugin(u32 text_addr, u32 text_size) {
-	u32 PAF_Resource_GetPageNodeByID_call = _lw((u32)&PAF_Resource_GetPageNodeByID);
-	u32 PAF_Resource_ResolveRefWString_call = _lw((u32)&PAF_Resource_ResolveRefWString);
-	u32 scePafGetText_call = _lw((u32)&scePafGetText);
+	u32 PAF_Resource_GetPageNodeByID_call = VREAD32((u32)&PAF_Resource_GetPageNodeByID);
+	u32 PAF_Resource_ResolveRefWString_call = VREAD32((u32)&PAF_Resource_ResolveRefWString);
+	u32 scePafGetText_call = VREAD32((u32)&scePafGetText);
 	int patches = 10;
 	for (u32 addr = text_addr; addr < text_addr + text_size && patches;
 		addr += 4) {
-		u32 data = _lw(addr);
-		if (data == 0x24420008 && _lw(addr - 4) == 0x00402821) {
+		u32 data = VREAD32(addr);
+		if (data == 0x24420008 && VREAD32(addr - 4) == 0x00402821) {
 			AddSysconfItem = (void *)addr - 36;
 			patches--;
-		} else if (data == 0x8C840008 && _lw(addr + 4) == 0x27BDFFD0) {
+		} else if (data == 0x8C840008 && VREAD32(addr + 4) == 0x27BDFFD0) {
 			GetSysconfItem = (void *)addr;
 			patches--;
-		} else if (data == 0xAFBF0060 && _lw(addr + 4) == 0xAFB3005C &&
-				_lw(addr - 12) == 0xAFB00050) {
+		} else if (data == 0xAFBF0060 && VREAD32(addr + 4) == 0xAFB3005C &&
+				VREAD32(addr - 12) == 0xAFB00050) {
 			OnInitMenuPspConfig = (void *)addr - 20;
 			patches--;
 		} else if (data == 0x2C420012) {
 			// Allows more than 18 items
-			_sh(0xFF, addr);
+			VWRITE16(addr, 0xFF);
 			patches--;
 		} else if (data == 0x01202821) {
 			MAKE_CALL(addr + 8, vshGetRegistryValuePatched);
 			MAKE_CALL(addr + 44, vshSetRegistryValuePatched);
 			patches--;
-		} else if (data == 0x2C620012 && _lw(addr - 4) == 0x00408821) {
+		} else if (data == 0x2C620012 && VREAD32(addr - 4) == 0x00408821) {
 			MAKE_CALL(addr - 16, GetSysconfItemPatched);
 			patches--;
 		} else if (data == (u32)OnInitMenuPspConfig && OnInitMenuPspConfig != NULL) {
@@ -801,7 +801,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size) {
 	for (u32 addr = text_addr + 0x33000; addr < text_addr + 0x40000; addr++) {
 		if (strcmp((char *)addr, "fiji") == 0) {
 		sysconf_unk = addr + 216;
-		if (_lw(sysconf_unk + 4) == 0)
+		if (VREAD32(sysconf_unk + 4) == 0)
 			sysconf_unk -= 4;                   // adjust on TT/DT firmware
 		sysconf_option = sysconf_unk + 0x4cc; // CHECK
 		break;
