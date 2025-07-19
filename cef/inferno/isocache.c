@@ -8,6 +8,7 @@
 #include <systemctrl_se.h>
 #include <stdio.h>
 #include <string.h>
+#include <macros.h>
 
 #include <adrenaline_log.h>
 
@@ -49,26 +50,22 @@ struct ISOCache {
 static struct ISOCache *g_caches = NULL;
 static int g_caches_num = 0, g_caches_cap = 0;
 
-static inline int is_within_range(u32 pos, u32 start, int len)
-{
-	if(start != (u32)-1 && pos >= start && pos < start + len) {
+static inline int is_within_range(u32 pos, u32 start, int len) {
+	if (start != (u32)-1 && pos >= start && pos < start + len) {
 		return 1;
 	}
 
 	return 0;
 }
 
-static int binary_search(const struct ISOCache *caches, size_t n, u32 pos)
-{
-	int low, high, mid;
-
-	low = 0;
-	high = n - 1;
+static int binary_search(const struct ISOCache *caches, size_t n, u32 pos) {
+	int low = 0;
+	int high = n - 1;
 
 	while (low <= high) {
-		mid = (low + high) / 2;
+		int mid = (low + high) / 2;
 
-		if(is_within_range(pos, caches[mid].pos, caches[mid].bufsize)) {
+		if (is_within_range(pos, caches[mid].pos, caches[mid].bufsize)) {
 			return mid;
 		} else if (pos < caches[mid].pos) {
 			high = mid - 1;
@@ -80,38 +77,33 @@ static int binary_search(const struct ISOCache *caches, size_t n, u32 pos)
 	return -1;
 }
 
-static struct ISOCache *get_matched_buffer(u32 pos)
-{
-	int cache_pos;
+static struct ISOCache *get_matched_buffer(u32 pos) {
+	int cache_pos = binary_search(g_caches, g_caches_num, pos);
 
-	cache_pos = binary_search(g_caches, g_caches_num, pos);
-
-	if(cache_pos == -1) {
+	if (cache_pos == -1) {
 		return NULL;
 	}
 
 	return &g_caches[cache_pos];
 }
 
-static int get_hit_caches(u32 pos, int len, char *data, struct ISOCache **last_cache)
-{
-	u32 cur;
-	int read_len;
+static int get_hit_caches(u32 pos, int len, char *data, struct ISOCache **last_cache) {
 	struct ISOCache *cache = NULL;
 
 	*last_cache = NULL;
 
-	for(cur = pos; cur < pos + len;) {
+	u32 cur;
+	for (cur = pos; cur < pos + len;) {
 		*last_cache = cache;
 		cache = get_matched_buffer(cur);
 
-		if(cache == NULL) {
+		if (cache == NULL) {
 			break;
 		}
 
-		read_len = MIN(len - (cur - pos), cache->pos + cache->bufsize - cur);
+		int read_len = MIN(len - (cur - pos), cache->pos + cache->bufsize - cur);
 
-		if(data != NULL) {
+		if (data != NULL) {
 			memcpy(data + cur - pos, cache->buf + cur - cache->pos, read_len);
 		}
 
@@ -119,7 +111,7 @@ static int get_hit_caches(u32 pos, int len, char *data, struct ISOCache **last_c
 		cache->age = -1;
 	}
 
-	if(cache == NULL)
+	if (cache == NULL)
 		return -1;
 
 	read_hit += len;
@@ -131,37 +123,34 @@ static void update_cache_info(void)
 {
 	int i;
 
-	if(cache_policy != CACHE_POLICY_LRU)
+	if (cache_policy != CACHE_POLICY_LRU)
 		return;
 
-	for(i=0; i<g_caches_num; ++i) {
+	for (i=0; i<g_caches_num; ++i) {
 		if (g_caches[i].pos != (u32)-1) {
 			g_caches[i].age++;
 		}
 	}
 }
 
-static struct ISOCache *get_retirng_cache(void)
-{
-	int i, retiring;
-
-	retiring = 0;
+static struct ISOCache *get_retirng_cache(void) {
+	int retiring = 0;
 
 	// invalid cache first
-	for(i=0; i<g_caches_num; ++i) {
-		if(g_caches[i].pos == (u32)-1) {
+	for (int i = 0; i < g_caches_num; ++i) {
+		if (g_caches[i].pos == (u32)-1) {
 			retiring = i;
 			goto exit;
 		}
 	}
 
-	if(cache_policy == CACHE_POLICY_LRU) {
-		for(i=0; i<g_caches_num; ++i) {
-			if(g_caches[i].age > g_caches[retiring].age) {
+	if (cache_policy == CACHE_POLICY_LRU) {
+		for (int i = 0; i < g_caches_num; ++i) {
+			if (g_caches[i].age > g_caches[retiring].age) {
 				retiring = i;
 			}
 		}
-	} else if(cache_policy == CACHE_POLICY_RR) {
+	} else if (cache_policy == CACHE_POLICY_RR) {
 		retiring = sctrlKernelRand() % g_caches_num;
 	}
 
@@ -169,19 +158,16 @@ exit:
 	return &g_caches[retiring];
 }
 
-static void disable_cache(struct ISOCache *cache)
-{
+static void disable_cache(struct ISOCache *cache) {
 	cache->pos = (u32)-1;
 	cache->age = -1;
 	cache->bufsize = 0;
 }
 
-static void reorder_iso_cache(int idx)
-{
+static void reorder_iso_cache(int idx) {
 	struct ISOCache tmp;
-	int i;
 
-	if(idx < 0 && idx >= g_caches_num) {
+	if (idx < 0 && idx >= g_caches_num) {
 		logmsg("%s: wrong idx\n", __func__);
 		return;
 	}
@@ -189,8 +175,9 @@ static void reorder_iso_cache(int idx)
 	memmove(&tmp, &g_caches[idx], sizeof(g_caches[idx]));
 	memmove(&g_caches[idx], &g_caches[idx+1], sizeof(g_caches[idx]) * (g_caches_num - idx - 1));
 
-	for(i=0; i<g_caches_num-1; ++i) {
-		if(g_caches[i].pos >= tmp.pos) {
+	int i;
+	for (i = 0; i < g_caches_num-1; ++i) {
+		if (g_caches[i].pos >= tmp.pos) {
 			break;
 		}
 	}
@@ -199,32 +186,30 @@ static void reorder_iso_cache(int idx)
 	memmove(&g_caches[i], &tmp, sizeof(tmp));
 }
 
-static int add_cache(struct IoReadArg *arg)
-{
-	int read_len, len, ret;
+static int add_cache(struct IoReadArg *arg) {
+	int read_len, ret;
 	struct IoReadArg cache_arg;
 	struct ISOCache *cache, *last_cache;
-	u32 pos, cur;
-	char *data;
+	u32 cur;
 
-	len = arg->size;
-	pos = arg->offset;
-	data = (char*)arg->address;
+	int len = arg->size;
+	u32 pos = arg->offset;
+	char* data = (char*)arg->address;
 
-	for(cur = pos; cur < pos + len;) {
-		if(data == NULL) {
+	for (cur = pos; cur < pos + len;) {
+		if (data == NULL) {
 			ret = get_hit_caches(cur, len - (cur - pos), NULL, &last_cache);
 		} else {
 			ret = get_hit_caches(cur, len - (cur - pos), data + cur - pos, &last_cache);
 		}
 
-		if(ret >= 0) {
+		if (ret >= 0) {
 			cur += ret;
 			continue;
 		}
 
-		if(last_cache != NULL) {
-			if(pos + len <= last_cache->pos + last_cache->bufsize) {
+		if (last_cache != NULL) {
+			if (pos + len <= last_cache->pos + last_cache->bufsize) {
 				logmsg("%s: error pos\n", __func__);
 				asm("break");
 			}
@@ -240,14 +225,14 @@ static int add_cache(struct IoReadArg *arg)
 
 		ret = iso_read(&cache_arg);
 
-		if(ret > 0) {
+		if (ret > 0) {
 			cache->pos = cache_arg.offset;
 			cache->age = -1;
 			cache->bufsize = ret;
 
 			read_len = MIN(len - (cur - pos), cache->pos + cache->bufsize - cur);
 
-			if(data != NULL) {
+			if (data != NULL) {
 				memcpy(data + cur - pos, cache->buf + cur - cache->pos, read_len);
 			}
 
@@ -267,18 +252,16 @@ static int add_cache(struct IoReadArg *arg)
 	return cur - pos;
 }
 
-static void process_request(void)
-{
-	int pos, len;
+static void process_request(void) {
 	struct IoReadArg cache_arg;
 
-	if(g_cache_request_idx <= 0) {
+	if (g_cache_request_idx <= 0) {
 		return;
 	}
 
 	g_cache_request_idx--;
-	pos = g_cache_request[g_cache_request_idx].pos;
-	len = g_cache_request[g_cache_request_idx].len;
+	int pos = g_cache_request[g_cache_request_idx].pos;
+	int len = g_cache_request[g_cache_request_idx].len;
 
 	cache_arg.size = len;
 	cache_arg.offset = pos;
@@ -288,18 +271,15 @@ static void process_request(void)
 }
 
 #ifdef CACHE_TEST
-void cache_test(struct IoReadArg *arg)
-{
-	SceUID memid;
+void cache_test(struct IoReadArg *arg) {
 	struct IoReadArg testarg;
 	int ret;
-	u32 cur;
 
-	cur = 0;
+	u32 cur = 0;
 	testarg.size = MIN(16 * 1024, arg->size - cur);
-	memid = sceKernelAllocPartitionMemory(1, "infernoCacheTest", PSP_SMEM_High, testarg.size + 64, NULL);
+	SceUID memid = sceKernelAllocPartitionMemory(1, "infernoCacheTest", PSP_SMEM_High, testarg.size + 64, NULL);
 
-	if(memid < 0) {
+	if (memid < 0) {
 		asm("break 1");
 		return;
 	}
@@ -308,13 +288,13 @@ void cache_test(struct IoReadArg *arg)
 	testarg.address = (void*)(((u32)testarg.address & (~(64-1))) + 64);
 	memset(testarg.address, 0, testarg.size);
 
-	while(cur < arg->size) {
+	while (cur < arg->size) {
 		testarg.size = MIN(16 * 1024, arg->size - cur);
 		testarg.offset = arg->offset + cur;
 		ret = iso_read(&testarg);
 
-		if(ret == 0) {
-			if(cur != arg->size) {
+		if (ret == 0) {
+			if (cur != arg->size) {
 				char buf[256];
 
 				sprintf(buf, "%s: 0x%08X <%d> unexpected EOF for %d bytes\n", __func__, (uint)testarg.offset, (int)testarg.size, cur);
@@ -325,7 +305,7 @@ void cache_test(struct IoReadArg *arg)
 			break;
 		}
 
-		if(ret < 0 || 0 != memcmp(arg->address + cur, testarg.address, ret)) {
+		if (ret < 0 || 0 != memcmp(arg->address + cur, testarg.address, ret)) {
 			char buf[256];
 
 			sprintf(buf, "%s: 0x%08X <%d> cache error at pos 0x%08X, status %d\n", __func__, (uint)arg->offset, (int)arg->size, arg->offset + cur, ret);
@@ -344,23 +324,19 @@ void cache_test(struct IoReadArg *arg)
 }
 #endif
 
-int iso_cache_read(struct IoReadArg *arg)
-{
-	int ret, len;
-	u32 pos;
-	char *data;
+int iso_cache_read(struct IoReadArg *arg) {
 	struct ISOCache *last_cache;
 
-	if(!cache_on) {
+	if (!cache_on) {
 		return iso_read(arg);
 	}
 
-	data = (char*)arg->address;
-	pos = arg->offset;
-	len = arg->size;
-	ret = get_hit_caches(pos, len, data, &last_cache);
+	char* data = (char*)arg->address;
+	u32 pos = arg->offset;
+	int len = arg->size;
+	int ret = get_hit_caches(pos, len, data, &last_cache);
 
-	if(ret < 0) {
+	if (ret < 0) {
 #if 0
 		{
 			char buf[256];
@@ -372,7 +348,7 @@ int iso_cache_read(struct IoReadArg *arg)
 
 		// abandon the caching, because the bufsize is too small
 		// if we cache it then random access performance will be hurt
-		if(arg->size < MIN(CACHE_MINIMUM_THRESHOLD, (u32)g_caches_cap)) {
+		if (arg->size < MIN(CACHE_MINIMUM_THRESHOLD, (u32)g_caches_cap)) {
 			return iso_read(arg);
 		}
 
@@ -396,8 +372,7 @@ int iso_cache_read(struct IoReadArg *arg)
 	return ret;
 }
 
-int infernoCacheInit(int cache_size, int cache_num, int partition)
-{
+int infernoCacheInit(int cache_size, int cache_num, int partition) {
 	if (cache_size == 0){ // disable cache
         sceKernelFreePartitionMemory(cache_ctrl);
         sceKernelFreePartitionMemory(cache_mem);
@@ -416,28 +391,28 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
 	g_caches_num = cache_num;
 	g_caches_cap = cache_size;
 
-	if(g_caches_cap % 0x200 != 0) {
+	if (g_caches_cap % 0x200 != 0) {
 		return -1;
 	}
 
 	memid = sceKernelAllocPartitionMemory(partition, "infernoCacheCtl", PSP_SMEM_High, g_caches_num * sizeof(g_caches[0]), NULL);
     cache_ctrl = memid;
 
-	if(memid < 0) {
+	if (memid < 0) {
 		logmsg("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
 		return -2;
 	}
 
 	g_caches = sceKernelGetBlockHeadAddr(memid);
 
-	if(g_caches == NULL) {
+	if (g_caches == NULL) {
 		return -3;
 	}
 
 	memid = sceKernelAllocPartitionMemory(partition, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
     cache_mem = memid;
 
-	if(memid < 0) {
+	if (memid < 0) {
 		logmsg("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
 		return -4;
 	}
@@ -445,7 +420,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
 	pbuf = sceKernelGetBlockHeadAddr(memid);
 	pbuf = (void*)(((u32)pbuf & (~(64-1))) + 64);
 
-	for(i=0; i<g_caches_num; ++i) {
+	for (i=0; i<g_caches_num; ++i) {
 		cache = &g_caches[i];
 		cache->buf = pbuf + i * g_caches_cap;
 		disable_cache(cache);
@@ -459,13 +434,12 @@ int infernoCacheInit(int cache_size, int cache_num, int partition)
 	return 0;
 }
 
-int infernoCacheAdd(u32 pos, int len)
-{
-	if(!cache_on) {
+int infernoCacheAdd(u32 pos, int len) {
+	if (!cache_on) {
 		return -1;
 	}
 
-	if(g_cache_request_idx < (int)NELEMS(g_cache_request)) {
+	if (g_cache_request_idx < (int)NELEMS(g_cache_request)) {
 		g_cache_request[g_cache_request_idx].pos = pos;
 		g_cache_request[g_cache_request_idx].len = len;
 		g_cache_request_idx++;
@@ -488,16 +462,15 @@ int infernoCacheAdd(u32 pos, int len)
 
 // call @PRO_Inferno_Driver:CacheCtrl,0x5CC24481@
 #ifdef DEBUG
-void isocache_stat(int reset)
-{
+void isocache_stat(int reset) {
 	char buf[256];
 	int i, used;
 
 	sprintf(buf, "caches stat:\n");
 	sceIoWrite(2, buf, strlen(buf));
 
-	for(i=0, used=0; i<g_caches_num; ++i) {
-		if(g_caches[i].pos != (u32)-1) {
+	for (i=0, used=0; i<g_caches_num; ++i) {
+		if (g_caches[i].pos != (u32)-1) {
 			used++;
 		}
 
@@ -518,7 +491,7 @@ void isocache_stat(int reset)
 	sprintf(buf, "%d caches used(%02d%%)\n", used, 100 * used / g_caches_num);
 	sceIoWrite(2, buf, strlen(buf));
 
-	if(reset) {
+	if (reset) {
 		read_call = read_hit = read_missed = 0;
 	}
 }
@@ -527,7 +500,6 @@ void isocache_stat(int reset){}
 #endif
 
 // call @PRO_Inferno_Driver:CacheCtrl,0xC0736FD6@
-void infernoCacheSetPolicy(int policy)
-{
+void infernoCacheSetPolicy(int policy) {
 	cache_policy = policy;
 }

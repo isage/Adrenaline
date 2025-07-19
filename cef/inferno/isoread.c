@@ -25,11 +25,10 @@
 #include <psprtc.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
+#include <macros.h>
 
 #include <adrenaline_log.h>
 
-#include "utils.h"
-#include "libs.h"
 #include "utils.h"
 #include "inferno.h"
 #include "lz4.h"
@@ -118,7 +117,7 @@ static u32 g_ciso_total_block;
 
 // reader functions
 static int is_compressed = 0;
-static void (*ciso_decompressor)(void* src, int src_len, void* dst, int dst_len, u32 topbit) = NULL;
+static void (*ciso_decompressor)(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit) = NULL;
 
 unsigned char umd_seek = 0;
 unsigned char umd_speed = 0;
@@ -127,8 +126,7 @@ u32 last_read_offset = 0;
 
 
 // 0x00000368
-static void wait_until_ms0_ready(void)
-{
+static void wait_until_ms0_ready(void) {
     int ret, status = 0;
 
     if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_VSH) return; // no wait on VSH
@@ -146,7 +144,7 @@ static void wait_until_ms0_ready(void)
             continue;
         }
 
-        if(status == 4) {
+        if (status == 4) {
             break;
         }
 
@@ -159,38 +157,36 @@ static int io_calls = 0;
 #endif
 
 // 0x00000BB4
-static int read_raw_data(u8* addr, u32 size, u32 offset)
-{
-    int ret, i;
-    SceOff ofs;
-    i = 0;
-
-    #ifdef DEBUG
+static int read_raw_data(u8* addr, u32 size, u32 offset) {
+	#ifdef DEBUG
     io_calls++;
     #endif
 
+    SceOff ofs;
+    int i = 0;
     do {
         i++;
         ofs = sceIoLseek(g_iso_fd, offset, PSP_SEEK_SET);
 
-        if(ofs >= 0) {
+        if (ofs >= 0) {
             i = 0;
             break;
         } else {
             logmsg("%s: lseek retry %d error 0x%08X\n", __func__, i, (int)ofs);
             iso_open();
         }
-    } while(i < 16);
+    } while (i < 16);
 
-    if(i == 16) {
+	int ret;
+    if (i == 16) {
         ret = 0x80010013;
         goto exit;
     }
 
-    for(i=0; i<16; ++i) {
+    for (i = 0; i < 16; ++i) {
         ret = sceIoRead(g_iso_fd, addr, size);
 
-        if(ret >= 0) {
+        if (ret >= 0) {
             i = 0;
             break;
         } else {
@@ -199,7 +195,7 @@ static int read_raw_data(u8* addr, u32 size, u32 offset)
         }
     }
 
-    if(i == 16) {
+    if (i == 16) {
         ret = 0x80010013;
         goto exit;
     }
@@ -222,7 +218,7 @@ exit:
     - align: CISO block alignment (none for others).
 
     Some other Technical Information:
-    - Block offsets can use the top bit to represent aditional information for the decompressor (NCarea, compression method, etc).
+    - Block offsets can use the top bit to represent additional information for the decompressor (NCarea, compression method, etc).
     - Block size is calculated via the difference with the next block. Works for DAX, allowing us to skip parsing block size array (with correction for last block).
     - Non-Compressed Area can be determined if size of compressed block is equal to size of uncompressed (equal or greater for CSOv2 due to padding).
     - This reader won't work for CSO/ZSO files above 4GB to avoid using 64 bit arithmetic, but can be easily adjustable.
@@ -233,11 +229,7 @@ exit:
     - reading the entire compressed data (or chunks of it) at the end of provided buffer to reduce block IO.
 
 */
-static int read_compressed_data(u8* addr, u32 size, u32 offset)
-{
-
-    u32 cur_block;
-    u32 pos, ret, read_bytes;
+static int read_compressed_data(u8* addr, u32 size, u32 offset) {
     u32 o_offset = offset;
     u32 g_ciso_total_block = uncompressed_size/block_size;
     u8* com_buf = g_ciso_block_buf;
@@ -249,11 +241,11 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     io_calls = 0;
     #endif
 
-    if(offset > uncompressed_size) {
+    if (offset > uncompressed_size) {
         // return if the offset goes beyond the iso size
         return 0;
     }
-    else if(offset + size > uncompressed_size) {
+    else if (offset + size > uncompressed_size) {
         // adjust size if it tries to read beyond the game data
         size = uncompressed_size - offset;
     }
@@ -279,9 +271,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     o_end = (o_end&0x7FFFFFFF)<<align;
     u32 compressed_size = o_end-o_start;
 
-    #ifdef DEBUG
-    printf("(0)compressed size: %d, ", compressed_size);
-    #endif
+    logmsg2("(0)compressed size: %d, ", compressed_size);
 
     // try to read at once as much compressed data as possible
     if (size > block_size*2){ // only if going to read more than two blocks
@@ -290,10 +280,10 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         read_raw_data(c_buf, compressed_size, o_start);
     }
 
-    while(size > 0) {
+    while (size > 0) {
         // calculate block number and offset within block
-        cur_block = offset / block_size;
-        pos = offset & (block_size - 1);
+        u32 cur_block = offset / block_size;
+        u32 pos = offset & (block_size - 1);
 
         // check if we need to refresh index table
         if (cur_block-g_cso_idx_start_block >= g_cso_idx_cache_num-1){
@@ -339,7 +329,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
         ciso_decompressor(com_buf, b_size, dec_buf, block_size, topbit);
 
         // read data from block into buffer
-        read_bytes = MIN(size, (block_size - pos));
+        u32 read_bytes = MIN(size, (block_size - pos));
         memcpy(addr, dec_buf + pos, read_bytes);
         size -= read_bytes;
         addr += read_bytes;
@@ -349,46 +339,46 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset)
     u32 res = offset - o_offset;
 
     #ifdef DEBUG
-    printf("read %d bytes at %p took %d IO calls\n", res, o_offset, io_calls);
+    logmsg2("read %d bytes at %p took %d IO calls\n", res, o_offset, io_calls);
     #endif
 
     return res;
 }
 
 // Decompress DAX v0
-static void decompress_dax0(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_dax0(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
     // use raw inflate with no NCarea check
     sceKernelDeflateDecompress(dst, DAX_COMP_BUF, src, 0);
 }
 
 // Decompress DAX v1 or JISO method 1
-static void decompress_dax1(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_dax1(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
     // for DAX Version 1 we can skip parsing NC-Areas and just use the block_size trick as in JSO and CSOv2
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
     else sceKernelDeflateDecompress(dst, dst_len, src, 0); // use raw inflate
 }
 
 // Decompress JISO method 0
-static void decompress_jiso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_jiso(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
     // while JISO allows for DAX-like NCarea, it by default uses compressed size check
     if (src_len == dst_len) memcpy(dst, src, dst_len); // check for NC area
-	else sctrlLzoDecompress(dst, &dst_len, src, src_len); // use lzo
+	else sctrlLzoDecompress(dst, (unsigned*)&dst_len, src, src_len); // use lzo
 }
 
 // Decompress CISO v1
-static void decompress_ciso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_ciso(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
     if (topbit) memcpy(dst, src, dst_len); // check for NC area
     else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
 // Decompress ZISO
-static void decompress_ziso(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_ziso(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
     if (topbit) memcpy(dst, src, dst_len); // check for NC area
     else sctrlLZ4Decompress(dst, src, dst_len);
 }
 
 // Decompress CISO v2
-static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 topbit){
+static void decompress_cso2(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
     // in CSOv2, top bit represents compression method instead of NCarea
     if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area (JSO-like, but considering padding, thus >=)
     else if (topbit) sctrlLZ4Decompress(dst, src, dst_len);
@@ -396,24 +386,21 @@ static void decompress_cso2(void* src, int src_len, void* dst, int dst_len, u32 
 }
 
 // 0x00000F00
-static int iso_type_check(SceUID fd)
-{
-    int ret;
-
+static int iso_type_check(SceUID fd) {
     CISOHeader g_CISO_hdr;
 
     g_CISO_hdr.magic = 0;
 
     sceIoLseek(fd, 0, PSP_SEEK_SET);
-    ret = sceIoRead(fd, &g_CISO_hdr, sizeof(g_CISO_hdr));
+    int ret = sceIoRead(fd, &g_CISO_hdr, sizeof(g_CISO_hdr));
 
-    if(ret != sizeof(g_CISO_hdr)) {
+    if (ret != sizeof(g_CISO_hdr)) {
         return -1;
     }
 
     u32 magic = g_CISO_hdr.magic;
 
-    if(magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
+    if (magic == CSO_MAGIC || magic == ZSO_MAGIC || magic == DAX_MAGIC || magic == JSO_MAGIC) { // CISO or ZISO or JISO or DAX
         u32 com_size = 0;
         // set reader and decompressor functions according to format
         if (magic == DAX_MAGIC){
@@ -459,17 +446,17 @@ static int iso_type_check(SceUID fd)
             }
             // allocate buffer for decompressed block
             g_ciso_dec_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
-            if(g_ciso_dec_buf == NULL) {
+            if (g_ciso_dec_buf == NULL) {
                 return -2;
             }
-            if((u32)g_ciso_dec_buf & 63) // align 64
+            if ((u32)g_ciso_dec_buf & 63) // align 64
                 g_ciso_dec_buf = (void*)(((u32)g_ciso_dec_buf & (~63)) + 64);
             // allocate buffer for compressed block
             g_ciso_block_buf = sceKernelAllocHeapMemory(heapid, com_size+64);
-            if(g_ciso_block_buf == NULL) {
+            if (g_ciso_block_buf == NULL) {
                 return -3;
             }
-            if((u32)g_ciso_block_buf & 63) // align 64
+            if ((u32)g_ciso_block_buf & 63) // align 64
                 g_ciso_block_buf = (void*)(((u32)g_ciso_block_buf & (~63)) + 64);
             // allocate buffer for block offset cache
             g_cso_idx_cache = sceKernelAllocHeapMemory(heapid, (g_cso_idx_cache_num * 4) + 64);
@@ -491,30 +478,29 @@ static int iso_type_check(SceUID fd)
 }
 
 // 0x000009D4
-int iso_open(void)
-{
-    int ret, retries;
-
-    if (g_iso_fn == NULL || g_iso_fn[0] == 0) return -1;
+int iso_open(void) {
+    if (g_iso_fn[0] == 0) {
+		return -1;
+	}
 
     wait_until_ms0_ready();
     sceIoClose(g_iso_fd);
     g_iso_opened = 0;
-    retries = 0;
 
+    int retries = 0;
     do {
         g_iso_fd = sceIoOpen(g_iso_fn, 0x000F0001, 0777);
 
-        if(g_iso_fd < 0) {
-            if(++retries >= 16) {
+        if (g_iso_fd < 0) {
+            if (++retries >= 16) {
                 return -1;
             }
 
             sceKernelDelayThread(20000);
         }
-    } while(g_iso_fd < 0);
+    } while (g_iso_fd < 0);
 
-    if(g_iso_fd < 0) {
+    if (g_iso_fd < 0) {
         return -1;
     }
 
@@ -528,8 +514,7 @@ int iso_open(void)
 }
 
 // 0x00000C7C
-int iso_read(struct IoReadArg *args)
-{
+int iso_read(struct IoReadArg *args) {
     if (is_compressed)
         return read_compressed_data(args->address, args->size, args->offset);
     return read_raw_data(args->address, args->size, args->offset);
@@ -537,13 +522,10 @@ int iso_read(struct IoReadArg *args)
 
 // 0x000003E0
 int (*iso_reader)(struct IoReadArg *args) = &iso_read;
-int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
-{
-    int ret, retv;
+int iso_read_with_stack(u32 offset, void *ptr, u32 data_len) {
+    int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
-    ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
-
-    if(ret < 0) {
+    if (ret < 0) {
         return -1;
     }
 
@@ -551,13 +533,11 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     g_read_arg.address = ptr;
     g_read_arg.size = data_len;
 
-    clock_t start_clock = sceKernelLibcClock();
-    retv = sceKernelExtendKernelStack(0x2000, (void*)iso_reader, &g_read_arg);
-    clock_t end_clock = sceKernelLibcClock();
+    int retv = sceKernelExtendKernelStack(0x2000, (void*)iso_reader, &g_read_arg);
 
     ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 
-    if(ret < 0) {
+    if (ret < 0) {
         return -1;
     }
 
@@ -579,7 +559,7 @@ int iso_read_with_stack(u32 offset, void *ptr, u32 data_len)
     return retv;
 }
 
-void infernoSetUmdDelay(int seek, int speed){
+void infernoSetUmdDelay(int seek, int speed) {
     umd_seek = seek;
     umd_speed = speed;
 }

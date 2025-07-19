@@ -25,12 +25,12 @@
 #include <pspsysevent.h>
 #include <pspumd.h>
 #include <psprtc.h>
+#include <macros.h>
+
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 
-#include "utils.h"
-#include "libs.h"
 #include "utils.h"
 #include "inferno.h"
 
@@ -61,18 +61,15 @@ PspSysEventHandler g_power_event = {
 };
 
 // 00000090
-int setup_umd_device(void)
-{
-	int ret;
-
+int setup_umd_device(void) {
 	memset(g_iso_fn, 0, sizeof(g_iso_fn));
     strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
 
     infernoSetDiscType(sctrlSEGetDiscType());
 
-	ret = sceIoAddDrv(&g_iodrv);
+	int ret = sceIoAddDrv(&g_iodrv);
 
-	if(ret < 0) {
+	if (ret < 0) {
 		return ret;
 	}
 
@@ -83,8 +80,7 @@ int setup_umd_device(void)
 }
 
 // 00001514
-int init_inferno(void)
-{
+int init_inferno(void) {
 	g_drive_status = PSP_UMD_INITING;
 	g_umd_cbid = -1;
 	g_umd_error_status = 0;
@@ -111,8 +107,7 @@ int module_start(SceSize args, void* argp) {
 }
 
 // 0x0000006C
-int module_stop(SceSize args, void *argp)
-{
+int module_stop(SceSize args, void *argp) {
 	sceIoDelDrv("umd");
 	sceKernelDeleteEventFlag(g_drive_status_evf);
 	sceKernelUnregisterSysEventHandler(&g_power_event);

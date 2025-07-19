@@ -26,7 +26,7 @@
 
 #define SAFE_FREE(p) \
   do { \
-    if(p != NULL) { \
+    if (p != NULL) { \
       oe_free(p); \
       p = NULL; \
     } \
