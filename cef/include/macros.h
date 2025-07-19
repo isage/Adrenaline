@@ -17,6 +17,25 @@
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+// Volatile read a u8 value from the address `addr`
+#define VREAD8(addr) _lb(addr)
+// Volatile read a u16 value from the address `addr`
+#define VREAD16(addr) _lh(addr)
+// Volatile read a u32 value from the address `addr`
+#define VREAD32(addr) _lw(addr)
+// Volatile read a u64 value from the address `addr`
+#define VREAD64(addr) _ld(addr)
+
+// Volatile write to `addr` the byte value of `val`
+#define VWRITE8(addr, val) _sb(val, addr);
+// Volatile write to `addr` the u16 value of `val`
+#define VWRITE16(addr, val) _sh(val, addr);
+// Volatile write to `addr` the u32 value of `val`
+#define VWRITE32(addr, val) _sw(val, addr);
+// Volatile write to `addr` the u64 value of `val`
+#define VWRITE64(addr, val) _sd(val, addr);
+
+
 // nop instruction value
 #define NOP 0
 
@@ -53,10 +72,16 @@
 // Create a syscall number for a given `n`
 #define SYSCALL(n) ((n << 6)|0x0000000C)
 
+// Insert a instruction optcode `i` at the address `a`
+#define MAKE_INSTRUCTION(a, i) _sw(i, a);
+
+// Insert a no operation (`nop`) instruction at the address `a`
+#define MAKE_NOP(a) _sw(NOP, a);
+
 // Insert a direct jump to `f` at the address `a`
 #define MAKE_JUMP(a, f) _sw(JUMP(f), a);
 
-// Insert a function call (jal) to `f` at the address `a`
+// Insert a function call (`jal`) to `f` at the address `a`
 #define MAKE_CALL(a, f) _sw(JAL(f), a);
 
 // Insert a syscall call of value `n` at the address `a`
