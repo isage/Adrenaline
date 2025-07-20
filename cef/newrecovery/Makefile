@@ -21,7 +21,7 @@ USE_PSPSDK_LIBC = 1
 USE_PSPSDK_LIBS = 1
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspkubridge -lpspreg -lz
+LIBS = -lpspsystemctrl_user -lpspkubridge -lpspreg -lz
 
 PSPSDK = $(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak
