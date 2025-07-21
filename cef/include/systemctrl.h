@@ -177,6 +177,21 @@ u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
 #define FindProc sctrlHENFindFunction
 
 /**
+ * Finds a function in a ::SceModule2.
+ *
+ * Good to optimize when you already have a ::SceModule2 module and wants to
+ * find a function in that module.
+ *
+ * @param mod - The module where to search the function
+ * @param szLib - The library name
+ * @param nid - The nid of the function
+ *
+ * @returns - The function address or 0 if not found
+ *
+*/
+u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid)
+
+/**
  * Replace import function stub with a function or dummy value.
  *
  * This function autodetects whether Syscalls are used or not, but manually

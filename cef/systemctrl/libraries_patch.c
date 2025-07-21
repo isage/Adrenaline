@@ -202,7 +202,7 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 	return res;
 }
 
-static u32 sctrlHENFindImportByNID(SceModule2 * mod, const char *szLib, u32 nid) {
+u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid) {
 	int i = 0;
 	while (i < mod->stub_size) {
 		SceLibraryStubTable *stub = (SceLibraryStubTable *)(mod->stub_top + i);
@@ -229,7 +229,7 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 	// Invalid Arguments
 	if(pMod == NULL || library == NULL) return -1;
 
-	u32 stub = sctrlHENFindImportByNID(pMod, library, nid);
+	u32 stub = sctrlHENFindFunctionInMod(pMod, library, nid);
 
 	if (stub == 0) {
 
@@ -240,7 +240,7 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 			return -2;
 		}
 
-		stub = sctrlHENFindImportByNID(pMod, library, old_nid);
+		stub = sctrlHENFindFunctionInMod(pMod, library, old_nid);
 
 		// Stub not found again...
 		if (stub == 0) {
