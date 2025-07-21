@@ -24,6 +24,8 @@
 #define VERSION_KEY_SIZE 0x10
 #define CONTENT_ID_SIZE 0x30
 
+#define PGD_MAGIC 0x44475000
+
 typedef struct {
 	int type;
 	u8 key[16];
