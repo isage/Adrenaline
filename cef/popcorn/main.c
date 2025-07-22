@@ -177,11 +177,10 @@ static void patchScePopsMgr(void) {
 	// Also this gives support to custom PSone games.
 	SetVersionKeyContentId = (void *)text_addr + 0x124; // Is this `sceNpDrmSetLicenseeKey`?
 	REDIRECT_FUNCTION(text_addr + 0x14FC, GetVersionKeyContentIdPatched);
-	// sctrlHENHookImportByNID(mod, "scePspNpDrm_driver",0x0F9547E6, GetVersionKeyContentIdPatched, 0);
 
 	if (!original) {
 		// Patch syscall to use it as deflate decompress
-		scePopsManExitVSHKernel = (void *)sctrlHENFindFunction("scePops_Manager", "scePopsMan", 0x0090B2C8);
+		scePopsManExitVSHKernel = (void *)sctrlHENFindFunctionInMod(mod, "scePopsMan", 0x0090B2C8);
 		sctrlHENPatchSyscall((u32)scePopsManExitVSHKernel, scePopsManExitVSHKernelPatched);
 
 		// Fake dnas drm
