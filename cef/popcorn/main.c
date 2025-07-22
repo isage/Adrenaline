@@ -25,7 +25,7 @@
 
 PSP_MODULE_INFO("M33PopcornManager", 0x1007, 1, 0);
 
-int (* scePopsManExitVSHKernel)(int error);
+int (* _scePopsManExitVSHKernel)(int error);
 int (* SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id);
 
 u8 pgd_buf[0x80];
@@ -35,7 +35,8 @@ STMOD_HANDLER previous;
 
 int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 	if (destSize & 0x80000000) {
-		return scePopsManExitVSHKernel(destSize);
+		logmsg2("%s: error=0x%08X", __func__, destSize);
+		return _scePopsManExitVSHKernel(destSize);
 	}
 
 	int size = sceKernelDeflateDecompress(dest, destSize, src, 0);
@@ -48,7 +49,7 @@ int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 		ret = size;
 	}
 
-	logmsg2("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\n",__func__, (uint)destSize, (uint)src, (uint)dest, ret);
+	logmsg2("%s: DeflateDecompress destSize=0x%08X, src=0x%08X, dest=0x%08X -> 0x%08X\n",__func__, (uint)destSize, (uint)src, (uint)dest, ret);
 	return ret;
 }
 
@@ -57,7 +58,7 @@ int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 	if (NULL == _sceMeAudio_2AB4FE43) {
 		logmsg2("%s: [ERROR]: Pointer to original function was not set\n", __func__);
 		// Illegal addr error
-		scePopsManExitVSHKernel(0x800200d3);
+		_scePopsManExitVSHKernel(0x800200d3);
 	}
 
 	u32 k1 = pspSdkSetK1(0);
@@ -72,7 +73,7 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	// Remove drm flag
 	SceUID res = sceIoOpen(file, flags & ~0x40000000, mode);
 
-	logmsg2("%s: %s 0x%08X -> 0x%08X\n", __func__, file, flags, res);
+	logmsg2("%s: file=%s, flags=0x%08X -> 0x%08X\n", __func__, file, flags, res);
 	return res;
 }
 
@@ -98,7 +99,7 @@ int sceIoReadPatched(SceUID fd, void *data, SceSize size) {
 		}
 	}
 
-	logmsg2("%s: fd=0x%08X data=0x%08X size=%d -> 0x%08X\n", __func__, fd, data, size, res);
+	logmsg2("%s: fd=0x%08X, data=0x%08X, size=%d -> 0x%08X\n", __func__, fd, data, size, res);
 	return res;
 }
 
@@ -210,8 +211,8 @@ static void patchScePopsMgr(void) {
 
 	if (!is_official) {
 		// Patch syscall to use it as deflate decompress
-		scePopsManExitVSHKernel = (void *)sctrlHENFindFunctionInMod(mod, "scePopsMan", 0x0090B2C8);
-		sctrlHENPatchSyscall((u32)scePopsManExitVSHKernel, scePopsManExitVSHKernelPatched);
+		_scePopsManExitVSHKernel = (void *)sctrlHENFindFunctionInMod(mod, "scePopsMan", 0x0090B2C8);
+		sctrlHENPatchSyscall((u32)_scePopsManExitVSHKernel, scePopsManExitVSHKernelPatched);
 
 		// Fake dnas drm
 		sctrlHENHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched, 0);
