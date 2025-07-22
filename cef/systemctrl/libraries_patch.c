@@ -227,7 +227,9 @@ u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid) {
 // Replace Import Function Stub
 int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *func, int dummy) {
 	// Invalid Arguments
-	if(pMod == NULL || library == NULL) return -1;
+	if(pMod == NULL || library == NULL) {
+		return -1;
+	}
 
 	u32 stub = sctrlHENFindFunctionInMod(pMod, library, nid);
 
@@ -248,7 +250,7 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 		}
 	}
 
-	// Function as 16-Bit Unsigned Integer
+	// Function as 32-Bit Unsigned Integer
 	unsigned int func_int = (unsigned int)func;
 
 	// Dummy Return
@@ -261,14 +263,38 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 	} else { // Normal Hook
 		// Syscall Hook
 		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
-			// Query Syscall Number
-			int syscall = sceKernelQuerySystemCall661(func);
+			if (dummy) {
+				void *ptr = NULL;
+				asm("cfc0 %0, $12\n" : "=r"(ptr));
 
-			// Not properly exported in exports.exp
-			if(syscall < 0) return -3;
+				// Syscall table not found.
+				if (NULL == ptr) {
+					return -4;
+				}
 
-			// Create Syscall Hook
-			MAKE_SYSCALL_FUNCTION(stub, syscall);
+				u32 *syscall_table = (u32 *)(ptr + 0x10);
+				int found = 0;
+				for (int i = 0; i < 0x1000; i++) {
+					if ((syscall_table[i] & 0x0FFFFFFF) == (stub & 0x0FFFFFFF)) {
+						syscall_table[i] = func_int;
+						found = 1;
+					}
+				}
+
+				// Syscall not found in the table
+				if (!found) {
+					return -5;
+				}
+			} else {
+				// Query Syscall Number
+				int syscall = sceKernelQuerySystemCall661(func);
+
+				// Not properly exported in exports.exp
+				if(syscall < 0) return -3;
+
+				// Create Syscall Hook
+				MAKE_SYSCALL_FUNCTION(stub, syscall);
+			}
 		} else {
 			// Create Direct Jump Hook
 			REDIRECT_FUNCTION(stub, func);
