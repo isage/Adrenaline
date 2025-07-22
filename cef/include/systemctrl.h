@@ -177,21 +177,47 @@ u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
 #define FindProc sctrlHENFindFunction
 
 /**
+ * Finds a function in a ::SceModule2.
+ *
+ * Good to optimize when you already have a ::SceModule2 module and wants to
+ * find a function in that module.
+ *
+ * @param mod - The module where to search the function
+ * @param szLib - The library name
+ * @param nid - The nid of the function
+ *
+ * @returns - The function address or 0 if not found
+ *
+*/
+u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid);
+
+/**
  * Replace import function stub with a function or dummy value.
  *
- * This function autodetects whether Syscalls are used or not, but manually
- * exporting in exports.exp is still required for Syscalls to work.
+ * This function autodetects whether Syscalls are used or not, and if used, it
+ * behaves differently depending on the value of `replace_syscall`. If true, the
+ * function replaces syscall address to the address to the `func` in the syscall
+ * table. I false, the function creates a new syscall and redirects the stub to
+ * the `func` syscall; in this case, manually exporting in exports.exp is still
+ * required for Syscalls to work.
  *
  * @param mod - The module where to search the function
  * @param library - The library name
  * @param nid - The nid of the function
  * @param func - The function to replace the stub. If NULL, use dummy value
- * @param dummy - The dummy value to replace the stub
+ * @param dummy/replace_syscall - If `func` is NULL, it is the dummy value to replace the stub.
+ * 	If `func` is not NULL, it is interpreted as a boolean on how to handle in
+ * the case of a syscall hook; `0` means new-syscall and redirect the stub, `>0`
+ * means replace the syscall in the syscall table (that means that all all usages
+ * of the replaced syscall will call `func`).
  *
- * @returns 0 if successful,
+ * @returns
+ * - 0 if successful,
  * -1 if `mod` or `library` are NULL,
  * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
  * -3 if failed to find import by NID after successful resolve to older firmware version
+ * -4 if failed to find syscall table
+ * -5 if failed to find syscall in the syscall table
  *
 */
 int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func, int dummy);

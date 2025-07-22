@@ -145,8 +145,12 @@ int sctrlKernelQuerySystemCall(void *function) {
 }
 
 void sctrlHENPatchSyscall(u32 addr, void *newaddr) {
-	void *ptr;
+	void *ptr = NULL;
 	asm("cfc0 %0, $12\n" : "=r"(ptr));
+
+	if (NULL == ptr) {
+		return;
+	}
 
 	u32 *syscalls = (u32 *)(ptr + 0x10);
 
