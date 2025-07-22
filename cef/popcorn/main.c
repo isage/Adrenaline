@@ -29,7 +29,7 @@ int (* scePopsManExitVSHKernel)(int error);
 int (* SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id);
 
 u8 pgd_buf[0x80];
-int original = 0;
+int is_official = 0;
 
 STMOD_HANDLER previous;
 
@@ -39,14 +39,40 @@ int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 	}
 
 	int size = sceKernelDeflateDecompress(dest, destSize, src, 0);
-	return (size == 0x9300) ? 0x92FF : size;
+
+	int ret;
+	if (size == 0x9300) {
+		ret = 0x92FF;
+		logmsg3("%s: [FAKE] return value -> 0x%08X\n", __func__, ret);
+	} else {
+		ret = size;
+	}
+
+	logmsg2("%s: 0x%08X 0x%08X 0x%08X -> 0x%08X\n",__func__, (uint)destSize, (uint)src, (uint)dest, ret);
+	return ret;
+}
+
+static int (*_sceMeAudio_2AB4FE43)(void *buf, int size) = NULL;
+int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
+	if (NULL == _sceMeAudio_2AB4FE43) {
+		logmsg2("%s: [ERROR]: Pointer to original function was not set\n", __func__);
+		// Illegal addr error
+		scePopsManExitVSHKernel(0x800200d3);
+	}
+
+	u32 k1 = pspSdkSetK1(0);
+	int ret = _sceMeAudio_2AB4FE43(buf, size);
+	pspSdkSetK1(k1);
+
+	logmsg2("%s: 0x%08X, 0x%08X -> 0x%08X", __func__, (u32)buf, size, ret);
+	return ret;
 }
 
 SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	// Remove drm flag
 	SceUID res = sceIoOpen(file, flags & ~0x40000000, mode);
 
-	logmsg2("%s: %s 0x%08X -> 0x%08X\r\n", __func__, file, flags, res);
+	logmsg2("%s: %s 0x%08X -> 0x%08X\n", __func__, file, flags, res);
 	return res;
 }
 
@@ -108,7 +134,7 @@ int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id)
 	memset(version_key, 0, VERSION_KEY_SIZE);
 	memset(content_id, 0, CONTENT_ID_SIZE);
 
-	if (original) {
+	if (is_official) {
 		// Set mac type
 		int mac_type = 0;
 
@@ -178,7 +204,11 @@ static void patchScePopsMgr(void) {
 	SetVersionKeyContentId = (void *)text_addr + 0x124; // Is this `sceNpDrmSetLicenseeKey`?
 	REDIRECT_FUNCTION(text_addr + 0x14FC, GetVersionKeyContentIdPatched);
 
-	if (!original) {
+	// Patch permission issues with audio function
+	_sceMeAudio_2AB4FE43 = (void*)sctrlHENFindFunctionInMod(mod, "sceMeAudio", 0x2AB4FE43);
+	sctrlHENHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched, 1);
+
+	if (!is_official) {
 		// Patch syscall to use it as deflate decompress
 		scePopsManExitVSHKernel = (void *)sctrlHENFindFunctionInMod(mod, "scePopsMan", 0x0090B2C8);
 		sctrlHENPatchSyscall((u32)scePopsManExitVSHKernel, scePopsManExitVSHKernelPatched);
@@ -205,7 +235,7 @@ int OnModuleStart(SceModule2 *mod) {
 			}
 		}
 
-		if (!original) {
+		if (!is_official) {
 			// Use our decompression function
 			VWRITE32(mod->text_addr + 0xC99C, VREAD32(mod->text_addr + 0xC69C));
 
@@ -258,7 +288,7 @@ int module_start(SceSize args, void *argp) {
 
 	// Check PGD magic
 	if (((u32 *)pgd_buf)[0] == PGD_MAGIC) {
-		original = 1;
+		is_official = 1;
 	}
 
 	setPsxCompiledFwVersion(0x06060110);
