@@ -28,8 +28,9 @@ PSP_MODULE_INFO("M33PopcornManager", 0x1007, 1, 0);
 int (* _scePopsManExitVSHKernel)(int error);
 int (* SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id);
 
-u8 pgd_buf[0x80];
-int is_official = 0;
+static u8 pgd_buf[0x80];
+// If the launched software is official (0 = CUSTOM, 1 = OFFICIAL)
+static int is_official = 0;
 
 STMOD_HANDLER previous;
 
@@ -58,14 +59,14 @@ int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 	if (NULL == _sceMeAudio_2AB4FE43) {
 		logmsg2("%s: [ERROR]: Pointer to original function was not set\n", __func__);
 		// Illegal addr error
-		_scePopsManExitVSHKernel(0x800200d3);
+		return 0x800200d3;
 	}
 
 	u32 k1 = pspSdkSetK1(0);
 	int ret = _sceMeAudio_2AB4FE43(buf, size);
 	pspSdkSetK1(k1);
 
-	logmsg2("%s: 0x%08X, 0x%08X -> 0x%08X", __func__, (u32)buf, size, ret);
+	logmsg2("%s: buf=0x%08X, size=0x%08X -> 0x%08X", __func__, (u32)buf, size, ret);
 	return ret;
 }
 
@@ -210,10 +211,6 @@ static void patchScePopsMgr(void) {
 	sctrlHENHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched, 1);
 
 	if (!is_official) {
-		// Patch syscall to use it as deflate decompress
-		_scePopsManExitVSHKernel = (void *)sctrlHENFindFunctionInMod(mod, "scePopsMan", 0x0090B2C8);
-		sctrlHENPatchSyscall((u32)_scePopsManExitVSHKernel, scePopsManExitVSHKernelPatched);
-
 		// Fake dnas drm
 		sctrlHENHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched, 0);
 		sctrlHENHookImportByNID(mod, "IoFileMgrForKernel", 0x63632449, sceIoIoctlPatched, 0);
@@ -237,8 +234,12 @@ int OnModuleStart(SceModule2 *mod) {
 		}
 
 		if (!is_official) {
+			// Patch syscall to use it as deflate decompress
+			_scePopsManExitVSHKernel = (void *)sctrlHENFindFunctionInMod(mod, "scePopsMan", 0x0090B2C8);
+			sctrlHENHookImportByNID(mod, "scePopsMan", 0x0090B2C8, scePopsManExitVSHKernelPatched, 0);
+
 			// Use our decompression function
-			VWRITE32(mod->text_addr + 0xC99C, VREAD32(mod->text_addr + 0xC69C));
+			MAKE_CALL(mod->text_addr + 0xC99C, _scePopsManExitVSHKernel);
 
 			// Fix index length. This enables CDDA support
 			VWRITE32(mod->text_addr + 0x164E4, 0x10000014);
