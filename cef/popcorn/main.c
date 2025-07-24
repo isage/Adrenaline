@@ -45,7 +45,7 @@ STMOD_HANDLER previous;
 
 int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 	if (destSize & 0x80000000) {
-		logmsg2("%s: error=0x%08X", __func__, destSize);
+		logmsg3("%s: error=0x%08X", __func__, destSize);
 		return _scePopsManExitVSHKernel(destSize);
 	}
 
@@ -54,19 +54,19 @@ int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 	int ret;
 	if (size == 0x9300) {
 		ret = 0x92FF;
-		logmsg3("%s: [FAKE] return value -> 0x%08X\n", __func__, ret);
+		logmsg4("%s: [FAKE] return value -> 0x%08X\n", __func__, ret);
 	} else {
 		ret = size;
 	}
 
-	logmsg2("%s: DeflateDecompress destSize=0x%08X, src=0x%08X, dest=0x%08X -> 0x%08X\n",__func__, (uint)destSize, (uint)src, (uint)dest, ret);
+	logmsg3("%s: DeflateDecompress destSize=0x%08X, src=0x%08X, dest=0x%08X -> 0x%08X\n",__func__, (uint)destSize, (uint)src, (uint)dest, ret);
 	return ret;
 }
 
 static int (*_sceMeAudio_2AB4FE43)(void *buf, int size) = NULL;
 int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 	if (NULL == _sceMeAudio_2AB4FE43) {
-		logmsg2("%s: [ERROR]: Pointer to original function was not set\n", __func__);
+		logmsg("%s: [ERROR]: Pointer to original function was not set\n", __func__);
 		// Illegal addr error
 		return 0x800200d3;
 	}
@@ -75,7 +75,7 @@ int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 	int ret = _sceMeAudio_2AB4FE43(buf, size);
 	pspSdkSetK1(k1);
 
-	logmsg2("%s: buf=0x%08X, size=0x%08X -> 0x%08X", __func__, (u32)buf, size, ret);
+	logmsg3("%s: buf=0x%08X, size=0x%08X -> 0x%08X", __func__, (u32)buf, size, ret);
 	return ret;
 }
 
@@ -83,17 +83,30 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	// Remove drm flag
 	SceUID res = sceIoOpen(file, flags & ~0x40000000, mode);
 
-	logmsg2("%s: file=%s, flags=0x%08X -> 0x%08X\n", __func__, file, flags, res);
+	logmsg3("%s: file=%s, flags=0x%08X -> 0x%08X\n", __func__, file, flags, res);
 	return res;
 }
 
 int sceIoIoctlPatched(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
-	// Seek
-	if (cmd == 0x04100002) {
-		sceIoLseek(fd, *(u32 *)indata, PSP_SEEK_SET);
+	int ret = 0;
+
+	if (cmd == 0x04100002) { // Seek
+		ret = sceIoLseek(fd, *(u32 *)indata, PSP_SEEK_SET);
+
+		if (ret < 0) {
+			logmsg("%s: [ERROR] sceIoLseek -> 0x%08X\n", __func__, ret);
+		}
+		ret = 0;
+
+		logmsg4("%s: [FAKE] fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
+	} else {
+		// ret = sceIoIoctl(fd, cmd, indata, inlen, outdata, outlen);
+		ret = 0;
+		logmsg4("%s: [FAKE] fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
 	}
 
-	return 0;
+	logmsg3("%s: fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
+	return ret;
 }
 
 int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
