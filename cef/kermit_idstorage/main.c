@@ -102,7 +102,7 @@ int sceIdStorageReadLeaf(short key,void *buf) {
 }
 
 int module_start(void) {
-	logInit("ms0:/log_inferno.txt");
+	logInit("ms0:/log_idstorage.txt");
 	logmsg("Kermit ID Storage started...\n");
 	return 0;
 }

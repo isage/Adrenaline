@@ -25,6 +25,7 @@
 #define CONTENT_ID_SIZE 0x30
 
 #define PGD_MAGIC 0x44475000
+#define LIBCRYPT_XOR_MAGIC 0x72D0EE59
 
 typedef struct {
 	int type;
@@ -36,5 +37,8 @@ typedef struct {
 int sceDrmBBMacInit(MAC_KEY *mkey, int type);
 int sceDrmBBMacUpdate(MAC_KEY *mkey, u8 *buf, int size);
 int sceDrmBBMacFinal(MAC_KEY *mkey, u8 *buf, u8 *vkey);
+
+
+u32 searchLibCryptMagicWord(char* disc_id);
 
 #endif
