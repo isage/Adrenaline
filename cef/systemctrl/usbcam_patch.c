@@ -154,9 +154,8 @@ int sceUsbCamWaitReadMicEnd_Patched() {
 	return res;
 }
 
-int sceUsbCamSetupMic(void *param, void *workarea, int wasize);
-int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
 
+int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
 int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize) {
 	int res = 0;
 	int k1 = pspSdkSetK1(0);

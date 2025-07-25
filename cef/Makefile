@@ -1,6 +1,6 @@
 all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
-SYSTEM_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver pspsysclib_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel pspvshbridge_user psppower_user pspreg_user psppaf pspvsh pspvshcommongui
+SYSTEM_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver pspusbcam_driver pspsysclib_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel pspvshbridge_user psppower_user pspreg_user psppaf pspvsh pspvshcommongui
 
 _libs:
 	make -C lib/system_stubs clean
