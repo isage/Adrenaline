@@ -1,6 +1,7 @@
 /*
 	Adrenaline
 	Copyright (C) 2016-2018, TheFloW
+	Copyright (C) 2025, GrayJack
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -37,10 +38,6 @@ int (* sceSystemFileGetIndex)(void *sfo, void *a1, void *a2);
 
 u32 FindPowerFunction(u32 nid) {
 	return FindProc("scePower_Service", "scePower", nid);
-}
-
-static u32 FindPowerDriverFunction(u32 nid) {
-	return FindProc("scePower_Service", "scePower_driver", nid);
 }
 
 typedef struct PartitionData {
@@ -81,7 +78,9 @@ void ApplyMemory() {
 
 		for (u32 i = 0; i < 0x4000; i += 4) {
 			u32 addr = 0x88000000 + i;
-			if (_lw(addr) == 0x2C85000D) {
+			u32 data = VREAD32(addr);
+
+			if (data == 0x2C85000D) {
 				GetPartition = (void *)(addr - 4);
 				break;
 			}
@@ -197,67 +196,71 @@ int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 
-void PatchLoadExec(u32 text_addr, u32 text_size) {
+void PatchLoadExec(SceModule2* mod) {
+	u32 text_addr = mod->text_addr;
+	u32 text_size = mod->text_size;
+
 	u32 jump = 0;
 
 	// Allow loadexec in whatever user level. Ignore K1 Check
-	_sh(0x1000, text_addr + 0x16A6);
-	_sh(0x1000, text_addr + 0x241E);
-	_sh(0x1000, text_addr + 0x2622);
+	VWRITE16(text_addr + 0x16A6, 0x1000);
+	VWRITE16(text_addr + 0x241E, 0x1000);
+	VWRITE16(text_addr + 0x2622, 0x1000);
 
 	for (int i = 0; i < text_size; i += 4) {
 		u32 addr = text_addr + i;
+		u32 data = VREAD32(addr);
 
 		// Allow loadexec in whatever user level. Make sceKernelGetUserLevel return 4
-		if (_lw(addr) == 0x1445FFF4) {
+		if (data == 0x1445FFF4) {
 			MAKE_DUMMY_FUNCTION(K_EXTRACT_CALL(addr - 0x10), 4);
 			continue;
 		}
 
 		// Remove apitype check in FW's above 2.60
-		if (_lw(addr) == 0x24070200) {
+		if (data == 0x24070200) {
 			memset((void *)addr, 0, 0x20);
 			continue;
 		}
 
 		// Patch to do things before reboot
-		if (_lw(addr) == 0x02202021 && _lw(addr + 4) == 0x00401821) {
+		if (data == 0x02202021 && VREAD32(addr + 4) == 0x00401821) {
 			K_HIJACK_CALL(addr - 4, RunRebootPatched, RunReboot);
 			continue;
 		}
 
 		// Ignore kermit calls
-		if (_lw(addr) == 0x17C001D3) {
-			_sw(0, addr);
+		if (data == 0x17C001D3) {
+			MAKE_NOP(addr);
 			jump = addr + 8;
 			continue;
 		}
 
 		// Redirect pointer to 0x88FC0000
-		if (_lw(addr) == 0x04400020) {
+		if (data == 0x04400020) {
 			K_HIJACK_CALL(addr - 8, DecodeKL4EPatched, DecodeKL4E);
-			_sb(0xFC, addr + 0x44);
+			VWRITE8(addr + 0x44, 0xFC);
 			continue;
 		}
 
 		// Fix type check
-		if (_lw(addr) == 0x34650002) {
-			_sw(0x24050002, addr); //ori $a1, $v1, 0x2 -> li $a1, 2
-			_sw(0x12E500B7, addr + 4); //bnez $s7, loc_XXXXXXXX -> beq $s7, $a1, loc_XXXXXXXX
-			_sw(0xAC570018, addr + 8); //sw $a1, 24($v0) -> sw $s7, 24($v0)
+		if (data == 0x34650002) {
+			MAKE_INSTRUCTION(addr, 0x24050002); // ori $a1, $v1, 0x2 -> li $a1, 2
+			MAKE_INSTRUCTION(addr + 4, 0x12E500B7); // bnez $s7, loc_XXXXXXXX -> beq $s7, $a1, loc_XXXXXXXX
+			MAKE_INSTRUCTION(addr + 8, 0xAC570018); // sw $a1, 24($v0) -> sw $s7, 24($v0)
 			continue;
 		}
 
-		if (_lw(addr) == 0x24100200) {
+		if (data == 0x24100200) {
 			// Some registers are reserved. Use other registers to avoid malfunction
-			_sw(0x24050200, addr); //li $s0, 0x200 -> li $a1, 0x200
-			_sw(0x12650003, addr + 4); //beq $s3, $s0, loc_XXXXXXXX - > beq $s3, $a1, loc_XXXXXXXX
-			_sw(0x241E0210, addr + 8); //li $s5, 0x210 -> li $fp, 0x210
-			_sw(0x567EFFDE, addr + 0xC); //bne $s3, $s5, loc_XXXXXXXX -> bne $s3, $fp, loc_XXXXXXXX
+			MAKE_INSTRUCTION(addr, 0x24050200); // li $s0, 0x200 -> li $a1, 0x200
+			MAKE_INSTRUCTION(addr + 4, 0x12650003); // beq $s3, $s0, loc_XXXXXXXX - > beq $s3, $a1, loc_XXXXXXXX
+			MAKE_INSTRUCTION(addr + 8, 0x241E0210); // li $s5, 0x210 -> li $fp, 0x210
+			MAKE_INSTRUCTION(addr + 0xC, 0x567EFFDE); // bne $s3, $s5, loc_XXXXXXXX -> bne $s3, $fp, loc_XXXXXXXX
 
 			// Allow LoadExecVSH type 1. Ignore peripheralCommon KERMIT_CMD_ERROR_EXIT
 			MAKE_JUMP(addr + 0x14, jump);
-			_sw(0x24170001, addr + 0x18); //li $s7, 1
+			MAKE_INSTRUCTION(addr + 0x18, 0x24170001);
 
 			continue;
 		}
@@ -274,8 +277,9 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 
 	if (config.fakeregion) {
 		pscode[2] = config.fakeregion < 12 ? config.fakeregion + 2 : config.fakeregion - 11;
-		if (pscode[2] == 2)
+		if (pscode[2] == 2) {
 			pscode[2] = 3;
+		}
 	}
 
 	pscode[3] = 0x00;
@@ -332,8 +336,9 @@ int exit_callback(int arg1, int arg2, void *common) {
 
 int CallbackThread(SceSize args, void *argp) {
 	SceUID cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
-	if (cbid < 0)
+	if (cbid < 0) {
 		return cbid;
+	}
 
 	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
 	sceKernelRegisterExitCallback(cbid);
@@ -345,8 +350,9 @@ int CallbackThread(SceSize args, void *argp) {
 
 SceUID SetupCallbacks() {
 	SceUID thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
-	if (thid >= 0)
+	if (thid >= 0) {
 		sceKernelStartThread(thid, 0, 0);
+	}
 	return thid;
 }
 
@@ -362,9 +368,11 @@ int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, Sc
 	return res;
 }
 
-void PatchImposeDriver(u32 text_addr) {
+void PatchImposeDriver(SceModule2* mod) {
+	u32 text_addr = mod->text_addr;
+
 	// Hide volume bar
-	_sw(0, text_addr + 0x4AEC);
+	MAKE_NOP(text_addr + 0x4AEC);
 
 	HIJACK_FUNCTION(text_addr + 0x381C, SetIdleCallbackPatched, SetIdleCallback);
 
@@ -378,17 +386,19 @@ void PatchImposeDriver(u32 text_addr) {
 	sctrlFlushCache();
 }
 
-void PatchMediaSync(u32 text_addr) {
+void PatchMediaSync(SceModule2* mod) {
+	u32 text_addr = mod->text_addr;
+
 	// Dummy function that checks flash0 files
-	_sw(0x00001021, text_addr + 0xC8);
+	MAKE_INSTRUCTION(text_addr + 0xC8, 0x00001021);
 
 	// Fixes: ELF boot, boot not from /PSP/GAME/
-	_sw(0x00008821, text_addr + 0x864);
-	_sw(0x00008821, text_addr + 0x988);
+	MAKE_INSTRUCTION(text_addr + 0x864, 0x00008821);
+	MAKE_INSTRUCTION(text_addr + 0x988, 0x00008821);
 
 	// Avoid SCE_MEDIASYNC_ERROR_INVALID_MEDIA
-	_sh(0x5000, text_addr + 0x3C6);
-	_sh(0x1000, text_addr + 0xDCA);
+	VWRITE16(text_addr + 0x3C6, 0x5000);
+	VWRITE16(text_addr + 0xDCA, 0x1000);
 
 	K_HIJACK_CALL(text_addr + 0x97C, sceSystemFileGetIndexPatched, sceSystemFileGetIndex);
 

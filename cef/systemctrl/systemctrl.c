@@ -32,13 +32,13 @@ int sctrlKernelSetUserLevel(int level) {
 	SceModule2 *mod = sceKernelFindModuleByName661("sceThreadManager");
 	u32 text_addr = mod->text_addr;
 
-	u32 high = (((u32)_lh(text_addr + 0x358)) << 16);
-	u32 low = ((u32)_lh(text_addr + 0x35C));
+	u32 high = (((u32)VREAD16(text_addr + 0x358)) << 16);
+	u32 low = ((u32)VREAD16(text_addr + 0x35C));
 
 	if (low & 0x8000)
 		high -= 0x10000;
 
-	u32 *thstruct = (u32 *)_lw(high | low);
+	u32 *thstruct = (u32 *)VREAD32(high | low);
 	thstruct[0x14/4] = (level ^ 8) << 28;
 
 	pspSdkSetK1(k1);
@@ -71,7 +71,9 @@ PspIoDrv *sctrlHENFindDriver(char *drvname) {
 
 	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
-		if (_lw(addr) == 0xA2200000) {
+		u32 data = VREAD32(addr);
+
+		if (data == 0xA2200000) {
 			GetDevice = (void *)K_EXTRACT_CALL(addr + 4);
 			break;
 		}

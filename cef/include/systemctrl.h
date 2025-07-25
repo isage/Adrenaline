@@ -190,6 +190,7 @@ u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
  *
 */
 u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid);
+#define FindProcInMod sctrlHENFindFunctionInMod
 
 /**
  * Replace import function stub with a function or dummy value.

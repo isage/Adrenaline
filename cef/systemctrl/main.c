@@ -1,6 +1,7 @@
 /*
 	Adrenaline
 	Copyright (C) 2016-2018, TheFloW
+	Copyright (C) 2025, GrayJack
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 #include "io_patch.h"
 #include "init_patch.h"
 #include "power_patch.h"
+#include "usbcam_patch.h"
 #include "utility_patch.h"
 #include "sysmodpatches.h"
 #include "nodrm.h"
@@ -45,7 +47,6 @@ AdrenalineConfig config;
 int idle = 0;
 
 #ifdef DEBUG
-
 void logmsg(char *msg) {
 	int k1 = pspSdkSetK1(0);
 
@@ -58,7 +59,6 @@ void logmsg(char *msg) {
 
 	pspSdkSetK1(k1);
 }
-
 #endif
 
 int ReadFile(char *file, void *buf, int size) {
@@ -134,8 +134,8 @@ void PatchInterruptMgr() {
 	u32 text_addr = mod->text_addr;
 
 	// Allow execution of syscalls in kernel mode
-	_sw(0x408F7000, text_addr + 0xE98);
-	_sw(0, text_addr + 0xE9C);
+	MAKE_INSTRUCTION(text_addr + 0xE98, 0x408F7000);
+	MAKE_NOP(text_addr + 0xE9C);
 }
 
 void PatchModuleMgr() {
@@ -145,14 +145,14 @@ void PatchModuleMgr() {
 	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
 
-		if (_lw(addr) == 0xA4A60024) {
+		if (VREAD32(addr) == 0xA4A60024) {
 			// Patch to allow a full coverage of loaded modules
 			PrologueModule = (void *)K_EXTRACT_CALL(addr - 4);
 			MAKE_CALL(addr - 4, PrologueModulePatched);
 			continue;
 		}
 
-		if (_lw(addr) == 0x27BDFFE0 && _lw(addr + 4) == 0xAFB10014) {
+		if (VREAD32(addr) == 0x27BDFFE0 && VREAD32(addr + 4) == 0xAFB10014) {
 			HIJACK_FUNCTION(addr, PartitionCheckPatched, PartitionCheck);
 			continue;
 		}
@@ -172,18 +172,19 @@ void PatchLoadCore() {
 
 	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
+		u32 data = VREAD32(addr);
 
 		// Allow custom modules
-		if (_lw(addr) == 0x1440FF55) {
+		if (data == 0x1440FF55) {
 			PspUncompress = (void *)K_EXTRACT_CALL(addr - 8);
 			MAKE_CALL(addr - 8, PspUncompressPatched);
 			continue;
 		}
 
 		// Patch relocation check in switch statement (7 -> 0)
-		if (_lw(addr) == 0x00A22021) {
-			u32 high = (((u32)_lh(addr - 0xC)) << 16);
-			u32 low = ((u32)_lh(addr - 0x4));
+		if (data == 0x00A22021) {
+			u32 high = (((u32)VREAD16(addr - 0xC)) << 16);
+			u32 low = ((u32)VREAD16(addr - 0x4));
 
 			if (low & 0x8000) high -= 0x10000;
 
@@ -195,36 +196,36 @@ void PatchLoadCore() {
 		}
 
 		// Allow kernel modules to have syscall imports
-		if (_lw(addr) == 0x30894000) {
-			_sw(0x3C090000, addr);
+		if (data == 0x30894000) {
+			VWRITE32(addr, 0x3C090000);
 			continue;
 		}
 
 		// Allow lower devkit version
-		if (_lw(addr) == 0x14A0FFCB) {
-			_sh(0x1000, addr + 2);
+		if (data == 0x14A0FFCB) {
+			VWRITE16(addr + 2, 0x1000);
 			continue;
 		}
 
 		// Allow higher devkit version
-		if (_lw(addr) == 0x14C0FFDF) {
-			_sw(0, addr);
+		if (data == 0x14C0FFDF) {
+			MAKE_NOP(addr);
 			continue;
 		}
 
 		// Patch to resolve NIDs
-		if (_lw(addr) == 0x8D450000) {
-			_sw(0x02203021, addr + 4); //move $a2, $s1
+		if (data == 0x8D450000) {
+			MAKE_INSTRUCTION(addr + 4, 0x02203021); // move $a2, $s1
 			search_nid_in_entrytable = (void *)K_EXTRACT_CALL(addr + 8);
 			MAKE_CALL(addr + 8, search_nid_in_entrytable_patched);
-			_sw(0x02403821, addr + 0xC); //move $a3, $s2
+			MAKE_INSTRUCTION(addr + 0xC, 0x02403821); // move $a3, $s2
 			continue;
 		}
 
-		if (_lw(addr) == 0xADA00004) {
+		if (data == 0xADA00004) {
 			// Patch to resolve NIDs
-			_sw(0, addr);
-			_sw(0, addr + 8);
+			MAKE_NOP(addr);
+			MAKE_NOP(addr + 8);
 
 			// Patch to undo prometheus patches
 			HIJACK_FUNCTION(addr + 0xC, aLinkLibEntriesPatched, aLinkLibEntries);
@@ -233,24 +234,24 @@ void PatchLoadCore() {
 		}
 
 		// Patch call to init module_bootstart
-		if (_lw(addr) == 0x02E0F809) {
+		if (data == 0x02E0F809) {
 			MAKE_CALL(addr, PatchInit);
-			_sw(0x02E02021, addr + 4); //move $a0, $s7
+			MAKE_INSTRUCTION(addr + 4, 0x02E02021); // move $a0, $s7
 			continue;
 		}
 
 		// Restore original call
-		if (_lw(addr) == 0xAE2D0048) {
+		if (data == 0xAE2D0048) {
 			MAKE_CALL(addr + 8, FindProc("sceMemlmd", "memlmd", 0xEF73E85B));
 			continue;
 		}
 
-		if (_lw(addr) == 0x40068000 && _lw(addr + 4) == 0x7CC51180) {
+		if (data == 0x40068000 && VREAD32(addr + 4) == 0x7CC51180) {
 			LoadCoreForKernel_nids[0].function = (void *)addr;
 			continue;
 		}
 
-		if (_lw(addr) == 0x40068000 && _lw(addr + 4) == 0x7CC51240) {
+		if (data == 0x40068000 && VREAD32(addr + 4) == 0x7CC51240) {
 			LoadCoreForKernel_nids[1].function = (void *)addr;
 			continue;
 		}
@@ -260,8 +261,10 @@ void PatchLoadCore() {
 // Taken from ARK-3
 u32 FindFirstBEQ(u32 addr) {
 	for (;; addr += 4){
-		if ((_lw(addr) & 0xFC000000) == 0x10000000)
+		u32 data = VREAD32(addr);
+		if ((data & 0xFC000000) == 0x10000000) {
 			return addr;
+		}
 	}
 
 	return 0;
@@ -272,20 +275,21 @@ void PatchSysmem() {
 
 	for (int i = 0; i < sizeof(nids) / sizeof(u32); i++) {
 		u32 addr = FindFirstBEQ(FindProc("sceSystemMemoryManager", "SysMemUserForUser", nids[i]));
-		if (addr)
-			_sh(0x1000, addr + 2);
+		if (addr) {
+			VWRITE16(addr + 2, 0x1000);
+		}
 	}
 }
 
 int (* sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size);
-
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
 
 	for (int i = 0; i < 0x10; i++) {
 		res = sceKernelVolatileMemTryLock(unk, ptr, size);
-		if (res >= 0)
+		if (res >= 0) {
 			break;
+		}
 
 		sceKernelDelayThread(100);
 	}
@@ -336,302 +340,15 @@ void OnSystemStatusIdle() {
 }
 
 int (* sceMeAudio_driver_C300D466)(int codec, int unk, void *info);
-
 int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 	int res = sceMeAudio_driver_C300D466(codec, unk, info);
 
-	if (res < 0 && codec == 0x1002 && unk == 2)
+	if (res < 0 && codec == 0x1002 && unk == 2) {
 		return 0;
-
-	return res;
-}
-
-void sceUsb_driver_0xED8C8695();
-void sceUsb_driver_0x63E55EBE();
-
-int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
-int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
-	int k1 = pspSdkSetK1(0);
-	int ret = _sceUsbCamStillInput(buf, size);
-	sceUsb_driver_0xED8C8695(); // force camera stop
-
-	pspSdkSetK1(k1);
-
-	return ret;
-}
-
-int sceUsbCamSetupStillEx_Patched(PspUsbCamSetupStillExParam *exparam) {
-	int res = 0;
-
-	int k1 = pspSdkSetK1(0);
-
-	PspUsbCamSetupStillParam param = {0};
-	param.size = sizeof(PspUsbCamSetupStillParam);
-	switch(exparam->resolution)
-	{
-		case 0:
-			param.resolution = 0;
-		break;
-		case 1:
-			param.resolution = 1;
-		break;
-		case 2:
-			param.resolution = 2;
-		break;
-		case 3:
-			param.resolution = 3;
-		break;
-		case 4:
-			param.resolution = 8;
-		break;
-		case 5:
-			param.resolution = 7;
-		break;
-		case 6:
-			param.resolution = 4;
-		break;
-		case 7:
-			param.resolution = 5;
-		break;
-		case 8:
-			// Vita camera doesn't support 1280x960
-			param.resolution = 7;
-			//param.resolution = 6;
-		break;
 	}
 
-	param.jpegsize = exparam->jpegsize;
-	param.complevel = exparam->complevel;
-	param.delay = exparam->delay;
-	param.reverseflags = 0x101;
-
-	res = sceUsbCamSetupStill(&param);
-
-	sceUsb_driver_0x63E55EBE(); // force camera start
-
-	pspSdkSetK1(k1);
-
 	return res;
 }
-
-int sceUsbCamSetupVideoEx_Patched(PspUsbCamSetupVideoExParam *exparam, void *workarea, int wasize) {
-	int res = 0;
-
-	int k1 = pspSdkSetK1(0);
-
-	PspUsbCamSetupVideoParam param = {0};
-	param.size = sizeof(PspUsbCamSetupVideoParam);
-	switch(exparam->resolution)
-	{
-		case 0:
-			param.resolution = 0;
-		break;
-		case 1:
-			param.resolution = 1;
-		break;
-		case 2:
-			param.resolution = 2;
-		break;
-		case 3:
-			param.resolution = 3;
-		break;
-		case 4:
-			param.resolution = 8;
-		break;
-		case 5:
-			param.resolution = 7;
-		break;
-		case 6:
-			param.resolution = 4;
-		break;
-		case 7:
-			param.resolution = 5;
-		break;
-		case 8:
-			// Vita camera doesn't support 1280x960
-			param.resolution = 7;
-//			param.resolution = 6;
-		break;
-	}
-
-	param.framerate = exparam->framerate;
-	param.wb = exparam->wb;
-	param.saturation = exparam->saturation;
-	param.brightness = exparam->brightness;
-	param.contrast = exparam->contrast;
-	param.sharpness = exparam->sharpness;
-	param.effectmode = exparam->effectmode;
-	param.framesize = exparam->framesize;
-	param.evlevel = exparam->evlevel;
-
-	res = sceUsbCamSetupVideo(&param, workarea, wasize);
-
-	pspSdkSetK1(k1);
-
-	return res;
-}
-
-
-typedef struct PspUsbCamSetupMicParam {
-    int size;
-    int alc;
-    int gain;
-    int noize;
-    int freq;
-} PspUsbCamSetupMicParam;
-
-typedef struct PspUsbCamSetupMicExParam {
-    int size;
-    int alc;
-    int gain;
-    u32 unk2[4]; // noize/hold/decay/attack?
-    int freq;
-    int unk3;
-} PspUsbCamSetupMicExParam;
-
-static int mute_mic = 0;
-static void* mic_buf = NULL;
-static SceSize mic_size = 0;
-
-int (* _sceUsbCamReadMic)(void *buf, SceSize size);
-int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
-    int k1 = pspSdkSetK1(0);
-    int res = _sceUsbCamReadMic(buf, size);
-    mic_buf = buf;
-    mic_size = size;
-    pspSdkSetK1(k1);
-    return res;
-}
-
-int (* _sceUsbCamWaitReadMicEnd)(void);
-int sceUsbCamWaitReadMicEnd_Patched() {
-    int k1 = pspSdkSetK1(0);
-    int res = _sceUsbCamWaitReadMicEnd();
-    if (mute_mic && mic_buf)
-    {
-        memset(mic_buf, 0, mic_size);
-    }
-    pspSdkSetK1(k1);
-    return res;
-}
-
-int sceUsbCamSetupMic(void *param, void *workarea, int wasize);
-int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
-
-int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize)
-{
-	int res = 0;
-	int k1 = pspSdkSetK1(0);
-	res = _sceUsbCamSetupMic(param, workarea, wasize);
-	pspSdkSetK1(k1);
-	mute_mic = 0;
-	return res;
-
-}
-
-int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workarea, int wasize) {
-	int res = 0;
-
-	// TODO: xmb wants 22050, but it causes crash for some reason
-	// TODO: pspemu resampler looks broken (see invizimals voice chat, for example)
-	int k1 = pspSdkSetK1(0);
-	PspUsbCamSetupMicParam param = {0};
-	param.size = sizeof(PspUsbCamSetupMicParam);
-	param.alc = exparam->alc;
-	param.gain = exparam->gain;
-	param.freq = 11025;//exparam->freq;
-
-	res = _sceUsbCamSetupMic(&param, workarea, wasize);
-
-	pspSdkSetK1(k1);
-
-	mute_mic = 1;
-
-	return res;
-}
-
-static int dummy_read_cam = 0;
-
-int (* _sceUsbCamSetEvLevel)(int level);
-
-int sceUsbCamSetEvLevel_Patched(int level)
-{
-	int res = 0;
-	int k1 = pspSdkSetK1(0);
-	dummy_read_cam = 1;
-	sceKernelDelayThread(100000);
-	res = _sceUsbCamSetEvLevel(level);
-	sceKernelDelayThread(100000);
-	dummy_read_cam = 0;
-	sceKernelDelayThread(100000);
-	pspSdkSetK1(k1);
-	return res;
-}
-
-int (* _sceUsbCamReadVideoFrame)(u8 *buf, SceSize size);
-
-int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size)
-{
-    int k1 = pspSdkSetK1(0);
-
-    if (dummy_read_cam)
-    {
-        sceKernelDelayThread(300000);
-        pspSdkSetK1(k1);
-        return 0;
-    }
-    int res = _sceUsbCamReadVideoFrame(buf, size);
-    pspSdkSetK1(k1);
-    return res;
-}
-
-int (* _sceUsbCamWaitReadVideoFrameEnd)(void);
-
-int sceUsbCamWaitReadVideoFrameEnd_Patched()
-{
-    int k1 = pspSdkSetK1(0);
-    if (dummy_read_cam)
-    {
-        sceKernelDelayThread(300000);
-        pspSdkSetK1(k1);
-        return 0x8000;
-    }
-    int res = _sceUsbCamWaitReadVideoFrameEnd();
-    pspSdkSetK1(k1);
-    return res;
-}
-
-/*
-int (* _sceRegGetKeyValueByName)(unsigned int handle, char* name, void* buf, SceSize size);
-
-int sceRegGetKeyValueByName_Patched(unsigned int handle, char* name, void* buf, SceSize size)
-{
-    int k1 = pspSdkSetK1(0);
-    int res = _sceRegGetKeyValueByName(handle, name, buf, size);
-    printf("sceRegGetKeyValueByName: %s\n", name);
-    if (strcmp(name, "owner_name")==0)
-    {
-        printf("owner_name: %s\n", (char*)buf);
-    }
-    pspSdkSetK1(k1);
-    return res;
-}
-
-int (* _sceRegSetKeyValueByName)(unsigned int handle, char* name, void* buf, SceSize size);
-
-int sceRegSetKeyValueByName_Patched(unsigned int handle, char* name, void* buf, SceSize size)
-{
-    int k1 = pspSdkSetK1(0);
-    int res = _sceRegSetKeyValueByName(handle, name, buf, size);
-    printf("sceRegSetKeyValueByName: %s\n", name);
-    if (strcmp(name, "owner_name")==0)
-    {
-        printf("owner_name: %s\n", (char*)buf);
-    }
-    pspSdkSetK1(k1);
-    return res;
-}
-*/
 
 int sceKernelSuspendThreadPatched(SceUID thid) {
 	SceKernelThreadInfo info;
@@ -663,8 +380,9 @@ int OnModuleStart(SceModule2 *mod) {
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {
 		if (mallocinit() < 0) {
-			while (1)
-				_sw(0, 0);
+			while (1) {
+				VWRITE32(0, 0);
+			}
 		}
 
 		// Protect pops memory
@@ -675,9 +393,11 @@ int OnModuleStart(SceModule2 *mod) {
 		memset((void *)0x49F40000, 0, 0x80000);
 		memset((void *)0xABCD0000, 0, 0x1B0);
 
-		PatchLowIODriver2(text_addr);
+		PatchLowIODriver2(mod);
+
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
-		PatchLoadExec(text_addr, mod->text_size);
+		PatchLoadExec(mod);
+
 	} else if (strcmp(modname, "scePower_Service") == 0) {
 		log("Built: %s %s\n", __DATE__, __TIME__);
 		log("Boot From: 0x%X\n", sceKernelBootFrom());
@@ -698,86 +418,81 @@ int OnModuleStart(SceModule2 *mod) {
 			ApplyAndResetMemory();
 		}
 
-		PatchPowerService(text_addr);
-		PatchPowerService2(text_addr);
+		PatchPowerService(mod);
+		PatchPowerService2(mod);
+
 	} else if (strcmp(modname, "sceChkreg") == 0) {
 		PatchChkreg();
+
 	} else if (strcmp(modname, "sceMesgLed") == 0) {
 		REDIRECT_FUNCTION(FindProc("sceMesgLed", "sceResmgr_driver", 0x9DC14891), sceResmgrDecryptIndexPatched);
 		sctrlFlushCache();
+
 	} else if (strcmp(modname, "scePspNpDrm_Driver") == 0) {
-		PatchNpDrmDriver(text_addr);
+		PatchNpDrmDriver(mod);
+
 	} else if (strcmp(modname, "sceUmd_driver") == 0) {
 		REDIRECT_FUNCTION(text_addr + 0xC80, sceUmdRegisterUMDCallBackPatched);
 		sctrlFlushCache();
+
 	} else if(strcmp(modname, "sceMeCodecWrapper") == 0) {
 		HIJACK_FUNCTION(FindProc(modname, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, sceMeAudio_driver_C300D466);
 		sctrlFlushCache();
+
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
+
 	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
-		PatchImposeDriver(text_addr);
+		PatchImposeDriver(mod);
+
 	} else if (strcmp(modname, "sceMediaSync") == 0) {
-		PatchMediaSync(text_addr);
+		PatchMediaSync(mod);
+
 	} else if (strcmp(modname, "sceNpSignupPlugin_Module") == 0) {
 		// ImageVersion = 0x10000000
-		_sw(0x3C041000, text_addr + 0x38CBC);
+		MAKE_INSTRUCTION(text_addr + 0x38CBC, 0x3C041000);
 		sctrlFlushCache();
+
 	} else if (strcmp(modname, "sceVshNpSignin_Module") == 0) {
 		// Kill connection error
-		_sw(0x10000008, text_addr + 0x6CF4);
+		MAKE_INSTRUCTION(text_addr + 0x6CF4, 0x10000008);
 
 		// ImageVersion = 0x10000000
-		_sw(0x3C041000, text_addr + 0x96C4);
+		MAKE_INSTRUCTION(text_addr + 0x96C4, 0x3C041000);
 
 		sctrlFlushCache();
+
 	} else if (strcmp(modname, "sceSAScore") == 0) {
-		PatchSasCore();
+		PatchSasCore(mod);
+
 	} else if(strcmp(modname, "sceUSBCam_Driver") == 0) {
-		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);
-		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
-		REDIRECT_FUNCTION(FindProc(modname, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
-		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
-		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x1D686870), sceUsbCamSetEvLevel_Patched, _sceUsbCamSetEvLevel);
-		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x99D86281), sceUsbCamReadVideoFrame_Patched, _sceUsbCamReadVideoFrame);
-		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xF90B2293), sceUsbCamWaitReadVideoFrameEnd_Patched, _sceUsbCamWaitReadVideoFrameEnd);
-		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
-		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
-		HIJACK_FUNCTION(FindProc(modname, "sceUsbCam", 0xB048A67D), sceUsbCamWaitReadMicEnd_Patched, _sceUsbCamWaitReadMicEnd);
-		sctrlFlushCache();
-//	} else if(strcmp(modname, "sceRegistry_Service") == 0) {
-//		HIJACK_FUNCTION(FindProc(modname, "sceReg_driver", 0x38415B9F), sceRegGetKeyValueByName_Patched, _sceRegGetKeyValueByName);
-//		HIJACK_FUNCTION(FindProc(modname, "sceReg_driver", 0x49C70163), sceRegSetKeyValueByName_Patched, _sceRegSetKeyValueByName);
-//		sctrlFlushCache();
+		PatchUSBCamDriver(mod);
+
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
-		u32 func = sctrlHENFindImport(modname, "IoFileMgrForUser", 0xE3EB004C);
-		if (func) {
-			MAKE_DUMMY_FUNCTION(func, 0);
-			sctrlFlushCache();
-		}
+		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
+
 	} else if (strcmp(modname, "tekken") == 0) {
-		u32 func = sctrlHENFindImport(modname, "scePower", 0x34F9C463);
-		if (func) {
-			MAKE_DUMMY_FUNCTION(func, 222);
-			sctrlFlushCache();
-		}
+		// Fix back screen on Tekken 6
+		// scePowerGetPllClockFrequencyInt
+		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222);
+
 	} else if (strcmp(modname, "KHBBS_patch") == 0) {
 		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
 		sctrlFlushCache();
+
 	} else if (strcmp(modname, "VLF_Module") == 0) {
 		static u32 nids[] = { 0x2A245FE6, 0x7B08EAAB, 0x22050FC0, 0x158BE61A, 0xD495179F };
 
 		for (int i = 0; i < (sizeof(nids) / sizeof(u32)); i++) {
-			u32 vlf_function = FindProc(modname, "VlfGui", nids[i]);
-			if (vlf_function)
-				MAKE_DUMMY_FUNCTION(vlf_function, 0);
+			sctrlHENHookImportByNID(mod, "VlfGui", nids[i], NULL, 0);
 		}
 
 		sctrlFlushCache();
+
 	} else if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x9944F31F), sceKernelSuspendThreadPatched);
-			MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x75156E8F), sceKernelResumeThreadPatched);
+			sctrlHENHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched, 0);
+			sctrlHENHookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched, 0);
 			sctrlFlushCache();
 		}
 	}

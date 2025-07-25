@@ -19,6 +19,6 @@
 #ifndef __POWER_PATCH_H__
 #define __POWER_PATCH_H__
 
-void PatchPowerService(u32 text_addr);
+void PatchPowerService(SceModule2* mod);
 
 #endif

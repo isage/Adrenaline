@@ -30,10 +30,9 @@ void ApplyMemory();
 void ApplyAndResetMemory();
 void UnprotectExtraMemory();
 
-void PatchLoadExec(u32 text_addr, u32 text_size);
-void PatchPeripheralDriver(char *modname);
+void PatchLoadExec(SceModule2* mod);
 void PatchChkreg();
-void PatchImposeDriver(u32 text_addr);
-void PatchMediaSync(u32 text_addr);
+void PatchImposeDriver(SceModule2* mod);
+void PatchMediaSync(SceModule2* mod);
 
 #endif

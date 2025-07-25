@@ -2,7 +2,7 @@ release: all
 	psp-fixup-imports -m nid_map.txt $(TARGET).prx
 
 TARGET = systemctrl
-OBJS = main.o adrenaline.o executable_patch.o libraries_patch.o io_patch.o init_patch.o power_patch.o utility_patch.o sysmodpatches.o \
+OBJS = main.o adrenaline.o executable_patch.o libraries_patch.o io_patch.o init_patch.o power_patch.o usbcam_patch.o utility_patch.o sysmodpatches.o \
 	   nodrm.o conf.o malloc.o kubridge.o systemctrl.o ttystdio.o LflashFatfmt.o string_clone.o setjmp_clone.o imports.o exports.o \
 	   lz4.o minilzo.o sysclibforuser.o
 

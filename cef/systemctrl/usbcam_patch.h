@@ -1,6 +1,7 @@
 /*
 	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
+	Copyright (C) 2025, isage
+	Copyright (C) 2025, GrayJack
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,17 +17,30 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __ADRENALINE_H__
-#define __ADRENALINE_H__
+#ifndef __USBCAM_PATCH_H__
+#define __USBCAM_PATCH_H__
 
-int SendAdrenalineCmd(int cmd);
+#include <psptypes.h>
+#include <psploadcore.h>
 
-void initAdrenalineInfo();
 
-void PatchSasCore(SceModule2* mod);
-void PatchLowIODriver2(SceModule2* mod);
-void PatchPowerService2(SceModule2* mod);
+typedef struct PspUsbCamSetupMicParam {
+	int size;
+	int alc;
+	int gain;
+	int noize;
+	int freq;
+} PspUsbCamSetupMicParam;
 
-int initAdrenaline();
+typedef struct PspUsbCamSetupMicExParam {
+	int size;
+	int alc;
+	int gain;
+	u32 unk2[4]; // noize/hold/decay/attack?
+	int freq;
+	int unk3;
+} PspUsbCamSetupMicExParam;
+
+void PatchUSBCamDriver(SceModule2* mod);
 
 #endif

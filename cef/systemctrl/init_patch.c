@@ -43,10 +43,10 @@ int sctrlHENRegisterHomebrewLoader(int (* handler)(const char *path, int flags, 
 	u32 text_addr = ((u32)handler) - 0xCE8;
 
 	// Remove version check
-	_sw(0, text_addr + 0xC58);
+	MAKE_NOP(text_addr + 0xC58);
 
 	// Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
-	_sw(0, text_addr + 0x1140);
+	MAKE_NOP(text_addr + 0x1140);
 
 	// Fix sceKernelLoadModuleMs2 call
 	MAKE_JUMP(text_addr + 0x2E28, sceKernelLoadModuleMs2Leda);
@@ -301,14 +301,14 @@ int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 	init_addr = ((u32)module_bootstart) - 0x1A54;
 
 	// Ignore StopInit
-	_sw(0, init_addr + 0x18EC);
+	MAKE_NOP(init_addr + 0x18EC);
 
 	// Redirect load functions to load from MS
 	LoadModuleBufferAnchorInBtcnf = (void *)init_addr + 0x1038;
 	MAKE_CALL(init_addr + 0x17E4, LoadModuleBufferAnchorInBtcnfPatched);
-	_sw(0x02402821, init_addr + 0x17E8); //move $a1, $s2
+	MAKE_INSTRUCTION(init_addr + 0x17E8, 0x02402821); // move $a1, $s2
 
-	_sw(0x02402021, init_addr + 0x1868); //move $a0, $s2
+	MAKE_INSTRUCTION(init_addr + 0x1868, 0x02402021); // move $a0, $s2
 	MAKE_CALL(init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
 
 	MAKE_JUMP(init_addr + 0x1C5C, sceKernelStartModulePatched);
