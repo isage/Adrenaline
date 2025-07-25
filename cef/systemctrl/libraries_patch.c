@@ -297,7 +297,7 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 				}
 			} else {
 				// Query Syscall Number
-				int syscall = sceKernelQuerySystemCall661(func);
+				int syscall = sceKernelQuerySystemCall(func);
 
 				// Not properly exported in exports.exp
 				if(syscall < 0) return -3;

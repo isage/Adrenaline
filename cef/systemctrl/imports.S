@@ -21,9 +21,6 @@
 	IMPORT_FUNC  "LoadCoreForKernel",0xD3353EC4,sceKernelCheckExecFile661
 	IMPORT_FUNC  "LoadCoreForKernel",0x41D10899,sceKernelProbeExecutableObject661
 
-	IMPORT_START "InterruptManagerForKernel",0x00010011
-	IMPORT_FUNC  "InterruptManagerForKernel",0xF153B371,sceKernelQuerySystemCall661
-
 	IMPORT_START "sceKermit_driver",0x00010011
 	IMPORT_FUNC  "sceKermit_driver",0x36666181,sceKermitSendRequest661
 	IMPORT_FUNC  "sceKermit_driver",0x5280B410,sceKermitRegisterVirtualIntrHandler661

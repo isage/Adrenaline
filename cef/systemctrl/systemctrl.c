@@ -17,6 +17,7 @@
 */
 
 #include <common.h>
+#include <pspintrman.h>
 
 #include "main.h"
 #include "adrenaline.h"
@@ -141,7 +142,7 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
 
 int sctrlKernelQuerySystemCall(void *function) {
 	int k1 = pspSdkSetK1(0);
-	int res = sceKernelQuerySystemCall661(function);
+	int res = sceKernelQuerySystemCall(function);
 	pspSdkSetK1(k1);
 	return res;
 }

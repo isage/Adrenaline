@@ -44,8 +44,6 @@ SceModule2 *sceKernelFindModuleByUID661(SceUID modid);
 int sceKernelCheckExecFile661(void *buf, SceLoadCoreExecFileInfo *execInfo);
 int sceKernelProbeExecutableObject661(void *buf, SceLoadCoreExecFileInfo *execInfo);
 
-int sceKernelQuerySystemCall661(void *function);
-
 int sceKermitSendRequest661(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
 int sceKermitRegisterVirtualIntrHandler661(int num, int (* handler)());
 
