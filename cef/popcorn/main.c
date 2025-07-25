@@ -114,7 +114,7 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 	u32 pos = sceIoLseek32(fd, 0, SEEK_CUR);
 	int res = sceIoRead(fd, data, size);
 
-	// Inject custom config
+	// Inject custom config and apply anti-libcrypt patch
 	for (int i = 0; i < NELEMS(psiso_offsets); i++) {
 		if (psiso_offsets[i] == 0) {
 			break;
@@ -129,20 +129,43 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 			continue;
 		}
 
-		// Seek to where PSISOIMG magic is expected to appear and read it
+		// Seek to where PSISOIMG0000 magic is expected to appear and read it
 		char magic[12];
 		sceIoLseek(fd, psiso_offsets[i], PSP_SEEK_SET);
 		sceIoRead(fd, magic, sizeof(magic));
 		// Seek back into where file cursor should be.
 		sceIoLseek(fd, pos+size, PSP_SEEK_SET);
 
-		// Magic is correct AND custom config exists
-		if (memcmp(magic, "PSISOIMG0000", 12) == 0 && config_size > 0) {
+		// Magic is correct
+		if (memcmp(magic, "PSISOIMG0000", 12) == 0) {
 			// Copy custom config if it exists
-			// It is located at 0x420 after PSISOIMG, thus 0x20 after given buffer
-			memcpy(data+0x20, custom_config, config_size);
-			logmsg2("%s: Custom config was set.\n", __func__);
+			if (config_size > 0) {
+				// It is located at 0x420 after PSISOIMG, thus 0x20 after given buffer
+				memcpy(data+0x20, custom_config, config_size);
+				logmsg2("%s: Custom config was set.\n", __func__);
+			}
+
+			// anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG, 0xEB0 after given buffer
+			// buf points to PSISOIMG+0x0400, which conviniently starts with the disc_id
+			u32 libcrypt_magic = searchLibCryptMagicWord(data);
+
+			// A magic word for this title was found
+			if (libcrypt_magic != 0) {
+				// It needs to be xored with this constant
+				libcrypt_magic ^= LIBCRYPT_XOR_MAGIC;
+				memcpy(data+0xeb0, &libcrypt_magic, sizeof(libcrypt_magic));
+				logmsg2("%s: Anti-libcrypt patch was applied.\n", __func__);
+			}
 		}
+	}
+
+	if (res != size) {
+		goto exit;
+	}
+
+	if (!is_official && size >= 0x420 && data[0x41B] == 0x27 && data[0x41C] == 0x19 && data[0x41D] == 0x22 && data[0x41E] == 0x41 && data[0x41A] == data[0x41F]) {
+		data[0x41B] = 0x55;
+		logmsg3("%s: Unknown patch loc_6c\n", __func__);
 	}
 
 	// Fake ~PSP magic to avoid crash
