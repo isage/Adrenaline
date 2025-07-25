@@ -67,10 +67,3 @@
 	IMPORT_START "sceUsb_driver",0x00090011
 	IMPORT_FUNC  "sceUsb_driver",0x63E55EBE,sceUsb_driver_0x63E55EBE
 	IMPORT_FUNC  "sceUsb_driver",0xED8C8695,sceUsb_driver_0xED8C8695
-
-	STUB_START "SysclibForKernel", 0x00010000, 0x00010005
-	STUB_FUNC 0xC2145E80, snprintf
-	STUB_FUNC 0x7DEE14DE, __udivdi3
-	STUB_FUNC 0x5E8E5F42, __umoddi3
-	STUB_FUNC 0xDF17F4A2, __udivmoddi4
-	STUB_END
