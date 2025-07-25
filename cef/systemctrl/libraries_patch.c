@@ -88,8 +88,9 @@ u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
 	}
 
 	u32 new_nid = ResolveOldNIDs(szLib, nid);
-	if (new_nid)
+	if (new_nid != 0) {
 		nid = new_nid;
+	}
 
 	int i = 0;
 	while (i < mod->ent_size) {
@@ -201,22 +202,33 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 }
 
 u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid) {
-	int i = 0;
-	while (i < mod->stub_size) {
-		SceLibraryStubTable *stub = (SceLibraryStubTable *)(mod->stub_top + i);
+	// Invalid Arguments
+	if(mod == NULL || szLib == NULL) {
+		return 0;
+	}
 
-		if (stub->libname && strcmp(stub->libname, szLib) == 0) {
-			u32 *table = (u32 *)stub->nidtable;
+	u32 new_nid = ResolveOldNIDs(szLib, nid);
+	if (new_nid != 0) {
+		nid = new_nid;
+	}
+
+	int i = 0;
+	while (i < mod->ent_size) {
+		SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
+
+        if (!szLib || (entry->libname && strcmp(entry->libname, szLib) == 0)) {
+			u32 *table = entry->entrytable;
+			int total = entry->stubcount + entry->vstubcount;
 
 			int j;
-			for (j = 0; j < stub->stubcount; j++) {
+			for (j = 0; j < total; j++) {
 				if (table[j] == nid) {
-					return ((u32)stub->stubtable + (j * 8));
+					return table[j + total];
 				}
 			}
 		}
 
-		i += (stub->len * 4);
+		i += (entry->len * 4);
 	}
 
 	return 0;
