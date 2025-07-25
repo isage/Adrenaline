@@ -19,6 +19,8 @@
 #ifndef __NODRM_H__
 #define __NODRM_H__
 
-void PatchNpDrmDriver(u32 text_addr);
+#include <psploadcore.h>
+
+void PatchNpDrmDriver(SceModule2* mod);
 
 #endif

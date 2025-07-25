@@ -134,8 +134,8 @@ int _msIoDevctl(u32 *args) {
 	int outlen = args[6];
 
 	if (cmd == 0x02415830) {
-		char *oldname = (char *)_lw((u32)indata);
-		char *newname = (char *)_lw((u32)indata + 4);
+		char *oldname = (char *)VREAD32((u32)indata);
+		char *newname = (char *)VREAD32((u32)indata + 4);
 		return ms_funcs.IoRename(arg, oldname, newname);
 	} else if (cmd == 0x0240D81E) {
 		return IoDevctlReinsertMs();

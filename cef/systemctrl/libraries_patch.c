@@ -191,10 +191,8 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 
 	// Not linked yet
 	if (res < 0) {
-		// log("Missing nid %s_%08X\n", libname, (unsigned int)nid);
-
-		_sw(0x0000054C, stub_addr);
-		_sw(0x00000000, stub_addr + 4);
+		VWRITE32(stub_addr, 0x0000054C);
+		VWRITE32(stub_addr + 4, 0x00000000);
 
 		return -1;
 	}

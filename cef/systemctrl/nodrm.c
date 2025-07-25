@@ -148,20 +148,23 @@ int sceNpDrmEdataGetDataSizePatched(SceUID fd) {
 	return res;
 }
 
-void PatchNpDrmDriver(u32 text_addr) {
+void PatchNpDrmDriver(SceModule2* mod) {
+	u32 text_addr = mod->text_addr;
+
 	if (!config.notusenodrmengine) {
 		if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 			SceModule2 *mod = sceKernelFindModuleByName661("sceIOFileManager");
 
 			for (int i = 0; i < mod->text_size; i += 4) {
 				u32 addr = mod->text_addr + i;
+				u32 data = VREAD32(addr);
 
-				if (_lw(addr) == 0x03641824) {
+				if (data == 0x03641824) {
 					HIJACK_FUNCTION(addr - 4, do_open_patched, do_open);
 					continue;
 				}
 
-				if (_lw(addr) == 0x00C75821) {
+				if (data == 0x00C75821) {
 					HIJACK_FUNCTION(addr - 4, do_ioctl_patched, do_ioctl);
 					continue;
 				}

@@ -270,23 +270,28 @@ int sceKermitSyncDisplayPatched() {
 	return sceKermitSyncDisplay();
 }
 
-void PatchSasCore() {
-	sceSasCoreInit = (void *)FindProc("sceSAScore", "sceSasCore_driver", 0xB0F9F98F);
-	sceSasCoreExit = (void *)FindProc("sceSAScore", "sceSasCore_driver", 0xE143A1EA);
+void PatchSasCore(SceModule2* mod) {
+	sceSasCoreInit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xB0F9F98F);
+	sceSasCoreExit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xE143A1EA);
 
-	HIJACK_FUNCTION(FindProc("sceSAScore", "sceSasCore", 0x42778A9F), __sceSasInitPatched, __sceSasInit);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceSasCore", 0x42778A9F), __sceSasInitPatched, __sceSasInit);
 
 	sctrlFlushCache();
 }
 
-void PatchLowIODriver2(u32 text_addr) {
+void PatchLowIODriver2(SceModule2* mod) {
+	u32 text_addr = mod->text_addr;
+
 	HIJACK_FUNCTION(text_addr + 0x880, SetFlag1Patched, SetFlag1);
 	HIJACK_FUNCTION(text_addr + 0xCD8, SetFlag2Patched, SetFlag2);
 	HIJACK_FUNCTION(FindProc("sceKermit_Driver", "sceKermit_driver", 0xD69C50BB), sceKermitSyncDisplayPatched, sceKermitSyncDisplay);
+
 	sctrlFlushCache();
 }
 
-void PatchPowerService2(u32 text_addr) {
+void PatchPowerService2(SceModule2* mod) {
+	u32 text_addr = mod->text_addr;
+
 	// Patch to inject binary and to call uiResumePoint
 	uiResumePoint = (void *)text_addr + 0x24C0;
 	K_HIJACK_CALL(text_addr + 0x22FC, VitaSyncPatched, VitaSync);

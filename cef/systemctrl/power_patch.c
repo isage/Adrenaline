@@ -1,6 +1,7 @@
 /*
 	Adrenaline
 	Copyright (C) 2016-2018, TheFloW
+	Copyright (C) 2025, GrayJack
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -111,7 +112,9 @@ float sceSysregPllGetFrequencyPatched() {
 	return 333.0f;
 }
 
-void PatchPowerService(u32 text_addr) {
+void PatchPowerService(SceModule2* mod) {
+	u32 text_addr = mod->text_addr;
+
 	// Redirect to similar functions
 	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestStandby661), K_EXTRACT_IMPORT(&scePowerRequestSuspend661));
 	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestColdReset661), scePowerRequestColdResetPatched);
@@ -127,11 +130,11 @@ void PatchPowerService(u32 text_addr) {
 	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryVolt661), 0);
 
 	// Allow all frequencies for scePowerSetCpuClockFrequency
-	_sh(0x1000, text_addr + 0x3182);
-	_sh(0x1000, text_addr + 0x319A);
+	VWRITE16(text_addr + 0x3182, 0x1000);
+	VWRITE16(text_addr + 0x319A, 0x1000);
 
 	// Allow all frequencies for scePowerSetClockFrequency
-	_sh(0x1000, text_addr + 0x339A);
+	VWRITE16(text_addr + 0x339A, 0x1000);
 
 	// Patch
 	sceClkcGetCpuFrequency = (void *)K_EXTRACT_IMPORT(text_addr + 0x4810);
@@ -155,10 +158,10 @@ void PatchPowerService(u32 text_addr) {
 	_sw(5, text_addr + 0x54D8); // 266
 	_sw(5, text_addr + 0x54E0); // 333
 */
-	SceModule2 *mod = sceKernelFindModuleByName661("sceLowIO_Driver");
+	SceModule2 *mod_low_io = sceKernelFindModuleByName661("sceLowIO_Driver");
 
-	MAKE_CALL(mod->text_addr + 0x2B60, sceSysregPllGetFrequencyPatched);
-	MAKE_CALL(mod->text_addr + 0x2BC4, sceSysregPllGetFrequencyPatched);
+	MAKE_CALL(mod_low_io->text_addr + 0x2B60, sceSysregPllGetFrequencyPatched);
+	MAKE_CALL(mod_low_io->text_addr + 0x2BC4, sceSysregPllGetFrequencyPatched);
 
 	sctrlFlushCache();
 }

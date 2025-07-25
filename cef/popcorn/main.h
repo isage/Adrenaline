@@ -19,6 +19,8 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <psptypes.h>
+
 #define KIRK7_HEADER_SIZE 0x14
 
 #define VERSION_KEY_SIZE 0x10
@@ -39,6 +41,6 @@ int sceDrmBBMacUpdate(MAC_KEY *mkey, u8 *buf, int size);
 int sceDrmBBMacFinal(MAC_KEY *mkey, u8 *buf, u8 *vkey);
 
 
-u32 searchLibCryptMagicWord(char* disc_id);
+u32 searchLibCryptMagicWord(u8* disc_id);
 
 #endif
