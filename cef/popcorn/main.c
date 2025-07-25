@@ -23,7 +23,7 @@
 
 #include "main.h"
 
-PSP_MODULE_INFO("M33PopcornManager", 0x1007, 1, 0);
+PSP_MODULE_INFO("EPIPopcornManager", 0x1007, 1, 0);
 
 int (* _scePopsManExitVSHKernel)(int error);
 int (* SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id);
@@ -436,6 +436,9 @@ static void patchScePopsMgr(void) {
 		// Dummying amctrl decryption functions
 		MAKE_DUMMY_FUNCTION(text_addr + 0xA90, 1);
 		MAKE_NOP(text_addr + 0x53C)
+
+		// Removes checks in scePopsManLoadModule that only allows loading modules below FW 3.XX
+		MAKE_NOP(text_addr + 0x10D0);
 	}
 
 	sctrlFlushCache();
