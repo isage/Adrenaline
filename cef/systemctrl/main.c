@@ -20,6 +20,9 @@
 #include <common.h>
 #include <pspusbcam.h>
 
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 #include "main.h"
 #include "adrenaline.h"
 #include "executable_patch.h"
@@ -45,21 +48,6 @@ RebootexConfig rebootex_config;
 AdrenalineConfig config;
 
 int idle = 0;
-
-#ifdef DEBUG
-void logmsg(char *msg) {
-	int k1 = pspSdkSetK1(0);
-
-	SceUID fd = sceIoOpen("ms0:/systemctrl_log.txt", PSP_O_WRONLY | PSP_O_CREAT, 0777);
-	if (fd >= 0) {
-		sceIoLseek(fd, 0, PSP_SEEK_END);
-		sceIoWrite(fd, msg, strlen(msg));
-		sceIoClose(fd);
-	}
-
-	pspSdkSetK1(k1);
-}
-#endif
 
 int ReadFile(char *file, void *buf, int size) {
 	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
@@ -399,11 +387,11 @@ int OnModuleStart(SceModule2 *mod) {
 		PatchLoadExec(mod);
 
 	} else if (strcmp(modname, "scePower_Service") == 0) {
-		log("Built: %s %s\n", __DATE__, __TIME__);
-		log("Boot From: 0x%X\n", sceKernelBootFrom());
-		log("Key Config: 0x%X\n", sceKernelInitKeyConfig());
-		log("Apitype: 0x%X\n", sceKernelInitApitype());
-		log("Filename: %s\n", sceKernelInitFileName());
+		logmsg3("Built: %s %s\n", __DATE__, __TIME__);
+		logmsg3("Boot From: 0x%X\n", sceKernelBootFrom());
+		logmsg3("Key Config: 0x%X\n", sceKernelInitKeyConfig());
+		logmsg3("Apitype: 0x%X\n", sceKernelInitApitype());
+		logmsg3("Filename: %s\n", sceKernelInitFileName());
 
 		sctrlSEGetConfig(&config);
 
@@ -504,12 +492,15 @@ int OnModuleStart(SceModule2 *mod) {
 		}
 	}
 
-	log("%s: 0x%08X\n", modname, text_addr);
+	logmsg3("%s: 0x%08X\n", modname, text_addr);
 
 	return 0;
 }
 
 int module_start(SceSize args, void *argp) {
+	logInit("ms0:/log_systemctrl.txt");
+	logmsg("SystemControl started...\n")
+
 	PatchSysmem();
 	PatchLoadCore();
 	PatchInterruptMgr();

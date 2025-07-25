@@ -23,25 +23,6 @@
 
 #include "executable_patch.h"
 
-// #define DEBUG
-
-#ifdef DEBUG
-
-void logmsg(char *msg);
-
-#define log(...) \
-{ \
-	char msg[256]; \
-	sprintf(msg,__VA_ARGS__); \
-	logmsg(msg); \
-}
-
-#else
-
-#define log(...);
-
-#endif
-
 extern RebootexConfig rebootex_config;
 extern AdrenalineConfig config;
 

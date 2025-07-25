@@ -17,11 +17,13 @@
 */
 
 #include <common.h>
+#include <adrenaline_log.h>
+
 #include "main.h"
+#include "binary.h"
 
 #include "../../adrenaline_compat.h"
 
-#include "binary.h"
 
 typedef struct {
 	void *sasCore;

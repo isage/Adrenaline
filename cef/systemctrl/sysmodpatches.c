@@ -260,7 +260,7 @@ void PatchLoadExec(SceModule2* mod) {
 
 			// Allow LoadExecVSH type 1. Ignore peripheralCommon KERMIT_CMD_ERROR_EXIT
 			MAKE_JUMP(addr + 0x14, jump);
-			MAKE_INSTRUCTION(addr + 0x18, 0x24170001);
+			MAKE_INSTRUCTION(addr + 0x18, 0x24170001); // li $s7, 1
 
 			continue;
 		}
