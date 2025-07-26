@@ -21,9 +21,6 @@
 	IMPORT_FUNC  "LoadCoreForKernel",0xD3353EC4,sceKernelCheckExecFile661
 	IMPORT_FUNC  "LoadCoreForKernel",0x41D10899,sceKernelProbeExecutableObject661
 
-	IMPORT_START "InterruptManagerForKernel",0x00010011
-	IMPORT_FUNC  "InterruptManagerForKernel",0xF153B371,sceKernelQuerySystemCall661
-
 	IMPORT_START "sceKermit_driver",0x00010011
 	IMPORT_FUNC  "sceKermit_driver",0x36666181,sceKermitSendRequest661
 	IMPORT_FUNC  "sceKermit_driver",0x5280B410,sceKermitRegisterVirtualIntrHandler661
@@ -60,20 +57,3 @@
 	IMPORT_START "sceChkreg_driver",0x00090011
 	IMPORT_FUNC  "sceChkreg_driver",0x54495B19,sceChkregCheckRegion661
 	IMPORT_FUNC  "sceChkreg_driver",0x59F8491D,sceChkregGetPsCode661
-
-	IMPORT_START "sceUsbCam",0x40090000
-	IMPORT_FUNC  "sceUsbCam",0x3F0CF289,sceUsbCamSetupStill
-	IMPORT_FUNC  "sceUsbCam",0x17F7B2FB,sceUsbCamSetupVideo
-	IMPORT_FUNC  "sceUsbCam",0x03ED7A82,sceUsbCamSetupMic
-	IMPORT_FUNC  "sceUsbCam",0x3DC0088E,sceUsbCamReadMic
-
-	IMPORT_START "sceUsb_driver",0x00090011
-	IMPORT_FUNC  "sceUsb_driver",0x63E55EBE,sceUsb_driver_0x63E55EBE
-	IMPORT_FUNC  "sceUsb_driver",0xED8C8695,sceUsb_driver_0xED8C8695
-
-	STUB_START "SysclibForKernel", 0x00010000, 0x00010005
-	STUB_FUNC 0xC2145E80, snprintf
-	STUB_FUNC 0x7DEE14DE, __udivdi3
-	STUB_FUNC 0x5E8E5F42, __umoddi3
-	STUB_FUNC 0xDF17F4A2, __udivmoddi4
-	STUB_END

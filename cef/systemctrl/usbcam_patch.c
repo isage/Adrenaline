@@ -3,14 +3,14 @@
 
 #include "usbcam_patch.h"
 
-void sceUsb_driver_0xED8C8695();
-void sceUsb_driver_0x63E55EBE();
+void sceUsb_driver_ED8C8695();
+void sceUsb_driver_63E55EBE();
 
 int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
 int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int ret = _sceUsbCamStillInput(buf, size);
-	sceUsb_driver_0xED8C8695(); // force camera stop
+	sceUsb_driver_ED8C8695(); // force camera stop
 
 	pspSdkSetK1(k1);
 
@@ -64,7 +64,7 @@ int sceUsbCamSetupStillEx_Patched(PspUsbCamSetupStillExParam *exparam) {
 
 	res = sceUsbCamSetupStill(&param);
 
-	sceUsb_driver_0x63E55EBE(); // force camera start
+	sceUsb_driver_63E55EBE(); // force camera start
 
 	pspSdkSetK1(k1);
 
@@ -154,9 +154,8 @@ int sceUsbCamWaitReadMicEnd_Patched() {
 	return res;
 }
 
-int sceUsbCamSetupMic(void *param, void *workarea, int wasize);
-int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
 
+int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
 int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize) {
 	int res = 0;
 	int k1 = pspSdkSetK1(0);

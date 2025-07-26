@@ -23,24 +23,6 @@
 #include <psptypes.h>
 #include <psploadcore.h>
 
-
-typedef struct PspUsbCamSetupMicParam {
-	int size;
-	int alc;
-	int gain;
-	int noize;
-	int freq;
-} PspUsbCamSetupMicParam;
-
-typedef struct PspUsbCamSetupMicExParam {
-	int size;
-	int alc;
-	int gain;
-	u32 unk2[4]; // noize/hold/decay/attack?
-	int freq;
-	int unk3;
-} PspUsbCamSetupMicExParam;
-
 void PatchUSBCamDriver(SceModule2* mod);
 
 #endif
