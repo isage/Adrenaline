@@ -455,7 +455,7 @@ int OnModuleStart(SceModule2 *mod) {
 
 		if (!is_official) {
 			// Patch syscall to use it as deflate decompress
-			_scePopsManExitVSHKernel = (void *)sctrlHENFindFunctionInMod(mod, "scePopsMan", 0x0090B2C8);
+			_scePopsManExitVSHKernel = (void *)sctrlHENFindImportInMod(mod, "scePopsMan", 0x0090B2C8);
 			sctrlHENHookImportByNID(mod, "scePopsMan", 0x0090B2C8, scePopsManExitVSHKernelPatched, 0);
 
 			// Use our decompression function
