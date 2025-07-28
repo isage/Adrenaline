@@ -185,9 +185,8 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 				vshmain_args[1] = 0x20;
 				vshmain_args[16] = 1;
 
-				if(config.startupprog && argsize == 0)
-				{
-					LoadExecForKernel_0xAA2029EC();
+				if(config.startupprog && argsize == 0) {
+					LoadExecForKernel_AA2029EC();
 
 					struct SceKernelLoadExecVSHParam param;
 					memset(&param, 0, sizeof(param));

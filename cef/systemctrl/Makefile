@@ -24,7 +24,7 @@ BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
 LIBDIR = ../lib
-LIBS = -lpspsemaphore -lpspinterruptmanager_kernel -lpspsysclib_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver
+LIBS = -lpspsemaphore -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver
 
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1

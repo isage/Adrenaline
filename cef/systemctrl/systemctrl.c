@@ -98,7 +98,7 @@ PspIoDrv *sctrlHENFindDriver(char *drvname) {
 
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
-	int res = sceKernelExitVSHVSH661(param);
+	int res = sceKernelExitVSHVSH(param);
 	pspSdkSetK1(k1);
 	return res;
 }

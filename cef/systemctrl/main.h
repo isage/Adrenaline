@@ -56,8 +56,7 @@ SceUID sceKernelLoadModuleMs2661(int apitype, const char *path, int flags, SceKe
 SceUID sceKernelLoadModule661(const char *path, int flags, SceKernelLMOption *option);
 SceUID sceKernelStartModule661(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option);
 
-int sceKernelExitVSHVSH661(struct SceKernelLoadExecVSHParam *param);
-int LoadExecForKernel_0xAA2029EC();
+int LoadExecForKernel_AA2029EC();
 
 int sceChkregCheckRegion();
 int sceChkregGetPsCode(u8 *pscode);
