@@ -19,6 +19,7 @@
 
 #include <common.h>
 #include <pspusbcam.h>
+#include <pspdisplay.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
@@ -305,7 +306,6 @@ int bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
 
 #define N_CPU (sizeof(cpu_list) / sizeof(int))
 
-int sceDisplaySetFrameBuf661(void *topaddr, int bufferwidth, int pixelformat, int sync);
 
 void OnSystemStatusIdle() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
@@ -320,7 +320,7 @@ void OnSystemStatusIdle() {
 
 	// Set fake framebuffer so that cwcheat can be displayed
 	if (adrenaline->pops_mode) {
-		sceDisplaySetFrameBuf661((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
+		sceDisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 	} else {
 		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
