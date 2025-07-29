@@ -116,18 +116,18 @@ void PatchPowerService(SceModule2* mod) {
 	u32 text_addr = mod->text_addr;
 
 	// Redirect to similar functions
-	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestStandby661), K_EXTRACT_IMPORT(&scePowerRequestSuspend661));
-	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestColdReset661), scePowerRequestColdResetPatched);
+	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestStandby), K_EXTRACT_IMPORT(&scePowerRequestSuspend));
+	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerRequestColdReset), scePowerRequestColdResetPatched);
 
 	// Patch to fix charging status
-	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryLifeTime661), scePowerGetBatteryLifeTimePatched);
-	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerIsPowerOnline661), power_online);
-	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerIsBatteryCharging661), power_online);
-	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryChargingStatus661), 1);
+	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryLifeTime), scePowerGetBatteryLifeTimePatched);
+	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerIsPowerOnline), power_online);
+	REDIRECT_FUNCTION(K_EXTRACT_IMPORT(&scePowerIsBatteryCharging), power_online);
+	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryChargingStatus), 1);
 
 	// Dummy not working functions
-	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryTemp661), 0);
-	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryVolt661), 0);
+	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryTemp), 0);
+	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&scePowerGetBatteryVolt), 0);
 
 	// Allow all frequencies for scePowerSetCpuClockFrequency
 	VWRITE16(text_addr + 0x3182, 0x1000);

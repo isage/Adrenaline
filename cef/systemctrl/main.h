@@ -49,29 +49,11 @@ int sceKermitRegisterVirtualIntrHandler661(int num, int (* handler)());
 
 int sceKermitMemorySetArgument661(SceKermitRequest *request, int argc, const void *data, int size, int mode);
 
-SceUID sceKernelLoadModuleBufferBootInitBtcnf661(int bufsize, void *buf, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModuleBuffer661(void *buf, SceSize bufsize, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModuleWithApitype2661(int apitype, const char *path, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModuleMs2661(int apitype, const char *path, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModule661(const char *path, int flags, SceKernelLMOption *option);
-SceUID sceKernelStartModule661(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option);
 
-int sceKernelExitVSHVSH661(struct SceKernelLoadExecVSHParam *param);
-int LoadExecForKernel_0xAA2029EC();
+int LoadExecForKernel_AA2029EC();
 
-int scePowerRequestStandby661();
-int scePowerRequestSuspend661();
-int scePowerRequestColdReset661(int a0);
-int scePowerIsPowerOnline661();
-int scePowerIsBatteryCharging661();
-int scePowerGetBatteryLifeTime661();
-int scePowerGetBatteryChargingStatus661();
-int scePowerSetIdleCallback661(int slot, int flags, u64 time, int (* callback)(int slot, u32 diff, int arg, int *unk), int arg);
-int scePowerGetBatteryTemp661();
-int scePowerGetBatteryVolt661();
-
-int sceChkregCheckRegion661();
-int sceChkregGetPsCode661(u8 *pscode);
+int sceChkregCheckRegion();
+int sceChkregGetPsCode(u8 *pscode);
 
 int ReadFile(char *file, void *buf, int size);
 int WriteFile(char *file, void *buf, int size);

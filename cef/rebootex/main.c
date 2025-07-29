@@ -106,7 +106,7 @@ int InsertModule(void *buf, char *new_module, char *module_after, int flags) {
 	if (header->signature != BTCNF_MAGIC)
 		return -1;
 
-	int i;
+	int i = 0;
 	for (i = 0; i < header->nmodules; i++) {
 		if (_strcmp(modnamestart + modules[i].stroffset, module_after) == 0) {
 			break;

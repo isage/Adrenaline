@@ -292,8 +292,8 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 }
 
 void PatchChkreg() {
-	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&sceChkregCheckRegion661), 1);
-	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceChkregGetPsCode661), sceChkregGetPsCodePatched, _sceChkregGetPsCode);
+	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&sceChkregCheckRegion), 1);
+	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceChkregGetPsCode), sceChkregGetPsCodePatched, _sceChkregGetPsCode);
 	sctrlFlushCache();
 }
 

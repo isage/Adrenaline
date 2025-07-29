@@ -102,7 +102,7 @@ SceUID sceKernelLoadModuleNpDrmPatched(const char *path, int flags, SceKernelLMO
 
 	if (res < 0) {
 		if (IsPlainDrmPath(path)) {
-			return sceKernelLoadModule661(path, flags, option);
+			return sceKernelLoadModule(path, flags, option);
 		}
 	}
 

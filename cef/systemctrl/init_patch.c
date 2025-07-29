@@ -17,6 +17,7 @@
 */
 
 #include <common.h>
+#include <pspmodulemgr.h>
 
 #include "main.h"
 #include "init_patch.h"
@@ -30,7 +31,7 @@ int leda_apitype;
 int plugindone = 0;
 
 SceUID sceKernelLoadModuleMs2Leda(const char *path, int flags, SceKernelLMOption *option) {
-	return sceKernelLoadModuleMs2661(leda_apitype, path, flags, option);
+	return sceKernelLoadModuleMs2(leda_apitype, path, flags, option);
 }
 
 SceUID sceKernelLoadModuleMs2Init(int apitype, const char *path, int flags, SceKernelLMOption *option) {
@@ -116,11 +117,11 @@ int GetPlugin(char *buf, int size, char *str, int *activated) {
 }
 
 int LoadStartModule(char *file) {
-	SceUID mod = sceKernelLoadModule661(file, 0, NULL);
+	SceUID mod = sceKernelLoadModule(file, 0, NULL);
 	if (mod < 0)
 		return mod;
 
-	return sceKernelStartModule661(mod, strlen(file) + 1, file, NULL, NULL);
+	return sceKernelStartModule(mod, strlen(file) + 1, file, NULL, NULL);
 }
 
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
@@ -133,22 +134,22 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 	char path[64];
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name); //not use flash0 cause of cxmb
 
-	SceUID mod = sceKernelLoadModule661(path, 0, NULL);
+	SceUID mod = sceKernelLoadModule(path, 0, NULL);
 	if (mod >= 0)
 		return mod;
 
-	return sceKernelLoadModuleBufferBootInitBtcnf661(info->size, buf, flags, option);
+	return sceKernelLoadModuleBufferBootInitBtcnf(info->size, buf, flags, option);
 }
 
 static void loadXmbControl(){
 	int apitype = sceKernelInitApitype();
 	if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
 		// load XMB Control Module
-		int modid = sceKernelLoadModule661("ms0:/__ADRENALINE__/flash0/vsh/module/xmbctrl.prx", 0, NULL);
+		int modid = sceKernelLoadModule("ms0:/__ADRENALINE__/flash0/vsh/module/xmbctrl.prx", 0, NULL);
 		if (modid < 0) {
-		  	modid = sceKernelLoadModule661("flash0:/vsh/module/xmbctrl.prx", 0, NULL);
+		  	modid = sceKernelLoadModule("flash0:/vsh/module/xmbctrl.prx", 0, NULL);
 		}
-		sceKernelStartModule661(modid, 0, NULL, NULL, NULL);
+		sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 	}
 }
 
@@ -156,7 +157,7 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 	char path[64];
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name);
 
-	SceUID mod = sceKernelLoadModule661(path, 0, NULL);
+	SceUID mod = sceKernelLoadModule(path, 0, NULL);
 	if (mod >= 0)
 		return mod;
 
@@ -185,9 +186,8 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 				vshmain_args[1] = 0x20;
 				vshmain_args[16] = 1;
 
-				if(config.startupprog && argsize == 0)
-				{
-					LoadExecForKernel_0xAA2029EC();
+				if(config.startupprog && argsize == 0) {
+					LoadExecForKernel_AA2029EC();
 
 					struct SceKernelLoadExecVSHParam param;
 					memset(&param, 0, sizeof(param));
@@ -287,7 +287,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 	}
 
 START_MODULE:
-	res = sceKernelStartModule661(modid, argsize, argp, status, option);
+	res = sceKernelStartModule(modid, argsize, argp, status, option);
 
 	if (plug_buf) {
 		sceKernelFreeFpl(fpl, plug_buf);
