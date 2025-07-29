@@ -63,7 +63,7 @@ int SendAdrenalineCmd(int cmd) {
 	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
 
 	u64 resp;
-	sceKermitSendRequest661(request_uncached, KERMIT_MODE_EXTRA_2, cmd, 0, 0, &resp);
+	sceKermitSendRequest(request_uncached, KERMIT_MODE_EXTRA_2, cmd, 0, 0, &resp);
 
 	pspSdkSetK1(k1);
 	return resp;
@@ -315,7 +315,7 @@ int initAdrenaline() {
 	sceKernelRegisterSysEventHandler(&event_handler);
 
 	// Register adrenaline interrupt
-	sceKermitRegisterVirtualIntrHandler661(KERMIT_VIRTUAL_INTR_IMPOSE_CH1, adrenaline_interrupt);
+	sceKermitRegisterVirtualIntrHandler(KERMIT_VIRTUAL_INTR_IMPOSE_CH1, adrenaline_interrupt);
 
 	// Create adrenaline semaphore
 	adrenaline_semaid = sceKernelCreateSema("", 0, 0, 1, NULL);

@@ -44,10 +44,10 @@ SceModule2 *sceKernelFindModuleByUID661(SceUID modid);
 int sceKernelCheckExecFile661(void *buf, SceLoadCoreExecFileInfo *execInfo);
 int sceKernelProbeExecutableObject661(void *buf, SceLoadCoreExecFileInfo *execInfo);
 
-int sceKermitSendRequest661(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
-int sceKermitRegisterVirtualIntrHandler661(int num, int (* handler)());
+int sceKermitSendRequest(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
+int sceKermitRegisterVirtualIntrHandler(int num, int (* handler)());
 
-int sceKermitMemorySetArgument661(SceKermitRequest *request, int argc, const void *data, int size, int mode);
+int sceKermitMemorySetArgument(SceKermitRequest *request, int argc, const void *data, int size, int mode);
 
 
 int LoadExecForKernel_AA2029EC();
