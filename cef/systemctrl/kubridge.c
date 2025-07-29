@@ -17,6 +17,7 @@
 */
 
 #include <common.h>
+#include <pspmodulemgr.h>
 
 #include "main.h"
 
@@ -59,14 +60,14 @@ int kuKernelInitApitype() {
 
 SceUID kuKernelLoadModuleWithApitype2(int apitype, const char *path, int flags, SceKernelLMOption *option) {
  	int k1 = pspSdkSetK1(0);
-	int res = sceKernelLoadModuleWithApitype2661(apitype, path, flags, option);
+	int res = sceKernelLoadModuleWithApitype2(apitype, path, flags, option);
 	pspSdkSetK1(k1);
 	return res;
 }
 
 SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option) {
 	int k1 = pspSdkSetK1(0);
-	int res = sceKernelLoadModule661(path, flags, option);
+	int res = sceKernelLoadModule(path, flags, option);
 	pspSdkSetK1(k1);
 	return res;
 }

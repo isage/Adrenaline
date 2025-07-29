@@ -27,12 +27,3 @@
 
 	IMPORT_START "sceKermitMemory_driver",0x00090011
 	IMPORT_FUNC  "sceKermitMemory_driver",0xAAF047AC,sceKermitMemorySetArgument661
-
-	IMPORT_START "ModuleMgrForKernel",0x00010011
-	IMPORT_FUNC  "ModuleMgrForKernel",0x1CF0B794,sceKernelLoadModuleBufferBootInitBtcnf661
-	IMPORT_FUNC  "ModuleMgrForKernel",0x1CF0B794,sceKernelLoadModuleBuffer661
-	IMPORT_FUNC  "ModuleMgrForKernel",0x2B7FC10D,sceKernelLoadModuleWithApitype2661
-	IMPORT_FUNC  "ModuleMgrForKernel",0x7BD53193,sceKernelLoadModuleMs2661
-	IMPORT_FUNC  "ModuleMgrForKernel",0x939E4270,sceKernelLoadModule661
-	IMPORT_FUNC  "ModuleMgrForKernel",0x3FF74DF1,sceKernelStartModule661
-

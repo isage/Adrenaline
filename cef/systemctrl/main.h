@@ -49,12 +49,6 @@ int sceKermitRegisterVirtualIntrHandler661(int num, int (* handler)());
 
 int sceKermitMemorySetArgument661(SceKermitRequest *request, int argc, const void *data, int size, int mode);
 
-SceUID sceKernelLoadModuleBufferBootInitBtcnf661(int bufsize, void *buf, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModuleBuffer661(void *buf, SceSize bufsize, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModuleWithApitype2661(int apitype, const char *path, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModuleMs2661(int apitype, const char *path, int flags, SceKernelLMOption *option);
-SceUID sceKernelLoadModule661(const char *path, int flags, SceKernelLMOption *option);
-SceUID sceKernelStartModule661(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option);
 
 int LoadExecForKernel_AA2029EC();
 

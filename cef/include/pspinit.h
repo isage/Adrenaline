@@ -50,9 +50,11 @@ enum PSPKeyConfig
 };
 
 /**
- * Gets the api type
+ * Gets the api type,
  *
- * @returns the api type in which the system has booted
+ * @returns the api type in which the system has booted (one of `SceFileExecApiType`)
+ *
+ * @attention Needs to link to `lpspinit_kernel`.
 */
 int sceKernelInitApitype();
 
@@ -60,6 +62,8 @@ int sceKernelInitApitype();
  * Gets the filename of the executable to be launched after all modules of the api.
  *
  * @returns filename of executable or NULL if no executable found.
+ *
+ * @attention Needs to link to `lpspinit_kernel`.
 */
 char *sceKernelInitFileName();
 
@@ -68,6 +72,8 @@ char *sceKernelInitFileName();
  * Gets the device in which the application was launched.
  *
  * @returns the device code, one of PSPBootFrom values.
+ *
+ * @attention Needs to link to `lpspinit_kernel`.
 */
 int sceKernelBootFrom();
 
@@ -75,10 +81,12 @@ int sceKernelBootFrom();
  * Get the key configuration in which the system has booted.
  *
  * @returns the key configuration code, one of PSPKeyConfig values
+ *
+ * @attention Needs to link to `lpspinit_kernel`.
 */
-int InitForKernel_7233B5BC();
+int sceKernelApplicationType();
 
-#define sceKernelInitKeyConfig InitForKernel_7233B5BC
+#define sceKernelInitKeyConfig sceKernelApplicationType
 
 #endif
 
