@@ -158,7 +158,7 @@ void PatchPowerService(SceModule2* mod) {
 	_sw(5, text_addr + 0x54D8); // 266
 	_sw(5, text_addr + 0x54E0); // 333
 */
-	SceModule2 *mod_low_io = sceKernelFindModuleByName661("sceLowIO_Driver");
+	SceModule2 *mod_low_io = sceKernelFindModuleByName("sceLowIO_Driver");
 
 	MAKE_CALL(mod_low_io->text_addr + 0x2B60, sceSysregPllGetFrequencyPatched);
 	MAKE_CALL(mod_low_io->text_addr + 0x2BC4, sceSysregPllGetFrequencyPatched);

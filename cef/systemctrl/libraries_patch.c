@@ -81,9 +81,9 @@ u32 ResolveOldNIDs(const char *libname, u32 nid) {
 }
 
 u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
-	SceModule2 *mod = sceKernelFindModuleByName661(szMod);
+	SceModule2 *mod = sceKernelFindModuleByName(szMod);
 	if (!mod) {
-		mod = sceKernelFindModuleByAddress661((SceUID)szMod);
+		mod = sceKernelFindModuleByAddress((SceUID)szMod);
 		if (!mod)
 			return 0;
 	}
@@ -116,9 +116,9 @@ u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
 }
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid) {
-	SceModule2 *mod = sceKernelFindModuleByName661(szMod);
+	SceModule2 *mod = sceKernelFindModuleByName(szMod);
 	if (!mod) {
-		mod = sceKernelFindModuleByAddress661((SceUID)szMod);
+		mod = sceKernelFindModuleByAddress((SceUID)szMod);
 		if (!mod)
 			return 0;
 	}

@@ -165,7 +165,7 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 }
 
 int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option) {
-	SceModule2 *mod = sceKernelFindModuleByUID661(modid);
+	SceModule2 *mod = sceKernelFindModuleByUID(modid);
 	SceUID fpl = -1;
 	char *plug_buf = NULL;
 	char *p;
@@ -206,13 +206,13 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 		} else if (!plugindone) {
 			char *waitmodule;
 
-			if (sceKernelFindModuleByName661("sceNp9660_driver")) {
+			if (sceKernelFindModuleByName("sceNp9660_driver")) {
 				waitmodule = "sceMeCodecWrapper";
 			} else {
 				waitmodule = "sceMediaSync";
 			}
 
-			if (sceKernelFindModuleByName661(waitmodule)) {
+			if (sceKernelFindModuleByName(waitmodule)) {
 				char plugin[64];
 				int i, size;
 				SceUID fd;
@@ -225,7 +225,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 					loadXmbControl();
 				}
 
-				if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName661("scePspNpDrm_Driver")) {
+				if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
 					goto START_MODULE;
 				}
 

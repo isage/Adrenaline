@@ -38,12 +38,6 @@ int sceKernelSetDdrMemoryProtection661(void *addr, int size, int prot);
 int sceKernelGetSystemStatus661();
 void *sceKernelGetGameInfo661();
 
-SceModule2 *sceKernelFindModuleByName661(const char *modname);
-SceModule2 *sceKernelFindModuleByAddress661(u32 addr);
-SceModule2 *sceKernelFindModuleByUID661(SceUID modid);
-int sceKernelCheckExecFile661(void *buf, SceLoadCoreExecFileInfo *execInfo);
-int sceKernelProbeExecutableObject661(void *buf, SceLoadCoreExecFileInfo *execInfo);
-
 int sceKermitSendRequest(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
 int sceKermitRegisterVirtualIntrHandler(int num, int (* handler)());
 

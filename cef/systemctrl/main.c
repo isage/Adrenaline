@@ -111,7 +111,7 @@ int memcmp_patched(const void *b1, const void *b2, size_t len) {
 }
 
 void PatchMemlmd() {
-	SceModule2 *mod = sceKernelFindModuleByName661("sceMemlmd");
+	SceModule2 *mod = sceKernelFindModuleByName("sceMemlmd");
 	u32 text_addr = mod->text_addr;
 
 	// Allow 6.61 kernel modules
@@ -119,7 +119,7 @@ void PatchMemlmd() {
 }
 
 void PatchInterruptMgr() {
-	SceModule2 *mod = sceKernelFindModuleByName661("sceInterruptManager");
+	SceModule2 *mod = sceKernelFindModuleByName("sceInterruptManager");
 	u32 text_addr = mod->text_addr;
 
 	// Allow execution of syscalls in kernel mode
@@ -128,7 +128,7 @@ void PatchInterruptMgr() {
 }
 
 void PatchModuleMgr() {
-	SceModule2 *mod = sceKernelFindModuleByName661("sceModuleManager");
+	SceModule2 *mod = sceKernelFindModuleByName("sceModuleManager");
 	u32 text_addr = mod->text_addr;
 
 	for (int i = 0; i < mod->text_size; i += 4) {
@@ -153,11 +153,11 @@ void PatchModuleMgr() {
 
 
 void PatchLoadCore() {
-	SceModule2 *mod = sceKernelFindModuleByName661("sceLoaderCore");
+	SceModule2 *mod = sceKernelFindModuleByName("sceLoaderCore");
 	u32 text_addr = mod->text_addr;
 
-	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelCheckExecFile661), sceKernelCheckExecFilePatched, _sceKernelCheckExecFile);
-	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelProbeExecutableObject661), sceKernelProbeExecutableObjectPatched, _sceKernelProbeExecutableObject);
+	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelCheckExecFile), sceKernelCheckExecFilePatched, _sceKernelCheckExecFile);
+	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelProbeExecutableObject), sceKernelProbeExecutableObjectPatched, _sceKernelProbeExecutableObject);
 
 	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
