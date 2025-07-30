@@ -1,0 +1,68 @@
+# Define the exports for the prx
+PSP_BEGIN_EXPORTS
+
+# These four lines are mandatory (although you can add other functions like module_stop)
+# syslib is a psynonym for the single mandatory export.
+PSP_EXPORT_START(syslib, 0, 0x8000)
+PSP_EXPORT_FUNC_HASH(module_start)
+PSP_EXPORT_FUNC_HASH(module_stop)
+# module_reboot_before
+#PSP_EXPORT_FUNC_NID(module_stop, 0x2F064FA6) 
+PSP_EXPORT_VAR_HASH(module_info)
+PSP_EXPORT_VAR_HASH(module_sdk_version)
+PSP_EXPORT_END
+
+PSP_EXPORT_START(sceUmd, 0x11, 0x0001)
+PSP_EXPORT_FUNC_NID(sceUmdSetDriveStatus, 0x0F4A9E65)
+PSP_EXPORT_FUNC_NID(sceUmdGetDiscInfo, 0xABD91854)
+PSP_EXPORT_FUNC_NID(sceUmdCheckMedium,0xAE62DEEA)
+PSP_EXPORT_FUNC_NID(sceUmdWaitDriveStatCB, 0x29C25A46)
+PSP_EXPORT_FUNC_NID(sceUmdWaitDriveStatWithTimer, 0x1177A45B)
+PSP_EXPORT_FUNC_NID(sceUmd_659587F7, 0x28D24A53)
+PSP_EXPORT_FUNC_NID(sceUmdGetErrorStatus, 0xE43C01A8)
+PSP_EXPORT_FUNC_NID(sceUmdReplaceProhibit, 0xC3CEF6A1)
+PSP_EXPORT_FUNC_NID(sceUmdWaitDriveStat, 0x8EF08FCE)
+PSP_EXPORT_FUNC_NID(sceUmdSetErrorStatus, 0x5449D481)
+PSP_EXPORT_FUNC_NID(sceUmdRegisterUMDCallBack, 0x9E21A720)
+PSP_EXPORT_FUNC_NID(sceUmdUnRegisterUMDCallBack, 0x7C39550B)
+PSP_EXPORT_FUNC_NID(sceUmdActivate, 0xC6183D47)
+PSP_EXPORT_FUNC_NID(sceUmdReplacePermit, 0xD1D2B2EF)
+PSP_EXPORT_FUNC_NID(sceUmdGetDriveStatus, 0x85AAD97C)
+PSP_EXPORT_FUNC_NID(sceUmdDeactivate, 0xE83742BA)
+PSP_EXPORT_FUNC_NID(sceUmdClearDriveStatus, 0x9040A4BB)
+PSP_EXPORT_FUNC_NID(sceUmdCancelWaitDriveStat, 0x07264D81)
+PSP_EXPORT_END
+
+PSP_EXPORT_START(sceUmdUser, 0x11, 0x4001)
+PSP_EXPORT_FUNC_HASH(sceUmdGetErrorStat)
+PSP_EXPORT_FUNC_HASH(sceUmdGetDiscInfo)
+PSP_EXPORT_FUNC_HASH(sceUmdCheckMedium)
+PSP_EXPORT_FUNC_HASH(sceUmdWaitDriveStatCB)
+PSP_EXPORT_FUNC_HASH(sceUmdWaitDriveStatWithTimer)
+PSP_EXPORT_FUNC_HASH(sceUmdCancelWaitDriveStat)
+PSP_EXPORT_FUNC_HASH(sceUmdGetDriveStat)
+PSP_EXPORT_FUNC_HASH(sceUmdReplaceProhibit)
+PSP_EXPORT_FUNC_HASH(sceUmdWaitDriveStat)
+PSP_EXPORT_FUNC_HASH(sceUmdRegisterUMDCallBack)
+PSP_EXPORT_FUNC_HASH(sceUmdUnRegisterUMDCallBack)
+PSP_EXPORT_FUNC_HASH(sceUmdActivate)
+PSP_EXPORT_FUNC_HASH(sceUmdReplacePermit)
+#PSP_EXPORT_FUNC_HASH(sceUmdGetDriveStatus)
+PSP_EXPORT_FUNC_HASH(sceUmdDeactivate)
+PSP_EXPORT_END
+
+PSP_EXPORT_START(sceUmdMan_driver, 0x11, 0x0001)
+PSP_EXPORT_FUNC_NID(sceUmdManUnRegisterImposeCallback, 0x0624CDD4)
+PSP_EXPORT_FUNC_NID(sceUmdManUnRegisterInsertEjectUMDCallBack, 0x7E72758D)
+PSP_EXPORT_FUNC_NID(sceUmdMan_driver_60933ECD, 0x620309A4)
+PSP_EXPORT_FUNC_NID(sceUmdManRegisterInsertEjectUMDCallBack, 0x7CCDF632)
+PSP_EXPORT_FUNC_NID(sceUmdManRegisterImposeCallBack, 0x1291D91D)
+PSP_EXPORT_END
+
+PSP_EXPORT_START(sceUmd9660_driver, 0x11, 0x0001)
+PSP_EXPORT_FUNC_NID(sceUmd9660_driver_2C6C3F4C, 0xFBD990B1)
+PSP_EXPORT_FUNC_NID(sceUmd9660_driver_44EF600C, 0x548F2C04)
+PSP_EXPORT_FUNC_NID(sceUmd9660_driver_C7CD9CE8, 0xD582142B)
+PSP_EXPORT_END
+
+PSP_END_EXPORTS
