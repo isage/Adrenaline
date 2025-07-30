@@ -28,15 +28,6 @@ extern AdrenalineConfig config;
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid);
 
-SceUID sceKernelCreateHeap661(SceUID partitionid, SceSize size, int unk, const char *name);
-void *sceKernelAllocHeapMemory661(SceUID heapid, SceSize size);
-int sceKernelFreeHeapMemory661(SceUID heapid, void *block);
-SceUID sceKernelAllocPartitionMemory661(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
-int sceKernelFreePartitionMemory661(SceUID blockid);
-void *sceKernelGetBlockHeadAddr661(SceUID blockid);
-int sceKernelSetDdrMemoryProtection661(void *addr, int size, int prot);
-int sceKernelGetSystemStatus661();
-void *sceKernelGetGameInfo661();
 
 int sceKermitSendRequest(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
 int sceKermitRegisterVirtualIntrHandler(int num, int (* handler)());

@@ -1,5 +1,5 @@
 #include <pspsdk.h>
-#include <pspsysmem_kernel.h>
+#include <pspsysmem.h>
 #include <pspkernel.h>
 #include <psputilsforkernel.h>
 #include <pspsysevent.h>

@@ -43,8 +43,6 @@ STMOD_HANDLER previous;
 
 AdrenalineConfig config;
 
-void *sceKernelGetGameInfo();
-
 void KXploitString(char *str) {
 	if (str) {
 		char *perc = strchr(str, '%');

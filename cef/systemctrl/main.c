@@ -375,7 +375,7 @@ int OnModuleStart(SceModule2 *mod) {
 
 		// Protect pops memory
 		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
-			sceKernelAllocPartitionMemory661(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
+			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
 		}
 
 		memset((void *)0x49F40000, 0, 0x80000);

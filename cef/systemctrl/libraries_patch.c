@@ -475,7 +475,7 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 }
 
 int sctrlHENIsSystemBooted() {
-	int res = sceKernelGetSystemStatus661();
+	int res = sceKernelGetSystemStatus();
 
     return (res == 0x20000) ? 1 : 0;
 }

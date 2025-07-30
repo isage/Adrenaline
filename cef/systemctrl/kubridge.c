@@ -27,7 +27,7 @@ int kuKernelGetModel() {
 
 int kuKernelSetDdrMemoryProtection(void *addr, int size, int prot) {
 	int k1 = pspSdkSetK1(0);
-	int res = sceKernelSetDdrMemoryProtection661(addr, size, prot);
+	int res = sceKernelSetDdrMemoryProtection(addr, size, prot);
 	pspSdkSetK1(k1);
 	return res;
 }

@@ -21,7 +21,7 @@
 #include <string.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <pspsysmem_kernel.h>
+#include <pspsysmem.h>
 #include <pspsysevent.h>
 #include <pspumd.h>
 #include <psprtc.h>

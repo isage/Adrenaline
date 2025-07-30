@@ -13,7 +13,7 @@
 #include <pspexception.h>
 #include <pspsysevent.h>
 #include <psputilsforkernel.h>
-#include <pspsysmem_kernel.h>
+#include <pspsysmem.h>
 #include <psploadexec_kernel.h>
 #include <pspthreadman_kernel.h>
 
