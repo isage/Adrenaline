@@ -45,9 +45,9 @@ int g_drive_status = 0;
 
 // 0x00002794
 u32 g_prev_gp = 0;
-int (*g_00002798)(int, int, int) = 0;
-u32 g_0000279C = 0;
-u32 g_000027A0 = 0;
+int (*g_ie_callback)(int, void*, int) = NULL;
+u32 g_ie_callback_id = 0;
+void* g_ie_callback_arg = NULL;
 
 // 0x000027A4
 SceUID g_umd_cbid = 0;
@@ -191,32 +191,32 @@ u32 sceUmdGetDriveStatus(u32 status) {
 	return g_drive_status;
 }
 
-int sceUmdMan_driver_D37B6422(void) {
+int sceUmdManRegisterImposeCallBack(void) {
 	int ret = 0;
 	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
-int sceUmdMan_driver_6A1FB0DD(void) {
+int sceUmdManUnRegisterImposeCallBack(void) {
 	int ret = 0;
 	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
-int sceUmdMan_driver_7DF4C4DA(u32 a0) {
-	if (g_0000279C != a0) {
+int sceUmdManUnRegisterInsertEjectUMDCallBack(u32 id) {
+	if (g_ie_callback_id != id) {
 		return 0x80010002;
 	}
 
 	g_prev_gp = 0;
-	g_00002798 = 0;
-	g_0000279C = 0;
-	g_000027A0 = 0;
+	g_ie_callback = NULL;
+	g_ie_callback_id = 0;
+	g_ie_callback_arg = NULL;
 
 	return 0;
 }
 
-int sceUmdMan_driver_F7A0D0D9(void) {
+int sceUmdManIsDvdDrive(void) {
 	int ret = 0;
 	logmsg("%s: -> 0x%08X\n", __func__, ret);
 	return ret;
@@ -235,15 +235,15 @@ static inline void set_gp(u32 gp) {
 }
 
 // for now 6.20/6.35 share the same patch
-int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2) {
-	if (0 != g_0000279C) {
+int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
+	if (0 != g_ie_callback_id) {
 		return 0x8001000C;
 	}
 
-	g_0000279C = a0;
+	g_ie_callback_id = id;
 	g_prev_gp = get_gp();
-	g_000027A0 = a2;
-	g_00002798 = (void*)a1;
+	g_ie_callback_arg = arg;
+	g_ie_callback = callback;
 
 	SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceIsofs_driver");
 	u32 text_addr = mod->text_addr;
@@ -272,12 +272,12 @@ int sceUmdMan_driver_4FFAB8DA(u32 a0, u32 a1, u32 a2) {
     }
 	sctrlFlushCache();
 
-	if (0 == g_00002798) {
+	if (NULL == g_ie_callback) {
 		return 0;
 	}
 
 	set_gp(g_prev_gp);
-	(*g_00002798)(g_0000279C, g_000027A0, 1);
+	(*g_ie_callback)(g_ie_callback_id, g_ie_callback_arg, 1);
 
 	return 0;
 }
@@ -489,15 +489,15 @@ exit:
 	return error_code;
 }
 
-static u32 g_unk_data = 0;
+static u32 g_suspend_resume_mode = 0;
 
 /* Used by vshbridge */
-u32 sceUmd_107064CC(void) {
-	return g_unk_data;
+u32 sceUmdGetSuspendResumeMode(void) {
+	return g_suspend_resume_mode;
 }
 
-void sceUmd_C886430B(u32 a0) {
-	g_unk_data = a0;
+void sceUmdSetSuspendResumeMode(u32 mode) {
+	g_suspend_resume_mode = mode;
 }
 
 int power_event_handler(int ev_id, char *ev_name, void *param, int *result) {
