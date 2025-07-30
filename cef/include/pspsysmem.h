@@ -84,7 +84,7 @@ typedef struct SceGameInfo {
 	char vsh_bootfilename[64]; // 116
 	char gamedata_id[16]; // 180
 	char app_ver[8]; // 196
-	char subscription_validity[8]; // 204 Maybe padding
+	char subscription_validity[8]; // 204
 	int bootable; // 212
 	int opnssmp_ver; // 216
 } SceGameInfo;
