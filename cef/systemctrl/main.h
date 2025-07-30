@@ -28,26 +28,11 @@ extern AdrenalineConfig config;
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid);
 
-SceUID sceKernelCreateHeap661(SceUID partitionid, SceSize size, int unk, const char *name);
-void *sceKernelAllocHeapMemory661(SceUID heapid, SceSize size);
-int sceKernelFreeHeapMemory661(SceUID heapid, void *block);
-SceUID sceKernelAllocPartitionMemory661(SceUID partitionid, const char *name, int type, SceSize size, void *addr);
-int sceKernelFreePartitionMemory661(SceUID blockid);
-void *sceKernelGetBlockHeadAddr661(SceUID blockid);
-int sceKernelSetDdrMemoryProtection661(void *addr, int size, int prot);
-int sceKernelGetSystemStatus661();
-void *sceKernelGetGameInfo661();
 
-SceModule2 *sceKernelFindModuleByName661(const char *modname);
-SceModule2 *sceKernelFindModuleByAddress661(u32 addr);
-SceModule2 *sceKernelFindModuleByUID661(SceUID modid);
-int sceKernelCheckExecFile661(void *buf, SceLoadCoreExecFileInfo *execInfo);
-int sceKernelProbeExecutableObject661(void *buf, SceLoadCoreExecFileInfo *execInfo);
+int sceKermitSendRequest(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
+int sceKermitRegisterVirtualIntrHandler(int num, int (* handler)());
 
-int sceKermitSendRequest661(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
-int sceKermitRegisterVirtualIntrHandler661(int num, int (* handler)());
-
-int sceKermitMemorySetArgument661(SceKermitRequest *request, int argc, const void *data, int size, int mode);
+int sceKermitMemorySetArgument(SceKermitRequest *request, int argc, const void *data, int size, int mode);
 
 
 int LoadExecForKernel_AA2029EC();

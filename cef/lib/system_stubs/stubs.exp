@@ -5513,6 +5513,7 @@ PSP_EXPORT_START(sceKermitMemory_driver, 17, 0x0001)
 PSP_EXPORT_FUNC_NID(sceKermitMemory_driver_80E1240A, 0x80E1240A)
 PSP_EXPORT_FUNC_NID(sceKermitMemory_driver_90B662D0, 0x90B662D0)
 PSP_EXPORT_FUNC_NID(sceKermitMemory_driver_AAF047AC, 0xAAF047AC)
+PSP_EXPORT_ALIAS(sceKermitMemory_driver_AAF047AC, sceKermitMemorySetArgument)
 PSP_EXPORT_END
 
 # ⟨kermit_msfs.prx⟩ — ⟨sceKermitMsfs_driver⟩ — sceKermitMsfs_driver
@@ -5557,8 +5558,10 @@ PSP_EXPORT_END
 # ⟨kermit.prx⟩ — ⟨sceKermit_Driver⟩ — sceKermit_driver
 PSP_EXPORT_START(sceKermit_driver, 17, 0x0001)
 PSP_EXPORT_FUNC_NID(sceKermit_driver_36666181, 0x36666181)
+PSP_EXPORT_ALIAS(sceKermit_driver_36666181, sceKermitSendRequest)
 PSP_EXPORT_FUNC_NID(sceKermit_driver_4C3A362D, 0x4C3A362D)
 PSP_EXPORT_FUNC_NID(sceKermit_driver_5280B410, 0x5280B410)
+PSP_EXPORT_ALIAS(sceKermit_driver_5280B410, sceKermitRegisterVirtualIntrHandler)
 PSP_EXPORT_FUNC_NID(sceKermit_driver_9DDD7DCA, 0x9DDD7DCA)
 PSP_EXPORT_FUNC_NID(sceKermit_driver_D69C50BB, 0xD69C50BB)
 PSP_EXPORT_END

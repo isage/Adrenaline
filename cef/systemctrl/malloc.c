@@ -23,8 +23,8 @@
 // SceUID heapid = -1;
 
 static void* malloc_impl(SceUID partition, SceSize size) {
-	SceUID uid = sceKernelAllocPartitionMemory661(partition, "", 1, size+sizeof(SceUID), NULL);
-	int* ptr = sceKernelGetBlockHeadAddr661(uid);
+	SceUID uid = sceKernelAllocPartitionMemory(partition, "", 1, size+sizeof(SceUID), NULL);
+	int* ptr = sceKernelGetBlockHeadAddr(uid);
 	if (ptr){
 		ptr[0] = uid;
 		return &(ptr[1]);
@@ -35,7 +35,7 @@ static void* malloc_impl(SceUID partition, SceSize size) {
 void oe_free(void *ptr) {
 	if (ptr != NULL) {
 		SceUID uid = ((SceUID*)ptr)[-1];
-		sceKernelFreePartitionMemory661(uid);
+		sceKernelFreePartitionMemory(uid);
 	}
 }
 
@@ -52,7 +52,7 @@ void* user_malloc(SceSize size) {
 }
 
 void* user_memalign(SceSize align, SceSize size) {
-	SceUID uid = sceKernelAllocPartitionMemory661(PSP_MEMORY_PARTITION_USER, "", 1, size+sizeof(SceUID)+align, NULL);
+	SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", 1, size+sizeof(SceUID)+align, NULL);
 	int* ptr = sceKernelGetBlockHeadAddr(uid);
 	if (ptr){
 		ptr = (void*)(((u32)ptr & (~(align-1))) + 64);
@@ -68,7 +68,7 @@ int mallocinit() {
 		return 0;
 	}
 
-	// heapid = sceKernelCreateHeap661(PSP_MEMORY_PARTITION_KERNEL, 256 * 1024, 1, "");
+	// heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, 256 * 1024, 1, "");
 
 	// return (heapid < 0) ? heapid : 0;
 	return 0;

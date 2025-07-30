@@ -82,13 +82,13 @@ typedef enum SceFileExecApiType {
 	SCE_EXEC_APITYPE_DISC_UPDATER = 0x121,
 	/** Disc debugger. */
     SCE_EXEC_APITYPE_DISC_DEBUG = 0x122,
-    /** NP-9660 game. */
+    /** NP-9660 game on Memory Stick. */
     SCE_EXEC_APITYPE_DISC_EMU_MS1 = 0x123,
-	/** Updater. */
+	/** NP-9660 game with update/DLC (`PBOOT.PBP`) on Memory Stick. */
     SCE_EXEC_APITYPE_DISC_EMU_MS2 = 0x124,
-    /** Unknown. */
+    /** NP-9660 game on internal memory (`ef0:`). */
     SCE_EXEC_APITYPE_DISC_EMU_EF1 = 0x125,
-    /** Unknown. */
+    /** NP-9660 game with update/DLC (`PBOOT.PBP`) on internal memory (`ef0:`). */
     SCE_EXEC_APITYPE_DISC_EMU_EF2 = 0x126,
     /** Game-sharing executable. */
     SCE_EXEC_APITYPE_USBWLAN = 0x130,
@@ -104,7 +104,7 @@ typedef enum SceFileExecApiType {
     SCE_EXEC_APITYPE_MS4 = 0x143,
     /** Playstation One executable on a PBP in the Memory Stick. */
     SCE_EXEC_APITYPE_MS5 = 0x144,
-    /** Unknown. */
+    /** Unknown. Licensed games? */
     SCE_EXEC_APITYPE_MS6 = 0x145,
     /** Updater executable on a PBP in the internal memory (`ef0:`). */
     SCE_EXEC_APITYPE_EF1 = 0x151,
@@ -118,8 +118,8 @@ typedef enum SceFileExecApiType {
     SCE_EXEC_APITYPE_EF5 = 0x155,
     /** Unknown. Probably the same as MS6 but loading form `ef0`. */
     SCE_EXEC_APITYPE_EF6 = 0x156,
-    /** Game/APP Update on a disc. */
-    SCE_EXEC_APITYPE_DISC_PBOOT = 0x160,
+    /** Game/APP with update/DLC on a disc. */
+    SCE_EXEC_APITYPE_DISC2 = 0x160,
     /** Unknown. */
     SCE_EXEC_APITYPE_UNK161 = 0x161,
     /** MerlinDRM Applications on Memory Stick */
