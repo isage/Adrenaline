@@ -1,4 +1,4 @@
-all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
 SYSTEM_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel pspvshbridge_user psppower_user pspreg_user psppaf pspvsh pspvshcommongui
 
@@ -92,6 +92,13 @@ _popcorn: | _libs
 	cp "popcorn/popcorn.prx" "../user/flash0/kd/popcorn.prx"
 	make -C popcorn clean
 
+_galaxy: | _libs
+	make -C galaxy clean
+	make -C galaxy
+	psp-packer galaxy/galaxy.prx
+	cp "galaxy/galaxy.prx" "../user/flash0/kd/galaxy.prx"
+	make -C galaxy clean
+
 _inferno: | _libs
 	make -C inferno clean
 	make -C inferno
@@ -150,6 +157,7 @@ clean:
 	make -C binary clean
 	make -C systemctrl clean
 	make -C popcorn clean
+	make -C galaxy clean
 	make -C inferno clean
 	make -C vshctrl clean
 	make -C kermit_idstorage clean
