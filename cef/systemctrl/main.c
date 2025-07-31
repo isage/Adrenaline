@@ -459,7 +459,13 @@ int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
 
-	} else if (strcmp(modname, "tekken") == 0) {
+	} else if (strcmp(mod->modname, "ATVPRO") == 0){
+		// Remove "overclock" message in ATV PRO
+		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
+        sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);
+        sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222);
+        sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111);
+    } else if (strcmp(modname, "tekken") == 0) {
 		// Fix back screen on Tekken 6
 		// scePowerGetPllClockFrequencyInt
 		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222);
