@@ -2,9 +2,11 @@
 #include <pspkernel.h>
 #include <pspthreadman_kernel.h>
 #include <psperror.h>
+#include <pspsysevent.h>
 
 #include <string.h>
 #include <systemctrl_se.h>
+#include <adrenaline_log.h>
 
 #include "malloc.h"
 #include "umd9660.h"
@@ -14,8 +16,8 @@
 int game_group = 0;
 
 
-char *umdfile;
-SceUID umdsema;
+char *umdfile = NULL;
+SceUID umdsema = -1;
 SceUID umdfd = -1;
 
 int discsize=0x7FFFFFFF;
@@ -32,42 +34,36 @@ int cso = 0, mounted = 0;
 #define N_GAME_GROUP1	4
 #define N_GAME_GROUP2	1
 
-char *game_group1[N_GAME_GROUP1] =
-{
+char *game_group1[N_GAME_GROUP1] = {
 	"ULES-00124", "ULUS-10019", "ULJM-05024", "ULAS-42009" // Coded Arms
 };
 
-char *game_group2[N_GAME_GROUP2] =
-{
+char *game_group2[N_GAME_GROUP2] = {
 	"TERTURADOR" // NPUG-80086 (flow PSN)
 };
 
-int GetDiscSize()
-{
-	if (cso == 0)
+int GetDiscSize() {
+	if (cso == 0) {
 		return IsofileGetDiscSize(umdfd);
+	}
 
 	return CisofileGetDiscSize(umdfd);
 }
 
-/*typedef struct
-{
+/*typedef struct {
 	int lba;
 	int nsectors;
-	void *buf;	
+	void *buf;
 	int result;
 } ReadSectorsParams;
 
 ReadSectorsParams params;
 
-int Umd9660ReadSectors_()
-{
-	if (!mounted)
-	{
+int Umd9660ReadSectors_() {
+	if (!mounted) {
 		int i;
 
-		for (i = 0; i < 0x10; i++)
-		{
+		for (i = 0; i < 0x10; i++) {
 			if (sceIoLseek32(umdfd, 0, PSP_SEEK_CUR) < 0)
 				OpenIso();
 			else
@@ -82,16 +78,16 @@ int Umd9660ReadSectors_()
 
 	if (!cso)
 	{
-		return IsofileReadSectors(params.lba, params.nsectors, params.buf);		
+		return IsofileReadSectors(params.lba, params.nsectors, params.buf);
 	}
-	
+
 	return CisofileReadSectors(params.lba, params.nsectors, params.buf);
 }
 
 int Umd9660ReadSectors2(int lba, int nsectors, void *buf)
-{	
+{
 	//Kprintf("umd read.\n");
-	
+
 	if (!mounted)
 	{
 		int i;
@@ -113,20 +109,20 @@ int Umd9660ReadSectors2(int lba, int nsectors, void *buf)
 
 	if (!cso)
 	{
-		return IsofileReadSectors(lba, nsectors, buf);			
+		return IsofileReadSectors(lba, nsectors, buf);
 	}
-	
-	return CisofileReadSectors(lba, nsectors, buf);	
+
+	return CisofileReadSectors(lba, nsectors, buf);
 }
 
 int Umd9660ReadSectors(int lba, int nsectors, void *buf)
 {
 	//Kprintf("begin read stacked, lba = 0x%08X\n", lba);
-	
+
 	params.lba = lba;
 	params.nsectors = nsectors;
 	params.buf = buf;
-	
+
 	return sceKernelExtendKernelStack(0x2000, (void *)Umd9660ReadSectors_, NULL);
 }*/
 
@@ -134,38 +130,33 @@ int g_args[3];
 
 #define LOCK() \
 	if (sceKernelWaitSema(umdsema, 1, NULL) < 0) \
-		return -1; 
+		return -1;
 
 #define UNLOCK() \
 	if (sceKernelSignalSema(umdsema, 1) < 0) \
 		return -1;
 
 
-int ReadUmdFile_(int *args)
-{
+int ReadUmdFile_(int *args) {
 	int offset = args[0];
 	void *buf = (void *)args[1];
 	int outsize = args[2];
 	int res;
-	
-	if (!cso)
-	{
-		res = ReadUmdFileRetry(buf, outsize, offset);	
-	}
-	else
-	{
+
+	if (!cso) {
+		res = ReadUmdFileRetry(buf, outsize, offset);
+	} else {
 		res = CisoReadFile(buf, outsize, offset);
 	}
 
 	return res;
 }
 
-int ReadUmdFile(int offset, void *buf, int outsize)
-{
+int ReadUmdFile(int offset, void *buf, int outsize) {
 	int res;
 
 	LOCK();
-	
+
 	g_args[0] = offset;
 	g_args[1] = (int)buf;
 	g_args[2] = outsize;
@@ -173,113 +164,114 @@ int ReadUmdFile(int offset, void *buf, int outsize)
 	res = sceKernelExtendKernelStack(0x2000, (void *)ReadUmdFile_, g_args);
 
 	UNLOCK();
-	
+
 	return res;
 }
 
-void WaitMs()
-{
+void WaitMs() {
 	u32 status = 0;
 
-	while (1)
-	{
-		if (sceIoDevctl("mscmhc0:", 0x02025801, 0, 0, &status, 4) >= 0)
-		{		
-			if (status == 4)
+	while (1) {
+		if (sceIoDevctl("mscmhc0:", 0x02025801, 0, 0, &status, 4) >= 0) {
+			if (status == 4) {
 				break;
+			}
 		}
-		
+
 		sceKernelDelayThread(20000);
 	}
 }
 
-int OpenIso()
-{
-	//Kprintf("Wait Ms.\n");
+int OpenIso() {
+	logmsg("%s: Wait Ms.\n", __func__);
 	WaitMs();
-	//Kprintf("Wait Ms finished.\n");
+	logmsg("%s: Wait Ms finished.\n", __func__);
 
 	mounted = 0;
 	sceIoClose(umdfd);
 
-	//Kprintf(umdfile);
-	
+	logmsg("%s: Opening %s\n", __func__, umdfile);
+
 	umdfd = sceIoOpen(umdfile, PSP_O_RDONLY | 0x000f0000, 0777);
-	if (umdfd >= 0)
-	{
+	if (umdfd >= 0) {
 		cso = 0;
-		if (CisoOpen(umdfd) >= 0)
-			cso = 1;		
+		if (CisoOpen(umdfd) >= 0) {
+			cso = 1;
+		}
 
 		discsize = GetDiscSize();
 		//lastLBA = -1;
 		mounted = 1;
-		//Kprintf("Mounted succesfull, size %d\n", discsize);
+		logmsg("%s: Mounted succesfull, size %d\n", __func__, discsize);
 		return 0;
 	}
 
-	//Kprintf("Mounted unsuccesfull.\n");
+	logmsg("%s: Mounted unsuccessful.\n", __func__);
 	return -1;
 }
 
-int ReadUmdFileRetry(void *buf, int size, int fpointer)
-{
-	int i;
+int ReadUmdFileRetry(void *buf, int size, int fpointer) {
+	int res = 0;
 
-	for (i = 0; i < 0x10; i++)
-	{
-		if (sceIoLseek32(umdfd, fpointer, PSP_SEEK_SET) < 0)
+	int i;
+	for (i = 0; i < 0x10; i++) {
+		if (sceIoLseek32(umdfd, fpointer, PSP_SEEK_SET) < 0) {
 			OpenIso();
-		else
+		} else {
 			break;
+		}
 	}
 
-	if (i == 0x10)
-		return SCE_ERROR_ERRNO_ENODEV;
+	if (i == 0x10) {
+		res = SCE_ERROR_ERRNO_ENODEV;
+		goto out;
+		// return SCE_ERROR_ERRNO_ENODEV;
+	}
 
-	for (i = 0; i < 0x10; i++)
-	{
+	for (i = 0; i < 0x10; i++) {
 		int read = sceIoRead(umdfd, buf, size);
 
-		if (read < 0)
+		if (read < 0) {
 			OpenIso();
-		else
-			return read;
+		} else {
+			res = read;
+			goto out;
+			// return read;
+		}
 	}
 
-	return SCE_ERROR_ERRNO_ENODEV;
+	res = SCE_ERROR_ERRNO_ENODEV;
+	// return SCE_ERROR_ERRNO_ENODEV;
+
+out:
+	logmsg("%s: buf:0x%p, size=0x%08X, fpointer:0x%08X -> 0x%08X\n", __func__, buf, size, fpointer, res);
+	return res;
 }
 
-int umd_init(PspIoDrvArg* arg)
-{
+int umd_init(PspIoDrvArg* arg) {
 	int i;
-	//Kprintf("umd_init.\n");
-	
-	//umdsector = (u8 *)oe_malloc(SECTOR_SIZE);	
+	logmsg("%s: start.\n", __func__);
+
+	//umdsector = (u8 *)oe_malloc(SECTOR_SIZE);
 	umdpvd = (u8 *)oe_malloc(SECTOR_SIZE);
-	
-	if (!umdpvd)
-	{
+
+	if (!umdpvd) {
 		return -1;
 	}
 
 	umdsema = sceKernelCreateSema("EcsUmd9660DeviceFile", 0, 1, 1, NULL);
 
-	if (umdsema < 0)
-	{
+	if (umdsema < 0) {
 		return umdsema;
 	}
 
-	while (!mounted)
-	{
-		//Kprintf("Attempting to open iso.\n");
+	while (!mounted) {
+		logmsg("%s: Attempting to open iso.\n", __func__);
 		OpenIso();
 		sceKernelDelayThread(20000);
 	}
 
 	memset(&descriptors, 0, sizeof(descriptors));
-
-	//Kprintf("umd_init.\n");
 
 	g_args[0] = 0x10*SECTOR_SIZE;
 	g_args[1] = (int)umdpvd;
@@ -288,151 +280,139 @@ int umd_init(PspIoDrvArg* arg)
 	ReadUmdFile_(g_args);
 
 	char *gamecode = (char *)umdpvd+0x373;
-	
-	for (i = 0; i < N_GAME_GROUP1; i++)
-	{
-		if (memcmp(gamecode, game_group1[i], 10) == 0)
-		{
+
+	for (i = 0; i < N_GAME_GROUP1; i++) {
+		if (memcmp(gamecode, game_group1[i], 10) == 0) {
 			game_group = 1;
 			break;
 		}
 	}
 
-	if (game_group == 0)
-	{
-		for (i = 0; i < N_GAME_GROUP2; i++)
-		{
-			if (memcmp(gamecode, game_group2[i], 10) == 0)
-			{
+	if (game_group == 0) {
+		for (i = 0; i < N_GAME_GROUP2; i++) {
+			if (memcmp(gamecode, game_group2[i], 10) == 0) {
 				game_group = 2;
 				break;
 			}
 		}
 	}
 
+	logmsg("%s: end.\n", __func__);
 	return 0;
 }
 
-int umd_exit(PspIoDrvArg* arg)
-{
+int umd_exit(PspIoDrvArg* arg) {
+	logmsg("%s: start.\n", __func__);
 	SceUInt timeout = 500000;
-	
+
 	sceKernelWaitSema(umdsema, 1, &timeout);
-	
+
 	/*if (umdsector)
 	{
 		oe_free(umdsector);
 	}*/
 
-	if (umdpvd)
-	{
+	if (umdpvd) {
 		oe_free(umdpvd);
 		umdpvd = NULL;
 	}
 
-	if (umdsema >= 0)
-	{
+	if (umdsema >= 0) {
 		sceKernelDeleteSema(umdsema);
-		umdsema = -1;		
-	}	
+		umdsema = -1;
+	}
 
+	logmsg("%s: end.\n", __func__);
 	return 0;
 }
 
-int umd_mount(PspIoDrvFileArg *arg)
-{
+int umd_mount(PspIoDrvFileArg *arg) {
 	return 0;
 }
 
-int umd_umount(PspIoDrvFileArg *arg)
-{
+int umd_umount(PspIoDrvFileArg *arg) {
 	return 0;
 }
 
-int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode)
-{
-	int i;
-
-	//Kprintf("umd open.\n");
+int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 	//sceKernelWaitSema(umdsema, 1, NULL);
-
-	for (i = 0; i < 0x10; i++)
-	{
-		if (sceIoLseek32(umdfd, 0, PSP_SEEK_SET) < 0)
+	int res = 0;
+	int i;
+	for (i = 0; i < 0x10; i++) {
+		if (sceIoLseek32(umdfd, 0, PSP_SEEK_SET) < 0) {
 			OpenIso();
-		else
+		} else {
 			break;
+		}
 	}
 
-	if (i == 0x10)
-	{
-		//sceKernelSignalSema(umdsema, 1);		
-		return SCE_ERROR_ERRNO_ENODEV;
+	if (i == 0x10) {
+		//sceKernelSignalSema(umdsema, 1);
+		res = SCE_ERROR_ERRNO_ENODEV;
+		goto out;
+		// return SCE_ERROR_ERRNO_ENODEV;
 	}
-	
+
 	LOCK();
 
-	for (i = 0; i < MAX_DESCRIPTORS; i++)
-	{
-		if (!descriptors[i].busy)
+	for (i = 0; i < MAX_DESCRIPTORS; i++) {
+		if (!descriptors[i].busy) {
 			break;
-		
+		}
 	}
 
-	if (i == MAX_DESCRIPTORS)
-	{
+	if (i == MAX_DESCRIPTORS) {
 		UNLOCK();
-		return 0x80010018; // EM_FILE
+		res = 0x80010018; // EM_FILE
+		goto out;
+		// return 0x80010018; // EM_FILE
 	}
 
 	arg->arg = (void *)i;
 	descriptors[i].busy = 1;
 	descriptors[i].discpointer = 0;
 
-	UNLOCK();	
+	UNLOCK();
+
+out:
+	logmsg("%s: arg=0x%p, file=%s, flags=0x%08X, mode=0x%08X -> 0x%08X\n", __func__, arg, file, flags, mode, res);
 	return 0;
 }
 
-int umd_close(PspIoDrvFileArg *arg)
-{
+int umd_close(PspIoDrvFileArg *arg) {
 	int res = 0;
 	int i = (int)arg->arg;
 
 	LOCK();
 
-	if (!descriptors[i].busy)
-	{
+	if (!descriptors[i].busy) {
 		res = 0x80010016;
-	}
-	else
-	{
+	} else {
 		descriptors[i].busy = 0;
 	}
 
 	UNLOCK();
 
+	logmsg("%s: arg=0x%p -> 0x%08X\n", __func__, arg, res);
 	return res;
 }
 
-int umd_read(PspIoDrvFileArg *arg, char *data, int len)
-{
+int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 	int i = (int)arg->arg;
-	
+
 	LOCK();
 
 	int discpointer = descriptors[i].discpointer;
 
 	UNLOCK();
 
-	if (discpointer + len > discsize)
-	{
+	if (discpointer + len > discsize) {
 		len = discsize - discpointer;
 	}
 
 	int res = ReadUmdFile(discpointer*SECTOR_SIZE, data, len*SECTOR_SIZE); //***
 
-	if (res > 0)
-	{
+	if (res > 0) {
 		res = res / SECTOR_SIZE;
 
 		LOCK();
@@ -441,65 +421,57 @@ int umd_read(PspIoDrvFileArg *arg, char *data, int len)
 	}
 
 	//sceKernelWaitSema(umdsema, 1);
+	logmsg("%s: arg=0x%p, data=%s, len=0x%08X -> 0x%08X\n", __func__, arg, data, len, res);
 	return res;
 }
 
-SceOff umd_lseek(PspIoDrvFileArg *arg, SceOff ofs, int whence)
-{
+SceOff umd_lseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 	int i = (int)arg->arg;
-	
+
 	LOCK();
 
-	if (whence == PSP_SEEK_SET)
-	{
+	if (whence == PSP_SEEK_SET) {
 		descriptors[i].discpointer = ofs;
-	}
-	else if (whence == PSP_SEEK_CUR)
-	{		
+	} else if (whence == PSP_SEEK_CUR) {
 		descriptors[i].discpointer += ofs;
-	}
-	else if (whence == PSP_SEEK_END)
-	{
+	} else if (whence == PSP_SEEK_END) {
 		descriptors[i].discpointer = discsize-ofs;
-	}
-	else
-	{
+	} else {
 		UNLOCK();
 		return SCE_ERROR_ERRNO_EINVAL;
 	}
 
-	if (descriptors[i].discpointer > discsize)
+	if (descriptors[i].discpointer > discsize) {
 		descriptors[i].discpointer = discsize;
+	}
 
 	//sceKernelWaitSema(umdsema, 1);
 	int res = descriptors[i].discpointer;
 
 	UNLOCK();
+	logmsg("%s: arg=0x%p, ofs=0x%08llX, whence=0x%08X -> 0x%08X\n", __func__, arg, ofs, whence, res);
 	return res;
 }
 
-typedef struct 
-{
+typedef struct {
 	SceOff sk_off;
 	SceInt32 sk_reserved;
 	SceInt32 sk_whence;
 } SceUmdSeekParam;
 
-int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen)
-{
+int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	u32 *outdata32 = (u32 *)outdata;
 	u32 *indata32 = (u32 *)indata;
 	int i = (int)arg->arg;
 
 	//sceKernelWaitSema(umdsema, 1, NULL);
-	switch (cmd)
-	{
+	switch (cmd) {
 		case 0x01d20001: // SCE_UMD_GET_FILEPOINTER
 		{
 			LOCK();
-			
+
 			outdata32[0] = descriptors[i].discpointer;
-			
+
 			UNLOCK();
 			return 0;
 		}
@@ -518,7 +490,7 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 
 			return (int)umd_lseek(arg, seekparam->sk_off, seekparam->sk_whence);
 		}
-		 
+
 		case 0x01f30003: // SCE_UMD_UNCACHED_READ
 		{
 			if (!indata || inlen < 4)
@@ -553,7 +525,7 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 	{
 		if (indata[5] != 0 || indata[7] != 0)
 		{
-			dataoffset = SECTOR_SIZE - dataoffset;		
+			dataoffset = SECTOR_SIZE - dataoffset;
 		}
 	}
 
@@ -564,14 +536,14 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 
 	if (dataoffset != 0)
 	{
-		// Read and write the first incomplete sector 
+		// Read and write the first incomplete sector
 
 		//Kprintf("dataoffset 0x%08X.\n", dataoffset);
 		int x = (SECTOR_SIZE - dataoffset);
 
 		if (x > datasize)
 			x = datasize;
-		
+
 		ReadOneSector(lba);
 		memcpy(p, umdsector+dataoffset, x);
 
@@ -583,12 +555,12 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 		remaining = datasize;
 	}
 
-	dirsectors = datasize / SECTOR_SIZE; // n of sectors that can be directly written 
-		
+	dirsectors = datasize / SECTOR_SIZE; // n of sectors that can be directly written
+
 	if (dirsectors != 0)
 	{
 		//Kprintf("dirsectors 0x%08X\n", dirsectors);
-		
+
 		Umd9660ReadSectors(lba, dirsectors, p); //
 		p += (dirsectors*SECTOR_SIZE);
 		lba += dirsectors;
@@ -601,37 +573,28 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 		ReadOneSector(lba);
 		memcpy(p, umdsector, remaining);
 		//Kprintf("Remaining data 0x%08X.\n", remaining);
-	}	
+	}
 
-	return indata[3];	
+	return indata[3];
 }*/
-int ProcessDevctlRead(void *outdata, int size, u32 *indata)
-{
+int ProcessDevctlRead(void *outdata, int size, u32 *indata) {
 	int datasize = indata[4]; // 0x10
 	int lba = indata[2]; // 0x08
 	int dataoffset = indata[6]; // 0x18
-	
+
 	int offset;
-	
-	if (size < datasize)
+
+	if (size < datasize) {
 		return 0x80010069;
-
-	if (dataoffset == 0)
-	{
-		offset = lba*0x800;		
 	}
 
-	else if (indata[5] != 0)
-	{
-		offset = (lba*0x800)-dataoffset+0x800;		
-	}
-
-	else if (indata[7] == 0)
-	{
-		offset = (lba*0x800)+dataoffset;		
-	}
-	else
-	{
+	if (dataoffset == 0) {
+		offset = lba*0x800;
+	} else if (indata[5] != 0) {
+		offset = (lba*0x800)-dataoffset+0x800;
+	} else if (indata[7] == 0) {
+		offset = (lba*0x800)+dataoffset;
+	} else {
 		offset = (lba*0x800)-dataoffset+0x800;
 	}
 
@@ -645,8 +608,7 @@ int ProcessDevctlRead(void *outdata, int size, u32 *indata)
 	sceIoClose(fd);
 }*/
 
-int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen)
-{
+int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	u32 *outdata32 = (u32 *)outdata;
 	int res;
 
@@ -663,24 +625,23 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 	// 01e180d6 -> return 0x80010086
 	// 01f000a6 -> return 0x80010086
 
-	switch (cmd)
-	{
+	switch (cmd) {
 		case 0x01e28035:
 		{
 			*outdata32 = (u32)umdpvd;
 			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
-	
+
 		case 0x01e280a9:
 		{
 			*outdata32 = 0x800;
 			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
-	
+
 		case 0x01e380c0: case 0x01f200a1: case 0x01f200a2:
-		{			
+		{
 			if (!indata ||!outdata)
 			{
 				return SCE_ERROR_ERRNO_EINVAL;
@@ -688,17 +649,17 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 
 			res = ProcessDevctlRead(outdata, outlen, indata);
 			//sceKernelWaitSema(umdsema, 1);
-			
+
 			return res;
-		}		
+		}
 
 		case 0x01e18030:
 		{
 			// region related
 			//sceKernelWaitSema(umdsema, 1);
-			return 1; 
+			return 1;
 		}
-		
+
 		case 0x01e38012:
 		{
 			if (outlen < 0)
@@ -712,7 +673,7 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
-		
+
 		case 0x01e38034:
 		{
 			if (!indata || !outdata)
@@ -721,7 +682,7 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 			}
 
 			*outdata32 = 0;
-			
+
 			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
@@ -729,8 +690,8 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 		case 0x01f20001: /* get disc type */
 		{
 			outdata32[1] = 0x10; /* game */
-			outdata32[0] = 0xFFFFFFFF; 
-			
+			outdata32[0] = 0xFFFFFFFF;
+
 			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
@@ -769,7 +730,7 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 		}
 	}
 
-	Kprintf("unknown devctl 0x%08X\n", cmd);		
+	Kprintf("unknown devctl 0x%08X\n", cmd);
 	//WriteFile("ms0:/unknown_devctl.bin", &cmd, 4);
 	//WriteFile("ms0:/unknown_devctl_indata.bin", indata, inlen);
 
@@ -777,26 +738,40 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 	return 0x80010086;
 }
 
-int sceUmd9660_driver_2C6C3F4C()
-{
+int sceUmd9660_driver_C0933C16() {
 	//Kprintf("9660 1.\n");
 	return 0;
 }
 
-int sceUmd9660_driver_44EF600C()
-{
+int sceUmd9660_driver_887C3193() {
 	//Kprintf("9660 2.\n");
 	return 0;
 }
 
-int sceUmd9660_driver_C7CD9CE8()
-{
+int sceUmd9660_driver_7EB57F56() {
 	//Kprintf("9660 3.\n");
 	return 0;
 }
 
-PspIoDrvFuncs umd_funcs = 
-{ 
+void sceUmd9660_driver_3CC9CE54() {}
+void sceUmd9660_driver_FE3A8B67() {}
+
+int sceNp9660_driver_B925CA6C() {
+	return 0;
+}
+
+int sceNp9660_driver_8EF69DC6() {
+	return 0;
+}
+
+int sceNp9660_driver_7A05EB3C(int *a0) {
+	if (NULL != a0) {
+		*a0 = 0;
+	}
+	return 0;
+}
+
+PspIoDrvFuncs umd_funcs = {
 	umd_init,
 	umd_exit,
 	umd_open,
@@ -823,38 +798,60 @@ PspIoDrvFuncs umd_funcs =
 
 PspIoDrv umd_driver = { "umd", 0x4, 0x800, "UMD9660", &umd_funcs };
 
-int SysMemForKernel_C7E57B9C(const u8 *umdid);
+int sceKernelSetQTGP3(const u8 *umdid);
 
-static const u8 dummy_umd_id[16] = 
-{
+static const u8 dummy_umd_id[16] = {
 	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
 	0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff
 };
 
-int InitUmd9660()
-{
+void UmdCallback(int stat);
+static int SysEventHandler(int ev_id, char* ev_name, void* param, int* result) {
+	if ( ev_id == 0x400 ){
+		if (sceKernelWaitSema(umdsema, 1, 0) >= 0) {
+			UmdCallback( 0x9 );
+		}
+	} else if ( ev_id == 0x400000 ) {
+		if (sceKernelSignalSema(umdsema, 1) >= 0) {
+			UmdCallback( 0x32 );
+		}
+	}
+
+	return 0;
+}
+
+static PspSysEventHandler event_handler = {
+	.size = sizeof(PspSysEventHandler),
+	.name = "march33SysEvent",
+	.type_mask = 0x00FFFF00, // both suspend / resume
+	.handler = &SysEventHandler,
+};
+
+int InitUmd9660() {
 	int res;
-	
+
+	sceKernelRegisterSysEventHandler(&event_handler);
+
 	umdfile = GetUmdFile();
 	res = sceIoAddDrv(&umd_driver);
 
 	if (res < 0)
 		return res;
-	
-	SysMemForKernel_C7E57B9C(dummy_umd_id);		
+
+	sceKernelSetQTGP3(dummy_umd_id);
 
 	//Kprintf("umd9660 inited.\n");
-	
+
 	return 0;
 }
 
-int module_stop(SceSize args, void *argp)
-{
+int module_stop(SceSize args, void *argp) {
 	sceIoDelDrv("umd");
+	sceKernelUnregisterSysEventHandler(&event_handler);
 	return 0;
 }
 
-/* Disasm np9660 
+/* Disasm np9660
 int ProcssDevctlRead(void *outdata, int size, u32 *indata)
 {
 	int datasize = indata[4]; // 0x10
@@ -862,7 +859,7 @@ int ProcssDevctlRead(void *outdata, int size, u32 *indata)
 	int dataoffset = indata[6]; // 0x18
 	int u14 = indata[5]; // 0x14
 	int u1C = indata[7]; // 0x1C
-	
+
 	if (size < datasize)
 		return 0x80010069;
 
