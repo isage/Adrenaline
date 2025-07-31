@@ -254,19 +254,19 @@ int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
     for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
         u32 data = VREAD32(addr);
         if (data == 0x86430048){
-			VWRITE32(addr-16, intr);
+			MAKE_INSTRUCTION(addr-16, intr);
             patches--;
         }
         else if (data == 0x3C147FDE){
-			VWRITE32(addr+8, intr);
+			MAKE_INSTRUCTION(addr+8, intr);
             patches--;
         }
         else if (data == 0x8D240018){
-			VWRITE32(addr+4, intr);
+			MAKE_INSTRUCTION(addr+4, intr);
             patches--;
         }
         else if (data == 0x34C30016){
-			VWRITE32(addr-16, intr);
+			MAKE_INSTRUCTION(addr-16, intr);
             patches--;
         }
     }
