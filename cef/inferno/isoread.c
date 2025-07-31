@@ -84,7 +84,7 @@ typedef enum {
 } JisoMethod;
 
 // 0x00002784
-struct IoReadArg g_read_arg;
+IoReadArg g_read_arg;
 
 SceUID heapid = -1;
 
@@ -514,14 +514,14 @@ int iso_open(void) {
 }
 
 // 0x00000C7C
-int iso_read(struct IoReadArg *args) {
+int iso_read(IoReadArg *args) {
     if (is_compressed)
         return read_compressed_data(args->address, args->size, args->offset);
     return read_raw_data(args->address, args->size, args->offset);
 }
 
 // 0x000003E0
-int (*iso_reader)(struct IoReadArg *args) = &iso_read;
+int (*iso_reader)(IoReadArg *args) = &iso_read;
 int iso_read_with_stack(u32 offset, void *ptr, u32 data_len) {
     int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 

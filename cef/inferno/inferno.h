@@ -25,18 +25,18 @@
 #define MAX_FILES_NR 8
 
 #define SAFE_FREE(p) \
-  do { \
-    if (p != NULL) { \
-      oe_free(p); \
-      p = NULL; \
-    } \
-  } while ( 0 )
+	do { \
+		if (p != NULL) { \
+			oe_free(p); \
+			p = NULL; \
+		} \
+	} while ( 0 )
 
-struct IoReadArg {
-  u32 offset; // 0
-  u8 *address; // 4
-  u32 size; // 8
-};
+typedef struct IoReadArg {
+	u32 offset; // 0
+	u8 *address; // 4
+	u32 size; // 8
+} IoReadArg;
 
 extern u32 psp_model;
 extern u32 psp_fw_version;
