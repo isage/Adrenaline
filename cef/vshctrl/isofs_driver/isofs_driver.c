@@ -14,7 +14,7 @@ int g_lastLBA, g_lastReadSize;
 
 int IsofsReadSectors(int lba, int nsectors, void *buf) {
 	if (buf == sectors) {
-		if (nsectors > 8) return SCE_ERROR_ERRNO_EFBIG;
+		if (nsectors > 8) return SCE_EFBIG;
 		memset(sectors + (nsectors * SECTOR_SIZE), 0, 64);
 	}
 
@@ -33,7 +33,7 @@ __attribute__((noinline)) int GetFreeHandle() {
 		if (handlers[i].opened == 0) return i;
 	}
 
-	return SCE_ERROR_ERRNO_EMFILE;
+	return SCE_EMFILE;
 }
 
 void UmdNormalizeName(char *filename) {
@@ -54,7 +54,7 @@ int GetPathAndName(char *fullpath, char *path, char *filename) {
 	if (!p) {
 		if (strlen(fullpath2)+1 > 32) {
 			// filename too big for ISO9660
-			return SCE_ERROR_ERRNO_ENAMETOOLONG;
+			return SCE_ENAMETOOLONG;
 		}
 
 		memset(path, 0, 256);
@@ -66,7 +66,7 @@ int GetPathAndName(char *fullpath, char *path, char *filename) {
 
 	if (strlen(p+1)+1 > 32) {
 		// filename too big for ISO9660
-		return SCE_ERROR_ERRNO_ENAMETOOLONG;
+		return SCE_ENAMETOOLONG;
 	}
 
 	strcpy(filename, p+1);
@@ -113,16 +113,16 @@ int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660Director
 				record = (Iso9660DirectoryRecord *)p;
 
 				if (record->len_dr == 0) {
-					return SCE_ERROR_ERRNO_ENOENT;
+					return SCE_ENOENT;
 				}
 			} else
 			{
-				return SCE_ERROR_ERRNO_ENOENT;
+				return SCE_ENOENT;
 			}
 		}
 
 		if (record->len_fi > 32) {
-			return SCE_ERROR_ERRNO_EINVAL;
+			return SCE_EINVAL;
 		}
 
 		if (record->fi == 0) {
@@ -144,7 +144,7 @@ int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660Director
 			if (strcmp(name, filename) == 0) {
 				if (isDir) {
 					if (!(record->fileFlags & ISO9660_FILEFLAGS_DIR)) {
-						return SCE_ERROR_ERRNO_ENOTDIR;
+						return SCE_ENOTDIR;
 					}
 				}
 
@@ -195,7 +195,7 @@ int FindPathLBA(char *path, Iso9660DirectoryRecord *retRecord) {
 
 	while (p) {
 		if (p-curpath+1 > 32) {
-			return SCE_ERROR_ERRNO_ENAMETOOLONG;
+			return SCE_ENAMETOOLONG;
 		}
 
 		memset(curdir, 0, sizeof(curdir));
@@ -210,7 +210,7 @@ int FindPathLBA(char *path, Iso9660DirectoryRecord *retRecord) {
 		}
 
 		if (level > 8) {
-			return SCE_ERROR_ERRNO_EINVAL;
+			return SCE_EINVAL;
 		}
 
 		lba = FindFileLBA(curdir, lba, retRecord->lsbDataLength, 1, retRecord);
@@ -233,7 +233,7 @@ int isofs_init() {
 	if (res < 0) return res;
 
 	if (memcmp(sectors + 1, "CD001", 5) != 0) {
-		return SCE_ERROR_ERRNO_EINVAL;
+		return SCE_EINVAL;
 	}
 
 	memcpy(&main_record, sectors + 0x9C, sizeof(Iso9660DirectoryRecord));
@@ -289,7 +289,7 @@ int isofs_open(char *file, int flags, SceMode mode) {
 	int res, lba, i;
 	int notallowedflags = PSP_O_WRONLY | PSP_O_APPEND | PSP_O_CREAT | PSP_O_TRUNC | PSP_O_EXCL;
 
-	if (!file) return SCE_ERROR_ERRNO_EINVAL;
+	if (!file) return SCE_EINVAL;
 
 	if (strcmp(file, "/") == 0) {
 		i = GetFreeHandle();
@@ -312,10 +312,10 @@ int isofs_open(char *file, int flags, SceMode mode) {
 
 	if (strlen(fullpath)+1 > 256) {
 		// path too big for ISO9660
-		return SCE_ERROR_ERRNO_ENAMETOOLONG;
+		return SCE_ENAMETOOLONG;
 	}
 
-	if (flags & notallowedflags) return SCE_ERROR_ERRNO_EFLAG;
+	if (flags & notallowedflags) return SCE_EFLAG;
 
 	if (strncmp(fullpath, "/sce_lbn", 8) != 0) {
 		if ((res = GetPathAndName(fullpath, path, filename)) < 0) {
@@ -348,27 +348,27 @@ int isofs_open(char *file, int flags, SceMode mode) {
 		char str[11];
 
 		char *p = strstr(fullpath, "_size");
-		if (!p) return SCE_ERROR_ERRNO_EINVAL;
+		if (!p) return SCE_EINVAL;
 
 		if ((p-(fullpath+8)) > 10) {
-			return SCE_ERROR_ERRNO_ENAMETOOLONG;
+			return SCE_ENAMETOOLONG;
 		}
 
 		memset(str, 0, 11);
 		strncpy(str, fullpath+8, p-(fullpath+8));
 
 		lba = strtol(str, NULL, 0);
-		if (lba < 0) return SCE_ERROR_ERRNO_EINVAL;
+		if (lba < 0) return SCE_EINVAL;
 
 		if ((p+strlen(p)-(p+5)) > 10) {
-			return SCE_ERROR_ERRNO_ENAMETOOLONG;
+			return SCE_ENAMETOOLONG;
 		}
 
 		memset(str, 0, 11);
 		strncpy(str, p+5, p+strlen(p)-(p+5));
 
 		int size = strtol(str, NULL, 0);
-		if (size < 0) return SCE_ERROR_ERRNO_EINVAL;
+		if (size < 0) return SCE_EINVAL;
 
 		i = GetFreeHandle();
 		if (i < 0) return i;
@@ -385,11 +385,11 @@ int isofs_open(char *file, int flags, SceMode mode) {
 int isofs_close(SceUID fd) {
 
 	if (fd < 0 || fd >= MAX_HANDLERS) {
-		return SCE_ERROR_ERRNO_EBADF;
+		return SCE_EBADF;
 	}
 
 	if (!handlers[fd].opened) {
-		return SCE_ERROR_ERRNO_EBADF;
+		return SCE_EBADF;
 	}
 
 	handlers[fd].opened = 0;
@@ -401,9 +401,9 @@ int isofs_read(SceUID fd, char *data, int len) {
 	int sectorscanbewritten = 0; // Sectors that can be written directly to the output buffer
 	int res, read = 0;
 
-	if (fd < 0 || fd >= MAX_HANDLERS) return SCE_ERROR_ERRNO_EBADF;
-	if (!handlers[fd].opened) return SCE_ERROR_ERRNO_EBADF;
-	if (len < 0) return SCE_ERROR_ERRNO_EINVAL;
+	if (fd < 0 || fd >= MAX_HANDLERS) return SCE_EBADF;
+	if (!handlers[fd].opened) return SCE_EBADF;
+	if (len < 0) return SCE_EINVAL;
 
 	u8 *p = (u8 *)data;
 	int remaining = len;
@@ -466,18 +466,18 @@ int isofs_read(SceUID fd, char *data, int len) {
 	handlers[fd].filepointer += (remaining % SECTOR_SIZE);
 	remaining -= (remaining % SECTOR_SIZE);
 
-	if (remaining > 0) return SCE_ERROR_ERRNO_EIO;
+	if (remaining > 0) return SCE_EIO;
 
 	return read;
 }
 
 SceOff isofs_lseek(SceUID fd, SceOff ofs, int whence) {
 	if (fd < 0 || fd >= MAX_HANDLERS) {
-		return SCE_ERROR_ERRNO_EBADF;
+		return SCE_EBADF;
 	}
 
 	if (!handlers[fd].opened) {
-		return SCE_ERROR_ERRNO_EBADF;
+		return SCE_EBADF;
 	}
 
 	if (whence == PSP_SEEK_SET) {
@@ -488,7 +488,7 @@ SceOff isofs_lseek(SceUID fd, SceOff ofs, int whence) {
 		handlers[fd].filepointer = handlers[fd].filesize - (int)ofs;
 	} else
 	{
-		return SCE_ERROR_ERRNO_EINVAL;
+		return SCE_EINVAL;
 	}
 
 	return handlers[fd].filepointer;
@@ -499,11 +499,11 @@ int isofs_getstat(const char *file, SceIoStat *stat) {
 	static char fullpath[256], path[256], filename[32];
 	int res, lba;
 
-	if (!file || !stat) return SCE_ERROR_ERRNO_EINVAL;
+	if (!file || !stat) return SCE_EINVAL;
 
 	if (strlen(file)+1 > 256) {
 		// path too big for ISO9660
-		return SCE_ERROR_ERRNO_ENAMETOOLONG;
+		return SCE_ENAMETOOLONG;
 	}
 
 	memset(fullpath, 0, 256);

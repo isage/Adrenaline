@@ -420,11 +420,11 @@ int OnModuleStart(SceModule2 *mod) {
         HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
 
 	} else if (strcmp(modname, "scePower_Service") == 0) {
-		logmsg3("Built: %s %s\n", __DATE__, __TIME__);
-		logmsg3("Boot From: 0x%X\n", sceKernelBootFrom());
-		logmsg3("Key Config: 0x%X\n", sceKernelInitKeyConfig());
-		logmsg3("Apitype: 0x%X\n", sceKernelInitApitype());
-		logmsg3("Filename: %s\n", sceKernelInitFileName());
+		logmsg3("SystemControl: [INFO] Built: %s %s\n", __DATE__, __TIME__);
+		logmsg3("SystemControl: [INFO] Boot From: 0x%X\n", sceKernelBootFrom());
+		logmsg3("SystemControl: [INFO] Key Config: 0x%X\n", sceKernelInitKeyConfig());
+		logmsg3("SystemControl: [INFO] Apitype: 0x%X\n", sceKernelInitApitype());
+		logmsg3("SystemControl: [INFO] Filename: %s\n", sceKernelInitFileName());
 
 		sctrlSEGetConfig(&config);
 
@@ -531,7 +531,7 @@ int OnModuleStart(SceModule2 *mod) {
 		}
 	}
 
-	logmsg3("%s: 0x%08X\n", modname, text_addr);
+	logmsg4("%s: [DEBUG]: mod_name=%s — text_addr=0x%08X\n", modname, text_addr);
 
 	return 0;
 }

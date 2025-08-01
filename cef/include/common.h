@@ -9,6 +9,7 @@
 #include <kubridge.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <psperror.h>
 
 #include <pspexception.h>
 #include <pspsysevent.h>
