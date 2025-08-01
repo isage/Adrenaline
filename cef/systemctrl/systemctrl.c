@@ -19,6 +19,8 @@
 #include <common.h>
 #include <pspintrman.h>
 
+#include <adrenaline_log.h>
+
 #include "main.h"
 #include "adrenaline.h"
 
@@ -96,23 +98,32 @@ PspIoDrv *sctrlHENFindDriver(char *drvname) {
 	return (PspIoDrv *)u[1];
 }
 
+int (*_sceKernelExitVSH)(void*) = (void*)sceKernelExitVSHVSH;
 int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
-	int res = sceKernelExitVSHVSH(param);
+	int res = _sceKernelExitVSH(param);
 	pspSdkSetK1(k1);
+
+	logmsg3("%s: param=0x%p -> 0x%08X\n", __func__, param, res);
 	return res;
 }
 
+int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int) = NULL;
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param) {
+	logmsg3("%s: [INFO]: apitype=0x%04X, file=%s, param=0x%p\n", __func__, apitype, file, param);
+
 	int k1 = pspSdkSetK1(0);
 
-	SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
-	u32 text_addr = mod->text_addr;
+	if (!_sceLoadExecVSHWithApitype) {
+		SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
+		u32 text_addr = mod->text_addr;
+		_sceLoadExecVSHWithApitype = (void *)text_addr + 0x23D0;
+	}
 
-	int (* LoadExecVSH)(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param, int unk2) = (void *)text_addr + 0x23D0;
-
-	int res = LoadExecVSH(apitype, file, param, 0x10000);
+	int res = _sceLoadExecVSHWithApitype(apitype, file, param, 0x10000);
 	pspSdkSetK1(k1);
+
+	logmsg3("%s: apitype=0x%04X, file=%s, param=0x%p -> 0x%08X\n", __func__, apitype, file, param, res);
 	return res;
 }
 

@@ -247,6 +247,27 @@ void PatchLoadCore() {
 	}
 }
 
+// Taken from ARK-4
+u32 _findJAL(u32 addr, int reversed, int skip) {
+    if (addr != 0) {
+        int add = 4;
+        if (reversed) {
+            add = -4;
+		}
+        for(;;addr += add) {
+            if ((VREAD32(addr) >= 0x0C000000) && (VREAD32(addr) < 0x10000000)){
+                if (skip == 0) {
+                    return (((VREAD32(addr) & 0x03FFFFFF) << 2) | 0x80000000);
+				} else {
+                    skip--;
+				}
+            }
+        }
+    }
+
+    return 0;
+}
+
 // Taken from ARK-3
 u32 FindFirstBEQ(u32 addr) {
 	for (;; addr += 4){
@@ -385,6 +406,18 @@ int OnModuleStart(SceModule2 *mod) {
 
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod);
+
+		// Hijack all execute calls
+        extern int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int);
+        extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
+        u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
+        HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
+
+        // Hijack exit calls
+        extern int (*_sceKernelExitVSH)(void*);
+        extern int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
+        u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
+        HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
 
 	} else if (strcmp(modname, "scePower_Service") == 0) {
 		logmsg3("Built: %s %s\n", __DATE__, __TIME__);
