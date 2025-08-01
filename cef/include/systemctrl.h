@@ -6,7 +6,7 @@
 #include <pspsdk.h>
 #include <psptypes.h>
 #include <pspiofilemgr_kernel.h>
-#include <psploadexec_kernel.h>
+#include <psploadexec.h>
 #include <psploadcore.h>
 
 enum BootModes
@@ -49,7 +49,7 @@ typedef int (* STMOD_HANDLER)(SceModule2 *);
  * @returns < 0 on some errors.
  *
 */
-int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a disc.
@@ -60,7 +60,7 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
  *
  * @returns < 0 on some errors.
 */
-int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelLoadExecVSHDisc(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a disc.
@@ -71,7 +71,7 @@ int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHPara
  *
  * @returns < 0 on some errors.
 */
-int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelLoadExecVSHDiscUpdater(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
@@ -82,7 +82,7 @@ int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExec
  *
  * @returns < 0 on some errors.
 */
-int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelLoadExecVSHMs1(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
@@ -93,7 +93,7 @@ int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam
  *
  * @returns < 0 on some errors.
 */
-int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelLoadExecVSHMs2(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
@@ -104,7 +104,7 @@ int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam
  *
  * @returns < 0 on some errors.
 */
-int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
@@ -115,7 +115,7 @@ int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam
  *
  * @returns < 0 on some errors.
 */
-int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelLoadExecVSHMs4(const char *file, SceKernelLoadExecVSHParam *param);
 
 
 /**
@@ -127,7 +127,7 @@ int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam
  *
  * @returns < 0 on some errors.
 */
-int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param);
+int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Obtain the syscall number of a given user-exported kernel function.

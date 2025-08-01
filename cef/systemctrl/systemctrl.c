@@ -99,7 +99,7 @@ PspIoDrv *sctrlHENFindDriver(char *drvname) {
 }
 
 int (*_sceKernelExitVSH)(void*) = (void*)sceKernelExitVSHVSH;
-int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param) {
+int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
 	int res = _sceKernelExitVSH(param);
 	pspSdkSetK1(k1);
@@ -108,8 +108,8 @@ int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param) {
 	return res;
 }
 
-int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int) = NULL;
-int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceKernelLoadExecVSHParam *param) {
+int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int) = NULL;
+int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLoadExecVSHParam *param) {
 	logmsg3("%s: [INFO]: apitype=0x%04X, file=%s, param=0x%p\n", __func__, apitype, file, param);
 
 	int k1 = pspSdkSetK1(0);
@@ -127,27 +127,27 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, struct SceK
 	return res;
 }
 
-int sctrlKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam *param) {
+int sctrlKernelLoadExecVSHMs1(const char *file, SceKernelLoadExecVSHParam *param) {
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS1, file, param);
 }
 
-int sctrlKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *param) {
+int sctrlKernelLoadExecVSHMs2(const char *file, SceKernelLoadExecVSHParam *param) {
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS2, file, param);
 }
 
-int sctrlKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam *param) {
+int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param) {
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS3, file, param);
 }
 
-int sctrlKernelLoadExecVSHMs4(const char *file, struct SceKernelLoadExecVSHParam *param) {
+int sctrlKernelLoadExecVSHMs4(const char *file, SceKernelLoadExecVSHParam *param) {
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS4, file, param);
 }
 
-int sctrlKernelLoadExecVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param) {
+int sctrlKernelLoadExecVSHDisc(const char *file, SceKernelLoadExecVSHParam *param) {
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC, file, param);
 }
 
-int sctrlKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExecVSHParam *param) {
+int sctrlKernelLoadExecVSHDiscUpdater(const char *file, SceKernelLoadExecVSHParam *param) {
 	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC_UPDATER, file, param);
 }
 

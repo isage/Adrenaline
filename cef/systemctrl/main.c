@@ -408,14 +408,14 @@ int OnModuleStart(SceModule2 *mod) {
 		PatchLoadExec(mod);
 
 		// Hijack all execute calls
-        extern int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int);
-        extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
+        extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
+        extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, SceKernelLoadExecVSHParam * param);
         u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
         HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
 
         // Hijack exit calls
         extern int (*_sceKernelExitVSH)(void*);
-        extern int sctrlKernelExitVSH(struct SceKernelLoadExecVSHParam *param);
+        extern int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param);
         u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
         HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
 

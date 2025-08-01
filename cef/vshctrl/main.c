@@ -101,7 +101,7 @@ int GetIsoIndex(const char *file) {
 	return strtol(number, NULL, 10);
 }
 
-int LoadExecVSHCommonPatched(int apitype, char *file, struct SceKernelLoadExecVSHParam *param, int unk2) {
+int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam *param, int unk2) {
 	int k1 = pspSdkSetK1(0);
 
 	VshCtrlSetUmdFile("");

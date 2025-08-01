@@ -14,7 +14,7 @@
 #include <pspsysevent.h>
 #include <psputilsforkernel.h>
 #include <pspsysmem.h>
-#include <psploadexec_kernel.h>
+#include <psploadexec.h>
 #include <pspthreadman_kernel.h>
 
 #include <pspusb.h>
