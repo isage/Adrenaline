@@ -374,15 +374,15 @@ int iso_cache_read(IoReadArg *arg) {
 
 int infernoCacheInit(int cache_size, int cache_num, int partition) {
 	if (cache_size == 0){ // disable cache
-        sceKernelFreePartitionMemory(cache_ctrl);
-        sceKernelFreePartitionMemory(cache_mem);
-        cache_ctrl = -1;
-        cache_mem = -1;
-        cache_on = 0;
-        return 0;
-    }
+		sceKernelFreePartitionMemory(cache_ctrl);
+		sceKernelFreePartitionMemory(cache_mem);
+		cache_ctrl = -1;
+		cache_mem = -1;
+		cache_on = 0;
+		return 0;
+	}
 
-    if (cache_on) return 0; // cache already on
+	if (cache_on) return 0; // cache already on
 	SceUID memid;
 	int i;
 	ISOCache *cache;
@@ -396,7 +396,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition) {
 	}
 
 	memid = sceKernelAllocPartitionMemory(partition, "infernoCacheCtl", PSP_SMEM_High, g_caches_num * sizeof(g_caches[0]), NULL);
-    cache_ctrl = memid;
+	cache_ctrl = memid;
 
 	if (memid < 0) {
 		logmsg("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
@@ -410,7 +410,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition) {
 	}
 
 	memid = sceKernelAllocPartitionMemory(partition, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
-    cache_mem = memid;
+	cache_mem = memid;
 
 	if (memid < 0) {
 		logmsg("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
@@ -429,7 +429,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition) {
 	cache_on = 1;
 
 	extern int (*iso_reader)(IoReadArg *args);
-    iso_reader = &iso_cache_read;
+	iso_reader = &iso_cache_read;
 
 	return 0;
 }

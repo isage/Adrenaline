@@ -59,9 +59,9 @@ int g_disc_type = PSP_UMD_TYPE_GAME;
 extern int sceKernelCancelSema(SceUID semaid, int newcount, int *num_wait_threads);
 
 int sceUmdCheckMedium(void) {
-    if (g_iso_fn[0] == '\0'){
-        return 0;
-    }
+	if (g_iso_fn[0] == '\0'){
+		return 0;
+	}
 
 	while (!g_iso_opened) {
 		sceKernelDelayThread(10000);
@@ -250,26 +250,26 @@ int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
 	u32 intr = ((0x2402 << 16) | ((0) & 0xFFFF));
 
 	int patches = 4;
-    u32 top_addr = text_addr+mod->text_size;
-    for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
-        u32 data = VREAD32(addr);
-        if (data == 0x86430048){
+	u32 top_addr = text_addr+mod->text_size;
+	for (u32 addr=text_addr; addr<top_addr && patches; addr+=4){
+		u32 data = VREAD32(addr);
+		if (data == 0x86430048){
 			MAKE_INSTRUCTION(addr-16, intr);
-            patches--;
-        }
-        else if (data == 0x3C147FDE){
+			patches--;
+		}
+		else if (data == 0x3C147FDE){
 			MAKE_INSTRUCTION(addr+8, intr);
-            patches--;
-        }
-        else if (data == 0x8D240018){
+			patches--;
+		}
+		else if (data == 0x8D240018){
 			MAKE_INSTRUCTION(addr+4, intr);
-            patches--;
-        }
-        else if (data == 0x34C30016){
+			patches--;
+		}
+		else if (data == 0x34C30016){
 			MAKE_INSTRUCTION(addr-16, intr);
-            patches--;
-        }
-    }
+			patches--;
+		}
+	}
 	sctrlFlushCache();
 
 	if (NULL == g_ie_callback) {

@@ -31,10 +31,10 @@
 
 #ifdef DEBUG
 char ownisgraph (u8 c) {
-    if ( c >= 0x21 && c <= 0x7e )
-        return 1;
+	if ( c >= 0x21 && c <= 0x7e )
+		return 1;
 
-    return 0;
+	return 0;
 }
 
 void hexdump(void *addr, int size)

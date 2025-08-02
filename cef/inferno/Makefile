@@ -1,5 +1,5 @@
 TARGET = inferno
-OBJS = main.o iodrv_funcs.o umd.o isoread.o isocache.o utils.o exports.o
+OBJS = main.o iodrv_funcs.o umd.o isoread.o isocache.o utils.o exports.o ../bits/iso_common.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -Wno-array-bounds -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__

@@ -28,6 +28,7 @@
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <iso_common.h>
 #include <macros.h>
 
 #define _ADRENALINE_LOG_IMPL_
@@ -40,47 +41,8 @@ PSP_MODULE_INFO("EPIGalaxyController", 0x1006, 1, 0);
 // SceNpUmdMount Thread ID
 SceUID g_SceNpUmdMount_thid = -1;
 
-// ISO File Descriptor
-SceUID g_iso_fd = -1;
-
-// ISO Block Count
-int g_total_blocks = -1;
-
-// ISO Open Flag
-int g_iso_opened = 0;
-
-// CSO Mode Flag
-int g_is_ciso = 0;
-
-// CSO Block Buffer
-void * g_ciso_block_buf = NULL;
-
-// CSO Decompress Buffer
-void * g_ciso_dec_buf = NULL;
-
-// CSO Index Cache
-unsigned int g_CISO_idx_cache[CISO_IDX_BUFFER_SIZE / 4] __attribute__((aligned(64)));
-
-// CSO Decompress Buffer Offset
-unsigned int g_ciso_dec_buf_offset = (unsigned int)-1;
-
-// CSO Decompress Buffer Size
-int g_ciso_dec_buf_size = 0;
-
-// CSO Current Index
-int g_CISO_cur_idx = 0;
-
-// CSO Header
-static CISO_header g_CISO_hdr __attribute__((aligned(64)));
-
-// CSO Block Count
-unsigned int ciso_total_block = 0;
-
 // np9660.prx Text Address
 unsigned int g_sceNp9660_driver_text_addr = 0;
-
-// ISO File Path
-char * g_iso_fn = NULL;
 
 // Dummy UMD Data for Global Pointer
 unsigned char g_umddata[16] = {
@@ -114,239 +76,17 @@ u32 findRefInGlobals(char* libname, u32 addr, u32 ptr) {
 	return addr;
 }
 
-// Get Disc Sector Count
-int get_total_block(void) {
-	if(g_is_ciso) {
-		// Return CSO Header Value
-		return ciso_total_block;
-	}
-
-	SceOff offset = sceIoLseek(g_iso_fd, 0, PSP_SEEK_END);
-
-	if(offset < 0) {
-		return (int)offset;
-	}
-
-	// Return Sector Count
-	return offset / ISO_SECTOR_SIZE;
-}
-
-// Read Raw ISO Data
-int read_raw_data(unsigned char * addr, unsigned int size, unsigned int offset) {
-	// Retry Counter
-	int i = 0;
-
-seek:
-	// Seek to Position
-	for (i = 0; i < 16; i++) {
-		SceOff ofs = sceIoLseek(g_iso_fd, offset, PSP_SEEK_SET);
-
-		if(ofs >= 0) {
-			break;
-		}
-
-		open_iso();
-	}
-
-	if (i == 16) {
-		return 0x80010013;
-	}
-
-	int read = sceIoRead(g_iso_fd, addr, size);
-
-	if (read < 0) {
-		// Reopen ISO File
-		open_iso();
-
-		// Retry Seeking
-		goto seek;
-	}
-
-	return read;
-}
-
-// Read CSO Disc Sector
-int read_cso_sector(unsigned char * addr, int sector) {
-	// Negative Sector
-	int n_sector = sector - g_CISO_cur_idx;
-
-	if (g_CISO_cur_idx == -1 || n_sector < 0 || n_sector >= NELEMS(g_CISO_idx_cache)) {
-		int read = read_raw_data((unsigned char *)g_CISO_idx_cache, sizeof(g_CISO_idx_cache), (sector << 2) + sizeof(CISO_header));
-
-		if(read < 0) {
-			return -4;
-		}
-
-		// Set Current Sector Index
-		g_CISO_cur_idx = sector;
-
-		n_sector = 0;
-	}
-
-	unsigned int offset = (g_CISO_idx_cache[n_sector] & 0x7FFFFFFF) << g_CISO_hdr.align;
-
-	if (g_CISO_idx_cache[n_sector] & 0x80000000) {
-		return read_raw_data(addr, ISO_SECTOR_SIZE, offset);
-	}
-
-	sector++;
-
-	n_sector = sector - g_CISO_cur_idx;
-
-	if (g_CISO_cur_idx == -1 || n_sector < 0 || n_sector >= NELEMS(g_CISO_idx_cache)) {
-		int read = read_raw_data((unsigned char *)g_CISO_idx_cache, sizeof(g_CISO_idx_cache), (sector << 2) + sizeof(CISO_header));
-
-		if(read < 0) {
-			return -5;
-		}
-
-		g_CISO_cur_idx = sector;
-
-		n_sector = 0;
-	}
-
-	unsigned int next_offset = (g_CISO_idx_cache[n_sector] & 0x7FFFFFFF) << g_CISO_hdr.align;
-	unsigned int size = next_offset - offset;
-
-	if(g_CISO_hdr.align) {
-		size += 1 << g_CISO_hdr.align;
-	}
-
-	// Set Minimum Size
-	if (size <= ISO_SECTOR_SIZE) {
-		size = ISO_SECTOR_SIZE;
-	}
-
-	// Packed Payload required
-	if (g_ciso_dec_buf_offset == (unsigned int)-1 || offset < g_ciso_dec_buf_offset || offset + size >= g_ciso_dec_buf_offset + g_ciso_dec_buf_size) {
-		int read = read_raw_data(g_ciso_dec_buf, size, offset);
-
-		if (read < 0) {
-			g_ciso_dec_buf_offset = 0xFFF00000;
-			return -6;
-		}
-
-		g_ciso_dec_buf_offset = offset;
-		g_ciso_dec_buf_size = read;
-	}
-
-	// Unpack Data
-	int read = sceKernelDeflateDecompress(addr, ISO_SECTOR_SIZE, g_ciso_dec_buf + offset - g_ciso_dec_buf_offset, 0);
-
-	return read < 0 ? read : ISO_SECTOR_SIZE;
-}
-
-// Custom CSO Sector Reader
-int read_cso_data(unsigned char * addr, unsigned int size, unsigned int offset) {
-	// Backup Start Sector Offset
-	unsigned int o_offset = offset;
-
-	while (size > 0) {
-		unsigned int cur_block = offset / ISO_SECTOR_SIZE;
-		unsigned int pos = offset & (ISO_SECTOR_SIZE - 1);
-
-		if(cur_block >= g_total_blocks) {
-			break;
-		}
-
-		int read = read_cso_sector(g_ciso_block_buf, cur_block);
-
-		if (read != ISO_SECTOR_SIZE) {
-			return -7;
-		}
-
-		read = MIN(size, (ISO_SECTOR_SIZE - pos));
-		memcpy(addr, g_ciso_block_buf + pos, read);
-
-		size -= read;
-		addr += read;
-		offset += read;
-	}
-
-	return offset - o_offset;
-}
-
-// Custom ISO Sector Reader Wrapper
-int iso_read(IoReadArg * args) {
-	if (g_is_ciso != 0) {
-		return read_cso_data(args->address, args->size, args->offset);
-	} else {
-		return read_raw_data(args->address, args->size, args->offset);
-	}
-}
-
-int cso_open(SceUID fd) {
-	g_CISO_hdr.magic[0] = 0;
-	g_ciso_dec_buf_offset = (unsigned int)-1;
-	g_ciso_dec_buf_size = 0;
-
-	// Rewind file
-	sceIoLseek(fd, 0, PSP_SEEK_SET);
-
-	if(sceIoRead(fd, &g_CISO_hdr, sizeof(g_CISO_hdr)) != sizeof(g_CISO_hdr)) {
-		return -1;
-	}
-
-	if (VREAD32((unsigned int)g_CISO_hdr.magic) != 0x4F534943) {
-		return 0x8002012F;
-	}
-
-	g_CISO_cur_idx = -1;
-
-	ciso_total_block = g_CISO_hdr.total_bytes / g_CISO_hdr.block_size;
-
-	// Decompression Buffer not yet created
-	if (g_ciso_dec_buf == NULL) {
-		g_ciso_dec_buf = oe_malloc(CISO_DEC_BUFFER_SIZE + (1 << g_CISO_hdr.align) + 64);
-
-		if (g_ciso_dec_buf == NULL) {
-			return -2;
-		}
-
-		// Alignment required
-		if (((unsigned int)g_ciso_dec_buf & 63) != 0) {
-			g_ciso_dec_buf = (void *)(((unsigned int)g_ciso_dec_buf & (~63)) + 64);
-		}
-	}
-
-	// Sector Buffer not yet created
-	if (g_ciso_block_buf == NULL) {
-		g_ciso_block_buf = oe_malloc(ISO_SECTOR_SIZE);
-		if(g_ciso_block_buf == NULL) {
-			return -3;
-		}
-	}
-
-	return 0;
-}
 
 // Open ISO File
 int open_iso(void) {
-	sceIoClose(g_iso_fd);
+	int res = iso_open();
 
-	g_iso_opened = 0;
-
-	while(1) {
-		g_iso_fd = sceIoOpen(g_iso_fn, 0xF0000 | PSP_O_RDONLY, 0);
-
-		if(g_iso_fd >= 0) {
-			break;
-		}
-
-		sceKernelDelayThread(10000);
+	if (res < 0) {
+		return res;
 	}
 
 	// Update NP9660 File Descriptor Variable
 	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_ISO_FD, g_iso_fd);
-
-	g_is_ciso = 0;
-
-	if (cso_open(g_iso_fd) >= 0) {
-		g_is_ciso = 1;
-	}
-
-	g_total_blocks = get_total_block();
-	g_iso_opened = 1;
 
 	return 0;
 }
@@ -397,8 +137,8 @@ int initEmulator(void) {
 	// sceUmdManGetUmdDiscInfo Patch
 	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_DATA_1, 0xE0000800);
 	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_DATA_2, 9);
-	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_DATA_3, g_total_blocks);
-	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_DATA_4, g_total_blocks);
+	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_DATA_3, g_total_sectors);
+	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_DATA_4, g_total_sectors);
 	VWRITE32(g_sceNp9660_driver_text_addr + NP9660_DATA_5, 0);
 
 	// Resume interrupts
@@ -481,8 +221,9 @@ int module_start(SceSize args, void* argp) {
 	logmsg("Galaxy driver started...\n")
 
 	// Get ISO path
-	g_iso_fn = sctrlSEGetUmdFile();
-	logmsg3("%s: UmdFile: %s\n", __func__, g_iso_fn);
+	memset(g_iso_fn, 0, sizeof(g_iso_fn));
+    strncpy(g_iso_fn, sctrlSEGetUmdFile(), sizeof(g_iso_fn));
+	logmsg3("[INFO] UMD File: %s\n", g_iso_fn);
 
 	// Leave NP9660 alone, we got no ISO
 	if(g_iso_fn[0] == 0) {
