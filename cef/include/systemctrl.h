@@ -234,9 +234,34 @@ u32 sctrlHENFindImportInMod(SceModule2 * mod, const char *szLib, u32 nid);
  * -3 if failed to find import by NID after successful resolve to older firmware version
  * -4 if failed to find syscall table
  * -5 if failed to find syscall in the syscall table
- *
 */
 int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func, int dummy);
+
+/**
+ * Replace import function stub with a function or dummy value.
+ *
+ * This function autodetects whether Syscalls are used or not, and if used, it
+ * behaves differently depending on the value of `replace_syscall`. If true, the
+ * function replaces syscall address to the address to the `func` in the syscall
+ * table. I false, the function creates a new syscall and redirects the stub to
+ * the `func` syscall; in this case, manually exporting in exports.exp is still
+ * required for Syscalls to work.
+ *
+ * @note ARK-4 compatibility, similar to `sctrlHENHookImportByNID`
+ *
+ * @param mod - The module where to search the function
+ * @param library - The library name
+ * @param nid - The nid of the function
+ * @param func - The function to replace the stub. If value is below 16bit max
+ * value, this is interpreted as a dummy value
+ *
+ * @returns
+ * - 0 if successful,
+ * -1 if `mod` or `library` are NULL,
+ * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
+ * -3 if failed to find import by NID after successful resolve to older firmware version
+ */
+int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func);
 
 /**
  * Replace function with a function or dummy value.
@@ -265,7 +290,6 @@ int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func
  * -3 if failed to find import by NID after successful resolve to older firmware version
  * -4 if failed to find syscall table
  * -5 if failed to find syscall in the syscall table
- *
 */
 int sctrlHENHookFunctionByNID(SceModule2 * pMod, char * library, u32 nid, void *func, int dummy);
 
@@ -313,6 +337,17 @@ int sctrlHENIsSystemBooted();
  * -2 if already unlocked, -3 if too late to unlock.
 */
 int sctrlHENSetMemory(u32 p2, u32 p11);
+
+/**
+ * Unlocks extra memory on partition 2 (user RAM).
+ *
+ * @param p2 - The size in MB for the user partition. The actual value is
+ * ignored but must be > 24.
+ *
+ * @returns 0 on success, -1 if can't unlock (i.e. pops, vsh, function to unlock
+ * not found), -2 if already unlocked, -3 if too late to unlock.
+ */
+int sctrlHENApplyMemory(u32 p2);
 
 /**
  * Sets the speed for the cpu and bus.

@@ -21,8 +21,10 @@
 
 /**
  * Apply the partition 2 and 11 memory configured by ::sctrlHENSetMemory.
+ *
+ * @returns 0 on success. -1 if the function to get the partitions is not found.
 */
-void ApplyMemory();
+int ApplyMemory();
 /**
  * Apply the partition 2 and 11 memory configured by ::sctrlHENSetMemory and
  * resets the rebootex config so a game can request large memory.
