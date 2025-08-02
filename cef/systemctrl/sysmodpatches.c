@@ -132,7 +132,7 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 	// Do not allow in pops and vsh
 	int apitype = sceKernelInitApitype();
-    if (apitype == 0x144 || apitype == 0x155 || apitype >= 0x200) {
+    if (apitype == SCE_EXEC_APITYPE_MS5 || apitype == SCE_EXEC_APITYPE_EF5 || apitype >= SCE_EXEC_APITYPE_KERNEL1) {
         return -1;
 	}
 
