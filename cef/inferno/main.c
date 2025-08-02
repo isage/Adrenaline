@@ -38,11 +38,7 @@ PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 2, 1);
 u32 psp_model;
 u32 psp_fw_version;
 
-extern int sceKernelSetQTGP3(void *unk0);
-extern char *GetUmdFile();
-
-// 00002790
-char g_iso_fn[255] = {0};
+int sceKernelSetQTGP3(void *data);
 
 // 0x00002248
 u8 g_umddata[16] = {
@@ -62,9 +58,9 @@ PspSysEventHandler g_power_event = {
 // 00000090
 int setup_umd_device(void) {
 	memset(g_iso_fn, 0, sizeof(g_iso_fn));
-    strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
+	strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
 
-    infernoSetDiscType(sctrlSEGetDiscType());
+	infernoSetDiscType(sctrlSEGetDiscType());
 
 	int ret = sceIoAddDrv(&g_iodrv);
 
@@ -99,6 +95,8 @@ int module_start(SceSize args, void* argp) {
 	if (ret < 0) {
 		return ret;
 	}
+
+	logmsg3("[INFO]: UMD File: %s\n", g_iso_fn);
 
 	ret = init_inferno();
 

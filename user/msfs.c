@@ -154,7 +154,7 @@ static SceUID ScePspemuMsfsOpen(const char *file, int flags, SceMode mode) {
   buildPspemuMsfsPath(msfs_path, file);
 
   if (file[0] == '\0')
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   if (flags & SCE_O_TRUNC) {
     char msfs_path_trunc[MAX_PATH_LENGTH];
@@ -239,7 +239,7 @@ EXIT:
 static int ScePspemuMsfsClose(SceUID fd) {
   ScePspemuMsfsDescriptor *descriptor = ScePspemuMsfsGetDescriptor(fd);
   if (!descriptor)
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   // Truncation on vita sets everything to 0
   // This doesn't happen on PSP though, so we need to copy back the data
@@ -252,7 +252,7 @@ static int ScePspemuMsfsClose(SceUID fd) {
   int res = sceIoClose(descriptor->fd);
 
   // Fake close success
-  if (res == SCE_ERROR_ERRNO_ENODEV)
+  if (res == SCE_ENODEV)
     res = 0;
 
   if (res >= 0)
@@ -264,7 +264,7 @@ static int ScePspemuMsfsClose(SceUID fd) {
 static int ScePspemuMsfsRead(SceUID fd, void *data, SceSize size) {
   ScePspemuMsfsDescriptor *descriptor = ScePspemuMsfsGetDescriptor(fd);
   if (!descriptor)
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   int seek = 0;
 
@@ -274,7 +274,7 @@ static int ScePspemuMsfsRead(SceUID fd, void *data, SceSize size) {
 
     int res = sceIoRead(descriptor->fd, data + seek, buf_size);
 
-    if (res == SCE_ERROR_ERRNO_ENODEV) {
+    if (res == SCE_ENODEV) {
       if (ScePspemuMsfsReopenFile(descriptor) >= 0)
         res = sceIoRead(descriptor->fd, data + seek, buf_size);
     }
@@ -295,7 +295,7 @@ static int ScePspemuMsfsRead(SceUID fd, void *data, SceSize size) {
 static int ScePspemuMsfsWrite(SceUID fd, const void *data, SceSize size) {
   ScePspemuMsfsDescriptor *descriptor = ScePspemuMsfsGetDescriptor(fd);
   if (!descriptor)
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   // Set first write offset for truncation hack
   if (!descriptor->first_write && size > 0) {
@@ -311,7 +311,7 @@ static int ScePspemuMsfsWrite(SceUID fd, const void *data, SceSize size) {
 
     int res = sceIoWrite(descriptor->fd, data + seek, buf_size);
 
-    if (res == SCE_ERROR_ERRNO_ENODEV) {
+    if (res == SCE_ENODEV) {
       if (ScePspemuMsfsReopenFile(descriptor) >= 0)
         res = sceIoWrite(descriptor->fd, data + seek, buf_size);
     }
@@ -332,11 +332,11 @@ static int ScePspemuMsfsWrite(SceUID fd, const void *data, SceSize size) {
 static SceOff ScePspemuMsfsLseek(SceUID fd, SceOff offset, int whence) {
   ScePspemuMsfsDescriptor *descriptor = ScePspemuMsfsGetDescriptor(fd);
   if (!descriptor)
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   SceOff res = sceIoLseek(descriptor->fd, offset, whence);
 
-  if ((int)res == SCE_ERROR_ERRNO_ENODEV) {
+  if ((int)res == SCE_ENODEV) {
     if (ScePspemuMsfsReopenFile(descriptor) >= 0)
       res = sceIoLseek(descriptor->fd, offset, whence);
   }
@@ -350,7 +350,7 @@ static SceOff ScePspemuMsfsLseek(SceUID fd, SceOff offset, int whence) {
 static int ScePspemuMsfsIoctl(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
   ScePspemuMsfsDescriptor *descriptor = ScePspemuMsfsGetDescriptor(fd);
   if (!descriptor)
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   // Directory filter command
   if (cmd == 0x02415050 && indata && inlen == sizeof(uint32_t)) {
@@ -359,7 +359,7 @@ static int ScePspemuMsfsIoctl(SceUID fd, unsigned int cmd, void *indata, int inl
     return 0;
   }
 
-  return SCE_ERROR_ERRNO_EINVAL;
+  return SCE_EINVAL;
 }
 
 static int ScePspemuMsfsRemove(const char *file) {
@@ -368,7 +368,7 @@ static int ScePspemuMsfsRemove(const char *file) {
 
   // Invalid path
   if (file[0] == '\0')
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   return sceIoRemove(msfs_path);
 }
@@ -379,7 +379,7 @@ static int ScePspemuMsfsMkdir(const char *dir, SceMode mode) {
 
   // Invalid path
   if (dir[0] == '\0')
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   return sceIoMkdir(msfs_path, 0777);
 }
@@ -390,7 +390,7 @@ static int ScePspemuMsfsRmdir(const char *path) {
 
   // Invalid path
   if (path[0] == '\0')
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   return sceIoRmdir(msfs_path);
 }
@@ -409,12 +409,12 @@ static SceUID ScePspemuMsfsDopen(const char *dirname) {
 static int ScePspemuMsfsDclose(SceUID fd) {
   ScePspemuMsfsDescriptor *descriptor = ScePspemuMsfsGetDescriptor(fd);
   if (!descriptor)
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   int res = sceIoDclose(descriptor->fd);
 
   // Fake close success
-  if (res == SCE_ERROR_ERRNO_ENODEV)
+  if (res == SCE_ENODEV)
     res = 0;
 
   if (res >= 0)
@@ -493,7 +493,7 @@ static int ScePspemuMsfsDread(SceUID fd, SceIoDirent *dir) {
 
   ScePspemuMsfsDescriptor *descriptor = ScePspemuMsfsGetDescriptor(fd);
   if (!descriptor)
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   void *private = dir->d_private;
 
@@ -530,7 +530,7 @@ int ScePspemuMsfsGetstat(const char *file, SceIoStat *stat) {
 
   // Invalid path
   if (file[0] == '\0')
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   int res = sceIoGetstat(msfs_path, stat);
 
@@ -545,7 +545,7 @@ static int ScePspemuMsfsChstat(const char *file, SceIoStat *stat, int bits) {
 
   // Invalid path
   if (file[0] == '\0')
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
 
   bits &= ~(PSP_CST_MODE | PSP_CST_ATTR | PSP_CST_SIZE | PSP_CST_PRVT);
 
@@ -563,14 +563,14 @@ static int ScePspemuMsfsRename(const char *oldname, const char *newname) {
 
   // Invalid path
   if (oldname[0] == '\0' || newname[0] == '\0') {
-    return SCE_ERROR_ERRNO_EINVAL;
+    return SCE_EINVAL;
   }
 
   // Allow renaming from '/PSP/GAME/_UPDATE' to 'UPDATE'
   if (!strchr(newname, '/')) {
     char *p = strrchr(old_path, '/');
     if (!p)
-      return SCE_ERROR_ERRNO_EINVAL;
+      return SCE_EINVAL;
 
     *p = '\0';
     snprintf(new_path, MAX_PATH_LENGTH, "%s/%s", old_path, newname);
@@ -625,7 +625,7 @@ static int ScePspemuMsfsDevctl(const char *dev, unsigned int cmd, void *indata, 
     return 0;
   }
 
-  return SCE_ERROR_ERRNO_EINVAL;
+  return SCE_EINVAL;
 }
 
 int ScePspemuRemoteMsfs(SceSize args, void *argp) {

@@ -1,13 +1,13 @@
 /*
- * File for sceVshBridge functions 
+ * File for sceVshBridge functions
  * Note: vshbridge lets vsh threads to call to some functions that
- * are kernel-exports only. 
+ * are kernel-exports only.
 */
 
 #ifndef __VSHBRIDGE__
 #define __VSHBRIDGE__
 
-#include "psploadexec_kernel.h"
+#include "psploadexec.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,7 +20,7 @@ extern "C" {
  * @param buf - Pointer to a buffer containing the module to execute.
  * @param param - Pointer to a ::SceKernelLoadExecParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
 int vshKernelLoadExecBufferPlain(SceSize bufsize, void *buf, struct SceKernelLoadExecParam *param);
 
@@ -43,9 +43,9 @@ int vshKernelExitVSHVSH(void *unk);
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
-int vshKernelLoadVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *param);
+int vshKernelLoadVSHDisc(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a disc.
@@ -54,9 +54,9 @@ int vshKernelLoadVSHDisc(const char *file, struct SceKernelLoadExecVSHParam *par
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
-int vshKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExecVSHParam *param);
+int vshKernelLoadExecVSHDiscUpdater(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
@@ -65,9 +65,9 @@ int vshKernelLoadExecVSHDiscUpdater(const char *file, struct SceKernelLoadExecVS
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
-int vshKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam *param);
+int vshKernelLoadExecVSHMs1(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
@@ -76,9 +76,9 @@ int vshKernelLoadExecVSHMs1(const char *file, struct SceKernelLoadExecVSHParam *
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
-int vshKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *param);
+int vshKernelLoadExecVSHMs2(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
@@ -87,9 +87,9 @@ int vshKernelLoadExecVSHMs2(const char *file, struct SceKernelLoadExecVSHParam *
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
  *
- * @returns < 0 on some errors. 
+ * @returns < 0 on some errors.
 */
-int vshKernelLoadExecVSHMs3(const char *file, struct SceKernelLoadExecVSHParam *param);
+int vshKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param);
 
 
 /**
@@ -103,7 +103,7 @@ int vshLflashFatfmtStartFatfmt(int argc, char *argv[]);
 
 /**
   * Load a module.
-  * 
+  *
   * @param path - The path to the module to load.
   * @param flags - Unused, always 0 .
   * @param option  - Pointer to a mod_param_t structure. Can be NULL.

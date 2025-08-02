@@ -247,6 +247,27 @@ void PatchLoadCore() {
 	}
 }
 
+// Taken from ARK-4
+u32 _findJAL(u32 addr, int reversed, int skip) {
+    if (addr != 0) {
+        int add = 4;
+        if (reversed) {
+            add = -4;
+		}
+        for(;;addr += add) {
+            if ((VREAD32(addr) >= 0x0C000000) && (VREAD32(addr) < 0x10000000)){
+                if (skip == 0) {
+                    return (((VREAD32(addr) & 0x03FFFFFF) << 2) | 0x80000000);
+				} else {
+                    skip--;
+				}
+            }
+        }
+    }
+
+    return 0;
+}
+
 // Taken from ARK-3
 u32 FindFirstBEQ(u32 addr) {
 	for (;; addr += 4){
@@ -386,12 +407,24 @@ int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod);
 
+		// Hijack all execute calls
+        extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
+        extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, SceKernelLoadExecVSHParam * param);
+        u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
+        HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
+
+        // Hijack exit calls
+        extern int (*_sceKernelExitVSH)(void*);
+        extern int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param);
+        u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
+        HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
+
 	} else if (strcmp(modname, "scePower_Service") == 0) {
-		logmsg3("Built: %s %s\n", __DATE__, __TIME__);
-		logmsg3("Boot From: 0x%X\n", sceKernelBootFrom());
-		logmsg3("Key Config: 0x%X\n", sceKernelInitKeyConfig());
-		logmsg3("Apitype: 0x%X\n", sceKernelInitApitype());
-		logmsg3("Filename: %s\n", sceKernelInitFileName());
+		logmsg3("SystemControl: [INFO] Built: %s %s\n", __DATE__, __TIME__);
+		logmsg3("SystemControl: [INFO] Boot From: 0x%X\n", sceKernelBootFrom());
+		logmsg3("SystemControl: [INFO] Key Config: 0x%X\n", sceKernelInitKeyConfig());
+		logmsg3("SystemControl: [INFO] Apitype: 0x%X\n", sceKernelInitApitype());
+		logmsg3("SystemControl: [INFO] Filename: %s\n", sceKernelInitFileName());
 
 		sctrlSEGetConfig(&config);
 
@@ -459,7 +492,13 @@ int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
 
-	} else if (strcmp(modname, "tekken") == 0) {
+	} else if (strcmp(mod->modname, "ATVPRO") == 0){
+		// Remove "overclock" message in ATV PRO
+		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
+        sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);
+        sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222);
+        sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111);
+    } else if (strcmp(modname, "tekken") == 0) {
 		// Fix back screen on Tekken 6
 		// scePowerGetPllClockFrequencyInt
 		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222);
@@ -492,7 +531,7 @@ int OnModuleStart(SceModule2 *mod) {
 		}
 	}
 
-	logmsg3("%s: 0x%08X\n", modname, text_addr);
+	logmsg4("%s: [DEBUG]: mod_name=%s — text_addr=0x%08X\n", modname, text_addr);
 
 	return 0;
 }
