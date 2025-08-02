@@ -70,7 +70,7 @@ static int protect_pspemu_mem() {
 	return 0;
 }
 
-void ApplyMemory() {
+int ApplyMemory() {
 	if (rebootex_config.ram2 != 0 && (rebootex_config.ram2 + rebootex_config.ram11) <= 52) {
 		SysMemPartition *(* GetPartition)(int partition) = NULL;
 		SysMemPartition *partition;
@@ -86,8 +86,9 @@ void ApplyMemory() {
 			}
 		}
 
-		if (!GetPartition)
-			return;
+		if (!GetPartition) {
+			return -1;
+		}
 
 		user_size = (rebootex_config.ram2 * 1024 * 1024);
 		partition = GetPartition(PSP_MEMORY_PARTITION_USER);
@@ -102,6 +103,8 @@ void ApplyMemory() {
 		// Protects the regions with pspemu addresses
 		protect_pspemu_mem();
 	}
+
+	return 0;
 }
 
 void ApplyAndResetMemory() {
@@ -129,8 +132,9 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 	// Do not allow in pops and vsh
 	int apitype = sceKernelInitApitype();
-    if (apitype == 0x144 || apitype == 0x155 || apitype >= 0x200)
+    if (apitype == 0x144 || apitype == 0x155 || apitype >= 0x200) {
         return -1;
+	}
 
 	// Checks for unlock state
     if (p2 > 24) {
@@ -152,6 +156,29 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 	pspSdkSetK1(k1);
 	return 0;
+}
+
+// ARK-4 compat
+int sctrlHENApplyMemory(u32 p2) {
+	int apitype = sceKernelInitApitype();
+
+	if (p2 > 52) {
+		p2 = 52;
+	}
+
+	int res = sctrlHENSetMemory(p2, 52-p2);
+	if (res < 0) {
+		return res;
+	}
+
+	res = ApplyMemory();
+	// Revert back on fail
+	if (res < 0) {
+		sctrlHENSetMemory(24, 16);
+		ApplyAndResetMemory();
+	}
+
+	return res;
 }
 
 int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {

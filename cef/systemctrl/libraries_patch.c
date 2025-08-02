@@ -474,6 +474,13 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 	return 0;
 }
 
+/**
+ *  Replace Import Function Stub
+ */
+int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func) {
+	return sctrlHENHookImportByNID(pMod, library, nid, func, 0);
+}
+
 int sctrlHENIsSystemBooted() {
 	int res = sceKernelGetSystemStatus();
 
