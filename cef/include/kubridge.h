@@ -8,7 +8,7 @@
 #include <pspctrl.h>
 
 // interface for passing arguments to kernel functions
-struct KernelCallArg {
+typedef struct KernelCallArg {
     u32 arg1;
     u32 arg2;
     u32 arg3;
@@ -23,7 +23,7 @@ struct KernelCallArg {
     u32 arg12;
     u32 ret1;
     u32 ret2;
-};
+} KernelCallArg;
 
 /**
  * Functions to let user mode access certain functions only available in
@@ -122,9 +122,44 @@ int kuKernelGetModel(void);
 int kuKernelFindModuleByName(char *modname, SceModule2 *mod);
 
 /**
+ * Find module by arbitrary memory address
+ *
+ * @param modname - Memory address somewhere inside the module
+ * @param mod - module structure for output (actually treated as SceModule2)
+ *
+ * @return < 0 on error
+ */
+int kuKernelFindModuleByAddress(void *addr, SceModule2 *mod);
+
+/**
  * Invalidate the entire instruction cache
  */
 void kuKernelIcacheInvalidateAll(void);
+
+/**
+ * Read 4 bytes from memory (with kernel memory access)
+ *
+ * @param addr - Address to read, must have 4 bytes alignment
+ */
+u32 kuKernelPeekw(void *addr);
+
+/**
+ * Write 4 bytes to memory (with kernel memory access)
+ *
+ * @param addr - Address to write, must have 4 bytes alignment
+ */
+void kuKernelPokew(void *addr, u32 value);
+
+/**
+ * memcpy (with kernel memory access)
+ *
+ * @param dest - Destination address
+ * @param src - Source address
+ * @param num - copy bytes count
+ *
+ * @return Destination address
+ */
+void *kuKernelMemcpy(void *dest, const void *src, size_t num);
 
 /**
  * Call a kernel function with kernel privilege
@@ -134,7 +169,7 @@ void kuKernelIcacheInvalidateAll(void);
  *
  * return < 0 on error
  */
-int kuKernelCall(void *func_addr, struct KernelCallArg *args);
+int kuKernelCall(void *func_addr, KernelCallArg *args);
 
 /**
  * Call a kernel function with kernel privilege and extended stack
@@ -144,7 +179,7 @@ int kuKernelCall(void *func_addr, struct KernelCallArg *args);
  *
  * return < 0 on error
  */
-int kuKernelCallExtendStack(void *func_addr, struct KernelCallArg *args, int stack_size);
+int kuKernelCallExtendStack(void *func_addr, KernelCallArg *args, int stack_size);
 
 #endif
 

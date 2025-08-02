@@ -44,7 +44,18 @@ PSP_EXPORT_FUNC(kuKernelInitKeyConfig)
 PSP_EXPORT_FUNC(kuKernelLoadModule)
 PSP_EXPORT_FUNC(kuKernelLoadModuleWithApitype2)
 PSP_EXPORT_FUNC(kuKernelSetDdrMemoryProtection)
+PSP_EXPORT_FUNC(kuKernelFindModuleByAddress)
+PSP_EXPORT_FUNC(kuKernelGetUmdFile)
+PSP_EXPORT_FUNC(kuKernelPeekw)
+PSP_EXPORT_FUNC(kuKernelPokew)
+PSP_EXPORT_FUNC(kuKernelMemcpy)
+
+# Alias with a name closer to the sce official name
+PSP_EXPORT_ALIAS(kuKernelInitKeyConfig, kuKernelApplicationType)
+
+# M33 Compat
 PSP_EXPORT_FUNC_NID(kuKernelInitKeyConfig, 0x501E983D)
+PSP_EXPORT_ALIAS(kuKernelInitKeyConfig, kuKernelInitMode)
 PSP_EXPORT_END
 # END KUBridge
 
