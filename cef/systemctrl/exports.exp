@@ -84,15 +84,25 @@ PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs1)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs2)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs3)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs4)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs5)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf1)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf2)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf3)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf4)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf5)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHWithApitype)
 PSP_EXPORT_FUNC(sctrlKernelQuerySystemCall)
 PSP_EXPORT_FUNC(sctrlKernelRand)
 PSP_EXPORT_FUNC(sctrlKernelSetUserLevel)
-#PSP_EXPORT_FUNC(sctrlKernelSetDevkitVersion)
-#PSP_EXPORT_FUNC(sctrlKernelSetInitApitype)
-#PSP_EXPORT_FUNC(sctrlKernelSetInitFileName)
-#PSP_EXPORT_FUNC(sctrlKernelSetInitMode)
-#PSP_EXPORT_FUNC_NID(sctrlKernelSetInitMode, 0xCB76B778)
+PSP_EXPORT_FUNC(sctrlKernelSetDevkitVersion)
+PSP_EXPORT_FUNC(sctrlKernelSetInitApitype)
+PSP_EXPORT_FUNC(sctrlKernelSetInitFileName)
+PSP_EXPORT_ALIAS(sctrlKernelSetInitFileName, sctrlKernelSetUMDEmuFile)
+PSP_EXPORT_FUNC_NID(sctrlKernelSetInitFileName, 0x2BA770CD)
+PSP_EXPORT_FUNC(sctrlKernelSetInitKeyConfig)
+PSP_EXPORT_ALIAS(sctrlKernelSetInitKeyConfig, sctrlKernelSetApplicationType)
+PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xCB76B778)
+PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xB551220C)
 
 # sctrlSE
 PSP_EXPORT_FUNC(sctrlSEGetConfig)
@@ -120,6 +130,10 @@ PSP_EXPORT_FUNC(sctrlRebootDevice)
 # sctrl - other USER EXCLUSIVE
 PSP_EXPORT_FUNC(sctrlDeflateDecompress)
 PSP_EXPORT_FUNC(sctrlGzipDecompress)
+
+# PRO - Compat
+PSP_EXPORT_FUNC(LZ4_decompress_fast)
+PSP_EXPORT_FUNC(lzo1x_decompress)
 
 PSP_EXPORT_END
 # END SystemCtrlForUser
@@ -161,15 +175,23 @@ PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs1)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs2)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs3)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs4)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHMs5)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf1)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf2)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf3)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf4)
+PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHEf5)
 PSP_EXPORT_FUNC(sctrlKernelLoadExecVSHWithApitype)
 PSP_EXPORT_FUNC(sctrlKernelQuerySystemCall)
 PSP_EXPORT_FUNC(sctrlKernelRand)
 PSP_EXPORT_FUNC(sctrlKernelSetUserLevel)
-#PSP_EXPORT_FUNC(sctrlKernelSetDevkitVersion)
-#PSP_EXPORT_FUNC(sctrlKernelSetInitApitype)
-#PSP_EXPORT_FUNC(sctrlKernelSetInitFileName)
-#PSP_EXPORT_FUNC(sctrlKernelSetInitMode)
-#PSP_EXPORT_FUNC_NID(sctrlKernelSetInitMode, 0xCB76B778)
+PSP_EXPORT_FUNC(sctrlKernelSetDevkitVersion)
+PSP_EXPORT_FUNC(sctrlKernelSetInitApitype)
+PSP_EXPORT_FUNC(sctrlKernelSetInitFileName)
+PSP_EXPORT_FUNC(sctrlKernelSetInitKeyConfig)
+PSP_EXPORT_ALIAS(sctrlKernelSetInitKeyConfig, sctrlKernelSetApplicationType)
+PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xCB76B778)
+PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xB551220C)
 
 # sctrlSE - COMMON
 PSP_EXPORT_FUNC(sctrlSEGetConfig)
@@ -216,6 +238,11 @@ PSP_EXPORT_FUNC(strncpy_s)
 PSP_EXPORT_FUNC(user_free)
 PSP_EXPORT_FUNC(user_malloc)
 PSP_EXPORT_FUNC(user_memalign)
+
+# PRO - Compat
+PSP_EXPORT_FUNC(LZ4_decompress_fast)
+PSP_EXPORT_FUNC(lzo1x_decompress)
+
 PSP_EXPORT_END
 # END SystemCtrlForKernel
 

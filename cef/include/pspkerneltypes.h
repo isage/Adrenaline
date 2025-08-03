@@ -151,4 +151,12 @@ typedef enum SceFileExecApiType {
 	SCE_EXEC_APITYPE_VSH_EXITVSH = SCE_EXEC_APITYPE_VSH2, /* ExitVSH */
 } SceFileExecApiType;
 
+typedef enum SceApplicationType {
+	SCE_APPTYPE_VSH		= 0x100,
+	SCE_APPTYPE_UPDATER	= 0x110,
+	SCE_APPTYPE_GAME	= 0x200,
+	SCE_APPTYPE_POPS	= 0x300,
+	SCE_APPTYPE_APP		= 0x400,
+} SceApplicationType;
+
 #endif /* PSPKERNELTYPES_H */

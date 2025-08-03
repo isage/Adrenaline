@@ -235,6 +235,15 @@ typedef struct SceLoadCoreExecFileInfo {
     u32 maxSegAlign; //188
 } SceLoadCoreExecFileInfo;
 
+/**
+ * This structure represents a boot callback belonging to a module.
+ */
+typedef struct SceBootCallback {
+    /** The boot callback function. */
+    void *bootCBFunc;
+    /** Global pointer value of the module. */
+    u32 gp;
+} SceBootCallback;
 
 /**
  * Find a module by it's name.

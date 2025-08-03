@@ -133,15 +133,16 @@ void PatchModuleMgr() {
 
 	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;
+		u32 data = VREAD32(addr);
 
-		if (VREAD32(addr) == 0xA4A60024) {
+		if (data == 0xA4A60024) {
 			// Patch to allow a full coverage of loaded modules
 			PrologueModule = (void *)K_EXTRACT_CALL(addr - 4);
 			MAKE_CALL(addr - 4, PrologueModulePatched);
 			continue;
 		}
 
-		if (VREAD32(addr) == 0x27BDFFE0 && VREAD32(addr + 4) == 0xAFB10014) {
+		if (data == 0x27BDFFE0 && VREAD32(addr + 4) == 0xAFB10014) {
 			HIJACK_FUNCTION(addr, PartitionCheckPatched, PartitionCheck);
 			continue;
 		}

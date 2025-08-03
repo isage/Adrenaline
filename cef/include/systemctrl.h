@@ -9,8 +9,7 @@
 #include <psploadexec.h>
 #include <psploadcore.h>
 
-enum BootModes
-{
+enum BootModes {
 	BOOT_NORMAL,
 	BOOT_INFERNO,
 	BOOT_MARCH33,
@@ -18,8 +17,7 @@ enum BootModes
 	BOOT_RECOVERY,
 };
 
-enum BootLoadFlags
-{
+enum BootLoadFlags {
 	BOOTLOAD_VSH = 1,
 	BOOTLOAD_GAME = 2,
 	BOOTLOAD_UPDATER = 4,
@@ -108,7 +106,7 @@ int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param
 
 /**
  * Executes a new executable from a memory stick.
- * It is the function used by the firmware to execute psx games
+ * It is the function used by the firmware to execute application (e.g. Comic Reader) from a memory stick.
  *
  * @param file - The file to execute.
  * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
@@ -117,6 +115,71 @@ int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param
 */
 int sctrlKernelLoadExecVSHMs4(const char *file, SceKernelLoadExecVSHParam *param);
 
+/**
+ * Executes a new executable from a memory stick.
+ * It is the function used by the firmware to execute PS1 games from a memory stick..
+ *
+ * @param file - The file to execute.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors.
+*/
+int sctrlKernelLoadExecVSHMs5(const char *file, SceKernelLoadExecVSHParam *param);
+
+/**
+ * Executes a new executable from the internal memory.
+ * It is the function used by the firmware to execute an updater from the internal memory.
+ *
+ * @param file - The file to execute.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors.
+*/
+int sctrlKernelLoadExecVSHEf1(const char *file, SceKernelLoadExecVSHParam *param);
+
+/**
+ * Executes a new executable from the internal memory.
+ * It is the function used by the firmware to execute games (and homebrew :P) from the internal memory.
+ *
+ * @param file - The file to execute.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors.
+*/
+int sctrlKernelLoadExecVSHEf2(const char *file, SceKernelLoadExecVSHParam *param);
+
+/**
+ * Executes a new executable from the internal memory.
+ * It is the function used by the firmware to execute ... ?
+ *
+ * @param file - The file to execute.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors.
+*/
+int sctrlKernelLoadExecVSHEf3(const char *file, SceKernelLoadExecVSHParam *param);
+
+/**
+ * Executes a new executable from a internal memory.
+ * It is the function used by the firmware to execute application (e.g. Comic Reader) from the internal memory
+ *
+ * @param file - The file to execute.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors.
+*/
+int sctrlKernelLoadExecVSHEf4(const char *file, SceKernelLoadExecVSHParam *param);
+
+/**
+ * Executes a new executable from a internal memory.
+ * It is the function used by the firmware to execute PS1 games from the internal memory.
+ *
+ * @param file - The file to execute.
+ * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ *
+ * @returns < 0 on some errors.
+*/
+int sctrlKernelLoadExecVSHEf5(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable with the specified apitype
@@ -140,6 +203,8 @@ int sctrlKernelQuerySystemCall(void *func_addr);
 
 /**
  *  Calculate Random Number via KIRK
+ *
+ * @returns A random number
  */
 u32 sctrlKernelRand(void);
 
@@ -147,10 +212,50 @@ u32 sctrlKernelRand(void);
  * Sets the user level of the current thread
  *
  * @param level - The user level
+ *
  * @return the previous user level on success
  */
 int sctrlKernelSetUserLevel(int level);
 
+/**
+ * Sets the api type
+ *
+ * @param apitype - The apitype to set. One of `SceFileExecApiType` (or `PSPInitApitype`)
+ *
+ * @returns the previous apitype
+ *
+ * @note - this will modify also the value of sceKernelBootFrom, since the value of
+ * bootfrom is calculated from the apitype
+ */
+int sctrlKernelSetInitApitype(int apitype);
+
+/**
+ * Sets the filename of the launched executable.
+ *
+ * @param filename - The filename to set
+ *
+ * @returns 0 on success
+ */
+int sctrlKernelSetInitFileName(char * filename);
+#define sctrlKernelSetUMDEmuFile sctrlKernelSetInitFileName;
+
+/**
+ * Sets the init key config
+ *
+ * @param key - The key code. One of `SceApplicationType` (or `PSPKeyConfig`)
+ *
+ * @returns the previous Application type
+ */
+int sctrlKernelSetInitKeyConfig(int key);
+
+/**
+ * Sets the devkit version
+ *
+ * @param version - The devkit version to set
+ *
+ * @return the previous devkit version
+ */
+int sctrlKernelSetDevkitVersion(int version);
 
 
 /**
