@@ -48,6 +48,77 @@ int sctrlKernelSetUserLevel(int level) {
 	return res;
 }
 
+int sctrlKernelSetDevkitVersion(int version) {
+	u32 k1 = pspSdkSetK1(0);
+
+	int prev_ver = sceKernelDevkitVersion();
+
+	// Overwrite version
+	u32 devkit_version = sctrlHENFindFunction("sceSystemMemoryManager", "SysMemForKernel", 0xC886B169);
+	VWRITE16(devkit_version, (version >> 16));
+	VWRITE16(devkit_version+8, (version & 0xFFFF));
+
+	sctrlFlushCache();
+	pspSdkSetK1(k1);
+
+	return prev_ver;
+}
+
+int sctrlKernelSetInitApitype(int apitype) {
+	int k1 = pspSdkSetK1(0);
+	SceInit* init = sceKernelQueryInitCB();
+
+	if (init == NULL) {
+		return SCE_EFAULT;
+	}
+
+	int prev_value = init->apitype;
+	init->apitype = apitype;
+
+	pspSdkSetK1(k1);
+	return prev_value;
+}
+
+char g_init_filename[255] = {0};
+// The same as sctrlKernelSetUMDEmuFile
+int sctrlKernelSetInitFileName(char * filename) {
+	if(filename == NULL) {
+		return SCE_EINVAL;
+	}
+
+	int k1 = pspSdkSetK1(0);
+
+	SceInit* init = sceKernelQueryInitCB();
+
+	if (init == NULL) {
+		return SCE_EFAULT;
+	}
+
+	if (init->file_mod_addr != NULL) {
+		logmsg4("%s: [DEBUG]: Previous filename=%s\n", __func__, *(const char**)(init->file_mod_addr));
+	} else {
+		logmsg4("%s: [DEBUG]: Previous filename=<NUL>\n", __func__);
+	}
+
+	strncpy_s(g_init_filename, 255, filename, strlen(filename));
+	init->file_mod_addr = &g_init_filename;
+
+	pspSdkSetK1(k1);
+	return 0;
+}
+
+int sctrlKernelSetInitKeyConfig(int key) {
+	int k1 = pspSdkSetK1(0);
+
+	SceInit* init = sceKernelQueryInitCB();
+	int prev_value = init->application_type;
+
+	init->application_type = key;
+
+	pspSdkSetK1(k1);
+	return prev_value;
+}
+
 int sctrlHENIsSE() {
 	return 1;
 }
@@ -128,27 +199,51 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 }
 
 int sctrlKernelLoadExecVSHMs1(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS1, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS1, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs2(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS2, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS2, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS3, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS3, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs4(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS4, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS4, file, param);
+}
+
+int sctrlKernelLoadExecVSHMs5(const char *file, SceKernelLoadExecVSHParam *param) {
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS5, file, param);
+}
+
+int sctrlKernelLoadExecVSHEf1(const char *file, SceKernelLoadExecVSHParam *param) {
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF1, file, param);
+}
+
+int sctrlKernelLoadExecVSHEf2(const char *file, SceKernelLoadExecVSHParam *param) {
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF2, file, param);
+}
+
+int sctrlKernelLoadExecVSHEf3(const char *file, SceKernelLoadExecVSHParam *param) {
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF3, file, param);
+}
+
+int sctrlKernelLoadExecVSHEf4(const char *file, SceKernelLoadExecVSHParam *param) {
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF4, file, param);
+}
+
+int sctrlKernelLoadExecVSHEf5(const char *file, SceKernelLoadExecVSHParam *param) {
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF5, file, param);
 }
 
 int sctrlKernelLoadExecVSHDisc(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_DISC, file, param);
 }
 
 int sctrlKernelLoadExecVSHDiscUpdater(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_DISC_UPDATER, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_DISC_UPDATER, file, param);
 }
 
 int sctrlKernelQuerySystemCall(void *function) {
@@ -266,10 +361,10 @@ u32 sctrlKernelRand(void) {
 
 
 int sctrlDeflateDecompress(void* dest, void* src, int size){
-    u32 k1 = pspSdkSetK1(0);
-    int ret = sceKernelDeflateDecompress(dest, size, src, 0);
-    pspSdkSetK1(k1);
-    return ret;
+	u32 k1 = pspSdkSetK1(0);
+	int ret = sceKernelDeflateDecompress(dest, size, src, 0);
+	pspSdkSetK1(k1);
+	return ret;
 }
 
 int sctrlGzipDecompress(void* dest, void* src, int size){
