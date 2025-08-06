@@ -512,9 +512,20 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
  *
  * @return < 0 on error
  *
- * @note Compat with ME, PRO, ARK-4
+ * @note Compat with PRO, ARK-4
  */
 int sctrlPatchModule(char *modname, u32 inst, u32 offset);
+
+/**
+ * Get module text address
+ *
+ * @param modname - module name
+ *
+ * @return text address, or 0 if not found
+ *
+ * @note Compat with PRO, ARK-4
+ */
+u32 sctrlModuleTextAddr(char *modname);
 
 /**
  * Flush/Cleans Instruction and Data Caches

@@ -487,6 +487,10 @@ int sctrlHENIsSystemBooted() {
     return (res == 0x20000) ? 1 : 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// COMPAT
+////////////////////////////////////////////////////////////////////////////////
+
 int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
 	int ret = 0;
 
@@ -504,4 +508,18 @@ int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
 
 	logmsg4("%s: modname=%s, inst=0x%08X, offset=0x%08X -> 0x%08X", __func__, modname, inst, offset);
 	return ret;
+}
+
+u32 sctrlModuleTextAddr(char *modname) {
+	u32 text_addr = 0;
+	u32 k1 = pspSdkSetK1(0);
+
+	SceModule2* mod = sceKernelFindModuleByName(modname);
+
+	if (mod != NULL) {
+		text_addr = mod->text_addr;
+	}
+
+	pspSdkSetK1(k1);
+	return text_addr;
 }
