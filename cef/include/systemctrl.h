@@ -468,11 +468,11 @@ void sctrlHENSetSpeed(int cpu, int bus);
  * @param handler - The function, that will receive the module structure before the module is started.
  *
  * @returns - The previous set function (NULL if none);
- * @Note: because only one handler function is handled by HEN, you should
+ *
+ * @note Because only one handler function is handled by HEN, you should
  * call the previous function in your code.
  *
- * @Example:
- *
+ * @example
  * STMOD_HANDLER previous = NULL;
  *
  * int OnModuleStart(SceModule2 *mod);
@@ -497,13 +497,24 @@ void sctrlHENSetSpeed(int cpu, int bus);
  *		return previous(mod);
  * }
  *
- * @Note2: The above example should be compiled with the flag -fno-pic
+ * @note The above example should be compiled with the flag -fno-pic
  *			in order to avoid problems with gp register that may lead to a crash.
  *
 */
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
 
-
+/**
+ * Patch module by offset
+ *
+ * @param modname - module name
+ * @param inst  - instruction
+ * @param offset - module patch offset
+ *
+ * @return < 0 on error
+ *
+ * @note Compat with ME, PRO, ARK-4
+ */
+int sctrlPatchModule(char *modname, u32 inst, u32 offset);
 
 /**
  * Flush/Cleans Instruction and Data Caches

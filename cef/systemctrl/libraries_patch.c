@@ -486,3 +486,22 @@ int sctrlHENIsSystemBooted() {
 
     return (res == 0x20000) ? 1 : 0;
 }
+
+int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
+	int ret = 0;
+
+	u32 k1 = pspSdkSetK1(0);
+	SceModule2* mod = sctrlKernelFindModuleByName(modname);
+
+	if(mod != NULL) {
+		MAKE_INSTRUCTION(mod->text_addr + offset, inst);
+		sctrlFlushCache();
+	} else {
+		ret = -1;
+	}
+
+	pspSdkSetK1(k1);
+
+	logmsg4("%s: modname=%s, inst=0x%08X, offset=0x%08X -> 0x%08X", __func__, modname, inst, offset);
+	return ret;
+}
