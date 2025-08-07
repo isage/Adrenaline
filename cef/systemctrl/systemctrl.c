@@ -119,6 +119,13 @@ int sctrlKernelSetInitKeyConfig(int key) {
 	return prev_value;
 }
 
+int sctrlKernelBootFrom() {
+	int k1 = pspSdkSetK1(0);
+	int res = sceKernelBootFrom();
+	pspSdkSetK1(k1);
+	return res;
+}
+
 int sctrlHENIsSE() {
 	return 1;
 }

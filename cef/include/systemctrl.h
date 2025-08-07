@@ -257,6 +257,13 @@ int sctrlKernelSetInitKeyConfig(int key);
  */
 int sctrlKernelSetDevkitVersion(int version);
 
+/**
+ * Obtain boot device
+ *
+ * @returns The boot device.
+ */
+int sctrlKernelBootFrom(void);
+
 
 /**
  * Finds a driver
