@@ -18,9 +18,13 @@
 
 #include <common.h>
 #include <pspmodulemgr.h>
+#include <adrenaline_log.h>
 
 #include "main.h"
 #include "init_patch.h"
+
+// init.prx Custom sceKernelStartModule Handler
+int (* custom_start_module_handler)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
 
 SceUID (* sceKernelLoadModuleMs2Handler)(const char *path, int flags, SceKernelLMOption *option);
 SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
@@ -171,118 +175,130 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 	char *p;
 	int res;
 
-	if (mod != NULL) {
-		if (strcmp(mod->modname, "vsh_module") == 0) {
-			if (config.skiplogo || config.startupprog) {
-				static u32 vshmain_args[0x100];
-				memset(vshmain_args, 0, sizeof(vshmain_args));
+	if (mod == NULL) {
+		goto START_MODULE;
+	}
 
-				if (argp != NULL && argsize != 0) {
-					memcpy(vshmain_args, argp, argsize);
-				}
+	if (strcmp(mod->modname, "vsh_module") == 0) {
+		if (config.skiplogo || config.startupprog) {
+			static u32 vshmain_args[0x100];
+			memset(vshmain_args, 0, sizeof(vshmain_args));
 
-				// Init param
-				vshmain_args[0] = sizeof(vshmain_args);
-				vshmain_args[1] = 0x20;
-				vshmain_args[16] = 1;
-
-				if(config.startupprog && argsize == 0) {
-					LoadExecForKernel_AA2029EC();
-
-					SceKernelLoadExecVSHParam param;
-					memset(&param, 0, sizeof(param));
-					param.size = sizeof(param);
-					param.args = sizeof("ms0:/PSP/GAME/BOOT/EBOOT.PBP");
-					param.argp = "ms0:/PSP/GAME/BOOT/EBOOT.PBP";
-					param.key = "game";
-
-					sctrlKernelLoadExecVSHMs2("ms0:/PSP/GAME/BOOT/EBOOT.PBP", &param);
-				}
-
-				argsize = sizeof(vshmain_args);
-				argp = vshmain_args;
-
-			}
-		} else if (!plugindone) {
-			char *waitmodule;
-
-			if (sceKernelFindModuleByName("sceNp9660_driver")) {
-				waitmodule = "sceMeCodecWrapper";
-			} else {
-				waitmodule = "sceMediaSync";
+			if (argp != NULL && argsize != 0) {
+				memcpy(vshmain_args, argp, argsize);
 			}
 
-			if (sceKernelFindModuleByName(waitmodule)) {
-				char plugin[64];
-				int i, size;
-				SceUID fd;
+			// Init param
+			vshmain_args[0] = sizeof(vshmain_args);
+			vshmain_args[1] = 0x20;
+			vshmain_args[16] = 1;
 
-				plugindone = 1;
+			if(config.startupprog && argsize == 0) {
+				LoadExecForKernel_AA2029EC();
 
-				int type = sceKernelInitKeyConfig();
+				SceKernelLoadExecVSHParam param;
+				memset(&param, 0, sizeof(param));
+				param.size = sizeof(param);
+				param.args = sizeof("ms0:/PSP/GAME/BOOT/EBOOT.PBP");
+				param.argp = "ms0:/PSP/GAME/BOOT/EBOOT.PBP";
+				param.key = "game";
 
-				if (type == PSP_INIT_KEYCONFIG_VSH && config.enablexmbctrl) {
-					loadXmbControl();
+				sctrlKernelLoadExecVSHMs2("ms0:/PSP/GAME/BOOT/EBOOT.PBP", &param);
+			}
+
+			argsize = sizeof(vshmain_args);
+			argp = vshmain_args;
+
+		}
+	}
+
+	if (custom_start_module_handler != NULL) {
+		res = custom_start_module_handler(modid, argsize, argp, status, option);
+
+		if (res < 0) {
+			logmsg3("%s: [INFO]: custom start module handler failed with res=0x%08X\n", __func__, res);
+		}
+	}
+
+	if (!plugindone) {
+		char *waitmodule;
+
+		if (sceKernelFindModuleByName("sceNp9660_driver")) {
+			waitmodule = "sceMeCodecWrapper";
+		} else {
+			waitmodule = "sceMediaSync";
+		}
+
+		if (sceKernelFindModuleByName(waitmodule) != NULL) {
+			char plugin[64];
+			int i, size;
+			SceUID fd;
+
+			plugindone = 1;
+
+			int type = sceKernelInitKeyConfig();
+
+			if (type == PSP_INIT_KEYCONFIG_VSH && config.enablexmbctrl) {
+				loadXmbControl();
+			}
+
+			if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
+				goto START_MODULE;
+			}
+
+			char *file = NULL;
+			if (type == PSP_INIT_KEYCONFIG_VSH && !config.notusexmbplugins) {
+				file = "ms0:/seplugins/vsh.txt";
+			} else if (type == PSP_INIT_KEYCONFIG_GAME && !config.notusegameplugins) {
+				file = "ms0:/seplugins/game.txt";
+			} else if (type == PSP_INIT_KEYCONFIG_POPS && !config.notusepopsplugins) {
+				file = "ms0:/seplugins/pops.txt";
+			}
+
+			if (!file) {
+				goto START_MODULE;
+			}
+
+			for (i = 0; i < 0x10; i++) {
+				fd = sceIoOpen(file, PSP_O_RDONLY, 0);
+
+				if (fd >= 0) {
+					break;
 				}
 
-				if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
-					goto START_MODULE;
-				}
+				sceKernelDelayThread(20000);
+			}
 
-				char *file = NULL;
-				if (type == PSP_INIT_KEYCONFIG_VSH && !config.notusexmbplugins) {
-					file = "ms0:/seplugins/vsh.txt";
-				} else if (type == PSP_INIT_KEYCONFIG_GAME && !config.notusegameplugins) {
-					file = "ms0:/seplugins/game.txt";
-				} else if (type == PSP_INIT_KEYCONFIG_POPS && !config.notusepopsplugins) {
-					file = "ms0:/seplugins/pops.txt";
-				}
+			if (fd < 0) {
+				goto START_MODULE;
+			}
 
-				if (!file) {
-					goto START_MODULE;
-				}
+			fpl = sceKernelCreateFpl("", PSP_MEMORY_PARTITION_KERNEL, 0, 1024, 1, NULL);
+			if (fpl < 0)
+				goto START_MODULE;
 
-				for (i = 0; i < 0x10; i++) {
-					fd = sceIoOpen(file, PSP_O_RDONLY, 0);
+			sceKernelAllocateFpl(fpl, (void *)&plug_buf, NULL);
 
-					if (fd >= 0) {
-						break;
+			size = sceIoRead(fd, plug_buf, 1024);
+			p = plug_buf;
+
+			do {
+				int activated = 0;
+				memset(plugin, 0, sizeof(plugin));
+
+				res = GetPlugin(p, size, plugin, &activated);
+
+				if (res > 0) {
+					if (activated) {
+						LoadStartModule(plugin);
 					}
 
-					sceKernelDelayThread(20000);
+					size -= res;
+					p += res;
 				}
+			} while (res > 0);
 
-				if (fd < 0) {
-					goto START_MODULE;
-				}
-
-				fpl = sceKernelCreateFpl("", PSP_MEMORY_PARTITION_KERNEL, 0, 1024, 1, NULL);
-				if (fpl < 0)
-					goto START_MODULE;
-
-				sceKernelAllocateFpl(fpl, (void *)&plug_buf, NULL);
-
-				size = sceIoRead(fd, plug_buf, 1024);
-				p = plug_buf;
-
-				do {
-					int activated = 0;
-					memset(plugin, 0, sizeof(plugin));
-
-					res = GetPlugin(p, size, plugin, &activated);
-
-					if (res > 0) {
-						if (activated) {
-							LoadStartModule(plugin);
-						}
-
-						size -= res;
-						p += res;
-					}
-				} while (res > 0);
-
-				sceIoClose(fd);
-			}
+			sceIoClose(fd);
 		}
 	}
 

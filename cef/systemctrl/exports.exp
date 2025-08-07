@@ -131,9 +131,11 @@ PSP_EXPORT_FUNC(sctrlRebootDevice)
 PSP_EXPORT_FUNC(sctrlDeflateDecompress)
 PSP_EXPORT_FUNC(sctrlGzipDecompress)
 
-# PRO - Compat
+# Compat
 PSP_EXPORT_FUNC(LZ4_decompress_fast)
 PSP_EXPORT_FUNC(lzo1x_decompress)
+PSP_EXPORT_FUNC(sctrlPatchModule)
+PSP_EXPORT_FUNC(sctrlModuleTextAddr)
 
 PSP_EXPORT_END
 # END SystemCtrlForUser
@@ -241,9 +243,16 @@ PSP_EXPORT_FUNC(user_free)
 PSP_EXPORT_FUNC(user_malloc)
 PSP_EXPORT_FUNC(user_memalign)
 
-# PRO - Compat
+# Compat
 PSP_EXPORT_FUNC(LZ4_decompress_fast)
 PSP_EXPORT_FUNC(lzo1x_decompress)
+PSP_EXPORT_FUNC(sctrlPatchModule)
+PSP_EXPORT_FUNC(sctrlModuleTextAddr)
+
+# Compat - KERNEL
+PSP_EXPORT_FUNC(sctrlSetCustomStartModule)
+PSP_EXPORT_FUNC(sctrlSetStartModuleExtra)
+
 
 PSP_EXPORT_END
 # END SystemCtrlForKernel

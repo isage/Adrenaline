@@ -381,3 +381,16 @@ int sctrlLZ4Decompress(void* dest, const void* src, int size) {
 int sctrlLzoDecompress(void* dest, unsigned* dst_size, void* src, unsigned src_size) {
 	return lzo1x_decompress(src, src_size, dest, dst_size, 0);
 }
+
+// init.prx Custom sceKernelStartModule Handler
+extern int (* custom_start_module_handler)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt);
+
+void sctrlSetCustomStartModule(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)) {
+	custom_start_module_handler = func;
+}
+
+void* sctrlSetStartModuleExtra(int (* func)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt)) {
+	void* ret = custom_start_module_handler;
+	custom_start_module_handler = func;
+	return ret;
+}
