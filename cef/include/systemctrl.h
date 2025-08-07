@@ -269,6 +269,17 @@ int sctrlKernelSetDevkitVersion(int version);
 PspIoDrv *sctrlHENFindDriver(char *drvname);
 
 /**
+ *  Find a import library stub table.
+ *
+ * @param mod - The module where to search the function
+ * @param library - The library name
+ *
+ * @returns The reference to the stub table ot NULL if not found.
+ */
+SceLibraryStubTable* sctrlHENFindImportLib(SceModule2* mod, const char* library);
+#define sctrlFindImportLib sctrlHENFindImportLib
+
+/**
  * Finds a function.
  *
  * @param szMod - The module where to search the function

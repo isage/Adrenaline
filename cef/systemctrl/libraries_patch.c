@@ -204,9 +204,28 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 	return res;
 }
 
+SceLibraryStubTable* sctrlHENFindImportLib(SceModule2* mod, const char* library) {
+	if (mod == NULL || library == NULL) {
+		return NULL;
+	}
+
+	int i = 0;
+	while (i < mod->stub_size) {
+		SceLibraryStubTable *stub = (SceLibraryStubTable *)(mod->stub_top + i);
+
+		if (stub->libname != NULL && strcmp(stub->libname, library) == 0) {
+			return stub;
+		}
+
+		i += (stub->len * 4);
+	}
+
+	return NULL;
+}
+
 u32 sctrlHENFindImportInMod(SceModule2 * mod, const char *szLib, u32 nid) {
 	// Invalid Arguments
-	if(mod == NULL || szLib == NULL) {
+	if (mod == NULL || szLib == NULL) {
 		return 0;
 	}
 
