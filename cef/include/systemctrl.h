@@ -365,6 +365,8 @@ int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func
  * -1 if `mod` or `library` are NULL,
  * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
  * -3 if failed to find import by NID after successful resolve to older firmware version
+ *
+ * @note Compat with ARK-4
  */
 int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func);
 
@@ -602,12 +604,12 @@ int sctrlGzipDecompress(void* dest, void* src, int size);
  * @param size - The size of the module
  * @param flags - The modes in which the module should be loaded, one of BootLoadFlags
  *
- * @Example:
+ * @example:
  * sctrlHENLoadModuleOnReboot("/kd/usersystemlib.prx", module_buffer, module_size, BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UMDEMU);
  *
  * This will load the module contained in module_buffer just before /kd/usersystemlib.prx in the next reboot, if the mode of next reboot is game, pops or umdemu
  *
- * @Remarks: Don't use too early modules in first param like "/kd/init.prx" or "/kd/systemctrl.prx", or your module may not load properly
+ * @note Don't use too early modules in first param like "/kd/init.prx" or "/kd/systemctrl.prx", or your module may not load properly
  * Only one module will be loaded on reboot with this function.
  * If this function is called many times, only the last one will be considered.
  * By making a module to load itself using this function, and calling
@@ -625,6 +627,34 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr);
 
 typedef int (* HEN_REG_HOMEBREW_LOADER_HANDLER)(const char *path, int flags, SceKernelLMOption *option);
 int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
+
+/**
+ * Set custom start module handler
+ *
+ * It can be used to replace a system module
+ *
+ * @param func function pointer to register as custom start module handler
+ *
+ * @note func returns -1 to ignore the module and load the original module. Or new modid if replace is done.
+ *
+ * @note Compat with PRO and ARK-4
+ */
+void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
+
+/**
+ * Set custom start module handler
+ *
+ * It can be used to replace a system module
+ *
+ * @param func function pointer to register as custom start module handler
+ *
+ * @returns The previously set module handler, if any.
+ *
+ * @note func returns -1 to ignore the module and load the original module. Or new modid if replace is done.
+ *
+ * @note Compat with ME and ARK-4
+ */
+void* sctrlSetStartModuleExtra(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
 
 void lowerString(char *orig, char *ret, int strSize);
 int strncasecmp(const char *s1, const char *s2, SceSize n);

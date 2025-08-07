@@ -474,12 +474,6 @@ int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *fu
 	return 0;
 }
 
-/**
- *  Replace Import Function Stub
- */
-int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func) {
-	return sctrlHENHookImportByNID(pMod, library, nid, func, 0);
-}
 
 int sctrlHENIsSystemBooted() {
 	int res = sceKernelGetSystemStatus();
@@ -491,11 +485,16 @@ int sctrlHENIsSystemBooted() {
 // COMPAT
 ////////////////////////////////////////////////////////////////////////////////
 
+int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func) {
+	return sctrlHENHookImportByNID(pMod, library, nid, func, 0);
+}
+
+
 int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
 	int ret = 0;
 
 	u32 k1 = pspSdkSetK1(0);
-	SceModule2* mod = sctrlKernelFindModuleByName(modname);
+	SceModule2* mod = sceKernelFindModuleByName(modname);
 
 	if(mod != NULL) {
 		MAKE_INSTRUCTION(mod->text_addr + offset, inst);

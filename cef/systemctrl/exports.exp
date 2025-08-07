@@ -249,6 +249,11 @@ PSP_EXPORT_FUNC(lzo1x_decompress)
 PSP_EXPORT_FUNC(sctrlPatchModule)
 PSP_EXPORT_FUNC(sctrlModuleTextAddr)
 
+# Compat - KERNEL
+PSP_EXPORT_FUNC(sctrlSetCustomStartModule)
+PSP_EXPORT_FUNC(sctrlSetStartModuleExtra)
+
+
 PSP_EXPORT_END
 # END SystemCtrlForKernel
 
