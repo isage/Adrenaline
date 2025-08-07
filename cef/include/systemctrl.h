@@ -635,9 +635,9 @@ int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
  *
  * @param func function pointer to register as custom start module handler
  *
- * @note func returns -1 to ignore the module and load the original module. Or new modid if replace is done.
+ * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note Compat with PRO and ARK-4
+ * @note - Compat with PRO and ARK-4
  */
 void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
 
@@ -650,11 +650,23 @@ void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *arg
  *
  * @returns The previously set module handler, if any.
  *
- * @note func returns -1 to ignore the module and load the original module. Or new modid if replace is done.
+ * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note Compat with ME and ARK-4
+ * @note - Compat with ME and ARK-4
  */
 void* sctrlSetStartModuleExtra(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
+
+/**
+ * Get `sceInit` module text address
+ *
+ * @note - Only useful before `sceInit` exits
+ *
+ * @return text address, or 0 if not found
+ *
+ * @note - Compat with PRO and ARK-4
+ */
+u32 sctrlGetInitTextAddr(void);
+
 
 void lowerString(char *orig, char *ret, int strSize);
 int strncasecmp(const char *s1, const char *s2, SceSize n);

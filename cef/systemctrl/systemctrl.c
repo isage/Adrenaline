@@ -394,3 +394,8 @@ void* sctrlSetStartModuleExtra(int (* func)(int modid, SceSize argsize, void * a
 	custom_start_module_handler = func;
 	return ret;
 }
+
+extern u32 init_addr;
+u32 sctrlGetInitTextAddr() {
+	return init_addr;
+}
