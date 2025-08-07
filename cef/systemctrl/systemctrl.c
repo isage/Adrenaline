@@ -298,6 +298,10 @@ void sctrlSESetBootConfFileIndex(int index) {
 	rebootex_config.bootfileindex = index;
 }
 
+int sctrlSEGetBootConfFileIndex() {
+	return rebootex_config.bootfileindex;
+}
+
 void sctrlSESetDiscType(int type) {
 	rebootex_config.iso_disc_type = type;
 }

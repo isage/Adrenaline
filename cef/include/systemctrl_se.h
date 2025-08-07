@@ -181,6 +181,13 @@ int sctrlSEGetDiscType(void);
 */
 void sctrlSESetBootConfFileIndex(int index);
 
+/**
+ * Gets the boot config file for next reboot
+ *
+ * @returns The index identifying the file (0 -> normal bootconf, 1 -> inferno driver bootconf, 2 -> march33 driver bootconf, 3 -> np9660 bootcnf, 4 -> recovery bootconf)
+*/
+int sctrlSEGetBootConfFileIndex(void);
+
 #ifdef __KERNEL__
 
 /**
