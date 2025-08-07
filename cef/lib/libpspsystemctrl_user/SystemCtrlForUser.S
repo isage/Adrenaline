@@ -185,3 +185,9 @@
 #ifdef F_SystemCtrlForUser_0059
 	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
 #endif
+#ifdef F_SystemCtrlForUser_0060
+	IMPORT_FUNC  "SystemCtrlForUser",0x62CAC4CF,sctrlPatchModule
+#endif
+#ifdef F_SystemCtrlForUser_0061
+	IMPORT_FUNC  "SystemCtrlForUser",0x2A868045,sctrlModuleTextAddr
+#endif
