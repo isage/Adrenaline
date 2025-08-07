@@ -138,6 +138,10 @@ int sctrlHENGetVersion() {
 	return 0x00001000;
 }
 
+int sctrlHENGetMinorVersion() {
+	return ADRENALINE_VERSION;
+}
+
 int sctrlSEGetVersion() {
 	return ADRENALINE_VERSION;
 }

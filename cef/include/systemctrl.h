@@ -424,8 +424,20 @@ int sctrlHENHookFunctionByNID(SceModule2 * pMod, char * library, u32 nid, void *
  * @returns - The HEN version
  *
  * HEN D / SE-C :  0x00000400
+ * M33 : 0x00000700 | 0x00000800
+ * TN / Adrenaline : 0x00001000
+ * PRO : 0x00001003
  */
 int sctrlHENGetVersion();
+
+/**
+ * Gets the HEN minor version
+ *
+ * @returns - The HEN minor version
+ *
+ * @note In practice, for Adrenaline, returns value for the release version of the CFW.
+ */
+int sctrlHENGetMinorVersion();
 
 /**
  * Checks if we are in Devhook.
