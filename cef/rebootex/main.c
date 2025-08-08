@@ -48,13 +48,13 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 }
 
 int PatchSysMem(void *a0, void *sysmem_config) {
-	int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)_lw((u32)a0 + 0x28);
+	int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)VREAD32((u32)a0 + 0x28);
 
 	for (int i = 0; i < 0x14000; i += 4) {
 		u32 addr = 0x88000000 + i;
 
 		// Patch to add new partition
-		if (_lw(addr) == 0x14600003) {
+		if (VREAD32(addr) == 0x14600003) {
 			K_HIJACK_CALL(addr - 0x1C, SetMemoryPartitionTablePatched, SetMemoryPartitionTable);
 			continue;
 		}
@@ -197,29 +197,30 @@ int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, in
 int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) {
 	for (u32 i = 0; i < 0x4000; i += 4) {
 		u32 addr = 0x88600000 + i;
+		u32 data = VREAD32(addr);
 
 		// Patch call to SysMem module_bootstart
-		if (_lw(addr) == 0x24040004) {
-			_sw(0x02402021, addr); //move $a0, $s2
+		if (data == 0x24040004) {
+			MAKE_INSTRUCTION(addr, 0x02402021); // move $a0, $s2
 			MAKE_CALL(addr + 0x64, PatchSysMem);
 			continue;
 		}
 
 		// Patch call to LoadCore module_bootstart
-		if (_lw(addr) == 0x00600008) {
-			_sw(0x00602021, addr - 8); //move $a0, $v1
+		if (data == 0x00600008) {
+			MAKE_INSTRUCTION(addr - 8, 0x00602021); // move $a0, $v1
 			MAKE_JUMP(addr, PatchLoadCore);
 			continue;
 		}
 
 		// Patch sceKernelCheckPspConfig
-		if (_lw(addr) == 0x04400022) {
+		if (data == 0x04400022) {
 			MAKE_CALL(addr - 8, sceKernelCheckPspConfigPatched);
 			continue;
 		}
 
 		// Patch sceKernelBootLoadFile
-		if (_lw(addr) == 0xAFBF0000 && _lw(addr + 8) == 0x00000000) {
+		if (data == 0xAFBF0000 && VREAD32(addr + 8) == 0x00000000) {
 			sceKernelBootLoadFile = (void *)K_EXTRACT_CALL(addr + 4);
 			MAKE_CALL(addr + 4, sceKernelBootLoadFilePatched);
 			continue;
