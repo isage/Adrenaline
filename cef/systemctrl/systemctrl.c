@@ -130,6 +130,10 @@ int sctrlHENIsSE() {
 	return 1;
 }
 
+int sctrlHENIsToolKit() {
+	return 0;
+}
+
 int sctrlHENIsDevhook() {
 	return 0;
 }

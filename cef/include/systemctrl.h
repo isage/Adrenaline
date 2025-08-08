@@ -463,6 +463,15 @@ int	sctrlHENIsSE();
 int sctrlHENIsSystemBooted();
 
 /**
+ * Checks if the system is a dev Toolkit.
+ *
+ * @returns 1 if system is a dev Toolkit, 0 otherwise.
+ *
+ * @note Compat with ARK-4
+*/
+int sctrlHENIsToolKit();
+
+/**
  * Sets the partition 2 and 11 memory for next loadexec.
  *
  * @param p2 - The size in MB for the user partition. Must be > 0
