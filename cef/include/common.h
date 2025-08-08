@@ -49,6 +49,12 @@
 
 #include "../../adrenaline_compat.h"
 
+typedef enum IsoDiscType {
+	ISO_DISC_TYPE_GAME = 0x10,
+	ISO_DISC_TYPE_VIDEO = 0x20,
+	ISO_DISC_TYPE_AUDIO = 0x40,
+} IsoDiscType;
+
 typedef struct {
 	u32 magic;
 	u32 version;
@@ -121,7 +127,7 @@ typedef struct {
 
 typedef struct {
 	int bootfileindex;
-	unsigned char iso_disc_type;
+	u8 iso_disc_type;
 
 	char *module_after;
 	void *buf;

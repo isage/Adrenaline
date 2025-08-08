@@ -119,8 +119,19 @@ int sctrlKernelSetInitKeyConfig(int key) {
 	return prev_value;
 }
 
+int sctrlKernelBootFrom() {
+	int k1 = pspSdkSetK1(0);
+	int res = sceKernelBootFrom();
+	pspSdkSetK1(k1);
+	return res;
+}
+
 int sctrlHENIsSE() {
 	return 1;
+}
+
+int sctrlHENIsToolKit() {
+	return 0;
 }
 
 int sctrlHENIsDevhook() {
@@ -129,6 +140,10 @@ int sctrlHENIsDevhook() {
 
 int sctrlHENGetVersion() {
 	return 0x00001000;
+}
+
+int sctrlHENGetMinorVersion() {
+	return ADRENALINE_VERSION;
 }
 
 int sctrlSEGetVersion() {
@@ -275,10 +290,25 @@ void sctrlSESetUmdFile(char *file) {
 	strncpy(rebootex_config.umdfilename, file, 255);
 }
 
+void sctrlSESetUmdFileEx(const char *file, char *input) {
+	if (input != NULL) {
+		strncpy(input, rebootex_config.umdfilename, 255);
+	}
+	sctrlSESetUmdFile(file);
+}
+
 
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
 char *sctrlSEGetUmdFile() {
 	return rebootex_config.umdfilename;
+}
+
+char *sctrlSEGetUmdFileEx(char *input) {
+	char* umdfilename = sctrlSEGetUmdFile();
+	if (input != NULL) {
+		sctrlSESetUmdFile(input);
+	}
+	return umdfilename;
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs) {
@@ -296,6 +326,10 @@ int sctrlSEGetBootConfBootFileIndex() {
 
 void sctrlSESetBootConfFileIndex(int index) {
 	rebootex_config.bootfileindex = index;
+}
+
+int sctrlSEGetBootConfFileIndex() {
+	return rebootex_config.bootfileindex;
 }
 
 void sctrlSESetDiscType(int type) {
@@ -393,4 +427,9 @@ void* sctrlSetStartModuleExtra(int (* func)(int modid, SceSize argsize, void * a
 	void* ret = custom_start_module_handler;
 	custom_start_module_handler = func;
 	return ret;
+}
+
+extern u32 init_addr;
+u32 sctrlGetInitTextAddr() {
+	return init_addr;
 }

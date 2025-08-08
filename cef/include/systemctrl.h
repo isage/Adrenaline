@@ -257,6 +257,13 @@ int sctrlKernelSetInitKeyConfig(int key);
  */
 int sctrlKernelSetDevkitVersion(int version);
 
+/**
+ * Obtain boot device
+ *
+ * @returns The boot device.
+ */
+int sctrlKernelBootFrom(void);
+
 
 /**
  * Finds a driver
@@ -267,6 +274,17 @@ int sctrlKernelSetDevkitVersion(int version);
  *
  */
 PspIoDrv *sctrlHENFindDriver(char *drvname);
+
+/**
+ *  Find a import library stub table.
+ *
+ * @param mod - The module where to search the function
+ * @param library - The library name
+ *
+ * @returns The reference to the stub table ot NULL if not found.
+ */
+SceLibraryStubTable* sctrlHENFindImportLib(SceModule2* mod, const char* library);
+#define sctrlFindImportLib sctrlHENFindImportLib
 
 /**
  * Finds a function.
@@ -406,8 +424,20 @@ int sctrlHENHookFunctionByNID(SceModule2 * pMod, char * library, u32 nid, void *
  * @returns - The HEN version
  *
  * HEN D / SE-C :  0x00000400
+ * M33 : 0x00000700 | 0x00000800
+ * TN / Adrenaline : 0x00001000
+ * PRO : 0x00001003
  */
 int sctrlHENGetVersion();
+
+/**
+ * Gets the HEN minor version
+ *
+ * @returns - The HEN minor version
+ *
+ * @note In practice, for Adrenaline, returns value for the release version of the CFW.
+ */
+int sctrlHENGetMinorVersion();
 
 /**
  * Checks if we are in Devhook.
@@ -431,6 +461,15 @@ int	sctrlHENIsSE();
  * @returns 1 if system has started, 0 otherwise.
 */
 int sctrlHENIsSystemBooted();
+
+/**
+ * Checks if the system is a dev Toolkit.
+ *
+ * @returns 1 if system is a dev Toolkit, 0 otherwise.
+ *
+ * @note Compat with ARK-4
+*/
+int sctrlHENIsToolKit();
 
 /**
  * Sets the partition 2 and 11 memory for next loadexec.
@@ -635,9 +674,9 @@ int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
  *
  * @param func function pointer to register as custom start module handler
  *
- * @note func returns -1 to ignore the module and load the original module. Or new modid if replace is done.
+ * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note Compat with PRO and ARK-4
+ * @note - Compat with PRO and ARK-4
  */
 void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
 
@@ -650,11 +689,23 @@ void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *arg
  *
  * @returns The previously set module handler, if any.
  *
- * @note func returns -1 to ignore the module and load the original module. Or new modid if replace is done.
+ * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note Compat with ME and ARK-4
+ * @note - Compat with ME and ARK-4
  */
 void* sctrlSetStartModuleExtra(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
+
+/**
+ * Get `sceInit` module text address
+ *
+ * @note - Only useful before `sceInit` exits
+ *
+ * @return text address, or 0 if not found
+ *
+ * @note - Compat with PRO and ARK-4
+ */
+u32 sctrlGetInitTextAddr(void);
+
 
 void lowerString(char *orig, char *ret, int strSize);
 int strncasecmp(const char *s1, const char *s2, SceSize n);

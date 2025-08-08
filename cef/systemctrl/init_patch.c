@@ -29,7 +29,7 @@ int (* custom_start_module_handler)(int modid, SceSize argsize, void * argp, int
 SceUID (* sceKernelLoadModuleMs2Handler)(const char *path, int flags, SceKernelLMOption *option);
 SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 
-u32 init_addr;
+u32 init_addr = 0;
 int leda_apitype;
 
 int plugindone = 0;
