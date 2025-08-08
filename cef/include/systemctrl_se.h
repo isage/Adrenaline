@@ -165,12 +165,14 @@ void sctrlSESetDiscOut(int out);
 /**
  * Sets the disctype.
  *
- * @param type - the disctype (0x10=game, 0x20=video, 0x40=audio)
+ * @param type - the disctype (0x10=game, 0x20=video, 0x40=audio) or one of `IsoDiscType`
 */
 void sctrlSESetDiscType(int type);
 
 /**
  * Get the disctype.
+ *
+ * @returns The ISO disctype - One of `IsoDiscType`
 */
 int sctrlSEGetDiscType(void);
 
@@ -192,9 +194,20 @@ int sctrlSEGetBootConfFileIndex(void);
 
 /**
  * Gets the current umd file (kernel only)
+ *
+ * @returns The current umd file
 */
 char *sctrlSEGetUmdFile();
 char *GetUmdFile();
+
+/**
+ * Gets the current umd file
+ *
+ * @param input If not NULL, a umd filename to set
+ *
+ * @returns The current umd file
+*/
+char *sctrlSEGetUmdFileEx(char *input);
 
 /**
  * Sets the current umd file (kernel only)
@@ -203,6 +216,14 @@ char *GetUmdFile();
 */
 void sctrlSESetUmdFile(char *file);
 void SetUmdFile(char *file);
+
+/**
+ * Sets the current umd file and copy the previous to `input`
+ *
+ * @param file The umd file
+ * @param input The output buffer for the previously set umd file. Or NULL to be ignored
+*/
+void sctrlSESetUmdFileEx(const char *file, char *input);
 
 /**
  * Immediately sets the SE configuration in memory without saving to flash.

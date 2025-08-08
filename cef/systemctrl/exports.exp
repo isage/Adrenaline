@@ -233,7 +233,9 @@ PSP_EXPORT_FUNC(SetUmdFile)
 PSP_EXPORT_FUNC(sctrlSEApplyConfig)
 PSP_EXPORT_FUNC(sctrlSEApplyConfigEX)
 PSP_EXPORT_FUNC(sctrlSEGetUmdFile)
+PSP_EXPORT_FUNC(sctrlSEGetUmdFileEx)
 PSP_EXPORT_FUNC(sctrlSESetUmdFile)
+PSP_EXPORT_FUNC(sctrlSESetUmdFileEx)
 
 # sctrl - COMMON
 PSP_EXPORT_FUNC(sctrlFlushCache)

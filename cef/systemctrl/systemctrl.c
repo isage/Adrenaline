@@ -290,10 +290,25 @@ void sctrlSESetUmdFile(char *file) {
 	strncpy(rebootex_config.umdfilename, file, 255);
 }
 
+void sctrlSESetUmdFileEx(const char *file, char *input) {
+	if (input != NULL) {
+		strncpy(input, rebootex_config.umdfilename, 255);
+	}
+	sctrlSESetUmdFile(file);
+}
+
 
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
 char *sctrlSEGetUmdFile() {
 	return rebootex_config.umdfilename;
+}
+
+char *sctrlSEGetUmdFileEx(char *input) {
+	char* umdfilename = sctrlSEGetUmdFile();
+	if (input != NULL) {
+		sctrlSESetUmdFile(input);
+	}
+	return umdfilename;
 }
 
 int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs) {
