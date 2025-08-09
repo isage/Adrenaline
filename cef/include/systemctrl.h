@@ -26,7 +26,7 @@ enum BootLoadFlags {
 };
 
 // Different PSP models
-enum PspModel {
+enum PspModels {
     PSP_1000 = 0,   // 01g
     PSP_2000 = 1,   // 02g
     PSP_3000 = 2,   // 03g

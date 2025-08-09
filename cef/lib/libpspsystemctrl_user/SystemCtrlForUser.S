@@ -138,80 +138,98 @@
 	IMPORT_FUNC_WITH_ALIAS  "SystemCtrlForUser",0xB551220C,sctrlKernelSetInitKeyConfig,sctrlKernelSetApplicationType
 #endif
 #ifdef F_SystemCtrlForUser_0044
-	IMPORT_FUNC  "SystemCtrlForUser",0x16C3B7EE,sctrlSEGetConfig
+	IMPORT_FUNC  "SystemCtrlForUser",0x32677DD3,sctrlKernelResolveNid
 #endif
 #ifdef F_SystemCtrlForUser_0045
-	IMPORT_FUNC  "SystemCtrlForUser",0x8E426F09,sctrlSEGetConfigEx
+	IMPORT_FUNC  "SystemCtrlForUser",0x603EE1D0,sctrlKernelSetNidResolver
 #endif
 #ifdef F_SystemCtrlForUser_0046
-	IMPORT_FUNC  "SystemCtrlForUser",0xABEF849B,sctrlSEGetDiscType
+	IMPORT_FUNC  "SystemCtrlForUser",0x16C3B7EE,sctrlSEGetConfig
 #endif
 #ifdef F_SystemCtrlForUser_0047
-	IMPORT_FUNC  "SystemCtrlForUser",0xB47C9D77,sctrlSEGetVersion
+	IMPORT_FUNC  "SystemCtrlForUser",0x8E426F09,sctrlSEGetConfigEx
 #endif
 #ifdef F_SystemCtrlForUser_0048
-	IMPORT_FUNC  "SystemCtrlForUser",0x85B520C6,sctrlSEMountUmdFromFile
+	IMPORT_FUNC  "SystemCtrlForUser",0xABEF849B,sctrlSEGetDiscType
 #endif
 #ifdef F_SystemCtrlForUser_0049
-	IMPORT_FUNC  "SystemCtrlForUser",0x1DDDAD0C,sctrlSESetConfig
+	IMPORT_FUNC  "SystemCtrlForUser",0xB47C9D77,sctrlSEGetVersion
 #endif
 #ifdef F_SystemCtrlForUser_0050
-	IMPORT_FUNC  "SystemCtrlForUser",0xAD4D5EA5,sctrlSESetConfigEx
+	IMPORT_FUNC  "SystemCtrlForUser",0x85B520C6,sctrlSEMountUmdFromFile
 #endif
 #ifdef F_SystemCtrlForUser_0051
-	IMPORT_FUNC  "SystemCtrlForUser",0x31C6160D,sctrlSESetDiscType
+	IMPORT_FUNC  "SystemCtrlForUser",0x1DDDAD0C,sctrlSESetConfig
 #endif
 #ifdef F_SystemCtrlForUser_0052
-	IMPORT_FUNC  "SystemCtrlForUser",0x80C0ED7B,sctrlStartUsb
+	IMPORT_FUNC  "SystemCtrlForUser",0xAD4D5EA5,sctrlSESetConfigEx
 #endif
 #ifdef F_SystemCtrlForUser_0053
-	IMPORT_FUNC  "SystemCtrlForUser",0x5FC12767,sctrlStopUsb
+	IMPORT_FUNC  "SystemCtrlForUser",0x31C6160D,sctrlSESetDiscType
 #endif
 #ifdef F_SystemCtrlForUser_0054
-	IMPORT_FUNC  "SystemCtrlForUser",0x70B92B45,sctrlSEGetBootConfFileIndex
+	IMPORT_FUNC  "SystemCtrlForUser",0x80C0ED7B,sctrlStartUsb
 #endif
 #ifdef F_SystemCtrlForUser_0055
-	IMPORT_FUNC  "SystemCtrlForUser",0xBC939DC1,sctrlSESetBootConfFileIndex
+	IMPORT_FUNC  "SystemCtrlForUser",0x5FC12767,sctrlStopUsb
 #endif
 #ifdef F_SystemCtrlForUser_0056
-	IMPORT_FUNC  "SystemCtrlForUser",0x5CB025F0,sctrlSESetBootConfFileIndex
+	IMPORT_FUNC  "SystemCtrlForUser",0x70B92B45,sctrlSEGetBootConfFileIndex
 #endif
 #ifdef F_SystemCtrlForUser_0057
-	IMPORT_FUNC  "SystemCtrlForUser",0x17691875,sctrlFlushCache
+	IMPORT_FUNC  "SystemCtrlForUser",0xBC939DC1,sctrlSESetBootConfFileIndex
 #endif
 #ifdef F_SystemCtrlForUser_0058
-	IMPORT_FUNC  "SystemCtrlForUser",0x05D8E209,sctrlGetUsbState
+	IMPORT_FUNC  "SystemCtrlForUser",0x5CB025F0,sctrlSESetBootConfFileIndex
 #endif
 #ifdef F_SystemCtrlForUser_0059
-	IMPORT_FUNC  "SystemCtrlForUser",0x72F47790,sctrlHookImportByNID
+	IMPORT_FUNC  "SystemCtrlForUser",0xFFEFA034,sctrlSESetDiscOut
 #endif
 #ifdef F_SystemCtrlForUser_0060
-	IMPORT_FUNC  "SystemCtrlForUser",0xFE84B359,sctrlLZ4Decompress
+	IMPORT_FUNC  "SystemCtrlForUser",0x512E0CD8,sctrlSEUmountUmd
 #endif
 #ifdef F_SystemCtrlForUser_0061
-	IMPORT_FUNC  "SystemCtrlForUser",0xCF03305A,sctrlLzoDecompress
+	IMPORT_FUNC  "SystemCtrlForUser",0x17691875,sctrlFlushCache
 #endif
 #ifdef F_SystemCtrlForUser_0062
-	IMPORT_FUNC  "SystemCtrlForUser",0x053172F8,sctrlRebootDevice
+	IMPORT_FUNC  "SystemCtrlForUser",0xFCE44FB8,sctrlGetInitPARAM
 #endif
 #ifdef F_SystemCtrlForUser_0063
-	IMPORT_FUNC  "SystemCtrlForUser",0xF462EE55,sctrlDeflateDecompress
+	IMPORT_FUNC  "SystemCtrlForUser",0x0796385F,sctrlGetSfoPARAM
 #endif
 #ifdef F_SystemCtrlForUser_0064
-	IMPORT_FUNC  "SystemCtrlForUser",0x5D665044,sctrlGzipDecompress
+	IMPORT_FUNC  "SystemCtrlForUser",0x05D8E209,sctrlGetUsbState
 #endif
 #ifdef F_SystemCtrlForUser_0065
-	IMPORT_FUNC  "SystemCtrlForUser",0x16100529,LZ4_decompress_fast
+	IMPORT_FUNC  "SystemCtrlForUser",0x72F47790,sctrlHookImportByNID
 #endif
 #ifdef F_SystemCtrlForUser_0066
-	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
+	IMPORT_FUNC  "SystemCtrlForUser",0xFE84B359,sctrlLZ4Decompress
 #endif
 #ifdef F_SystemCtrlForUser_0067
-	IMPORT_FUNC  "SystemCtrlForUser",0x62CAC4CF,sctrlPatchModule
+	IMPORT_FUNC  "SystemCtrlForUser",0xCF03305A,sctrlLzoDecompress
 #endif
 #ifdef F_SystemCtrlForUser_0068
-	IMPORT_FUNC  "SystemCtrlForUser",0x2A868045,sctrlModuleTextAddr
+	IMPORT_FUNC  "SystemCtrlForUser",0x053172F8,sctrlRebootDevice
 #endif
 #ifdef F_SystemCtrlForUser_0069
+	IMPORT_FUNC  "SystemCtrlForUser",0xF462EE55,sctrlDeflateDecompress
+#endif
+#ifdef F_SystemCtrlForUser_0070
+	IMPORT_FUNC  "SystemCtrlForUser",0x5D665044,sctrlGzipDecompress
+#endif
+#ifdef F_SystemCtrlForUser_0071
+	IMPORT_FUNC  "SystemCtrlForUser",0x16100529,LZ4_decompress_fast
+#endif
+#ifdef F_SystemCtrlForUser_0072
+	IMPORT_FUNC  "SystemCtrlForUser",0x76C382FF,lzo1x_decompress
+#endif
+#ifdef F_SystemCtrlForUser_0073
+	IMPORT_FUNC  "SystemCtrlForUser",0x62CAC4CF,sctrlPatchModule
+#endif
+#ifdef F_SystemCtrlForUser_0074
+	IMPORT_FUNC  "SystemCtrlForUser",0x2A868045,sctrlModuleTextAddr
+#endif
+#ifdef F_SystemCtrlForUser_0075
 	IMPORT_FUNC_WITH_ALIAS  "SystemCtrlForUser",0xFAC22931,sctrlHENFindImportLib,sctrlFindImportLib
 #endif

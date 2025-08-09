@@ -39,7 +39,7 @@ enum PspGenericError {
 	/** Invalid format */
 	SCE_ERR_INFORMAT = 0x80000108,
 	/** Invalid value */
-	SCE_ERR_INVAL = 0x800001FE,
+	SCE_ERR_INVALUE = 0x800001FE,
 	/** Invalid argument */
 	SCE_ERR_INARG = 0x800001FF,
 	SCE_ERR_NOENT = 0x80000202,
