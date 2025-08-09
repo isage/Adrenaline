@@ -211,7 +211,7 @@ int RunRebootPatched(u32 *params) {
 		if (rebootex_config.bootfileindex != BOOT_RECOVERY) {
 			rebootex_config.bootfileindex = BOOT_NORMAL;
 		}
-		memset(rebootex_config.umdfilename, 0, 0x48);
+		memset(rebootex_config.umdfilename, 0, 256);
 	}
 
 	return RunReboot(params);
