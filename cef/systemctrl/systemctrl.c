@@ -325,7 +325,7 @@ int sctrlSEUmountUmd() {
 }
 
 void sctrlSESetDiscOut(int out){
-    return;
+	return;
 }
 
 int sctrlSEGetBootConfBootFileIndex() {
@@ -440,4 +440,12 @@ void* sctrlSetStartModuleExtra(int (* func)(int modid, SceSize argsize, void * a
 extern u32 init_addr;
 u32 sctrlGetInitTextAddr() {
 	return init_addr;
+}
+
+void* sctrlHENGetInitControl() {
+	return NULL;
+}
+
+void sctrlHENTakeInitControl(void* ictrl) {
+	return;
 }

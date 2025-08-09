@@ -26,7 +26,7 @@ enum BootLoadFlags {
 };
 
 // Different PSP models
-enum {
+enum PspModel {
     PSP_1000 = 0,   // 01g
     PSP_2000 = 1,   // 02g
     PSP_3000 = 2,   // 03g
@@ -741,6 +741,5 @@ SceSize strncat_s(char *dest, SceSize numberOfElements, const char *src, SceSize
 SceSize strncpy_s(char *dest, SceSize numberOfElements, const char *src, SceSize count);
 
 #endif // __KERNEL__
-
 
 #endif // __SCTRLLIBRARY_H__
