@@ -1,7 +1,7 @@
 TARGET = xmbctrl
 OBJS = main.o settings.o list.o plugins.o utils.o exports.o config.o
 
-CFLAGS = -std=c99 -O2 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
+CFLAGS = -std=c99 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661

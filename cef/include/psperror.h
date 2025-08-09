@@ -1,6 +1,57 @@
 #ifndef __PSPERROR_H__
 #define __PSPERROR_H__
 
+enum PspGenericError {
+	/** Not Initialized */
+	SCE_ERR_NOT_INIT = 0x80000001,
+	/** Not Implemented */
+	SCE_ERR_NOT_IMPL = 0x80000003,
+	/** Not Supported */
+	SCE_ERR_NOT_SUPP = 0x80000004,
+	SCE_ERR_ALREADY = 0x80000020,
+	SCE_ERR_BUSY = 0x80000021,
+	/** Out of memory */
+	SCE_ERR_NOMEM = 0x80000022,
+	/** Privileges required */
+	SCE_ERR_PRIV_REQUIRED = 0x80000023,
+	SCE_ERR_NOTFOUND = 0x80000025,
+	/** Illegal context */
+	SCE_ERR_ILLCTX = 0x80000030,
+	SCE_ERR_CPUDI = 0x80000031,
+	/** Semaphore error */
+	SCE_ERR_SEMA = 0x80000041,
+	/** Invalid ID */
+	SCE_ERR_INID = 0x80000100,
+	/** Invalid name */
+	SCE_ERR_INNAME = 0x80000101,
+	/** Invalid index */
+	SCE_ERR_ININDEX = 0x80000102,
+	/** Invalid pointer */
+	SCE_ERR_INPTR = 0x80000103,
+	/** Invalid size */
+	SCE_ERR_INSIZE = 0x80000104,
+	/** Invalid flag */
+	SCE_ERR_INFLAG = 0x80000105,
+	/** Invalid Command */
+	SCE_ERR_INCMD = 0x80000106,
+	/** Invalid mode */
+	SCE_ERR_INMODE = 0x80000107,
+	/** Invalid format */
+	SCE_ERR_INFORMAT = 0x80000108,
+	/** Invalid value */
+	SCE_ERR_INVALUE = 0x800001FE,
+	/** Invalid argument */
+	SCE_ERR_INARG = 0x800001FF,
+	SCE_ERR_NOENT = 0x80000202,
+	SCE_ERR_BADF = 0x80000209,
+	SCE_ERR_ACCESS = 0x8000020D,
+	SCE_ERR_EXIST = 0x80000211,
+	SCE_ERR_INVAL = 0x80000216,
+	SCE_ERR_MFILE = 0x80000218,
+	SCE_ERR_NOSPC = 0x8000021C,
+	SCE_ERR_DFUNC = 0x800002FF,
+};
+
 enum PspUserErrorCodes {
 	SCE_EPERM = 0x80010001,
 	SCE_ENOENT = 0x80010002,

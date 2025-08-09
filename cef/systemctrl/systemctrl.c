@@ -320,6 +320,14 @@ int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs) {
 	return 0;
 }
 
+int sctrlSEUmountUmd() {
+	return 0;
+}
+
+void sctrlSESetDiscOut(int out){
+	return;
+}
+
 int sctrlSEGetBootConfBootFileIndex() {
 	return rebootex_config.bootfileindex;
 }
@@ -432,4 +440,155 @@ void* sctrlSetStartModuleExtra(int (* func)(int modid, SceSize argsize, void * a
 extern u32 init_addr;
 u32 sctrlGetInitTextAddr() {
 	return init_addr;
+}
+
+void* sctrlHENGetInitControl() {
+	return NULL;
+}
+
+void sctrlHENTakeInitControl(void* ictrl) {
+	return;
+}
+
+int sctrlGetSfoPARAM(const char* sfo_path, const char* param_name, u16* param_type, u32* param_length, void* param_buf) {
+	u32 k1 = pspSdkSetK1(0);
+
+	if (param_name == NULL || param_name[0] == 0 || param_length == NULL) {
+		pspSdkSetK1(k1);
+		return SCE_ERR_INARG;
+	}
+
+	if (*param_length <= 0) {
+		pspSdkSetK1(k1);
+		return SCE_ERR_INSIZE;
+	}
+
+	u32 param_offset = 0;
+	if (sfo_path == NULL) {
+		sfo_path = sceKernelInitFileName();
+
+		if (sfo_path == NULL) {
+			pspSdkSetK1(k1);
+			return SCE_ERR_NOENT;
+		}
+
+		if (strncmp(sfo_path, "disc0", 5) == 0) {
+			sfo_path = "disc0:/PSP_GAME/PARAM.SFO";
+		}
+	}
+
+	int fd = sceIoOpen(sfo_path, PSP_O_RDONLY, 0);
+
+	if (fd < 0) {
+		pspSdkSetK1(k1);
+		return SCE_ERR_NOENT;
+	}
+
+	int magic = 0;
+	sceIoRead(fd, &magic, sizeof(magic));
+
+	if (magic == PBP_MAGIC){
+		sceIoLseek(fd, 0x08, PSP_SEEK_SET);
+		sceIoRead(fd, &param_offset, sizeof(u32));
+	} else if (magic != 0x46535000){ // Invalid Format - FSP
+		sceIoClose(fd);
+		pspSdkSetK1(k1);
+		return SCE_ERR_NOENT;
+	}
+
+	// seek to PARAM.SFO offset
+	sceIoLseek(fd, param_offset, PSP_SEEK_SET);
+
+	// seek to key table offset variable
+	sceIoLseek(fd, 0x08, PSP_SEEK_CUR);
+
+	// read variables of interest
+	u32 key_table_offset = 0;
+	u32 data_table_offset = 0;
+	u32 entry_count = 0;
+	sceIoRead(fd, &key_table_offset, sizeof(key_table_offset));
+	sceIoRead(fd, &data_table_offset, sizeof(data_table_offset));
+	sceIoRead(fd, &entry_count, sizeof(entry_count));
+
+	// iterate entries
+	u32 entry;
+	for (entry = 0; entry < entry_count; entry++) {
+		// read variables of interest
+		u16 entry_key_offset = 0;
+		u16 entry_format = 0;
+		u32 entry_used_length = 0;
+		u32 entry_full_length = 0;
+		u32 entry_data_offset = 0;
+		sceIoRead(fd, &entry_key_offset, sizeof(entry_key_offset));
+		sceIoRead(fd, &entry_format, sizeof(entry_format));
+		sceIoRead(fd, &entry_used_length, sizeof(entry_used_length));
+		sceIoRead(fd, &entry_full_length, sizeof(entry_full_length));
+		sceIoRead(fd, &entry_data_offset, sizeof(entry_data_offset));
+
+		// save offset for next entry
+		SceOff next_entry_offset = sceIoLseek(fd, 0, PSP_SEEK_CUR);
+
+		// move to key name
+		sceIoLseek(fd, param_offset + key_table_offset + entry_key_offset, PSP_SEEK_SET);
+
+		// read key name
+		char key_name[128];
+		memset(key_name, 0, sizeof(key_name));
+		char symbol = 0;
+		while (sceIoRead(fd, &symbol, sizeof(symbol)) > 0) {
+			key_name[strlen(key_name)] = symbol;
+			if (symbol == 0) {
+				break;
+			}
+		}
+
+		if (strcmp(key_name, param_name) == 0) {
+			u32 required_length = entry_used_length;
+
+			if (entry_format == 0x0004) {
+				required_length = entry_used_length + 1;
+			}
+
+			if (param_buf != NULL && *param_length < required_length) {
+				sceIoClose(fd);
+				pspSdkSetK1(k1);
+				return SCE_ERR_INSIZE;
+			}
+
+			if (param_length != NULL) {
+				*param_length = required_length;
+			}
+
+			if (param_type != NULL) {
+				*param_type = entry_format;
+			}
+
+			// move to entry data
+			sceIoLseek(fd, param_offset + data_table_offset + entry_data_offset, PSP_SEEK_SET);
+
+			if (param_buf != NULL) {
+				// Reset buffer (also serves as termination of strings)
+				memset(param_buf, 0, *param_length);
+
+				sceIoRead(fd, param_buf, entry_used_length);
+			}
+
+			sceIoClose(fd);
+			pspSdkSetK1(k1);
+			return 0;
+		}
+
+		// Resume processing at next entry
+		sceIoLseek(fd, next_entry_offset, PSP_SEEK_SET);
+	}
+
+	sceIoClose(fd);
+	pspSdkSetK1(k1);
+
+	// Return Error Code (we just treat a missing parameter as file not found, it should work)
+	return SCE_ERR_NOENT;
+}
+
+int sctrlGetInitPARAM(const char* param_name, u16* param_type, u32* param_length, void* param_buf) {
+	return sctrlGetSfoPARAM(NULL, param_name, param_type, param_length, param_buf);
 }

@@ -26,7 +26,7 @@ enum BootLoadFlags {
 };
 
 // Different PSP models
-enum {
+enum PspModels {
     PSP_1000 = 0,   // 01g
     PSP_2000 = 1,   // 02g
     PSP_3000 = 2,   // 03g
@@ -264,6 +264,32 @@ int sctrlKernelSetDevkitVersion(int version);
  */
 int sctrlKernelBootFrom(void);
 
+/**
+ * Resolves the NID of a library if missing.
+ *
+ * @param libname The name of the library
+ * @param nid The NID to resolve
+ *
+ * @returns The function pointer to the resolved function, `0` otherwise
+ *
+ * @note Compat with ARK-4
+ */
+u32 sctrlKernelResolveNid(const char *libname, u32 nid);
+
+/**
+ * Enable/disable NID Resolver on particular library
+ *
+ * @param libname the name of the library to be enabled/disabled
+ * @param enabled 0 - disabled, != 0 - enabled
+ *
+ * @Example:
+ * sctrlKernelSetNidResolver("sceImpose_driver", 0); // disable sceImpose_driver resolving
+ *
+ * @return previous value if set, < 0 on error
+ *
+ * @note Compat with ARK-4. On Adrenaline returns `SCE_ENOSYS`
+ */
+int sctrlKernelSetNidResolver(char* libname, u32 enabled);
 
 /**
  * Finds a driver
@@ -544,6 +570,32 @@ void sctrlHENSetSpeed(int cpu, int bus);
 */
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
 
+
+/**
+ * Read parameter from an SFO file or an EBOOT.PBP file.
+ *
+ * @param sfo_path The SFO file path, or NULL for EBOOT.PBP file
+ * @param param_name The SFO parameter name
+ * @param param_type The SFO parameter type
+ * @param param_length The SFO parameter length
+ * @param param_buf The buffer to write the the found SFO parameter
+ *
+ * @returns Returns `0` if parameter was found, `<0` on error
+ */
+int sctrlGetSfoPARAM(const char* sfo_path, const char* param_name, u16* param_type, u32* param_length, void* param_buf);
+
+/**
+ * Get SFO param from currently running game/app.
+ *
+ * @param param_name The SFO parameter name
+ * @param param_type The SFO parameter type
+ * @param param_length The SFO parameter length
+ * @param param_buf The buffer to write the the found SFO parameter
+ *
+ * @returns Returns `0` if parameter was found, `<0` on error
+ */
+int sctrlGetInitPARAM(const char* param_name, u16* param_type, u32* param_length, void* param_buf);
+
 /**
  * Patch module by offset
  *
@@ -715,6 +767,5 @@ SceSize strncat_s(char *dest, SceSize numberOfElements, const char *src, SceSize
 SceSize strncpy_s(char *dest, SceSize numberOfElements, const char *src, SceSize count);
 
 #endif // __KERNEL__
-
 
 #endif // __SCTRLLIBRARY_H__

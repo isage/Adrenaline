@@ -541,3 +541,11 @@ u32 sctrlModuleTextAddr(char *modname) {
 	pspSdkSetK1(k1);
 	return text_addr;
 }
+
+u32 sctrlKernelResolveNid(const char *libname, u32 nid) {
+	return (u32)ResolveMissingNIDs(libname, nid);
+}
+
+int sctrlKernelSetNidResolver(char* libname, u32 enabled) {
+	return SCE_ENOSYS;
+}

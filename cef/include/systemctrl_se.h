@@ -123,25 +123,22 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size);
  *
  * @returns 0 on success
  *
- * @Note - When setting noumd to 1, isofs should also be set to 1,
+ * @note 1. When setting noumd to 1, isofs should also be set to 1,
  * otherwise the umd would be still required.
  *
- * @Note 2 - The function doesn't check if the file is valid or even if it exists
+ * @note 2. The function doesn't check if the file is valid or even if it exists
  * and it may return success on those cases
  *
- * @Note 3 - This function is not available in SE for devhook
- * @Example:
+ * @note 3. This function is not available in SE for devhook
  *
+ * @example
  * AdrenalineConfig config;
  *
  * sctrlSEGetConfig(&config);
  *
- * if (config.usenoumd)
- * {
+ * if (config.usenoumd) {
  *		sctrlSEMountUmdFromFile("ms0:/ISO/mydisc.iso", 1, 1);
- * }
- * else
- * {
+ * } else {
  *		sctrlSEMountUmdFromFile("ms0:/ISO/mydisc.iso", 0, config.useisofsonumdinserted);
  * }
 */
