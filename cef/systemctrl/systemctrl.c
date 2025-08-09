@@ -320,6 +320,14 @@ int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs) {
 	return 0;
 }
 
+int sctrlSEUmountUmd() {
+	return 0;
+}
+
+void sctrlSESetDiscOut(int out){
+    return;
+}
+
 int sctrlSEGetBootConfBootFileIndex() {
 	return rebootex_config.bootfileindex;
 }
