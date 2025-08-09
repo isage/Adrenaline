@@ -109,6 +109,8 @@ PSP_EXPORT_FUNC(sctrlKernelSetInitKeyConfig)
 PSP_EXPORT_ALIAS(sctrlKernelSetInitKeyConfig, sctrlKernelSetApplicationType)
 PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xCB76B778)
 PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xB551220C)
+PSP_EXPORT_FUNC(sctrlKernelResolveNid)
+PSP_EXPORT_FUNC(sctrlKernelSetNidResolver)
 
 # sctrlSE
 PSP_EXPORT_FUNC(sctrlSEGetConfig)
@@ -211,6 +213,8 @@ PSP_EXPORT_FUNC(sctrlKernelSetInitKeyConfig)
 PSP_EXPORT_ALIAS(sctrlKernelSetInitKeyConfig, sctrlKernelSetApplicationType)
 PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xCB76B778)
 PSP_EXPORT_FUNC_NID(sctrlKernelSetInitKeyConfig, 0xB551220C)
+PSP_EXPORT_FUNC(sctrlKernelResolveNid)
+PSP_EXPORT_FUNC(sctrlKernelSetNidResolver)
 
 # sctrlSE - COMMON
 PSP_EXPORT_FUNC(sctrlSEGetConfig)

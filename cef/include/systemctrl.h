@@ -264,6 +264,32 @@ int sctrlKernelSetDevkitVersion(int version);
  */
 int sctrlKernelBootFrom(void);
 
+/**
+ * Resolves the NID of a library if missing.
+ *
+ * @param libname The name of the library
+ * @param nid The NID to resolve
+ *
+ * @returns The function pointer to the resolved function, `0` otherwise
+ *
+ * @note Compat with ARK-4
+ */
+u32 sctrlKernelResolveNid(const char *libname, u32 nid);
+
+/**
+ * Enable/disable NID Resolver on particular library
+ *
+ * @param libname the name of the library to be enabled/disabled
+ * @param enabled 0 - disabled, != 0 - enabled
+ *
+ * @Example:
+ * sctrlKernelSetNidResolver("sceImpose_driver", 0); // disable sceImpose_driver resolving
+ *
+ * @return previous value if set, < 0 on error
+ *
+ * @note Compat with ARK-4. On Adrenaline returns `SCE_ENOSYS`
+ */
+int sctrlKernelSetNidResolver(char* libname, u32 enabled);
 
 /**
  * Finds a driver
