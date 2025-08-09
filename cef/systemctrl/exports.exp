@@ -131,6 +131,8 @@ PSP_EXPORT_FUNC(sctrlSEUmountUmd)
 
 # sctrl - other
 PSP_EXPORT_FUNC(sctrlFlushCache)
+PSP_EXPORT_FUNC(sctrlGetInitPARAM)
+PSP_EXPORT_FUNC(sctrlGetSfoPARAM)
 PSP_EXPORT_FUNC(sctrlGetUsbState)
 PSP_EXPORT_FUNC(sctrlHookImportByNID)
 PSP_EXPORT_FUNC(sctrlLZ4Decompress)
@@ -179,10 +181,10 @@ PSP_EXPORT_FUNC(sctrlHENPatchSyscall)
 PSP_EXPORT_FUNC_NID(sctrlHENPatchSyscall, 0x826668E9)
 PSP_EXPORT_FUNC_NID(sctrlHENPatchSyscall, 0x02BFCB5F)
 PSP_EXPORT_FUNC(sctrlHENRegisterHomebrewLoader)
-#PSP_EXPORT_FUNC(sctrlHENRegisterKDecryptHandler)
-#PSP_EXPORT_FUNC(sctrlHENRegisterMDecryptHandler)
 PSP_EXPORT_FUNC(sctrlHENGetInitControl)
 PSP_EXPORT_FUNC(sctrlHENTakeInitControl)
+#PSP_EXPORT_FUNC(sctrlHENRegisterKDecryptHandler)
+#PSP_EXPORT_FUNC(sctrlHENRegisterMDecryptHandler)
 #PSP_EXPORT_FUNC(sctrlHENRegisterLLEHandler)
 
 # sctrlKernel - COMMON
@@ -243,6 +245,8 @@ PSP_EXPORT_FUNC(sctrlSESetUmdFileEx)
 
 # sctrl - COMMON
 PSP_EXPORT_FUNC(sctrlFlushCache)
+PSP_EXPORT_FUNC(sctrlGetInitPARAM)
+PSP_EXPORT_FUNC(sctrlGetSfoPARAM)
 PSP_EXPORT_FUNC(sctrlGetUsbState)
 PSP_EXPORT_FUNC(sctrlHookImportByNID)
 PSP_EXPORT_FUNC(sctrlLZ4Decompress)

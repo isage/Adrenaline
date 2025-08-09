@@ -570,6 +570,32 @@ void sctrlHENSetSpeed(int cpu, int bus);
 */
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
 
+
+/**
+ * Read parameter from an SFO file or an EBOOT.PBP file.
+ *
+ * @param sfo_path The SFO file path, or NULL for EBOOT.PBP file
+ * @param param_name The SFO parameter name
+ * @param param_type The SFO parameter type
+ * @param param_length The SFO parameter length
+ * @param param_buf The buffer to write the the found SFO parameter
+ *
+ * @returns Returns `0` if parameter was found, `<0` on error
+ */
+int sctrlGetSfoPARAM(const char* sfo_path, const char* param_name, u16* param_type, u32* param_length, void* param_buf);
+
+/**
+ * Get SFO param from currently running game/app.
+ *
+ * @param param_name The SFO parameter name
+ * @param param_type The SFO parameter type
+ * @param param_length The SFO parameter length
+ * @param param_buf The buffer to write the the found SFO parameter
+ *
+ * @returns Returns `0` if parameter was found, `<0` on error
+ */
+int sctrlGetInitPARAM(const char* param_name, u16* param_type, u32* param_length, void* param_buf);
+
 /**
  * Patch module by offset
  *
