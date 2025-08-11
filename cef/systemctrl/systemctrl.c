@@ -285,8 +285,8 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr) {
 	}
 }
 
-void SetUmdFile(char *file) __attribute__((alias("sctrlSESetUmdFile")));
-void sctrlSESetUmdFile(char *file) {
+void SetUmdFile(const char *file) __attribute__((alias("sctrlSESetUmdFile")));
+void sctrlSESetUmdFile(const char *file) {
 	strncpy(rebootex_config.umdfilename, file, 255);
 }
 

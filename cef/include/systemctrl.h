@@ -15,6 +15,8 @@ enum BootModes {
 	BOOT_MARCH33,
 	BOOT_NP9660,
 	BOOT_RECOVERY,
+	BOOT_VSHUMD,
+	BOOT_UPDATERUMD,
 };
 
 enum BootLoadFlags {

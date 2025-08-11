@@ -211,8 +211,8 @@ char *sctrlSEGetUmdFileEx(char *input);
  *
  * @param file - The umd file
 */
-void sctrlSESetUmdFile(char *file);
-void SetUmdFile(char *file);
+void sctrlSESetUmdFile(const char *file);
+void SetUmdFile(const char *file);
 
 /**
  * Sets the current umd file and copy the previous to `input`
