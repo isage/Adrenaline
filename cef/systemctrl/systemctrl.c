@@ -194,6 +194,29 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	return res;
 }
 
+#if defined(DEBUG) && DEBUG >= 3
+int (* _runExec)(RunExecParams* args) = NULL;
+int runExecPatched(RunExecParams* args) {
+	if (args->args == 0) {
+		logmsg3("%s: [INFO]: apitype=0x%04X, file=%s, param=0x%p\n", __func__, args->api_type, (char *)args->argp, args->vsh_param);
+	} else {
+		logmsg3("%s: [INFO]: apitype=0x%04X, param=0x%p\n", __func__, args->api_type, args->vsh_param);
+	}
+
+	u32 k1 = pspSdkSetK1(0);
+
+	if (!_runExec) {
+		SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
+		_runExec = (void*) mod->text_addr + 0x2148;
+	}
+
+	int res = _runExec(args);
+
+	pspSdkSetK1(k1);
+	return res;
+}
+#endif // defined(DEBUG) && DEBUG >= 3
+
 int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int) = NULL;
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLoadExecVSHParam *param) {
 	logmsg3("%s: [INFO]: apitype=0x%04X, file=%s, param=0x%p\n", __func__, apitype, file, param);

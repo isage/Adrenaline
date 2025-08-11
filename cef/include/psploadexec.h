@@ -65,6 +65,19 @@ typedef struct SceKernelLoadExecVSHParam {
     u32 unk5;
 } SceKernelLoadExecVSHParam;
 
+typedef struct {
+    s32 api_type;
+    s32 args;
+    // Sometimes contains filename (args is then set to 0)
+    void *argp;
+    SceKernelLoadExecVSHParam *vsh_param;
+    void *opt4;
+    char *np_drm1;
+    s32 np_drm2_1;
+    s32 np_drm2_2;
+    void *np_drm_arg;
+} RunExecParams;
+
 #ifdef __USER__
 /**
  * Register callback

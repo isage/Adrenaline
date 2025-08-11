@@ -408,6 +408,12 @@ int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod);
 
+		#if defined(DEBUG) && DEBUG >= 3
+		extern int (* _runExec)(RunExecParams*);
+		extern int runExecPatched(RunExecParams* args);
+		HIJACK_FUNCTION(text_addr+0x2148, runExecPatched, _runExec);
+		#endif // defined(DEBUG) && DEBUG >= 3
+
 		// Hijack all execute calls
         extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
         extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, SceKernelLoadExecVSHParam * param);
