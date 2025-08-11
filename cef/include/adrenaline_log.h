@@ -128,6 +128,7 @@ int _logSync(void);
 #include <pspdebug.h>
 #include <pspdisplay.h>
 #include <pspiofilemgr.h>
+#include <pspmoduleinfo.h>
 #include <stdarg.h>
 #include <string.h>
 
@@ -435,7 +436,7 @@ static void logOutput(int printed_len) {
 	sceKernelDelayThread(10000);
 }
 
-int isCpuIntrEnabled(void) {
+static int isCpuIntrEnabled(void) {
 	int ret;
 
 	__asm__ volatile ("mfic    %0, $0\n"
@@ -485,7 +486,7 @@ int _logCached(char *fmt, ...) {
 	return printed_len;
 }
 
-int _logmsg(char *fmt, ...) {
+static int __logmsg(char *fmt, ...) {
 	va_list args;
 	int printed_len;
 
@@ -511,6 +512,37 @@ int _logmsg(char *fmt, ...) {
 	pspSdkSetK1(k1);
 
 	return printed_len;
+}
+
+int _logmsg(char *fmt, ...) {
+	extern SceModuleInfo module_info;
+	int res = __logmsg("[%s v%d.%d]: ", module_info.modname, module_info.modversion[0], module_info.modversion[1]);
+
+	va_list args;
+	int printed_len;
+
+	u32 k1 = pspSdkSetK1(0);
+
+	if (0 == isCpuIntrEnabled()) {
+		// interrupt disabled, let's do the work quickly before the watchdog bites
+		va_start(args, fmt);
+		printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+		va_end(args);
+		printed_len--;
+		appendToMemoryLog(printed_len);
+	} else {
+		logLock();
+		va_start(args, fmt);
+		printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+		va_end(args);
+		printed_len--;
+		logOutput(printed_len);
+		logUnlock();
+	}
+
+	pspSdkSetK1(k1);
+
+	return res + printed_len;
 }
 
 static unsigned long InterlockedExchange(unsigned long volatile *dst, unsigned long exchange) {

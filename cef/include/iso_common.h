@@ -86,8 +86,11 @@ extern SceUID g_iso_fd;
 extern int g_iso_opened;
 extern int g_total_sectors;
 extern IoReadArg g_read_arg;
+extern char* g_sector_buffer;
+
 
 int iso_read(IoReadArg *args);
 int iso_open(void);
+void iso_close(void);
 
 #endif // __ISO_COMMON_H
