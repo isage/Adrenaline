@@ -217,7 +217,7 @@ int loadParamsPatched(int a0) {
 
 int _start(void *a0, void *a1, void *a2) __attribute__((section(".text.start")));
 int _start(void *a0, void *a1, void *a2) {
-	int (* sceBoot)(void *a0, void *a1, void *a2);
+	int (* sceBoot)(void *a0, void *a1, void *a2) = NULL;
 
 	*(u32 *)0x89FF0000 = 0x200;
 	*(u32 *)0x89FF0004 = 0x2;
@@ -269,5 +269,10 @@ int _start(void *a0, void *a1, void *a2) {
 	ClearCaches();
 
 	// Call original function
-	return sceBoot(a0, a1, a2);
+	int res = SCE_ERR_NOT_INIT;
+	// this branch should always happen
+	if (sceBoot != NULL) {
+		res = sceBoot(a0, a1, a2);
+	}
+	return res;
 }

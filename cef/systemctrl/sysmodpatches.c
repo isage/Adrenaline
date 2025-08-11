@@ -160,8 +160,6 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 // ARK-4 compat
 int sctrlHENApplyMemory(u32 p2) {
-	int apitype = sceKernelInitApitype();
-
 	if (p2 > 52) {
 		p2 = 52;
 	}
