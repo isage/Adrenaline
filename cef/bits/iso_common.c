@@ -33,7 +33,7 @@
 
 
 // Iso filename
-char g_iso_fn[255] = {0};
+char g_iso_fn[256] = {0};
 IoReadArg g_read_arg;
 SceUID heapid = -1;
 int g_iso_opened = 0;
@@ -348,7 +348,10 @@ static void decompress_cso2(void* src, u32 src_len, void* dst, u32 dst_len, u32 
 	else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
-static int iso_alloc(u32 com_size) {
+#ifndef __ISO_EXTRA__
+static
+#endif // __ISO_EXTRA__
+int iso_alloc(u32 com_size) {
 	#ifdef __USE_USER_ALLOC
 	if (is_compressed) {
 		// allocate buffer for decompressed block
@@ -454,7 +457,10 @@ static void iso_free() {
 	g_sector_buffer = NULL;
 }
 
-static int iso_type_check(SceUID fd) {
+#ifndef __ISO_EXTRA__
+static
+#endif // __ISO_EXTRA__
+int iso_type_check(SceUID fd) {
 	CISOHeader g_CISO_hdr;
 
 	g_CISO_hdr.magic = 0;
@@ -589,3 +595,28 @@ void iso_close() {
 	is_compressed = 0;
 	memset(g_iso_fn, 0, 255);
 }
+
+#ifdef __ISO_EXTRA__
+int iso_re_open(void) {
+	int retries = max_retries;
+	int fd = -1;
+
+	sceIoClose(g_iso_fd);
+
+	while (retries -- > 0) {
+		fd = sceIoOpen(g_iso_fn, o_flags, 0777);
+
+		if (fd >= 0) {
+			break;
+		}
+
+		sceKernelDelayThread(100000);
+	}
+
+	if (fd >= 0) {
+		g_iso_fd = fd;
+	}
+
+	return fd;
+}
+#endif // __ISO_EXTRA__

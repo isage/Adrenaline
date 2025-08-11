@@ -81,16 +81,21 @@ typedef struct IoReadArg {
 	u32 size; // 8
 } IoReadArg;
 
-extern char g_iso_fn[255];
+extern char g_iso_fn[256];
 extern SceUID g_iso_fd;
 extern int g_iso_opened;
 extern int g_total_sectors;
 extern IoReadArg g_read_arg;
 extern char* g_sector_buffer;
 
-
 int iso_read(IoReadArg *args);
 int iso_open(void);
 void iso_close(void);
+
+#ifdef __ISO_EXTRA__
+int iso_type_check(SceUID fd);
+int iso_alloc(u32 com_size);
+int iso_re_open(void);
+#endif // __ISO_EXTRA__
 
 #endif // __ISO_COMMON_H
