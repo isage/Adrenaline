@@ -198,9 +198,9 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 int (* _runExec)(RunExecParams* args) = NULL;
 int runExecPatched(RunExecParams* args) {
 	if (args->args == 0) {
-		logmsg3("%s: [INFO]: apitype=0x%04X, file=%s, param=0x%p\n", __func__, args->api_type, (char *)args->argp, args->vsh_param);
+		logmsg3("%s: [INFO]: apitype=0x%04lX, file=%s, param=0x%p\n", __func__, args->api_type, (char *)args->argp, args->vsh_param);
 	} else {
-		logmsg3("%s: [INFO]: apitype=0x%04X, param=0x%p\n", __func__, args->api_type, args->vsh_param);
+		logmsg3("%s: [INFO]: apitype=0x%04lX, param=0x%p\n", __func__, args->api_type, args->vsh_param);
 	}
 
 	u32 k1 = pspSdkSetK1(0);

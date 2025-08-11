@@ -45,7 +45,7 @@ STMOD_HANDLER previous;
 
 int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 	if (destSize & 0x80000000) {
-		logmsg3("%s: error=0x%08X", __func__, destSize);
+		logmsg3("%s: error=0x%08lX", __func__, destSize);
 		return _scePopsManExitVSHKernel(destSize);
 	}
 
@@ -54,7 +54,7 @@ int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 	int ret;
 	if (size == 0x9300) {
 		ret = 0x92FF;
-		logmsg4("%s: [FAKE] return value -> 0x%08X\n", __func__, ret);
+		logmsg4("%s: [FAKE] return value -> 0x%08lX\n", __func__, ret);
 	} else {
 		ret = size;
 	}
@@ -75,7 +75,7 @@ int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 	int ret = _sceMeAudio_2AB4FE43(buf, size);
 	pspSdkSetK1(k1);
 
-	logmsg3("%s: buf=0x%08X, size=0x%08X -> 0x%08X", __func__, (u32)buf, size, ret);
+	logmsg3("%s: buf=0x%p, size=0x%08X -> 0x%08X", __func__, buf, size, ret);
 	return ret;
 }
 
@@ -142,7 +142,7 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 			if (config_size > 0) {
 				// It is located at 0x420 after PSISOIMG, thus 0x20 after given buffer
 				memcpy(data+0x20, custom_config, config_size);
-				logmsg2("%s: Custom config was set.\n", __func__);
+				logmsg2("%s: [INFO]: Custom config was set.\n", __func__);
 			}
 
 			// anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG, 0xEB0 after given buffer
@@ -154,7 +154,7 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 				// It needs to be xored with this constant
 				libcrypt_magic ^= LIBCRYPT_XOR_MAGIC;
 				memcpy(data+0xeb0, &libcrypt_magic, sizeof(libcrypt_magic));
-				logmsg2("%s: Anti-libcrypt patch was applied.\n", __func__);
+				logmsg2("%s: [INFO]: Anti-libcrypt patch was applied.\n", __func__);
 			}
 		}
 	}
@@ -165,7 +165,7 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 
 	if (!is_official && size >= 0x420 && data[0x41B] == 0x27 && data[0x41C] == 0x19 && data[0x41D] == 0x22 && data[0x41E] == 0x41 && data[0x41A] == data[0x41F]) {
 		data[0x41B] = 0x55;
-		logmsg3("%s: Unknown patch loc_6c\n", __func__);
+		logmsg3("%s: [INFO]: Unknown patch loc_6c\n", __func__);
 	}
 
 	// Fake ~PSP magic to avoid crash
@@ -180,7 +180,7 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 
 exit:
 	pspSdkSetK1(k1);
-	logmsg3("%s: fd=0x%08X, data=0x%08X, size=0x%08X -> 0x%08X\n", __func__, fd, data, size, res);
+	logmsg3("%s: fd=0x%08X, data=0x%p, size=0x%08X -> 0x%08X\n", __func__, fd, data, size, res);
 	return res;
 }
 

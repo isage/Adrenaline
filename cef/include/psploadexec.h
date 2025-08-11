@@ -66,7 +66,7 @@ typedef struct SceKernelLoadExecVSHParam {
 } SceKernelLoadExecVSHParam;
 
 typedef struct {
-    s32 api_type;
+    u32 api_type;
     s32 args;
     // Sometimes contains filename (args is then set to 0)
     void *argp;
