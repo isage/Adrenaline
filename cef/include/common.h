@@ -138,6 +138,7 @@ typedef struct {
 	u32 ram11;
 
 	char umdfilename[256];
+	char game_id[10];
 } RebootexConfig;
 
 int sctrlGetUsbState();

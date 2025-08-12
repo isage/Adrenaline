@@ -37,6 +37,7 @@
 #include "nodrm.h"
 #include "malloc.h"
 #include "ttystdio.h"
+#include "gameinfo.h"
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 0);
 
@@ -495,6 +496,10 @@ int OnModuleStart(SceModule2 *mod) {
 
 	} else if(strcmp(modname, "sceUSBCam_Driver") == 0) {
 		PatchUSBCamDriver(mod);
+
+	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
+		findAndSetGameId();
+		logmsg3("[INFO]: Rebootex Game ID: %s\n", rebootex_config.game_id);
 
 	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);

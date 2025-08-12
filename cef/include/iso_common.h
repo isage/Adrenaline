@@ -92,6 +92,8 @@ int iso_read(IoReadArg *args);
 int iso_open(void);
 void iso_close(void);
 
+int isoGetGameId(char game_id[10]);
+
 #ifdef __ISO_EXTRA__
 int iso_type_check(SceUID fd);
 int iso_alloc(u32 com_size);

@@ -145,9 +145,9 @@ void initAdrenalineInfo() {
 		strcpy(adrenaline->title, "Unknown");
 	}
 
-	void *game_info = sceKernelGetGameInfo();
+	SceGameInfo *game_info = sceKernelGetGameInfo();
 	if (game_info)
-		strcpy(adrenaline->titleid, game_info + 0x44);
+		strcpy(adrenaline->titleid, game_info->game_id);
 
 	char *filename = sceKernelInitFileName();
 	if (filename)
