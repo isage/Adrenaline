@@ -626,7 +626,7 @@ int isoGetGameId(char game_id[10]) {
 	// lba=16, offset=883
 	u32 pos = 16 * ISO_SECTOR_SIZE + 883;
 	IoReadArg read_arg = {
-		.address = game_id,
+		.address = (u8*)game_id,
 		.size = 10,
 		.offset = pos
 	};

@@ -167,7 +167,7 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		if (has_pboot)
 			apitype = PSP_INIT_APITYPE_UMDEMU_MS2;
 		else
-			apitype = PSP_INIT_APITYPE_DISC;
+			apitype = PSP_INIT_APITYPE_UMDEMU_MS1;
 
 		param->args = strlen(param->argp) + 1; //Update length
 

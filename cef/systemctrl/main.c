@@ -44,6 +44,7 @@ PSP_MODULE_INFO("SystemControl", 0x1007, 1, 0);
 int (* PrologueModule)(void *modmgr_param, SceModule2 *mod);
 
 STMOD_HANDLER module_handler;
+STMOD_HANDLER game_previous = NULL;
 
 RebootexConfig rebootex_config;
 
@@ -111,7 +112,7 @@ int memcmp_patched(const void *b1, const void *b2, size_t len) {
 	return memcmp(b1, b2, len);
 }
 
-void PatchMemlmd() {
+static void PatchMemlmd() {
 	SceModule2 *mod = sceKernelFindModuleByName("sceMemlmd");
 	u32 text_addr = mod->text_addr;
 
@@ -119,7 +120,7 @@ void PatchMemlmd() {
 	MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
 }
 
-void PatchInterruptMgr() {
+static void PatchInterruptMgr() {
 	SceModule2 *mod = sceKernelFindModuleByName("sceInterruptManager");
 	u32 text_addr = mod->text_addr;
 
@@ -128,7 +129,7 @@ void PatchInterruptMgr() {
 	MAKE_NOP(text_addr + 0xE9C);
 }
 
-void PatchModuleMgr() {
+static void PatchModuleMgr() {
 	SceModule2 *mod = sceKernelFindModuleByName("sceModuleManager");
 	u32 text_addr = mod->text_addr;
 
@@ -154,7 +155,7 @@ void PatchModuleMgr() {
 }
 
 
-void PatchLoadCore() {
+static void PatchLoadCore() {
 	SceModule2 *mod = sceKernelFindModuleByName("sceLoaderCore");
 	u32 text_addr = mod->text_addr;
 
@@ -251,23 +252,23 @@ void PatchLoadCore() {
 
 // Taken from ARK-4
 u32 _findJAL(u32 addr, int reversed, int skip) {
-    if (addr != 0) {
-        int add = 4;
-        if (reversed) {
-            add = -4;
+	if (addr != 0) {
+		int add = 4;
+		if (reversed) {
+			add = -4;
 		}
-        for(;;addr += add) {
-            if ((VREAD32(addr) >= 0x0C000000) && (VREAD32(addr) < 0x10000000)){
-                if (skip == 0) {
-                    return (((VREAD32(addr) & 0x03FFFFFF) << 2) | 0x80000000);
+		for(;;addr += add) {
+			if ((VREAD32(addr) >= 0x0C000000) && (VREAD32(addr) < 0x10000000)){
+				if (skip == 0) {
+					return (((VREAD32(addr) & 0x03FFFFFF) << 2) | 0x80000000);
 				} else {
-                    skip--;
+					skip--;
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 
-    return 0;
+	return 0;
 }
 
 // Taken from ARK-3
@@ -282,7 +283,7 @@ u32 FindFirstBEQ(u32 addr) {
 	return 0;
 }
 
-void PatchSysmem() {
+static void PatchSysmem() {
 	u32 nids[] = { 0x7591C7DB, 0x342061E5, 0x315AD3A0, 0xEBD5C3E6, 0x057E7380, 0x91DE343C, 0x7893F79A, 0x35669D4C, 0x1B4217BC, 0x358CA1BB };
 
 	for (int i = 0; i < sizeof(nids) / sizeof(u32); i++) {
@@ -309,7 +310,7 @@ int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	return res;
 }
 
-void PatchVolatileMemBug() {
+static void PatchVolatileMemBug() {
 	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 		sceKernelVolatileMemTryLock = (void *)FindProc("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
 		sctrlHENPatchSyscall((u32)sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
@@ -329,8 +330,72 @@ int bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
 
 #define N_CPU (sizeof(cpu_list) / sizeof(int))
 
+static int (*utilityGetParam)(int, int*) = NULL;
+static int utilityGetParamPatched_ULJM05221(int param, int* value) {
+	int res = utilityGetParam(param, value);
+	if (param == PSP_SYSTEMPARAM_ID_INT_LANGUAGE && *value > 1) {
+		*value = 0;
+	}
+	return res;
+}
 
-void OnSystemStatusIdle() {
+static int wweModuleOnStart(SceModule2 * mod) {
+    // Boot Complete Action not done yet
+    if (strcmp(mod->modname, "mainPSP") == 0) {
+        sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222); // scePowerGetPllClockFrequencyInt
+        sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);   // scePowerSetCpuClockFrequency
+        sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222); // scePowerGetCpuClockFrequencyInt
+        sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111); // scePowerGetBusClockFrequencyInt
+    }
+
+    // Call Previous Module Start Handler
+    if(game_previous) game_previous(mod);
+
+	return 0;
+}
+
+static void PatchGameByGameId() {
+	char* game_id = rebootex_config.game_id;
+
+	// Fix TwinBee Portable when not using English or Japanese language
+	if (strcasecmp("ULJM05221", game_id) == 0) {
+		utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
+		sctrlHENPatchSyscall((u32)utilityGetParam, utilityGetParamPatched_ULJM05221);
+
+	} else if (strcasecmp("ULES01472", game_id) == 0 || strcasecmp("ULUS10543", game_id) == 0){
+        // Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
+		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
+    }
+}
+
+static void PatchGamesByMod(SceModule2* mod) {
+	char *modname = mod->modname;
+
+	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
+		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
+
+	} else if (strcmp(mod->modname, "ATVPRO") == 0){
+		// Remove "overclock" message in ATV PRO
+		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
+		sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);
+		sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222);
+		sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111);
+
+	} else if (strcmp(modname, "tekken") == 0) {
+		// Fix back screen on Tekken 6
+		// scePowerGetPllClockFrequencyInt
+		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222);
+
+	} else if (strcmp(modname, "KHBBS_patch") == 0) {
+		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
+
+	}
+
+	sctrlFlushCache();
+}
+
+
+static void OnSystemStatusIdle() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 	initAdrenalineInfo();
@@ -385,9 +450,15 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
-int OnModuleStart(SceModule2 *mod) {
+static int OnModuleStart(SceModule2 *mod) {
+	static int ready_gamepatch_mod = 0;
+
 	char *modname = mod->modname;
 	u32 text_addr = mod->text_addr;
+
+	if (ready_gamepatch_mod) {
+		PatchGamesByMod(mod);
+	}
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {
 		if (mallocinit() < 0) {
@@ -416,16 +487,16 @@ int OnModuleStart(SceModule2 *mod) {
 		#endif // defined(DEBUG) && DEBUG >= 3
 
 		// Hijack all execute calls
-        extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
-        extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, SceKernelLoadExecVSHParam * param);
-        u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
-        HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
+		extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
+		extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, SceKernelLoadExecVSHParam * param);
+		u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
+		HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
 
-        // Hijack exit calls
-        extern int (*_sceKernelExitVSH)(void*);
-        extern int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param);
-        u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
-        HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
+		// Hijack exit calls
+		extern int (*_sceKernelExitVSH)(void*);
+		extern int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param);
+		u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
+		HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
 
 	} else if (strcmp(modname, "scePower_Service") == 0) {
 		logmsg3("[INFO]: Built: %s %s\n", __DATE__, __TIME__);
@@ -498,26 +569,10 @@ int OnModuleStart(SceModule2 *mod) {
 		PatchUSBCamDriver(mod);
 
 	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
+		ready_gamepatch_mod = 1;
 		findAndSetGameId();
-		logmsg3("[INFO]: Rebootex Game ID: %s\n", rebootex_config.game_id);
-
-	} else if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
-		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
-
-	} else if (strcmp(mod->modname, "ATVPRO") == 0){
-		// Remove "overclock" message in ATV PRO
-		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
-        sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);
-        sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222);
-        sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111);
-    } else if (strcmp(modname, "tekken") == 0) {
-		// Fix back screen on Tekken 6
-		// scePowerGetPllClockFrequencyInt
-		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222);
-
-	} else if (strcmp(modname, "KHBBS_patch") == 0) {
-		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
-		sctrlFlushCache();
+		logmsg3("[INFO]: Game ID: %s\n", rebootex_config.game_id);
+		PatchGameByGameId();
 
 	} else if (strcmp(modname, "VLF_Module") == 0) {
 		static u32 nids[] = { 0x2A245FE6, 0x7B08EAAB, 0x22050FC0, 0x158BE61A, 0xD495179F };

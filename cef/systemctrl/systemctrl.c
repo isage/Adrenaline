@@ -240,8 +240,6 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
         sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, rebootex_config.game_id);
     }
 
-	logmsg3("[INFO]: Rebootex Game ID: %s\n", rebootex_config.game_id);
-
 	int res = _sceLoadExecVSHWithApitype(apitype, file, param, 0x10000);
 	pspSdkSetK1(k1);
 
@@ -526,7 +524,7 @@ int sctrlGetSfoPARAM(const char* sfo_path, const char* param_name, u16* param_ty
 	if (magic == PBP_MAGIC){
 		sceIoLseek(fd, 0x08, PSP_SEEK_SET);
 		sceIoRead(fd, &param_offset, sizeof(u32));
-	} else if (magic != 0x46535000){ // Invalid Format - FSP
+	} else if (magic != SFO_MAGIC){ // Invalid Format - FSP
 		sceIoClose(fd);
 		pspSdkSetK1(k1);
 		return SCE_ERR_NOENT;
