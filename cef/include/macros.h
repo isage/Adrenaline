@@ -8,6 +8,7 @@
 #define ELF_MAGIC 0x464C457F
 #define PSP_MAGIC 0x5053507E
 #define BTCNF_MAGIC 0x0F803001
+#define SFO_MAGIC 0x46535000
 
 #define FW_TO_FIRMWARE(f) ((((f >> 8) & 0xF) << 24) | (((f >> 4) & 0xF) << 16) | ((f & 0xF) << 8) | 0x10)
 #define FIRMWARE_TO_FW(f) ((((f >> 24) & 0xF) << 8) | (((f >> 16) & 0xF) << 4) | ((f >> 8) & 0xF))

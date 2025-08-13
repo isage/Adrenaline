@@ -132,6 +132,8 @@ PSP_EXPORT_FUNC(infernoCacheInit)
 PSP_EXPORT_FUNC(infernoSetUmdDelay)
 # inferno_driver_B573209C
 PSP_EXPORT_FUNC(iso_read_with_stack)
+# inferno_driver_FF8838D4
+PSP_EXPORT_FUNC(isoGetGameId)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS
