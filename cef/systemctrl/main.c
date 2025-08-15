@@ -598,7 +598,7 @@ static int OnModuleStart(SceModule2 *mod) {
 		}
 	}
 
-	logmsg4("%s: [DEBUG]: mod_name=%s — text_addr=0x%08X\n", modname, text_addr);
+	logmsg4("%s: [DEBUG]: mod_name=%s — text_addr=0x%08X\n", __func__, modname, text_addr);
 
 	return 0;
 }
