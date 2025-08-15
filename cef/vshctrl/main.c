@@ -18,6 +18,9 @@
 
 #include <common.h>
 
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 #include "virtualpbpmgr.h"
 #include "isofs_driver/umd9660_driver.h"
 #include "isofs_driver/isofs_driver.h"
@@ -987,6 +990,9 @@ int OnModuleStart(SceModule2 *mod) {
 }
 
 int module_start(SceSize args, void *argp) {
+	logInit("ms0:/log_vshctrl.txt");
+	logmsg("VshCtrl started\n");
+
 	SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
 	u32 text_addr = mod->text_addr;
 
