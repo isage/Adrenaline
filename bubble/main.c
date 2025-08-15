@@ -207,7 +207,8 @@ int main() {
 		while (1);
 	}
 
-    // TODO: delay and re-launch
+	// Restart application
+	sceAppMgrLoadExec("ux0:app/" ADRENALINE_TITLEID "/eboot.bin", NULL, NULL);
 
 	return 0;
 }
