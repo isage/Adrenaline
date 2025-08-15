@@ -118,7 +118,7 @@ static int read_raw_data(u8* addr, u32 size, u32 offset) {
 			i = 0;
 			break;
 		} else {
-			logmsg("%s: %s lseek retry %d error 0x%08X\n", __func__, g_iso_fn, i, (int)ofs);
+			logmsg("%s: %s(%d) lseek retry %d error 0x%08X\n", __func__, g_iso_fn, g_iso_fd, i, (int)ofs);
 			iso_open();
 		}
 
@@ -226,7 +226,7 @@ static int read_compressed_data(u8* addr, u32 size, u32 offset) {
 	o_end = (o_end&0x7FFFFFFF)<<align;
 	u32 compressed_size = o_end-o_start;
 
-	logmsg4("%s: [DEBUG]: compressed size: %d, ", __func__, compressed_size);
+	logmsg4("%s: [DEBUG]: compressed size: %ld, ", __func__, compressed_size);
 
 	// try to read at once as much compressed data as possible
 	if (size > block_size*2){ // only if going to read more than two blocks
@@ -431,7 +431,10 @@ int iso_alloc(u32 com_size) {
 	return 0;
 }
 
-static void iso_free() {
+#ifndef __ISO_EXTRA__
+static
+#endif // __ISO_EXTRA__
+void iso_free() {
 	#ifdef __USE_USER_ALLOC
 	if (is_compressed) {
 		user_free(g_ciso_dec_buf_alloc_ptr);

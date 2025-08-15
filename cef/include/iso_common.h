@@ -97,6 +97,7 @@ int isoGetGameId(char game_id[10]);
 #ifdef __ISO_EXTRA__
 int iso_type_check(SceUID fd);
 int iso_alloc(u32 com_size);
+void iso_free();
 int iso_re_open(void);
 #endif // __ISO_EXTRA__
 
