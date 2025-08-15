@@ -18,6 +18,9 @@
 
 #include <common.h>
 
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 #include "virtualpbpmgr.h"
 #include "isofs_driver/umd9660_driver.h"
 #include "isofs_driver/isofs_driver.h"
@@ -53,6 +56,12 @@ void KXploitString(char *str) {
 }
 
 int CorruptIconPatch(char *name) {
+	// Hide ARK bubble launchers
+	if (strcasecmp(name, "SCPS10084") == 0 || strcasecmp(name, "NPUZ01234") == 0){
+		strcpy(name, "__SCE"); // hide icon
+		return 1;
+	}
+
 	char path[256];
 	sprintf(path, "ms0:/PSP/GAME/%s%%/EBOOT.PBP", name);
 
@@ -987,6 +996,9 @@ int OnModuleStart(SceModule2 *mod) {
 }
 
 int module_start(SceSize args, void *argp) {
+	logInit("ms0:/log_vshctrl.txt");
+	logmsg("VshCtrl started\n");
+
 	SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
 	u32 text_addr = mod->text_addr;
 

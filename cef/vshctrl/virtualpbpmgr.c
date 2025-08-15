@@ -1,5 +1,7 @@
 #include <common.h>
 
+#include <adrenaline_log.h>
+
 #include "virtualpbpmgr.h"
 #include "isofs_driver/umd9660_driver.h"
 #include "isofs_driver/isofs_driver.h"
@@ -211,6 +213,7 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res)
 	{
 		memcpy(res, &vpbps[g_index], sizeof(VirtualPbp));
 	}
+	logmsg("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", vpbps[g_index].isofile);
 
 	g_index++;
 
@@ -229,6 +232,7 @@ int virtualpbp_fastadd(VirtualPbp *pbp)
 	}
 
 	memcpy(&vpbps[g_index], pbp, sizeof(VirtualPbp));
+	logmsg2("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", vpbps[g_index].isofile);
 
 	g_index++;
 
