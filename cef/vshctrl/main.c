@@ -753,8 +753,7 @@ int sceKernelQuerySystemCall(void *function);
 u32 MakeSyscallStub(void *function) {
 	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
 	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
-	_sw(0x03E00008, stub);
-	_sw(0x0000000C | (sceKernelQuerySystemCall(function) << 6), stub + 4);
+	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
 	return stub;
 }
 
@@ -807,9 +806,9 @@ void IoPatches() {
 
 void PatchVshMain(u32 text_addr) {
 	// Allow old sfo's
-	_sw(0, text_addr + 0x122B0);
-	_sw(0, text_addr + 0x12058); //DISC_ID
-	_sw(0, text_addr + 0x12060); //DISC_ID
+	MAKE_NOP(text_addr + 0x122B0);
+	MAKE_NOP(text_addr + 0x12058); //DISC_ID
+	MAKE_NOP(text_addr + 0x12060); //DISC_ID
 
 	IoPatches();
 
@@ -824,11 +823,11 @@ void PatchVshMain(u32 text_addr) {
 
 	if (config.skipgameboot) {
 		// Disable sceDisplaySetHoldMode
-		_sw(0, text_addr + 0xCA88);
+		MAKE_NOP(text_addr + 0xCA88);
 	}
 
 	if (config.useextendedcolors == 1) {
-		_sh(0x1000, text_addr + 0x3174A);
+		VWRITE16(text_addr + 0x3174A, 0x1000);
 	}
 
 	sctrlFlushCache();
@@ -838,8 +837,7 @@ void PatchVshMain(u32 text_addr) {
 wchar_t macinfo[] = L"00:00:00:00:00:00";
 
 // Credits: ARK-4
-static inline void ascii2utf16(char *dest, const char *src)
-{
+static inline void ascii2utf16(char *dest, const char *src) {
     while(*src != '\0') {
         *dest++ = *src;
         *dest++ = '\0';
@@ -849,8 +847,7 @@ static inline void ascii2utf16(char *dest, const char *src)
     *dest++ = '\0';
 }
 
-int SetDefaultNicknamePatched()
-{
+int SetDefaultNicknamePatched() {
     int k1 = pspSdkSetK1(0);
 
     struct RegParam reg;
@@ -862,14 +859,11 @@ int SetDefaultNicknamePatched()
     reg.unk3 = 1;
     strcpy(reg.name, "flash1:/registry/system");
 
-    if(sceRegOpenRegistry(&reg, 2, &h) == 0)
-    {
+    if(sceRegOpenRegistry(&reg, 2, &h) == 0) {
         REGHANDLE hd;
-        if(!sceRegOpenCategory(h, "/CONFIG/SYSTEM", 2, &hd))
-        {
+        if(!sceRegOpenCategory(h, "/CONFIG/SYSTEM", 2, &hd)) {
             char* name = (char*)0xa83ff050;
-            if(sceRegSetKeyValue(hd, "owner_name", name, strlen(name)) == 0)
-            {
+            if(sceRegSetKeyValue(hd, "owner_name", name, strlen(name)) == 0) {
                 printf("Set registry value\n");
                 sceRegFlushCategory(hd);
             }
@@ -894,8 +888,8 @@ void PatchSysconfPlugin(u32 text_addr) {
 
 	ascii2utf16( (char*)((void *)text_addr + 0x2A62C), verinfo);
 
-	_sw(0x3C020000 | ((u32)(text_addr + 0x2A62C) >> 16), text_addr + 0x192E0);
-	_sw(0x34420000 | ((u32)(text_addr + 0x2A62C) & 0xFFFF), text_addr + 0x192E4);
+	MAKE_INSTRUCTION(text_addr + 0x192E0, 0x3C020000 | ((u32)(text_addr + 0x2A62C) >> 16));
+	MAKE_INSTRUCTION(text_addr + 0x192E4, 0x34420000 | ((u32)(text_addr + 0x2A62C) & 0xFFFF));
 
 	if (config.hidemacaddr) {
 		memcpy((void *)text_addr + 0x2E9A0, macinfo, sizeof(macinfo));
@@ -903,15 +897,15 @@ void PatchSysconfPlugin(u32 text_addr) {
 
 	// Allow slim colors
 	if (config.useextendedcolors != 0) {
-		_sw(_lw(text_addr + 0x76F0), text_addr + 0x76EC);
-		_sw(0x24020001, text_addr + 0x76F0);
+		MAKE_INSTRUCTION(text_addr + 0x76EC, VREAD32(text_addr + 0x76F0));
+		MAKE_INSTRUCTION(text_addr + 0x76F0, LI_V0(1));
 	}
 
 	// Dummy all vshbridge usbstor functions
-	_sw(0x24020001, text_addr + 0xCD78); // sceVshBridge_ED978848 - vshUsbstorMsSetWorkBuf
-	_sw(0x00001021, text_addr + 0xCDAC); // sceVshBridge_EE59B2B7
-	_sw(0x00001021, text_addr + 0xCF0C); // sceVshBridge_6032E5EE - vshUsbstorMsSetProductInfo
-	_sw(0x00001021, text_addr + 0xD218); // sceVshBridge_360752BF - vshUsbstorMsSetVSHInfo
+	MAKE_INSTRUCTION(text_addr + 0xCD78, LI_V0(1));   // sceVshBridge_ED978848 - vshUsbstorMsSetWorkBuf
+	MAKE_INSTRUCTION(text_addr + 0xCDAC, MOVE_V0_ZR); // sceVshBridge_EE59B2B7
+	MAKE_INSTRUCTION(text_addr + 0xCF0C, MOVE_V0_ZR); // sceVshBridge_6032E5EE - vshUsbstorMsSetProductInfo
+	MAKE_INSTRUCTION(text_addr + 0xD218, MOVE_V0_ZR); // sceVshBridge_360752BF - vshUsbstorMsSetVSHInfo
 
 	// Dummy LoadUsbModules, UnloadUsbModules
 	MAKE_DUMMY_FUNCTION(text_addr + 0xCC70, 0);
@@ -923,7 +917,7 @@ void PatchSysconfPlugin(u32 text_addr) {
 	REDIRECT_FUNCTION(text_addr + 0xB4A0, MakeSyscallStub(GetUsbStatusPatched));
 
 	// Ignore wait thread end failure
-	_sw(0, text_addr + 0xB264);
+	MAKE_NOP(text_addr + 0xB264);
 
 	// Do not set nickname to PXXX on initial setup/reset
 	REDIRECT_FUNCTION(text_addr + 0x1520, MakeSyscallStub(SetDefaultNicknamePatched));
@@ -939,19 +933,19 @@ void PatchGamePlugin(u32 text_addr) {
 	MAKE_DUMMY_FUNCTION(text_addr + 0x20E6C, 0);
 
 	// Allow custom multi-disc PSX
-	_sw(0, text_addr + 0x14850);
+	MAKE_NOP(text_addr + 0x14850);
 
 	// if check patch
-	_sw(0x00001021, text_addr + 0x20620);
+	MAKE_INSTRUCTION(text_addr + 0x20620, MOVE_V0_ZR);
 
 	if (config.hidepic0pic1) {
-		_sw(0x00601021, text_addr + 0x1D858);
-		_sw(0x00601021, text_addr + 0x1D864);
+		MAKE_INSTRUCTION(text_addr + 0x1D858, 0x00601021);
+		MAKE_INSTRUCTION(text_addr + 0x1D864, 0x00601021);
 	}
 
 	if (config.skipgameboot) {
 		MAKE_CALL(text_addr + 0x19130, text_addr + 0x194B0);
-		_sw(0x24040002, text_addr + 0x19134);
+		MAKE_INSTRUCTION(text_addr + 0x19134, 0x24040002);
 	}
 
 	sctrlFlushCache();

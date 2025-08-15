@@ -82,7 +82,7 @@ int PatchLoadCore(int (* module_bootstart)(SceSize args, void *argp), void *argp
 		u32 addr = text_addr + i;
 
 		// Allow custom modules
-		if (_lw(addr) == 0xAE2D0048) {
+		if (VREAD32(addr) == 0xAE2D0048) {
 			DecryptExecutable = (void *)K_EXTRACT_CALL(addr + 8);
 			MAKE_CALL(addr + 8, DecryptExecutablePatched);
 			break;
