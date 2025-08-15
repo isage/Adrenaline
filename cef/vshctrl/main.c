@@ -56,6 +56,12 @@ void KXploitString(char *str) {
 }
 
 int CorruptIconPatch(char *name) {
+	// Hide ARK bubble launchers
+	if (strcasecmp(name, "SCPS10084") == 0 || strcasecmp(name, "NPUZ01234") == 0){
+		strcpy(name, "__SCE"); // hide icon
+		return 1;
+	}
+
 	char path[256];
 	sprintf(path, "ms0:/PSP/GAME/%s%%/EBOOT.PBP", name);
 

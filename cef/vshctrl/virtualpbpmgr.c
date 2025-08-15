@@ -213,10 +213,10 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res)
 	{
 		memcpy(res, &vpbps[g_index], sizeof(VirtualPbp));
 	}
+	logmsg("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", vpbps[g_index].isofile);
 
 	g_index++;
 
-	logmsg("[INFO]: %s ISO file was added to VirtualPBP list\n", isofile);
 	sceKernelSignalSema(vpsema, 1);
 	return 0;
 }
@@ -232,10 +232,10 @@ int virtualpbp_fastadd(VirtualPbp *pbp)
 	}
 
 	memcpy(&vpbps[g_index], pbp, sizeof(VirtualPbp));
+	logmsg2("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", vpbps[g_index].isofile);
 
 	g_index++;
 
-	logmsg2("[INFO]: %s ISO file was added to VirtualPBP list\n", vpbps[g_index].isofile);
 	sceKernelSignalSema(vpsema, 1);
 	return 0;
 }
