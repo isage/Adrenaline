@@ -75,52 +75,52 @@ enum ExtendedColors {
 	EXTENDED_COLOR_03G,
 };
 
-#define ADRENALINE_CFG_MAGIC_1 0x31483943
-#define ADRENALINE_CFG_MAGIC_2 0x334F4E33
+#define ADRENALINE_CFG_MAGIC_1 0x192EFC3C
+#define ADRENALINE_CFG_MAGIC_2 0x17BEB6AA
 typedef struct {
 	int magic[2];
 	/** 0 - Disabled, 1 - Enabled */
-	int hide_corrupt;
+	u8 hide_corrupt;
 	/** 0 - Disabled, 1 - Enabled */
-	int	skip_logo;
+	u8	skip_logo;
 	/** 0 - Disabled, 1 - Enabled */
-	int startup_program;
+	u8 startup_program;
 	/** One of `SEUmdModes` */
-	int umd_mode;
+	u8 umd_mode;
 	/** One of `CpuBusSpeed` */
-	int	vsh_cpu_speed;
+	u8	vsh_cpu_speed;
 	/** One of `CpuBusSpeed` */
-	int	app_cpu_speed;
+	u8	app_cpu_speed;
 	/** One of `FakeRegionOptions` */
-	int fake_region;
+	u8 fake_region;
 	/** 0 - Disabled, 1 - Enabled */
-	int skip_game_boot_logo;
+	u8 skip_game_boot_logo;
 	/** 0 - Disabled, 1 - Enabled */
-	int hide_mac_addr;
+	u8 hide_mac_addr;
 	/** 0 - Disabled, 1 - Enabled */
-	int hide_dlcs;
+	u8 hide_dlcs;
 	/** 0 - Disabled, 1 - Enabled */
-	int hide_pic0pic1;
+	u8 hide_pic0pic1;
 	/** One of `ExtendedColors` */
-	int extended_colors;
+	u8 extended_colors;
 	/** 0 - Disabled, 1 - Enabled */
-	int use_sony_psposk;
+	u8 use_sony_psposk;
 	/** 0 - Use, 1 - Do not use */
-	int no_nodrm_engine;
+	u8 no_nodrm_engine;
 	/** 0 - Use, 1 - Do not use */
-	int no_xmb_plugins;
+	u8 no_xmb_plugins;
 	/** 0 - Use, 1 - Do not use */
-	int no_game_plugins;
+	u8 no_game_plugins;
 	/** 0 - Use, 1 - Do not use */
-	int no_pops_plugins;
+	u8 no_pops_plugins;
 	/** One of `ForceHighMemory` */
-	int force_high_memory;
+	u8 force_high_memory;
 	/** 0 - Disabled, 1 - Enabled */
-	int execute_boot_bin;
+	u8 execute_boot_bin;
 	/** One of `RecoveryColor` */
-	int recovery_color;
+	u8 recovery_color;
 	/** 0 - Disabled, 1 - Enabled */
-	int enable_xmbctrl;
+	u8 enable_xmbctrl;
 } AdrenalineConfig;
 
 typedef AdrenalineConfig SEConfig;
