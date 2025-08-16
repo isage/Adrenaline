@@ -36,5 +36,6 @@ void PatchLoadExec(SceModule2* mod);
 void PatchChkreg();
 void PatchImposeDriver(SceModule2* mod);
 void PatchMediaSync(SceModule2* mod);
+void PatchController(SceModule2* mod);
 
 #endif

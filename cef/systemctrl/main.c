@@ -477,6 +477,9 @@ static int OnModuleStart(SceModule2 *mod) {
 
 		PatchLowIODriver2(mod);
 
+	} else if (strcmp(mod->modname, "sceController_Service") == 0) {
+		PatchController(mod);
+
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod);
 
