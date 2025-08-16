@@ -25,7 +25,7 @@ typedef struct {
 	void (* function)(int sel);
 	char **options;
 	int size_options;
-	int *value;
+	u8 *value;
 } Entry;
 
 typedef struct {
