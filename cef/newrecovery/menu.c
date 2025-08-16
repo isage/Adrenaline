@@ -288,7 +288,7 @@ Entry general_entries[] = {
   { "Fake region", NULL, regions, sizeof(regions), &config.fake_region },
   { "Hide DLC's in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_dlcs },
   { "Hide PIC0/PIC1.PNG in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_pic0pic1 },
-  { "Use extended colors", NULL, extendedcolors, sizeof(extendedcolors), &config.use_extended_colors },
+  { "Use extended colors", NULL, extendedcolors, sizeof(extendedcolors), &config.extended_colors },
   { "Recovery color", Setrecovery_color, theme_names, sizeof(theme_names), &config.recovery_color },
   { "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.use_sony_psposk },
   { "Use NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.no_nodrm_engine },

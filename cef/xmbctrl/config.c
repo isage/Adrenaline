@@ -32,7 +32,7 @@ void loadSettings() {
 	config.force_highmem = se_config.force_high_memory;
 	config.exec_bootbin = se_config.execute_boot_bin;
 	config.vsh_region = se_config.fake_region;
-	config.extended_colors = se_config.use_extended_colors;
+	config.extended_colors = se_config.extended_colors;
 	config.enable_xmbctrl = se_config.enable_xmbctrl;
 
 	config.use_nodrm = !se_config.no_nodrm_engine;
@@ -60,7 +60,7 @@ void saveSettings() {
 	se_config.force_high_memory = config.force_highmem;
 	se_config.execute_boot_bin = config.exec_bootbin;
 	se_config.fake_region = config.vsh_region;
-	se_config.use_extended_colors = config.extended_colors;
+	se_config.extended_colors = config.extended_colors;
 	se_config.enable_xmbctrl = config.enable_xmbctrl;
 
 	se_config.no_nodrm_engine = !config.use_nodrm;

@@ -826,7 +826,7 @@ void PatchVshMain(u32 text_addr) {
 		MAKE_NOP(text_addr + 0xCA88);
 	}
 
-	if (config.use_extended_colors == 1) {
+	if (config.extended_colors == 1) {
 		VWRITE16(text_addr + 0x3174A, 0x1000);
 	}
 
@@ -896,7 +896,7 @@ void PatchSysconfPlugin(u32 text_addr) {
 	}
 
 	// Allow slim colors
-	if (config.use_extended_colors != 0) {
+	if (config.extended_colors != 0) {
 		MAKE_INSTRUCTION(text_addr + 0x76EC, VREAD32(text_addr + 0x76F0));
 		MAKE_INSTRUCTION(text_addr + 0x76F0, LI_V0(1));
 	}
