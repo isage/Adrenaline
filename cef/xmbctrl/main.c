@@ -521,7 +521,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int *value) {
 	if (name) {
 		if (is_cfw_config == 1) {
-			int configs[] = {
+			u8 configs[] = {
 				config.vsh_cpu_speed,  config.game_cpu_speed, config.umd_driver,
 				config.skip_sony_coldboot_logo, config.skip_sony_gameboot_logo,
 				config.hide_corrupt_icons, config.hide_mac_addr, config.hide_dlcs,
@@ -557,7 +557,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
 	if (name) {
 		if (is_cfw_config == 1) {
-			static int *configs[] = {
+			static u8 *configs[] = {
 				&config.vsh_cpu_speed,  &config.game_cpu_speed, &config.umd_driver,
 				&config.skip_sony_coldboot_logo, &config.skip_sony_gameboot_logo,
 				&config.hide_corrupt_icons, &config.hide_mac_addr, &config.hide_dlcs,

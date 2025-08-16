@@ -23,6 +23,8 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <psptypes.h>
+
 #define sysconf_console_id 4
 #define sysconf_console_action 2
 #define sysconf_console_action_arg 2
@@ -34,26 +36,26 @@ enum {
 
 typedef struct {
 	int magic;
-	int vsh_cpu_speed;
-	int game_cpu_speed;
-	int umd_driver;
-	int skip_sony_coldboot_logo;
-	int skip_sony_gameboot_logo;
-	int hide_corrupt_icons;
-	int hide_mac_addr;
-	int hide_dlcs;
-	int hide_pic01;
-	int extended_colors;
-	int use_sony_osk;
-	int use_nodrm;
-	int autorun_boot_eboot;
-	int force_highmem;
-	int exec_bootbin;
-	int vsh_region;
-	int vsh_plugins;
-	int game_plugins;
-	int pops_plugins;
-	int enable_xmbctrl;
+	u8 vsh_cpu_speed;
+	u8 game_cpu_speed;
+	u8 umd_driver;
+	u8 skip_sony_coldboot_logo;
+	u8 skip_sony_gameboot_logo;
+	u8 hide_corrupt_icons;
+	u8 hide_mac_addr;
+	u8 hide_dlcs;
+	u8 hide_pic01;
+	u8 extended_colors;
+	u8 use_sony_osk;
+	u8 use_nodrm;
+	u8 autorun_boot_eboot;
+	u8 force_highmem;
+	u8 exec_bootbin;
+	u8 vsh_region;
+	u8 vsh_plugins;
+	u8 game_plugins;
+	u8 pops_plugins;
+	u8 enable_xmbctrl;
 } CFWConfig;
 
 typedef struct
