@@ -109,6 +109,7 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 
 		switch (magics.magic[1]) {
 			case ADRENALINE717_CFG_MAGIC_2:
+				logmsg("[INFO]: Migrated Adrenaline CFW 7.1.7 config\n");
 				AdrenalineConfig717 old_conf;
 				read = sceIoRead(fd, &old_conf, sizeof(AdrenalineConfig717));
 				migrate_config717(&old_conf, config);
@@ -121,7 +122,7 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 				// Close fd and also set the new config
 				sceIoClose(fd);
 				sctrlSESetConfig(config);
-				logmsg("%s: [INFO]: Migrated 7.1.7 config\n", __func__);
+				logmsg("[INFO]: Migrated Adrenaline CFW 7.1.7 config\n");
 				break;
 			default:
 				read = sceIoRead(fd, config, size);

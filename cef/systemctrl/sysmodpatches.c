@@ -476,7 +476,7 @@ static int exitToVsh(SceSize args, void *argp) {
 
     int res = sctrlKernelExitVSH(NULL);
 
-    pspSdkSetK1(0);
+    pspSdkSetK1(k1);
     return res;
 }
 
