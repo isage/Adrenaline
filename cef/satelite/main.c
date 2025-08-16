@@ -34,9 +34,9 @@ void RecoveryMenu();
 void RestartVSH();
 
 Entry entries[] = {
-	{ "CPU CLOCK XMB", NULL, cpuspeeds, sizeof(cpuspeeds), &config.vshcpuspeed, 0 },
-	{ "CPU CLOCK GAME", NULL, cpuspeeds, sizeof(cpuspeeds), &config.umdisocpuspeed, 0 },
-	{ "UMD ISO MODE", NULL, umdmodes, sizeof(umdmodes), &config.umdmode, 0 },
+	{ "CPU CLOCK XMB", NULL, cpuspeeds, sizeof(cpuspeeds), &config.vsh_cpu_speed, 0 },
+	{ "CPU CLOCK GAME", NULL, cpuspeeds, sizeof(cpuspeeds), &config.app_cpu_speed, 0 },
+	{ "UMD ISO MODE", NULL, umdmodes, sizeof(umdmodes), &config.umd_mode, 0 },
 	{ "SUSPEND DEVICE", SuspendDevice, NULL, 0, NULL, 1 },
 	{ "RECOVERY MENU", RecoveryMenu, NULL, 0, NULL, 1 },
 	{ "RESTART VSH", RestartVSH, NULL, 0, NULL, 1 },

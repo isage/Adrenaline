@@ -51,20 +51,20 @@ Entry main_entries[] = {
 
 Entry configuration_entries[] = {
 	{ "Back", MainMenu, NULL, 0, NULL },
-	{ "Skip Sony logo", NULL, disenabled, sizeof(disenabled), &config.skiplogo },
-	{ "Skip gameboot", NULL, disenabled, sizeof(disenabled), &config.skipgameboot },
-	{ "Hide corrupt icons", NULL, disenabled, sizeof(disenabled), &config.hidecorrupt },
-	{ "Hide MAC address", NULL, disenabled, sizeof(disenabled), &config.hidemacaddr },
-	{ "Autorun program at /PSP/GAME/BOOT/EBOOT.PBP", NULL, disenabled, sizeof(disenabled), &config.startupprog },
-	{ "UMD mode", NULL, umdmodes, sizeof(umdmodes), &config.umdmode },
-	{ "Fake region", NULL, regions, sizeof(regions), &config.fakeregion },
-	{ "Hide DLC's in game menu", NULL, disenabled, sizeof(disenabled), &config.hidedlcs },
-	{ "Hide PIC0.PNG and PIC1.PNG in game menu", NULL, disenabled, sizeof(disenabled), &config.hidepic0pic1 },
-	{ "Use extended colors", NULL, extendedcolors, sizeof(extendedcolors), &config.useextendedcolors },
-	{ "Recovery color", SetRecoveryColor, colors, sizeof(colors), &config.recoverycolor },
-	{ "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.usesonypsposk },
-	{ "Use NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.notusenodrmengine },
-	{ "Enable XMBControl", NULL, disenabled, sizeof(disenabled), &config.enablexmbctrl },
+	{ "Skip Sony logo", NULL, disenabled, sizeof(disenabled), &config.skip_logo },
+	{ "Skip gameboot", NULL, disenabled, sizeof(disenabled), &config.skip_game_boot_logo },
+	{ "Hide corrupt icons", NULL, disenabled, sizeof(disenabled), &config.hide_corrupt },
+	{ "Hide MAC address", NULL, disenabled, sizeof(disenabled), &config.hide_mac_addr },
+	{ "Autorun program at /PSP/GAME/BOOT/EBOOT.PBP", NULL, disenabled, sizeof(disenabled), &config.startup_program },
+	{ "UMD mode", NULL, umdmodes, sizeof(umdmodes), &config.umd_mode },
+	{ "Fake region", NULL, regions, sizeof(regions), &config.fake_region },
+	{ "Hide DLC's in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_dlcs },
+	{ "Hide PIC0.PNG and PIC1.PNG in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_pic0pic1 },
+	{ "Use extended colors", NULL, extendedcolors, sizeof(extendedcolors), &config.use_extended_colors },
+	{ "Recovery color", Setrecovery_color, colors, sizeof(colors), &config.recovery_color },
+	{ "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.use_sony_psposk },
+	{ "Use NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.no_nodrm_engine },
+	{ "Enable XMBControl", NULL, disenabled, sizeof(disenabled), &config.enable_xmbctrl },
 };
 
 Entry advanced_entries[] = {
@@ -75,17 +75,17 @@ Entry advanced_entries[] = {
 
 Entry advanced_configuration_entries[] = {
 	{ "Back", Advanced, NULL, 0, NULL },
-	{ "Force high memory layout", NULL, disenabled, sizeof(disenabled), &config.forcehighmemory },
-	{ "Execute BOOT.BIN in UMD/ISO", NULL, disenabled, sizeof(disenabled), &config.executebootbin },
-	{ "XMB  plugins", NULL, endisabled, sizeof(endisabled), &config.notusexmbplugins },
-	{ "GAME plugins", NULL, endisabled, sizeof(endisabled), &config.notusegameplugins },
-	{ "POPS plugins", NULL, endisabled, sizeof(endisabled), &config.notusepopsplugins },
+	{ "Force high memory layout", NULL, disenabled, sizeof(disenabled), &config.force_high_memory },
+	{ "Execute BOOT.BIN in UMD/ISO", NULL, disenabled, sizeof(disenabled), &config.execute_boot_bin },
+	{ "XMB  plugins", NULL, endisabled, sizeof(endisabled), &config.no_xmb_plugins },
+	{ "GAME plugins", NULL, endisabled, sizeof(endisabled), &config.no_game_plugins },
+	{ "POPS plugins", NULL, endisabled, sizeof(endisabled), &config.no_pops_plugins },
 };
 
 Entry cpu_speed_entries[] = {
 	{ "Back", MainMenu, NULL, 0, NULL },
-	{ "Speed in XMB", NULL, cpuspeeds, sizeof(cpuspeeds), &config.vshcpuspeed },
-	{ "Speed in UMD/ISO", NULL, cpuspeeds, sizeof(cpuspeeds), &config.umdisocpuspeed },
+	{ "Speed in XMB", NULL, cpuspeeds, sizeof(cpuspeeds), &config.vsh_cpu_speed },
+	{ "Speed in UMD/ISO", NULL, cpuspeeds, sizeof(cpuspeeds), &config.app_cpu_speed },
 };
 
 Entry registry_hacks_entries[] = {
@@ -196,7 +196,7 @@ void SetFlashPlayer(int sel) {
 	MenuResetSelection();
 }
 
-void SetRecoveryColor(int sel) {
+void Setrecovery_color(int sel) {
     u32 color_list[] = {
         0x00FF0000, // Blue
         0x0000FF00, // Green
@@ -208,7 +208,7 @@ void SetRecoveryColor(int sel) {
         0x004080FF, // Orange
         0x0000FFFF  // Yellow
     };
-    select_color = color_list[config.recoverycolor];
+    select_color = color_list[config.recovery_color];
 }
 
 void Exit() {
@@ -227,7 +227,7 @@ int main(int argc, char *argv[]) {
 		Installer();
 
 	sctrlSEGetConfig(&config);
-	SetRecoveryColor(config.recoverycolor);
+	Setrecovery_color(config.recovery_color);
 	MainMenu();
 
 	while (!recovery_exit) {

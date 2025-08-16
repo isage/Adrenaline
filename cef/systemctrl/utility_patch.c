@@ -57,7 +57,7 @@ void PatchUtility() {
 	HIJACK_FUNCTION(FindUtilityFunction(0x2A2B3DE0), sceUtilityLoadModulePatched, _sceUtilityLoadModule);
 	HIJACK_FUNCTION(FindUtilityFunction(0xE49BFE92), sceUtilityUnloadModulePatched, _sceUtilityUnloadModule);
 
-	if (!config.usesonypsposk) {
+	if (!config.use_sony_psposk) {
 		_sceUtilityGetSystemParamInt = (void *)FindUtilityFunction(0xA5DA2406);
 		_kermitUtilityOskGetStatus = (void *)FindProc("sceUtility_Driver", "sceUtility_private", 0xB08B2B48);
 

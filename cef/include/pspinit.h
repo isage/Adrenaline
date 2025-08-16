@@ -117,7 +117,7 @@ char *sceKernelInitFileName();
  *
  * Gets the device in which the application was launched.
  *
- * @returns the device code, one of PSPBootFrom values.
+ * @returns the device code, one of `SceBootMediumType` values.
  *
  * @attention Needs to link to `lpspinit_kernel`.
 */
@@ -126,7 +126,7 @@ int sceKernelBootFrom();
 /**
  * Get the key configuration in which the system has booted.
  *
- * @returns the key configuration code, one of PSPKeyConfig values
+ * @returns the key configuration code, one of `SceApplicationType` values
  *
  * @attention Needs to link to `lpspinit_kernel`.
 */

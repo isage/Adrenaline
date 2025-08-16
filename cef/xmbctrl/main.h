@@ -53,7 +53,7 @@ typedef struct {
 	int vsh_plugins;
 	int game_plugins;
 	int pops_plugins;
-	int enablexmbctrl;
+	int enable_xmbctrl;
 } CFWConfig;
 
 typedef struct

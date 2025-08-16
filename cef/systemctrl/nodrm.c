@@ -151,7 +151,7 @@ int sceNpDrmEdataGetDataSizePatched(SceUID fd) {
 void PatchNpDrmDriver(SceModule2* mod) {
 	u32 text_addr = mod->text_addr;
 
-	if (!config.notusenodrmengine) {
+	if (!config.no_nodrm_engine) {
 		if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 			SceModule2 *mod = sceKernelFindModuleByName("sceIOFileManager");
 

@@ -125,9 +125,9 @@ void SetFlashPlayer(int sel)
   }
 }
 
-void SetRecoveryColor(int sel)
+void Setrecovery_color(int sel)
 {
-  theme = config.recoverycolor;
+  theme = config.recovery_color;
 }
 
 void Exit()
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 
   VGraphInit(1);
   sctrlSEGetConfig(&config);
-  SetRecoveryColor(config.recoverycolor);
+  Setrecovery_color(config.recovery_color);
 
   RegistryHacks();
   UpdatePluginCount(Plugins());

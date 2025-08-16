@@ -129,7 +129,7 @@ int LoadStartModule(char *file) {
 }
 
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
-	if (config.usesonypsposk) {
+	if (config.use_sony_psposk) {
 		if (strcmp(info->name, "/kd/kermit_utility.prx") == 0) {
 			info->name = "/kd/utility.prx";
 		}
@@ -180,7 +180,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 	}
 
 	if (strcmp(mod->modname, "vsh_module") == 0) {
-		if (config.skiplogo || config.startupprog) {
+		if (config.skip_logo || config.startup_program) {
 			static u32 vshmain_args[0x100];
 			memset(vshmain_args, 0, sizeof(vshmain_args));
 
@@ -193,7 +193,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			vshmain_args[1] = 0x20;
 			vshmain_args[16] = 1;
 
-			if(config.startupprog && argsize == 0) {
+			if(config.startup_program && argsize == 0) {
 				LoadExecForKernel_AA2029EC();
 
 				SceKernelLoadExecVSHParam param;
@@ -238,7 +238,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 
 			int type = sceKernelInitKeyConfig();
 
-			if (type == PSP_INIT_KEYCONFIG_VSH && config.enablexmbctrl) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && config.enable_xmbctrl) {
 				loadXmbControl();
 			}
 
@@ -247,11 +247,11 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			}
 
 			char *file = NULL;
-			if (type == PSP_INIT_KEYCONFIG_VSH && !config.notusexmbplugins) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && !config.no_xmb_plugins) {
 				file = "ms0:/seplugins/vsh.txt";
-			} else if (type == PSP_INIT_KEYCONFIG_GAME && !config.notusegameplugins) {
+			} else if (type == PSP_INIT_KEYCONFIG_GAME && !config.no_game_plugins) {
 				file = "ms0:/seplugins/game.txt";
-			} else if (type == PSP_INIT_KEYCONFIG_POPS && !config.notusepopsplugins) {
+			} else if (type == PSP_INIT_KEYCONFIG_POPS && !config.no_pops_plugins) {
 				file = "ms0:/seplugins/pops.txt";
 			}
 

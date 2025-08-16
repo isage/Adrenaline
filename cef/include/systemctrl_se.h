@@ -42,27 +42,27 @@ enum InfernoCachePolicy
 
 typedef struct {
 	int magic[2];
-	int hidecorrupt;
-	int	skiplogo;
-	int startupprog;
-	int umdmode;
-	int	vshcpuspeed;
-	int	umdisocpuspeed;
-	int fakeregion;
-	int skipgameboot;
-	int hidemacaddr;
-	int hidedlcs;
-	int hidepic0pic1;
-	int useextendedcolors;
-	int usesonypsposk;
-	int notusenodrmengine;
-	int notusexmbplugins;
-	int notusegameplugins;
-	int notusepopsplugins;
-	int forcehighmemory;
-	int executebootbin;
-	int recoverycolor;
-	int enablexmbctrl;
+	int hide_corrupt;
+	int	skip_logo;
+	int startup_program;
+	int umd_mode;
+	int	vsh_cpu_speed;
+	int	app_cpu_speed;
+	int fake_region;
+	int skip_game_boot_logo;
+	int hide_mac_addr;
+	int hide_dlcs;
+	int hide_pic0pic1;
+	int use_extended_colors;
+	int use_sony_psposk;
+	int no_nodrm_engine;
+	int no_xmb_plugins;
+	int no_game_plugins;
+	int no_pops_plugins;
+	int force_high_memory;
+	int execute_boot_bin;
+	int recovery_color;
+	int enable_xmbctrl;
 } AdrenalineConfig;
 
 typedef AdrenalineConfig SEConfig;

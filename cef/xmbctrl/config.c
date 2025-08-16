@@ -18,55 +18,55 @@ void loadSettings() {
 
 	sctrlSEGetConfig(&se_config);
 
-	config.vsh_cpu_speed = se_config.vshcpuspeed;
-	config.game_cpu_speed = se_config.umdisocpuspeed;
-	config.umd_driver = se_config.umdmode;
-	config.skip_sony_coldboot_logo = se_config.skiplogo;
-	config.skip_sony_gameboot_logo = se_config.skipgameboot;
-	config.hide_corrupt_icons = se_config.hidecorrupt;
-	config.hide_mac_addr = se_config.hidemacaddr;
-	config.hide_dlcs = se_config.hidedlcs;
-	config.hide_pic01 = se_config.hidepic0pic1;
-	config.use_sony_osk = se_config.usesonypsposk;
-	config.autorun_boot_eboot = se_config.startupprog;
-	config.force_highmem = se_config.forcehighmemory;
-	config.exec_bootbin = se_config.executebootbin;
-	config.vsh_region = se_config.fakeregion;
-	config.extended_colors = se_config.useextendedcolors;
-	config.enablexmbctrl = se_config.enablexmbctrl;
+	config.vsh_cpu_speed = se_config.vsh_cpu_speed;
+	config.game_cpu_speed = se_config.app_cpu_speed;
+	config.umd_driver = se_config.umd_mode;
+	config.skip_sony_coldboot_logo = se_config.skip_logo;
+	config.skip_sony_gameboot_logo = se_config.skip_game_boot_logo;
+	config.hide_corrupt_icons = se_config.hide_corrupt;
+	config.hide_mac_addr = se_config.hide_mac_addr;
+	config.hide_dlcs = se_config.hide_dlcs;
+	config.hide_pic01 = se_config.hide_pic0pic1;
+	config.use_sony_osk = se_config.use_sony_psposk;
+	config.autorun_boot_eboot = se_config.startup_program;
+	config.force_highmem = se_config.force_high_memory;
+	config.exec_bootbin = se_config.execute_boot_bin;
+	config.vsh_region = se_config.fake_region;
+	config.extended_colors = se_config.use_extended_colors;
+	config.enable_xmbctrl = se_config.enable_xmbctrl;
 
-	config.use_nodrm = !se_config.notusenodrmengine;
-	config.vsh_plugins = !se_config.notusexmbplugins;
-	config.game_plugins = !se_config.notusegameplugins;
-	config.pops_plugins = !se_config.notusepopsplugins;
+	config.use_nodrm = !se_config.no_nodrm_engine;
+	config.vsh_plugins = !se_config.no_xmb_plugins;
+	config.game_plugins = !se_config.no_game_plugins;
+	config.pops_plugins = !se_config.no_pops_plugins;
 }
 
 void saveSettings() {
 	sctrlSEGetConfig(&se_config);
 
-	int oldspeed = se_config.vshcpuspeed;
+	int oldspeed = se_config.vsh_cpu_speed;
 
-	se_config.vshcpuspeed = config.vsh_cpu_speed;
-	se_config.umdisocpuspeed = config.game_cpu_speed;
-	se_config.umdmode = config.umd_driver;
-	se_config.skiplogo = config.skip_sony_coldboot_logo;
-	se_config.skipgameboot = config.skip_sony_gameboot_logo;
-	se_config.hidecorrupt = config.hide_corrupt_icons;
-	se_config.hidemacaddr = config.hide_mac_addr;
-	se_config.hidedlcs = config.hide_dlcs;
-	se_config.hidepic0pic1 = config.hide_pic01;
-	se_config.usesonypsposk = config.use_sony_osk;
-	se_config.startupprog = config.autorun_boot_eboot;
-	se_config.forcehighmemory = config.force_highmem;
-	se_config.executebootbin = config.exec_bootbin;
-	se_config.fakeregion = config.vsh_region;
-	se_config.useextendedcolors = config.extended_colors;
-	se_config.enablexmbctrl = config.enablexmbctrl;
+	se_config.vsh_cpu_speed = config.vsh_cpu_speed;
+	se_config.app_cpu_speed = config.game_cpu_speed;
+	se_config.umd_mode = config.umd_driver;
+	se_config.skip_logo = config.skip_sony_coldboot_logo;
+	se_config.skip_game_boot_logo = config.skip_sony_gameboot_logo;
+	se_config.hide_corrupt = config.hide_corrupt_icons;
+	se_config.hide_mac_addr = config.hide_mac_addr;
+	se_config.hide_dlcs = config.hide_dlcs;
+	se_config.hide_pic0pic1 = config.hide_pic01;
+	se_config.use_sony_psposk = config.use_sony_osk;
+	se_config.startup_program = config.autorun_boot_eboot;
+	se_config.force_high_memory = config.force_highmem;
+	se_config.execute_boot_bin = config.exec_bootbin;
+	se_config.fake_region = config.vsh_region;
+	se_config.use_extended_colors = config.extended_colors;
+	se_config.enable_xmbctrl = config.enable_xmbctrl;
 
-	se_config.notusenodrmengine = !config.use_nodrm;
-	se_config.notusexmbplugins = !config.vsh_plugins;
-	se_config.notusegameplugins= !config.game_plugins;
-	se_config.notusepopsplugins= !config.pops_plugins;
+	se_config.no_nodrm_engine = !config.use_nodrm;
+	se_config.no_xmb_plugins = !config.vsh_plugins;
+	se_config.no_game_plugins= !config.game_plugins;
+	se_config.no_pops_plugins= !config.pops_plugins;
 
 	sctrlSESetConfig(&se_config);
 

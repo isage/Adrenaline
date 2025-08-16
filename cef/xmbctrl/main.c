@@ -526,7 +526,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 				config.skip_sony_coldboot_logo, config.skip_sony_gameboot_logo,
 				config.hide_corrupt_icons, config.hide_mac_addr, config.hide_dlcs,
 				config.hide_pic01, config.vsh_region, config.extended_colors, config.use_sony_osk,
-				config.use_nodrm, config.enablexmbctrl,
+				config.use_nodrm, config.enable_xmbctrl,
 				config.autorun_boot_eboot, config.force_highmem, config.exec_bootbin,
 				config.vsh_plugins, config.game_plugins, config.pops_plugins,
 			};
@@ -562,7 +562,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
 				&config.skip_sony_coldboot_logo, &config.skip_sony_gameboot_logo,
 				&config.hide_corrupt_icons, &config.hide_mac_addr, &config.hide_dlcs,
 				&config.hide_pic01, &config.vsh_region, &config.extended_colors, &config.use_sony_osk,
-				&config.use_nodrm, &config.enablexmbctrl,
+				&config.use_nodrm, &config.enable_xmbctrl,
 				&config.autorun_boot_eboot, &config.force_highmem, &config.exec_bootbin,
 				&config.vsh_plugins, &config.game_plugins, &config.pops_plugins,
 			};
