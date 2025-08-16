@@ -627,6 +627,15 @@ u32 sctrlModuleTextAddr(char *modname);
  */
 void sctrlFlushCache(void);
 
+/**
+ * Finds the UID of the thread with a given `name`.
+ *
+ * @param name The name of the thread
+ *
+ * @returns The UID of the thread on success, `< 0` on error or not found.
+ */
+SceUID sctrlGetThreadUIDByName(const char* name);
+
 
 int sctrlGetUsbState();
 int sctrlStartUsb();
