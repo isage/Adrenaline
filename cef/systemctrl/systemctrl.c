@@ -626,3 +626,37 @@ int sctrlGetSfoPARAM(const char* sfo_path, const char* param_name, u16* param_ty
 int sctrlGetInitPARAM(const char* param_name, u16* param_type, u32* param_length, void* param_buf) {
 	return sctrlGetSfoPARAM(NULL, param_name, param_type, param_length, param_buf);
 }
+
+SceUID sctrlGetThreadUIDByName(const char* name) {
+	if (name == NULL) {
+		return SCE_EINVAL;
+	}
+
+	SceUID ids[100];
+	memset(ids, 0, sizeof(ids));
+
+	int count = 0;
+
+	int res = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, ids, NELEMS(ids), &count);
+
+	if (res < 0) {
+		return res;
+	}
+
+	for (int i = 0; i < count; i++) {
+		SceKernelThreadInfo info = {0};
+		info.size = sizeof(info);
+
+		res = sceKernelReferThreadStatus(ids[i], &info);
+		if (res != 0) {
+			return res;
+		}
+
+		// Check if name match
+		if (strcmp(info.name, name) == 0) {
+			return ids[i];
+		}
+	}
+
+	return SCE_ERR_NOTFOUND;
+}

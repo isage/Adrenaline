@@ -25,6 +25,8 @@
 
 #include "rebootex.h"
 
+#define EXIT_TO_VSH_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_SELECT | PSP_CTRL_DOWN)
+
 int (* _sceChkregGetPsCode)(u8 *pscode);
 
 int (* RunReboot)(u32 *params);
@@ -126,28 +128,28 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 	}
 
 	// Disallow setting after game boot
-    if (sctrlHENIsSystemBooted()) {
+	if (sctrlHENIsSystemBooted()) {
 		return -3;
 	};
 
 	// Do not allow in pops and vsh
 	int apitype = sceKernelInitApitype();
-    if (apitype == SCE_EXEC_APITYPE_MS5 || apitype == SCE_EXEC_APITYPE_EF5 || apitype >= SCE_EXEC_APITYPE_KERNEL1) {
-        return -1;
+	if (apitype == SCE_EXEC_APITYPE_MS5 || apitype == SCE_EXEC_APITYPE_EF5 || apitype >= SCE_EXEC_APITYPE_KERNEL1) {
+		return -1;
 	}
 
 	// Checks for unlock state
-    if (p2 > 24) {
+	if (p2 > 24) {
 		// already enabled
-        if (rebootex_config.ram2 > 24) {
+		if (rebootex_config.ram2 > 24) {
 			return -2;
 		}
-    } else if (p2 == 24) { // Checks for default state
+	} else if (p2 == 24) { // Checks for default state
 		// already enabled
-        if (rebootex_config.ram2 == 24) {
+		if (rebootex_config.ram2 == 24) {
 			return -2;
 		}
-    }
+	}
 
 	int k1 = pspSdkSetK1(0);
 
@@ -450,4 +452,117 @@ void sctrlHENSetSpeed(int cpu, int bus) {
 	int k1 = pspSdkSetK1(0);
 	SetSpeed(cpu, bus);
 	pspSdkSetK1(k1);
+}
+
+static int exitToVsh(SceSize args, void *argp) {
+    int k1 = pspSdkSetK1(0);
+
+    // Refuse operation in Save dialog
+    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) {
+		return 0;
+	}
+
+    // Refuse operation in Dialog
+    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) {
+		return 0;
+	}
+
+    int (*_sceDisplaySetHoldMode)(int) = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
+    if (_sceDisplaySetHoldMode) _sceDisplaySetHoldMode(0);
+
+    // reset some flags
+    SetUmdFile("");
+    sctrlSESetBootConfFileIndex(BOOT_NORMAL);
+
+    int res = sctrlKernelExitVSH(NULL);
+
+    pspSdkSetK1(0);
+    return res;
+}
+
+static void startExitThread(){
+	int k1 = pspSdkSetK1(0);
+	int intc = pspSdkDisableInterrupts();
+	if (sctrlGetThreadUIDByName("ExitGamePollThread") >= 0){
+		pspSdkEnableInterrupts(intc);
+		return; // already exiting
+	}
+	int uid = sceKernelCreateThread("ExitGamePollThread", exitToVsh, 1, 4096, 0, NULL);
+	pspSdkEnableInterrupts(intc);
+	sceKernelStartThread(uid, 0, NULL);
+	sceKernelWaitThreadEnd(uid, NULL);
+	sceKernelDeleteThread(uid);
+	pspSdkSetK1(k1);
+}
+
+int (*_sceCtrlPeekBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
+int sceCtrlPeekBufferPositivePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlPeekBufferPositive == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlPeekBufferPositive(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+int (*_sceCtrlPeekBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
+int sceCtrlPeekBufferNegativePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlPeekBufferNegative == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlPeekBufferNegative(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+int (*_sceCtrlReadBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
+int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlReadBufferPositive == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlReadBufferPositive(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
+int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlReadBufferNegative == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlReadBufferNegative(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+void PatchController(SceModule2* mod) {
+	_sceCtrlPeekBufferPositive = (void*)sctrlHENFindFunctionInMod(mod, "sceCtrl_driver", 0x3A622550);
+	_sceCtrlPeekBufferNegative = (void*)sctrlHENFindFunctionInMod(mod, "sceCtrl_driver", 0xC152080A);
+	_sceCtrlReadBufferPositive = (void*)sctrlHENFindFunctionInMod(mod, "sceCtrl_driver", 0x1F803938);
+	_sceCtrlReadBufferNegative = (void*)sctrlHENFindFunctionInMod(mod, "sceCtrl_driver", 0x60B81F86);
+
+	HIJACK_FUNCTION(_sceCtrlPeekBufferPositive, sceCtrlPeekBufferPositivePatched, _sceCtrlPeekBufferPositive);
+	HIJACK_FUNCTION(_sceCtrlPeekBufferNegative, sceCtrlPeekBufferNegativePatched, _sceCtrlPeekBufferNegative);
+	HIJACK_FUNCTION(_sceCtrlReadBufferPositive, sceCtrlReadBufferPositivePatched, _sceCtrlReadBufferPositive);
+	HIJACK_FUNCTION(_sceCtrlReadBufferNegative, sceCtrlReadBufferNegativePatched, _sceCtrlReadBufferNegative);
 }
