@@ -23,7 +23,7 @@
 
 #include "main.h"
 
-PSP_MODULE_INFO("EPIPopcornManager", 0x1007, 1, 0);
+PSP_MODULE_INFO("EPI-PopcornManager", 0x1007, 1, 1);
 
 int (* _scePopsManExitVSHKernel)(int error);
 int (* SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id);

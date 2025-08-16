@@ -36,7 +36,7 @@
 
 #include "galaxy.h"
 
-PSP_MODULE_INFO("EPIGalaxyController", 0x1006, 1, 0);
+PSP_MODULE_INFO("EPI-GalaxyController", 0x1006, 1, 0);
 
 // SceNpUmdMount Thread ID
 SceUID g_SceNpUmdMount_thid = -1;

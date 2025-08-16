@@ -33,7 +33,7 @@
 #include "plugins.h"
 #include "settings.h"
 
-PSP_MODULE_INFO("AdrenalineXmbControl", 0x0007, 1, 0);
+PSP_MODULE_INFO("EPI-XmbControl", 0x0007, 1, 0);
 
 extern List plugins;
 

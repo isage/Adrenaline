@@ -33,7 +33,7 @@
 #include "utils.h"
 #include "inferno.h"
 
-PSP_MODULE_INFO("PRO_Inferno_Driver", 0x1000, 2, 1);
+PSP_MODULE_INFO("EPI-InfernoDriver", 0x1000, 2, 2);
 
 u32 psp_model;
 u32 psp_fw_version;

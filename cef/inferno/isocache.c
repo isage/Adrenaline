@@ -460,7 +460,7 @@ int infernoCacheAdd(u32 pos, int len) {
 	return -2;
 }
 
-// call @PRO_Inferno_Driver:CacheCtrl,0x5CC24481@
+// call @EPI-InfernoDriver:CacheCtrl,0x5CC24481@
 #ifdef DEBUG
 void isocache_stat(int reset) {
 	char buf[256];
@@ -499,7 +499,7 @@ void isocache_stat(int reset) {
 void isocache_stat(int reset){}
 #endif
 
-// call @PRO_Inferno_Driver:CacheCtrl,0xC0736FD6@
+// call @EPI-InfernoDriver:CacheCtrl,0xC0736FD6@
 void infernoCacheSetPolicy(int policy) {
 	cache_policy = policy;
 }

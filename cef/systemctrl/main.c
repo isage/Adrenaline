@@ -39,7 +39,7 @@
 #include "ttystdio.h"
 #include "gameinfo.h"
 
-PSP_MODULE_INFO("SystemControl", 0x1007, 1, 0);
+PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
 int (* PrologueModule)(void *modmgr_param, SceModule2 *mod);
 

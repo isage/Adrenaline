@@ -693,7 +693,7 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 		}
 	}
 
-	if (!sceKernelFindModuleByName("VshCtrlSatelite")) {
+	if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
 		if (pad_data->Buttons & PSP_CTRL_SELECT) {
 			if (!sceKernelFindModuleByName("htmlviewer_plugin_module") &&
 			   !sceKernelFindModuleByName("sceVshOSK_Module") &&

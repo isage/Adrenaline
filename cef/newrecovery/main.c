@@ -26,7 +26,7 @@
 
 #include "options.h"
 
-PSP_MODULE_INFO("Recovery mode", 0, 1, 0);
+PSP_MODULE_INFO("EPI-RecoveryMode", 0, 2, 0);
 PSP_DISABLE_NEWLIB();
 PSP_DISABLE_AUTOSTART_PTHREAD();
 

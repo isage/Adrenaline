@@ -22,7 +22,7 @@
 #include "main.h"
 #include "menu.h"
 
-PSP_MODULE_INFO("VshCtrlSatelite", 0, 1, 0);
+PSP_MODULE_INFO("EPI-VshCtrlSatelite", 0, 1, 0);
 
 char *cpuspeeds[] = { "Default", "20/10", "75/37", "100/50", "133/66", "222/111", "266/133", "300/150", "333/166" };
 char *umdmodes[] = { "Inferno", "M33 Driver", "Sony NP9660" };
