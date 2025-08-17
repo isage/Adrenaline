@@ -19,13 +19,14 @@
 #ifndef __MENU_H__
 #define __MENU_H__
 
-typedef struct {
+#include <psptypes.h>
 
+typedef struct {
 	char *name;
 	void (* function)();
 	char **options;
 	int size_options;
-	int *value;
+	u8 *value;
 	int exit;
 } Entry;
 

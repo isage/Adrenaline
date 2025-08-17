@@ -417,7 +417,7 @@ int sceUmdGetErrorStat(void) {
 }
 
 // 0x000018A4
-// call @PRO_Inferno_Driver:sceUmd,0xF60013F8@
+// call @EPI-InfernoDriver:sceUmd,0xF60013F8@
 void sceUmdSetDriveStatus(int status) {
 	int intr = sceKernelCpuSuspendIntr();
 

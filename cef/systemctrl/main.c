@@ -39,7 +39,7 @@
 #include "ttystdio.h"
 #include "gameinfo.h"
 
-PSP_MODULE_INFO("SystemControl", 0x1007, 1, 0);
+PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
 int (* PrologueModule)(void *modmgr_param, SceModule2 *mod);
 
@@ -402,8 +402,12 @@ static void OnSystemStatusIdle() {
 
 	PatchVolatileMemBug();
 
-	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
-		SetSpeed(cpu_list[config.umdisocpuspeed % N_CPU], bus_list[config.umdisocpuspeed % N_CPU]);
+	SceBootMediumType medium_type = sceKernelBootFrom();
+	SceApplicationType app_type = sceKernelApplicationType();
+	u8 is_correct_medium = (medium_type == SCE_BOOT_DISC || medium_type == SCE_BOOT_MS || medium_type == SCE_BOOT_EF);
+
+	if (app_type != SCE_APPTYPE_VSH && is_correct_medium) {
+		SetSpeed(cpu_list[config.app_cpu_speed % N_CPU], bus_list[config.app_cpu_speed % N_CPU]);
 	}
 
 	// Set fake framebuffer so that cwcheat can be displayed
@@ -510,7 +514,7 @@ static int OnModuleStart(SceModule2 *mod) {
 
 		sctrlSEGetConfig(&config);
 
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_GAME  && config.forcehighmemory) {
+		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_GAME  && config.force_high_memory) {
 			sctrlHENSetMemory(52, 0);
 			ApplyMemory();
 		} else {

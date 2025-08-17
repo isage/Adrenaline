@@ -54,11 +54,11 @@ int readGameIdFromPBP() {
 
 // 0 - Not able to get | 1 - Able to get
 int readGameIdFromISO() {
-	int (*isoGetGameId)(char game_id[10]) = (void*)FindProc("PRO_Inferno_Driver", "inferno_driver", 0xFF8838D4);
+	int (*isoGetGameId)(char game_id[10]) = (void*)FindProc("EPI-InfernoDriver", "inferno_driver", 0xFF8838D4);
 
 	if (isoGetGameId == NULL) {
 		// Try galaxy
-		isoGetGameId = (void*)FindProc("EPIGalaxyController", "galaxy_driver", 0xFF8838D4);
+		isoGetGameId = (void*)FindProc("EPI-GalaxyController", "galaxy_driver", 0xFF8838D4);
 
 		if (isoGetGameId == NULL) {
 			// FIXME: Add logic for M33 driver once we have the M33 driver code on Adrenaline
@@ -78,7 +78,7 @@ void findAndSetGameId() {
 	}
 
 	if (rebootex_config.game_id[0] == '\0') {
-		int is_iso = sceKernelFindModuleByName("PRO_Inferno_Driver") != NULL || sceKernelFindModuleByName("EPIGalaxyController") != NULL;
+		int is_iso = sceKernelFindModuleByName("EPI-InfernoDriver") != NULL || sceKernelFindModuleByName("EPI-GalaxyController") != NULL;
 		if (is_iso) {
 			readGameIdFromISO();
 		} else {

@@ -33,7 +33,7 @@
 #include "plugins.h"
 #include "settings.h"
 
-PSP_MODULE_INFO("AdrenalineXmbControl", 0x0007, 1, 0);
+PSP_MODULE_INFO("EPI-XmbControl", 0x0007, 1, 0);
 
 extern List plugins;
 
@@ -521,12 +521,12 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int *value) {
 	if (name) {
 		if (is_cfw_config == 1) {
-			int configs[] = {
+			u8 configs[] = {
 				config.vsh_cpu_speed,  config.game_cpu_speed, config.umd_driver,
 				config.skip_sony_coldboot_logo, config.skip_sony_gameboot_logo,
 				config.hide_corrupt_icons, config.hide_mac_addr, config.hide_dlcs,
 				config.hide_pic01, config.vsh_region, config.extended_colors, config.use_sony_osk,
-				config.use_nodrm, config.enablexmbctrl,
+				config.use_nodrm, config.enable_xmbctrl,
 				config.autorun_boot_eboot, config.force_highmem, config.exec_bootbin,
 				config.vsh_plugins, config.game_plugins, config.pops_plugins,
 			};
@@ -557,12 +557,12 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
 	if (name) {
 		if (is_cfw_config == 1) {
-			static int *configs[] = {
+			static u8 *configs[] = {
 				&config.vsh_cpu_speed,  &config.game_cpu_speed, &config.umd_driver,
 				&config.skip_sony_coldboot_logo, &config.skip_sony_gameboot_logo,
 				&config.hide_corrupt_icons, &config.hide_mac_addr, &config.hide_dlcs,
 				&config.hide_pic01, &config.vsh_region, &config.extended_colors, &config.use_sony_osk,
-				&config.use_nodrm, &config.enablexmbctrl,
+				&config.use_nodrm, &config.enable_xmbctrl,
 				&config.autorun_boot_eboot, &config.force_highmem, &config.exec_bootbin,
 				&config.vsh_plugins, &config.game_plugins, &config.pops_plugins,
 			};

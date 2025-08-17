@@ -6,8 +6,7 @@
  * and they are not in HEN
 */
 
-enum
-{
+enum FakeRegionOptions {
 	FAKE_REGION_DISABLED = 0,
 	FAKE_REGION_JAPAN = 1,
 	FAKE_REGION_AMERICA = 2,
@@ -24,45 +23,104 @@ enum
 	FAKE_REGION_DEBUG_TYPE_II = 13,
 };
 
-enum SEUmdModes
-{
+enum SEUmdModes {
 	MODE_INFERNO,
 	MODE_MARCH33,
 	MODE_NP9660,
 };
 
-enum InfernoCachePolicy
-{
+enum InfernoCachePolicy {
     CACHE_POLICY_LRU = 0,
     CACHE_POLICY_RR = 1,
 };
 
-#define ADRENALINE_CFG_MAGIC_1 0x31483943
-#define ADRENALINE_CFG_MAGIC_2 0x334F4E33
+enum CpuBusSpeed {
+	CLOCK_SPEED_DISABLED,
+	CLOCK_SPEED_20_10,
+	CLOCK_SPEED_75_37,
+	CLOCK_SPEED_100_50,
+	CLOCK_SPEED_133_66,
+	CLOCK_SPEED_222_111,
+	CLOCK_SPEED_266_133,
+	CLOCK_SPEED_300_150,
+	CLOCK_SPEED_333_166,
+};
 
+enum ForceHighMemory {
+	HIGHMEM_OPT_DISABLED,
+	HIGHMEM_OPT_MAX,
+};
+
+enum RecoveryColor {
+	RECOVERY_COLOR_BLUE,
+	RECOVERY_COLOR_GREEN,
+	RECOVERY_COLOR_RED,
+	RECOVERY_COLOR_GRAY,
+	RECOVERY_COLOR_PINK,
+	RECOVERY_COLOR_PURPLE,
+	RECOVERY_COLOR_CYAN,
+	RECOVERY_COLOR_ORANGE,
+	RECOVERY_COLOR_YELLOW,
+	RECOVERY_COLOR_B_WHITE,
+	RECOVERY_COLOR_B_RED,
+	RECOVERY_COLOR_B_GREEN,
+	RECOVERY_COLOR_B_BLUE,
+};
+
+enum ExtendedColors {
+	EXTENDED_COLOR_DISABLED,
+	/** PSP 2000 Extended Color */
+	EXTENDED_COLOR_02G,
+	/** PSP 3000 Extended Color */
+	EXTENDED_COLOR_03G,
+};
+
+#define ADRENALINE_CFG_MAGIC_1 0x192EFC3C
+#define ADRENALINE_CFG_MAGIC_2 0x17BEB6AA
 typedef struct {
 	int magic[2];
-	int hidecorrupt;
-	int	skiplogo;
-	int startupprog;
-	int umdmode;
-	int	vshcpuspeed;
-	int	umdisocpuspeed;
-	int fakeregion;
-	int skipgameboot;
-	int hidemacaddr;
-	int hidedlcs;
-	int hidepic0pic1;
-	int useextendedcolors;
-	int usesonypsposk;
-	int notusenodrmengine;
-	int notusexmbplugins;
-	int notusegameplugins;
-	int notusepopsplugins;
-	int forcehighmemory;
-	int executebootbin;
-	int recoverycolor;
-	int enablexmbctrl;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 hide_corrupt;
+	/** 0 - Disabled, 1 - Enabled */
+	u8	skip_logo;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 startup_program;
+	/** One of `SEUmdModes` */
+	u8 umd_mode;
+	/** One of `CpuBusSpeed` */
+	u8	vsh_cpu_speed;
+	/** One of `CpuBusSpeed` */
+	u8	app_cpu_speed;
+	/** One of `FakeRegionOptions` */
+	u8 fake_region;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 skip_game_boot_logo;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 hide_mac_addr;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 hide_dlcs;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 hide_pic0pic1;
+	/** One of `ExtendedColors` */
+	u8 extended_colors;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 use_sony_psposk;
+	/** 0 - Use, 1 - Do not use */
+	u8 no_nodrm_engine;
+	/** 0 - Use, 1 - Do not use */
+	u8 no_xmb_plugins;
+	/** 0 - Use, 1 - Do not use */
+	u8 no_game_plugins;
+	/** 0 - Use, 1 - Do not use */
+	u8 no_pops_plugins;
+	/** One of `ForceHighMemory` */
+	u8 force_high_memory;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 execute_boot_bin;
+	/** One of `RecoveryColor` */
+	u8 recovery_color;
+	/** 0 - Disabled, 1 - Enabled */
+	u8 enable_xmbctrl;
 } AdrenalineConfig;
 
 typedef AdrenalineConfig SEConfig;

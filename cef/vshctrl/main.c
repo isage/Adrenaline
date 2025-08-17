@@ -153,7 +153,7 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 			if (uses_prometheus) {
 				param->argp = EBOOT_OLD;
 			} else {
-				if (config.executebootbin)
+				if (config.execute_boot_bin)
 					param->argp = BOOT_BIN;
 				else
 					param->argp = EBOOT_BIN;
@@ -164,12 +164,12 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		file = param->argp;
 		param->key = "umdemu";
 
-		// Set umdmode
-		if (config.umdmode == MODE_INFERNO) {
+		// Set umd_mode
+		if (config.umd_mode == MODE_INFERNO) {
 			sctrlSESetBootConfFileIndex(BOOT_INFERNO);
-		} else if (config.umdmode == MODE_MARCH33) {
+		} else if (config.umd_mode == MODE_MARCH33) {
 			sctrlSESetBootConfFileIndex(BOOT_MARCH33);
-		} else if (config.umdmode == MODE_NP9660) {
+		} else if (config.umd_mode == MODE_NP9660) {
 			sctrlSESetBootConfFileIndex(BOOT_NP9660);
 		}
 
@@ -440,10 +440,10 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 	res = sceIoDread(fd, dir);
 
 	if (res > 0) {
-		if (config.hidecorrupt)
+		if (config.hide_corrupt)
 			CorruptIconPatch(dir->d_name);
 
-		if (config.hidedlcs)
+		if (config.hide_dlcs)
 			HideDlc(dir->d_name);
 	}
 
@@ -682,18 +682,18 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 	int res = sceCtrlReadBufferPositive(pad_data, count);
 	int k1 = pspSdkSetK1(0);
 
-	if (!set && config.vshcpuspeed != 0) {
+	if (!set && config.vsh_cpu_speed != 0) {
 		u32 curtick = sceKernelGetSystemTimeLow();
 		curtick -= firsttick;
 
 		u32 t = (u32)curtick;
 		if (t >= (10 * 1000 * 1000)) {
 			set = 1;
-			SetSpeed(cpu_list[config.vshcpuspeed % N_CPU], bus_list[config.vshcpuspeed % N_CPU]);
+			SetSpeed(cpu_list[config.vsh_cpu_speed % N_CPU], bus_list[config.vsh_cpu_speed % N_CPU]);
 		}
 	}
 
-	if (!sceKernelFindModuleByName("VshCtrlSatelite")) {
+	if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
 		if (pad_data->Buttons & PSP_CTRL_SELECT) {
 			if (!sceKernelFindModuleByName("htmlviewer_plugin_module") &&
 			   !sceKernelFindModuleByName("sceVshOSK_Module") &&
@@ -728,16 +728,16 @@ int vctrlVSHRegisterVshMenu(int (* ctrl)(SceCtrlData *, int)) {
 
 int vctrlVSHExitVSHMenu(AdrenalineConfig *conf) {
 	int k1 = pspSdkSetK1(0);
-	int oldspeed = config.vshcpuspeed;
+	int oldspeed = config.vsh_cpu_speed;
 
 	vshmenu_ctrl = NULL;
 	memcpy(&config, conf, sizeof(AdrenalineConfig));
 	sctrlSEApplyConfig(&config);
 
 	if (set) {
-		if (config.vshcpuspeed != oldspeed) {
-			if (config.vshcpuspeed) {
-				SetSpeed(cpu_list[config.vshcpuspeed % N_CPU], bus_list[config.vshcpuspeed % N_CPU]);
+		if (config.vsh_cpu_speed != oldspeed) {
+			if (config.vsh_cpu_speed) {
+				SetSpeed(cpu_list[config.vsh_cpu_speed % N_CPU], bus_list[config.vsh_cpu_speed % N_CPU]);
 			} else {
 				SetSpeed(222, 111);
 			}
@@ -821,12 +821,12 @@ void PatchVshMain(u32 text_addr) {
 //	MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
 //	MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
 
-	if (config.skipgameboot) {
+	if (config.skip_game_boot_logo) {
 		// Disable sceDisplaySetHoldMode
 		MAKE_NOP(text_addr + 0xCA88);
 	}
 
-	if (config.useextendedcolors == 1) {
+	if (config.extended_colors == 1) {
 		VWRITE16(text_addr + 0x3174A, 0x1000);
 	}
 
@@ -891,12 +891,12 @@ void PatchSysconfPlugin(u32 text_addr) {
 	MAKE_INSTRUCTION(text_addr + 0x192E0, 0x3C020000 | ((u32)(text_addr + 0x2A62C) >> 16));
 	MAKE_INSTRUCTION(text_addr + 0x192E4, 0x34420000 | ((u32)(text_addr + 0x2A62C) & 0xFFFF));
 
-	if (config.hidemacaddr) {
+	if (config.hide_mac_addr) {
 		memcpy((void *)text_addr + 0x2E9A0, macinfo, sizeof(macinfo));
 	}
 
 	// Allow slim colors
-	if (config.useextendedcolors != 0) {
+	if (config.extended_colors != 0) {
 		MAKE_INSTRUCTION(text_addr + 0x76EC, VREAD32(text_addr + 0x76F0));
 		MAKE_INSTRUCTION(text_addr + 0x76F0, LI_V0(1));
 	}
@@ -938,12 +938,12 @@ void PatchGamePlugin(u32 text_addr) {
 	// if check patch
 	MAKE_INSTRUCTION(text_addr + 0x20620, MOVE_V0_ZR);
 
-	if (config.hidepic0pic1) {
+	if (config.hide_pic0pic1) {
 		MAKE_INSTRUCTION(text_addr + 0x1D858, 0x00601021);
 		MAKE_INSTRUCTION(text_addr + 0x1D864, 0x00601021);
 	}
 
-	if (config.skipgameboot) {
+	if (config.skip_game_boot_logo) {
 		MAKE_CALL(text_addr + 0x19130, text_addr + 0x194B0);
 		MAKE_INSTRUCTION(text_addr + 0x19134, 0x24040002);
 	}
@@ -1002,7 +1002,7 @@ int module_start(SceSize args, void *argp) {
 
 	sctrlSEGetConfig(&config);
 
-	if (config.vshcpuspeed != 0) {
+	if (config.vsh_cpu_speed != 0) {
 		firsttick = sceKernelGetSystemTimeLow();
 	}
 

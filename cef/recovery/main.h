@@ -38,7 +38,7 @@ void RegistryHacks();
 void SetButtonAssign(int sel);
 void SetWMA(int sel);
 void SetFlashPlayer(int sel);
-void SetRecoveryColor(int sel);
+void Setrecovery_color(int sel);
 void Exit();
 
 #endif

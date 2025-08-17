@@ -151,11 +151,37 @@ typedef enum SceFileExecApiType {
 	SCE_EXEC_APITYPE_VSH_EXITVSH = SCE_EXEC_APITYPE_VSH2, /* ExitVSH */
 } SceFileExecApiType;
 
+/**
+ * The possible boot medium types for an executable.
+ */
+typedef enum SceBootMediumType {
+    /** The executable was booted via Flash 0 (1, 2). */
+    SCE_BOOT_FLASH     = 0,
+    /** The executable was booted via a Disc medium. */
+    SCE_BOOT_DISC      = 0x20,
+    /** The executable was booted via a Game-sharing medium. */
+    SCE_BOOT_USBWLAN   = 0x30,
+    /** The executable was booted via the Memory Stick medium. */
+    SCE_BOOT_MS        = 0x40,
+    /** The executable was booted via an unknown medium. */
+    SCE_BOOT_EF        = 0x50,
+    /** The executable was booted via Flash 3.*/
+    SCE_BOOT_FLASH3    = 0x80,
+} SceBootMediumType;
+
+/**
+ * Application types of an executable.
+ */
 typedef enum SceApplicationType {
+	/** The application is a VSH application (i.e. VSH modules). */
 	SCE_APPTYPE_VSH		= 0x100,
+	/** The application is an updater. */
 	SCE_APPTYPE_UPDATER	= 0x110,
+	/** The application is a PSP game. */
 	SCE_APPTYPE_GAME	= 0x200,
+	/** The application is a Playstation One game. */
 	SCE_APPTYPE_POPS	= 0x300,
+	/** The application is a PSP application (i.e. Skype). */
 	SCE_APPTYPE_APP		= 0x400,
 } SceApplicationType;
 

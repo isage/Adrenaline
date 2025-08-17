@@ -302,8 +302,8 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 	pscode[0] = 0x01;
 	pscode[1] = 0x00;
 
-	if (config.fakeregion) {
-		pscode[2] = config.fakeregion < 12 ? config.fakeregion + 2 : config.fakeregion - 11;
+	if (config.fake_region) {
+		pscode[2] = config.fake_region < 12 ? config.fake_region + 2 : config.fake_region - 11;
 		if (pscode[2] == 2) {
 			pscode[2] = 3;
 		}
@@ -476,7 +476,7 @@ static int exitToVsh(SceSize args, void *argp) {
 
     int res = sctrlKernelExitVSH(NULL);
 
-    pspSdkSetK1(0);
+    pspSdkSetK1(k1);
     return res;
 }
 

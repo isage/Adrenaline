@@ -57,17 +57,17 @@ void loadPlugins(){
 	sctrlSEGetConfig(&se_config);
 	clear_list(&plugins, &list_cleaner);
 
-	if (!se_config.notusexmbplugins) {
+	if (!se_config.no_xmb_plugins) {
 		cur_place = PLACE_VSH;
 		ProcessConfigFile("ms0:/seplugins/vsh.txt", &processPlugin, &processCustomLine);
 	}
 
-	if (!se_config.notusegameplugins) {
+	if (!se_config.no_game_plugins) {
 		cur_place = PLACE_GAME;
 		ProcessConfigFile("ms0:/seplugins/game.txt", &processPlugin, &processCustomLine);
 	}
 
-	if (!se_config.notusepopsplugins) {
+	if (!se_config.no_pops_plugins) {
 		cur_place = PLACE_POPS;
 		ProcessConfigFile("ms0:/seplugins/pops.txt", &processPlugin, &processCustomLine);
 	}
@@ -101,9 +101,9 @@ void savePlugins() {
 	sctrlSEGetConfig(&se_config);
 
 	int fd[3] = {
-		(!se_config.notusexmbplugins)? sceIoOpen("ms0:/seplugins/vsh.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
-		(!se_config.notusegameplugins)? sceIoOpen("ms0:/seplugins/game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
-		(!se_config.notusepopsplugins)? sceIoOpen("ms0:/seplugins/pops.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
+		(!se_config.no_xmb_plugins)? sceIoOpen("ms0:/seplugins/vsh.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
+		(!se_config.no_game_plugins)? sceIoOpen("ms0:/seplugins/game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
+		(!se_config.no_pops_plugins)? sceIoOpen("ms0:/seplugins/pops.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
 	};
 
 	for (int i = 0; i < plugins.count; i++) {

@@ -26,7 +26,7 @@
 
 #include "options.h"
 
-PSP_MODULE_INFO("Recovery mode", 0, 1, 0);
+PSP_MODULE_INFO("EPI-RecoveryMode", 0, 2, 0);
 PSP_DISABLE_NEWLIB();
 PSP_DISABLE_AUTOSTART_PTHREAD();
 
@@ -125,9 +125,9 @@ void SetFlashPlayer(int sel)
   }
 }
 
-void SetRecoveryColor(int sel)
+void Setrecovery_color(int sel)
 {
-  theme = config.recoverycolor;
+  theme = config.recovery_color;
 }
 
 void Exit()
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 
   VGraphInit(1);
   sctrlSEGetConfig(&config);
-  SetRecoveryColor(config.recoverycolor);
+  Setrecovery_color(config.recovery_color);
 
   RegistryHacks();
   UpdatePluginCount(Plugins());
