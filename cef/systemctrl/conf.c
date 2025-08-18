@@ -156,7 +156,7 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size) {
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 	if (fd < 0) {
 		pspSdkSetK1(k1);
-		return -1;
+		return fd;
 	}
 
 	config->magic[0] = ADRENALINE_CFG_MAGIC_1;
@@ -165,7 +165,7 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size) {
 	if (sceIoWrite(fd, config, size) < size) {
 		sceIoClose(fd);
 		pspSdkSetK1(k1);
-		return -1;
+		return SCE_EIO;
 	}
 
 	sceIoClose(fd);

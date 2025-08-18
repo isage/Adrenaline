@@ -34,6 +34,35 @@ enum InfernoCachePolicy {
     CACHE_POLICY_RR = 1,
 };
 
+enum InfernoCacheConf {
+	CACHE_CONFIG_LRU,
+    CACHE_CONFIG_RR,
+	CACHE_CONFIG_OFF,
+};
+
+enum IsoCacheNumberConf {
+	ISO_CACHE_NUM_AUTO,
+	ISO_CACHE_NUM_001,
+	ISO_CACHE_NUM_002,
+	ISO_CACHE_NUM_004,
+	ISO_CACHE_NUM_008,
+	ISO_CACHE_NUM_016,
+	ISO_CACHE_NUM_032,
+	ISO_CACHE_NUM_064,
+	ISO_CACHE_NUM_128,
+};
+
+enum IsoCacheSizeConf {
+	ISO_CACHE_SIZE_AUTO,
+	ISO_CACHE_SIZE_01KB,
+	ISO_CACHE_SIZE_02KB,
+	ISO_CACHE_SIZE_04KB,
+	ISO_CACHE_SIZE_08KB,
+	ISO_CACHE_SIZE_16KB,
+	ISO_CACHE_SIZE_32KB,
+	ISO_CACHE_SIZE_64KB,
+};
+
 enum CpuBusSpeed {
 	CLOCK_SPEED_DISABLED,
 	CLOCK_SPEED_20_10,
@@ -47,7 +76,7 @@ enum CpuBusSpeed {
 };
 
 enum ForceHighMemory {
-	HIGHMEM_OPT_DISABLED,
+	HIGHMEM_OPT_OFF,
 	HIGHMEM_OPT_MAX,
 };
 
@@ -121,6 +150,18 @@ typedef struct {
 	u8 recovery_color;
 	/** 0 - Disabled, 1 - Enabled */
 	u8 enable_xmbctrl;
+	/** Inferno cache type. One of `InfernoCacheConf` */
+	u8 iso_cache;
+	/** Inferno cache partition 2 or 11 (automatic) */
+	u8 iso_cache_partition;
+	/** Inferno cache size (in KB) for each cache item. One of `IsoCacheSizeConf` */
+	u8 iso_cache_size;
+	/** Number of inferno cache items. One of `IsoCacheNumberConf` */
+	u8 iso_cache_num;
+	/** Simulate UMD seek time. Zero - Off, `>0` - seek time factor, i.e. value that will be multiplied on amount of bytes to be read */
+	u8 umd_seek;
+	/** Simulate UMD seek time. Zero - Off, `>0` - seek time factor, i.e. value that will be multiplied on amount of bytes to be read */
+    u8 umd_speed;
 } AdrenalineConfig;
 
 typedef AdrenalineConfig SEConfig;
