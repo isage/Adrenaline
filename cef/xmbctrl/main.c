@@ -49,14 +49,19 @@ enum {
 	HIDE_MAC_ADDR,
 	HID_DLCS,
 	HIDE_PIC_0_1,
+	AUTORUN_BOOT,
+	VSH_REGION,
 	EXT_COLORS,
 	USE_SONY_OSK,
 	USE_NO_DRM,
-	AUTORUN_BOOT,
 	XMBCNTRL,
 	FORCE_HIGHMEM,
 	EXEC_BOOT_BIN,
-	VSH_REGION,
+	INFERNO_CACHE_POLICY,
+	INFERNO_CACHE_NUM,
+	INFERNO_CACHE_SIZE,
+	INFERNO_SIM_UMD_SEEK,
+	INFERNO_SIM_UMD_SPEED,
 	VSH_PLUGINS,
 	GAME_PLUGINS,
 	POPS_PLUGINS,
@@ -91,9 +96,11 @@ GetItem GetItemes[] = {
 	{19, 0, "Inferno ISO cache policy", 0, 1},
 	{20, 0, "Inferno ISO cache number", 0, 1},
 	{21, 0, "Inferno ISO cache size", 0, 1},
-	{22, 0, "XMB Plugins", 1, 1},
-	{23, 0, "Game Plugins", 1, 1},
-	{24, 0, "POPS Plugins", 1, 1},
+	{22, 0, "Inferno UMD emu seek delay factor", 0, 1},
+	{23, 0, "Inferno UMD emu read speed delay factor", 0, 1},
+	{24, 0, "XMB Plugins", 1, 1},
+	{25, 0, "Game Plugins", 1, 1},
+	{26, 0, "POPS Plugins", 1, 1},
 };
 
 #define PLUGINS_CONTEXT 1
@@ -137,6 +144,7 @@ char *boolean_options[] = {"Off", "On"};
 char *iso_cache_options[] = {"LRU", "RR", "Off"};
 char *iso_cache_num_options[] = {"Auto", "1", "2", "4", "8", "16", "32", "64", "128"};
 char *iso_cache_size_options[] = {"Auto", "1KB", "2KB", "4KB", "8KB", "16KB", "32KB", "64KB"};
+char *iso_umd_seek_read_options[] = {"Off", "1x", "2x", "3x", "4x"};
 
 static char *need_reboot_subtitle = "Requires restarting VSH to take effect";
 
@@ -166,6 +174,8 @@ struct {
 	{NELEMS(iso_cache_options), iso_cache_options}, // ISO cache kind
 	{NELEMS(iso_cache_num_options), iso_cache_num_options}, // ISO cache number
 	{NELEMS(iso_cache_size_options), iso_cache_size_options}, // ISO cache size
+	{NELEMS(iso_umd_seek_read_options), iso_umd_seek_read_options}, // ISO UMD seek delay
+	{NELEMS(iso_umd_seek_read_options), iso_umd_seek_read_options}, // ISO UMD read speed delay
 	{2, boolean_options},           // VSH/XMB Plugins
 	{2, boolean_options},           // Game Plugins
 	{2, boolean_options},           // POPS Plugins
@@ -539,6 +549,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 				config.extended_colors, config.use_sony_osk, config.use_nodrm,
 				config.enable_xmbctrl, config.force_highmem, config.exec_bootbin,
 				config.iso_cache, config.iso_cache_num, config.iso_cache_size,
+				config.umd_seek, config.umd_speed,
 				config.vsh_plugins, config.game_plugins, config.pops_plugins,
 			};
 
@@ -576,6 +587,7 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
 				&config.extended_colors, &config.use_sony_osk, &config.use_nodrm,
 				&config.enable_xmbctrl, &config.force_highmem, &config.exec_bootbin,
 				&config.iso_cache, &config.iso_cache_num, &config.iso_cache_size,
+				&config.umd_seek, &config.umd_speed,
 				&config.vsh_plugins, &config.game_plugins, &config.pops_plugins,
 			};
 

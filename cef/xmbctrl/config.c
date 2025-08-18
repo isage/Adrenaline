@@ -37,6 +37,8 @@ void loadSettings() {
 	config.iso_cache = se_config.iso_cache;
 	config.iso_cache_num = se_config.iso_cache_num;
 	config.iso_cache_size = se_config.iso_cache_size;
+	config.umd_seek = se_config.umd_seek;
+	config.umd_speed = se_config.umd_speed;
 
 	config.use_nodrm = !se_config.no_nodrm_engine;
 	config.vsh_plugins = !se_config.no_xmb_plugins;
@@ -68,6 +70,8 @@ void saveSettings() {
 	se_config.iso_cache = config.iso_cache;
 	se_config.iso_cache_num = config.iso_cache_num;
 	se_config.iso_cache_size = config.iso_cache_size;
+	se_config.umd_seek = config.umd_seek;
+	se_config.umd_speed = config.umd_speed;
 
 	se_config.no_nodrm_engine = !config.use_nodrm;
 	se_config.no_xmb_plugins = !config.vsh_plugins;

@@ -59,6 +59,8 @@ typedef struct {
 	u8 iso_cache;
 	u8 iso_cache_num;
 	u8 iso_cache_size;
+	u8 umd_seek;
+	u8 umd_speed;
 } CFWConfig;
 
 typedef struct
