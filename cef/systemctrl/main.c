@@ -327,8 +327,12 @@ int sceUmdRegisterUMDCallBackPatched(int cbid) {
 
 int cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
 int bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
+u32 cache_size_list[] = { 0, 1024, 2*1024, 4*1024, 8*1024, 16*1024, 32*1024, 64*1024 };
+u8 cache_num_list[] = { 0, 1, 2, 4, 8, 16, 32, 64, 128 };
 
 #define N_CPU (sizeof(cpu_list) / sizeof(int))
+#define N_CACHE_SIZE (sizeof(cache_size_list) / sizeof(u32))
+#define N_CACHE_NUM (sizeof(cache_num_list) / sizeof(u8))
 
 static int (*utilityGetParam)(int, int*) = NULL;
 static int utilityGetParamPatched_ULJM05221(int param, int* value) {
@@ -340,16 +344,16 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 }
 
 static int wweModuleOnStart(SceModule2 * mod) {
-    // Boot Complete Action not done yet
-    if (strcmp(mod->modname, "mainPSP") == 0) {
-        sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222); // scePowerGetPllClockFrequencyInt
-        sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);   // scePowerSetCpuClockFrequency
-        sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222); // scePowerGetCpuClockFrequencyInt
-        sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111); // scePowerGetBusClockFrequencyInt
-    }
+	// Boot Complete Action not done yet
+	if (strcmp(mod->modname, "mainPSP") == 0) {
+		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222); // scePowerGetPllClockFrequencyInt
+		sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);   // scePowerSetCpuClockFrequency
+		sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222); // scePowerGetCpuClockFrequencyInt
+		sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111); // scePowerGetBusClockFrequencyInt
+	}
 
-    // Call Previous Module Start Handler
-    if(game_previous) game_previous(mod);
+	// Call Previous Module Start Handler
+	if(game_previous) game_previous(mod);
 
 	return 0;
 }
@@ -362,10 +366,21 @@ static void PatchGameByGameId() {
 		utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		sctrlHENPatchSyscall((u32)utilityGetParam, utilityGetParamPatched_ULJM05221);
 
-	} else if (strcasecmp("ULES01472", game_id) == 0 || strcasecmp("ULUS10543", game_id) == 0){
-        // Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
+	} else if (strcasecmp("ULES01472", game_id) == 0 || strcasecmp("ULUS10543", game_id) == 0) {
+		// Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
 		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
-    }
+
+	} else if (strcasecmp("ULES00590", game_id) == 0 || strcasecmp("ULJM05075", game_id) == 0) {
+		// Patch Aces of War anti-CFW check (UMD speed)
+		if (config.umd_seek == 0 && config.umd_speed == 0) {
+			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xB6522E93);
+			if (SetUmdDelay != NULL) {
+				SetUmdDelay(1, 1);
+			}
+
+		}
+
+	}
 }
 
 static void PatchGamesByMod(SceModule2* mod) {
@@ -373,6 +388,22 @@ static void PatchGamesByMod(SceModule2* mod) {
 
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
+
+		if (config.iso_cache != CACHE_CONFIG_OFF) {
+			SceModule2* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+
+			// enable UMD reading speed
+			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
+			if (SetUmdDelay != NULL) {
+				SetUmdDelay(2, 2);
+			}
+
+			// Disable Inferno cache
+			int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+			if (CacheInit != NULL) {
+				CacheInit(0, 0, 0);
+			}
+		}
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
 		// Remove "overclock" message in ATV PRO
@@ -399,9 +430,55 @@ static void OnSystemStatusIdle() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 	initAdrenalineInfo();
-
 	PatchVolatileMemBug();
 
+	// Inferno cache config
+	SceModule2* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+
+	// Inferno driver is loaded
+	if (inferno_mod != NULL) {
+		// Handle Inferno's UMD seek and UMD speed setting
+		if (config.umd_seek > 0 || config.umd_speed > 0) {
+			config.iso_cache = CACHE_CONFIG_OFF;
+
+			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
+
+			if (SetUmdDelay != NULL) {
+				SetUmdDelay(config.umd_seek, config.umd_speed);
+				logmsg3("[INFO]: Inferno ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", config.umd_seek, config.umd_speed);
+			}
+		}
+
+		// Handle Inferno Iso cache
+		if (config.iso_cache != CACHE_CONFIG_OFF) {
+			if (rebootex_config.ram2 > 24 || config.force_high_memory != HIGHMEM_OPT_OFF) {
+				config.iso_cache_partition = 2;
+			} else {
+				config.iso_cache_partition = 11;
+			}
+
+			int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+			if (CacheInit != NULL) {
+				u32 cache_size = (config.iso_cache_size == ISO_CACHE_SIZE_AUTO) ? 32*1024 : cache_size_list[config.iso_cache_size%N_CACHE_SIZE];
+				u8 cache_num = (config.iso_cache_num == ISO_CACHE_NUM_AUTO) ? 32 : cache_num_list[config.iso_cache_num%N_CACHE_NUM];
+				CacheInit(cache_size, cache_num, config.iso_cache_partition);
+				logmsg3("[INFO]: Inferno ISO cache: %d caches of %d KiB in partition %d — Total: %d KiB\n", cache_num, cache_size/1024, config.iso_cache_partition, (cache_num*cache_size)/1024, N_CACHE_SIZE);
+			}
+
+			int (*CacheSetPolicy)(int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xC0736FD6);
+			if (CacheSetPolicy != NULL) {
+				if (config.iso_cache == CACHE_CONFIG_LRU) {
+					CacheSetPolicy(CACHE_POLICY_LRU);
+					logmsg3("[INFO]: Inferno ISO cache policy: LRU\n");
+				} else if (config.iso_cache == 2) {
+					CacheSetPolicy(CACHE_POLICY_RR);
+					logmsg3("[INFO]: Inferno ISO cache policy: RR\n");
+				}
+			}
+		}
+	}
+
+	// Set CPU/BUS speed on apps/games
 	SceBootMediumType medium_type = sceKernelBootFrom();
 	SceApplicationType app_type = sceKernelApplicationType();
 	u8 is_correct_medium = (medium_type == SCE_BOOT_DISC || medium_type == SCE_BOOT_MS || medium_type == SCE_BOOT_EF);

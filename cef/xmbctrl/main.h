@@ -56,6 +56,9 @@ typedef struct {
 	u8 game_plugins;
 	u8 pops_plugins;
 	u8 enable_xmbctrl;
+	u8 iso_cache;
+	u8 iso_cache_num;
+	u8 iso_cache_size;
 } CFWConfig;
 
 typedef struct
