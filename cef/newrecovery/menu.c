@@ -305,9 +305,12 @@ Entry advanced_entries[] = {
   { "Inferno ISO cache policy", NULL, iso_cache, sizeof(iso_cache), &config.iso_cache },
   { "Inferno ISO cache number", NULL, iso_cache_num, sizeof(iso_cache_num), &config.iso_cache_num },
   { "Inferno ISO cache size", NULL, iso_cache_size, sizeof(iso_cache_size), &config.iso_cache_size },
+  { "Inferno UMD emu seek delay factor", NULL, umd_seek_read_delay, sizeof(umd_seek_read_delay), &config.umd_seek },
+  { "Inferno UMD emu speed delay factor", NULL, umd_seek_read_delay, sizeof(umd_seek_read_delay), &config.umd_speed },
   { "XMB  plugins", NULL, endisabled, sizeof(endisabled), &config.no_xmb_plugins },
   { "GAME plugins", NULL, endisabled, sizeof(endisabled), &config.no_game_plugins },
   { "POPS plugins", NULL, endisabled, sizeof(endisabled), &config.no_pops_plugins },
+  { "", NULL, NULL, 0, NULL },
   { "Button assign", SetButtonAssign, buttonassign, sizeof(buttonassign), (int *)&button_assign_value },
   { "Activate WMA", SetWMA, NULL, 0, NULL },
   { "Activate Flash Player", SetFlashPlayer, NULL, 0, NULL },
@@ -315,9 +318,12 @@ Entry advanced_entries[] = {
   { "Reset settings", ResetSettings, NULL, 0, NULL },
 };
 
+#define N_GENERAL (sizeof(general_entries) / sizeof(Entry))
+#define N_ADVANCED (sizeof(advanced_entries) / sizeof(Entry))
+
 Page pages[] = {
-  { general_entries, 20, "General" },
-  { advanced_entries, 10, "Advanced" },
+  { general_entries, N_GENERAL, "General" },
+  { advanced_entries, N_ADVANCED, "Advanced" },
   { plugins_tool_entries, 0, "Plugins" }
 };
 
