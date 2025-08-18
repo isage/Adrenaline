@@ -80,17 +80,20 @@ GetItem GetItemes[] = {
 	{8, 0, "Hide MAC address", 1, 0},
 	{9, 0, "Hide DLCs", 1, 0},
 	{10, 0, "Hide PIC0 and PIC1", 1, 0},
-	{11, 0, "VSH Region", 1, 0},
-	{12, 0, "Extended colors", 1, 0},
-	{13, 0, "Use Sony PSP OSK", 1, 0},
-	{14, 0, "Use NoDRM engine", 1, 0},
-	{15, 0, "XMB Control", 1, 0},
-	{16, 0, "Autorun program in /PSP/GAME/BOOT/EBOOT.PBP", 1, 1},
+	{11, 0, "Autorun /PSP/GAME/BOOT/EBOOT.PBP", 1, 0},
+	{12, 0, "VSH Region", 1, 0},
+	{13, 0, "Extended colors", 1, 0},
+	{14, 0, "Use Sony PSP OSK", 1, 0},
+	{15, 0, "Use NoDRM engine", 1, 0},
+	{16, 0, "XMB Control", 1, 0},
 	{17, 0, "Force high memory layout", 1, 1},
 	{18, 0, "Execute BOOT.BIN in Game", 1, 1},
-	{19, 0, "XMB Plugins", 1, 1},
-	{20, 0, "Game Plugins", 1, 1},
-	{21, 0, "POPS Plugins", 1, 1},
+	{19, 0, "Inferno ISO cache policy", 0, 1},
+	{20, 0, "Inferno ISO cache number", 0, 1},
+	{21, 0, "Inferno ISO cache size", 0, 1},
+	{22, 0, "XMB Plugins", 1, 1},
+	{23, 0, "Game Plugins", 1, 1},
+	{24, 0, "POPS Plugins", 1, 1},
 };
 
 #define PLUGINS_CONTEXT 1
@@ -131,6 +134,10 @@ char *use_extended_color_option[] = {
 
 char *boolean_options[] = {"Off", "On"};
 
+char *iso_cache_options[] = {"LRU", "RR", "Off"};
+char *iso_cache_num_options[] = {"Auto", "1", "2", "4", "8", "16", "32", "64", "128"};
+char *iso_cache_size_options[] = {"Auto", "1KB", "2KB", "4KB", "8KB", "16KB", "32KB", "64KB"};
+
 static char *need_reboot_subtitle = "Requires restarting VSH to take effect";
 
 struct {
@@ -148,14 +155,17 @@ struct {
 	{2, boolean_options},           // Hide MAC address
 	{2, boolean_options},           // Hide DLCs in game menu
 	{2, boolean_options},           // Hide PIC0/PIC1.PNG in game menu
+	{2, boolean_options},           // Autorun /PSP/GAME/BOOT/EBOOT.PBP
 	{NELEMS(region_options), region_options}, // Fake region
 	{3, use_extended_color_option}, // Use extended color
 	{2, boolean_options},           // Use Sony PSP OSK
 	{2, boolean_options},           // Use NoDRM Engine
 	{2, boolean_options},           // XMB Control
-	{2, boolean_options},           // Autorun /PSP/GAME/BOOT/EBOOT.PBP
 	{2, boolean_options},           // Force high memory layout
 	{2, boolean_options},           // Execute BOOT.BIN in Game
+	{NELEMS(iso_cache_options), iso_cache_options}, // ISO cache kind
+	{NELEMS(iso_cache_num_options), iso_cache_num_options}, // ISO cache number
+	{NELEMS(iso_cache_size_options), iso_cache_size_options}, // ISO cache size
 	{2, boolean_options},           // VSH/XMB Plugins
 	{2, boolean_options},           // Game Plugins
 	{2, boolean_options},           // POPS Plugins
@@ -522,12 +532,13 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 	if (name) {
 		if (is_cfw_config == 1) {
 			u8 configs[] = {
-				config.vsh_cpu_speed,  config.game_cpu_speed, config.umd_driver,
+				config.vsh_cpu_speed, config.game_cpu_speed, config.umd_driver,
 				config.skip_sony_coldboot_logo, config.skip_sony_gameboot_logo,
 				config.hide_corrupt_icons, config.hide_mac_addr, config.hide_dlcs,
-				config.hide_pic01, config.vsh_region, config.extended_colors, config.use_sony_osk,
-				config.use_nodrm, config.enable_xmbctrl,
-				config.autorun_boot_eboot, config.force_highmem, config.exec_bootbin,
+				config.hide_pic01, config.autorun_boot_eboot, config.vsh_region,
+				config.extended_colors, config.use_sony_osk, config.use_nodrm,
+				config.enable_xmbctrl, config.force_highmem, config.exec_bootbin,
+				config.iso_cache, config.iso_cache_num, config.iso_cache_size,
 				config.vsh_plugins, config.game_plugins, config.pops_plugins,
 			};
 
@@ -558,12 +569,13 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
 	if (name) {
 		if (is_cfw_config == 1) {
 			static u8 *configs[] = {
-				&config.vsh_cpu_speed,  &config.game_cpu_speed, &config.umd_driver,
+				&config.vsh_cpu_speed, &config.game_cpu_speed, &config.umd_driver,
 				&config.skip_sony_coldboot_logo, &config.skip_sony_gameboot_logo,
 				&config.hide_corrupt_icons, &config.hide_mac_addr, &config.hide_dlcs,
-				&config.hide_pic01, &config.vsh_region, &config.extended_colors, &config.use_sony_osk,
-				&config.use_nodrm, &config.enable_xmbctrl,
-				&config.autorun_boot_eboot, &config.force_highmem, &config.exec_bootbin,
+				&config.hide_pic01, &config.autorun_boot_eboot, &config.vsh_region,
+				&config.extended_colors, &config.use_sony_osk, &config.use_nodrm,
+				&config.enable_xmbctrl, &config.force_highmem, &config.exec_bootbin,
+				&config.iso_cache, &config.iso_cache_num, &config.iso_cache_size,
 				&config.vsh_plugins, &config.game_plugins, &config.pops_plugins,
 			};
 

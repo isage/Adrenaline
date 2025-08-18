@@ -34,6 +34,9 @@ void loadSettings() {
 	config.vsh_region = se_config.fake_region;
 	config.extended_colors = se_config.extended_colors;
 	config.enable_xmbctrl = se_config.enable_xmbctrl;
+	config.iso_cache = se_config.iso_cache;
+	config.iso_cache_num = se_config.iso_cache_num;
+	config.iso_cache_size = se_config.iso_cache_size;
 
 	config.use_nodrm = !se_config.no_nodrm_engine;
 	config.vsh_plugins = !se_config.no_xmb_plugins;
@@ -62,6 +65,9 @@ void saveSettings() {
 	se_config.fake_region = config.vsh_region;
 	se_config.extended_colors = config.extended_colors;
 	se_config.enable_xmbctrl = config.enable_xmbctrl;
+	se_config.iso_cache = config.iso_cache;
+	se_config.iso_cache_num = config.iso_cache_num;
+	se_config.iso_cache_size = config.iso_cache_size;
 
 	se_config.no_nodrm_engine = !config.use_nodrm;
 	se_config.no_xmb_plugins = !config.vsh_plugins;
