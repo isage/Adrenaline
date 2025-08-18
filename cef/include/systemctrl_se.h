@@ -1,6 +1,8 @@
 #ifndef __SCTRLLIBRARY_SE_H__
 #define __SCTRLLIBRARY_SE_H__
 
+#include <psptypes.h>
+
 /**
  * These functions are only available in SE-C and later,
  * and they are not in HEN

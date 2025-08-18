@@ -462,7 +462,7 @@ static void OnSystemStatusIdle() {
 				u32 cache_size = (config.iso_cache_size == ISO_CACHE_SIZE_AUTO) ? 32*1024 : cache_size_list[config.iso_cache_size%N_CACHE_SIZE];
 				u8 cache_num = (config.iso_cache_num == ISO_CACHE_NUM_AUTO) ? 32 : cache_num_list[config.iso_cache_num%N_CACHE_NUM];
 				CacheInit(cache_size, cache_num, config.iso_cache_partition);
-				logmsg3("[INFO]: Inferno ISO cache: %d caches of %d KiB in partition %d — Total: %d KiB\n", cache_num, cache_size/1024, config.iso_cache_partition, (cache_num*cache_size)/1024, N_CACHE_SIZE);
+				logmsg3("[INFO]: Inferno ISO cache: %d caches of %ld KiB in partition %d — Total: %ld KiB\n", cache_num, cache_size/1024, config.iso_cache_partition, (cache_num*cache_size)/1024);
 			}
 
 			int (*CacheSetPolicy)(int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xC0736FD6);
