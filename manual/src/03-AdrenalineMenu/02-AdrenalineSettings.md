@@ -1,4 +1,4 @@
-# Adrenaline Settings
+# Adrenaline Application Settings
 ---
 
 A tab in the [Adrenaline Menu](../04-AdrenalineMenu.md) that allows to adjusts various settings related to Adrenaline Application.
