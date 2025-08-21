@@ -238,7 +238,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 
 			int type = sceKernelInitKeyConfig();
 
-			if (type == PSP_INIT_KEYCONFIG_VSH && config.enable_xmbctrl) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && !config.no_xmbctrl) {
 				loadXmbControl();
 			}
 

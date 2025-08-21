@@ -64,7 +64,7 @@ Entry configuration_entries[] = {
 	{ "Recovery color", Setrecovery_color, colors, sizeof(colors), &config.recovery_color },
 	{ "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.use_sony_psposk },
 	{ "Use NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.no_nodrm_engine },
-	{ "Enable XMBControl", NULL, disenabled, sizeof(disenabled), &config.enable_xmbctrl },
+	{ "Enable XMBControl", NULL, endisabled, sizeof(endisabled), &config.no_xmbctrl },
 };
 
 Entry advanced_entries[] = {

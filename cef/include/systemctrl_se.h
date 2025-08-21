@@ -150,8 +150,8 @@ typedef struct {
 	u8 execute_boot_bin;
 	/** One of `RecoveryColor` */
 	u8 recovery_color;
-	/** 0 - Disabled, 1 - Enabled */
-	u8 enable_xmbctrl;
+	/** 0 - load xmbctrl, 1 - not load xmbctrl */
+	u8 no_xmbctrl;
 	/** Inferno cache type. One of `InfernoCacheConf` */
 	u8 iso_cache;
 	/** Inferno cache partition 2 or 11 (automatic) */

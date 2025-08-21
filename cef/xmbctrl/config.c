@@ -33,13 +33,13 @@ void loadSettings() {
 	config.exec_bootbin = se_config.execute_boot_bin;
 	config.vsh_region = se_config.fake_region;
 	config.extended_colors = se_config.extended_colors;
-	config.enable_xmbctrl = se_config.enable_xmbctrl;
 	config.iso_cache = se_config.iso_cache;
 	config.iso_cache_num = se_config.iso_cache_num;
 	config.iso_cache_size = se_config.iso_cache_size;
 	config.umd_seek = se_config.umd_seek;
 	config.umd_speed = se_config.umd_speed;
 
+	config.enable_xmbctrl = !se_config.no_xmbctrl;
 	config.use_nodrm = !se_config.no_nodrm_engine;
 	config.vsh_plugins = !se_config.no_xmb_plugins;
 	config.game_plugins = !se_config.no_game_plugins;
@@ -66,13 +66,13 @@ void saveSettings() {
 	se_config.execute_boot_bin = config.exec_bootbin;
 	se_config.fake_region = config.vsh_region;
 	se_config.extended_colors = config.extended_colors;
-	se_config.enable_xmbctrl = config.enable_xmbctrl;
 	se_config.iso_cache = config.iso_cache;
 	se_config.iso_cache_num = config.iso_cache_num;
 	se_config.iso_cache_size = config.iso_cache_size;
 	se_config.umd_seek = config.umd_seek;
 	se_config.umd_speed = config.umd_speed;
 
+	se_config.no_xmbctrl = !config.enable_xmbctrl;
 	se_config.no_nodrm_engine = !config.use_nodrm;
 	se_config.no_xmb_plugins = !config.vsh_plugins;
 	se_config.no_game_plugins= !config.game_plugins;
