@@ -1,19 +1,19 @@
 /*
-  Adrenaline
-  Copyright (C) 2016-2018, TheFloW
+	Adrenaline
+	Copyright (C) 2016-2018, TheFloW
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef __MAIN_H__
@@ -33,53 +33,70 @@
 #define MAX_NAME_LENGTH 256
 
 #define ADRENALINE_CFG_MAGIC_1 0x31483943
-#define ADRENALINE_CFG_MAGIC_2 0x334F4E33
+#define ADRENALINE_CFG_MAGIC_2 0x8451860B
+#define ADRENALINE717_CFG_MAGIC_2 0x334F4E33
 
 enum MemoryStickLocations {
-  MEMORY_STICK_LOCATION_UX0,
-  MEMORY_STICK_LOCATION_UR0,
-  MEMORY_STICK_LOCATION_IMC0,
-  MEMORY_STICK_LOCATION_XMC0,
-  MEMORY_STICK_LOCATION_UMA0,
+	MEMORY_STICK_LOCATION_UX0,
+	MEMORY_STICK_LOCATION_UR0,
+	MEMORY_STICK_LOCATION_IMC0,
+	MEMORY_STICK_LOCATION_XMC0,
+	MEMORY_STICK_LOCATION_UMA0,
 };
 
 enum UsbDevices {
-  USBDEVICE_MODE_MEMORY_CARD,
-  USBDEVICE_MODE_INTERNAL_STORAGE,
-  USBDEVICE_MODE_SD2VITA,
-  USBDEVICE_MODE_PSVSD,
+	USBDEVICE_MODE_MEMORY_CARD,
+	USBDEVICE_MODE_INTERNAL_STORAGE,
+	USBDEVICE_MODE_SD2VITA,
+	USBDEVICE_MODE_PSVSD,
 };
 
-enum AdrenalineScreenSizes {
-  SCREEN_SIZE_2_00,
-  SCREEN_SIZE_1_75,
-  SCREEN_SIZE_1_50,
-  SCREEN_SIZE_1_25,
-  SCREEN_SIZE_1_00,
+enum FluxMode {
+	FLUX_MODE_OFF,
+	FLUX_MODE_YELLOW,
+	FLUX_MODE_BLUE,
+	FLUX_MODE_BLACK,
 };
 
-enum AdrenalineScreenModes {
-  SCREEN_MODE_ORIGINAL,
-  SCREEN_MODE_NORMAL,
-  SCREEN_MODE_ZOOM,
-  SCREEN_MODE_FULL,
+enum GraphicFilterMode {
+	FILTER_ORIGINAL,
+	FILTER_BILINEAR,
+	FILTER_SHARP_BILINEAR,
+	FILTER_ADVANCED_AA,
+	FILTER_LCD3X,
+	FILTER_SHARP_BILINEAR2,
+	FILTER_SCALE2X,
 };
 
 typedef struct {
-  int magic[2];
-  int graphics_filtering;
-  int no_smooth_graphics;
-  int flux_mode;
-  int screen_size;
-  int ms_location;
-  int use_ds3_ds4;
-  int screen_mode;
-  int skip_logo;
-  float psp_screen_scale_x;
-  float psp_screen_scale_y;
-  float ps1_screen_scale_x;
-  float ps1_screen_scale_y;
-  int usbdevice;
+	int magic[2];
+	int graphics_filtering;
+	int no_smooth_graphics;
+	int flux_mode;
+	int screen_size;
+	int ms_location;
+	int use_ds3_ds4;
+	int screen_mode;
+	int skip_logo;
+	float psp_screen_scale_x;
+	float psp_screen_scale_y;
+	float ps1_screen_scale_x;
+	float ps1_screen_scale_y;
+	int usbdevice;
+} AdrenalineConfig717;
+
+typedef struct {
+	int magic[2];
+	uint8_t graphics_filtering;
+	uint8_t no_smooth_graphics;
+	uint8_t flux_mode;
+	uint8_t ms_location;
+	uint8_t skip_logo;
+	uint8_t usbdevice;
+	float psp_screen_scale_x;
+	float psp_screen_scale_y;
+	float ps1_screen_scale_x;
+	float ps1_screen_scale_y;
 } AdrenalineConfig;
 
 extern AdrenalineConfig config;

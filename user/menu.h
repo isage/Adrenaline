@@ -85,7 +85,7 @@ typedef struct {
   int type;
   uint32_t color;
   int (* callback)();
-  int *value;
+  uint8_t *value;
   char **options;
   int n_options;
 } MenuEntry;

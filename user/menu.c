@@ -101,13 +101,12 @@ static MenuEntry settings_entries[] = {
   { "Graphics Filtering",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.graphics_filtering, graphics_options, sizeof(graphics_options) / sizeof(char **) },
   { "Smooth Graphics",           MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.no_smooth_graphics, yes_no_options, sizeof(yes_no_options) / sizeof(char **) },
   { "f.lux Filter Color",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.flux_mode, flux_mode_options, sizeof(flux_mode_options) / sizeof(char **) },
-  { "Screen Scale X (PSP)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (int *)&config.psp_screen_scale_x, NULL, 0 },
-  { "Screen Scale Y (PSP)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (int *)&config.psp_screen_scale_y, NULL, 0 },
-  { "Screen Scale X (PS1)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (int *)&config.ps1_screen_scale_x, NULL, 0 },
-  { "Screen Scale Y (PS1)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (int *)&config.ps1_screen_scale_y, NULL, 0 },
+  { "Screen Scale X (PSP)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (uint8_t *)&config.psp_screen_scale_x, NULL, 0 },
+  { "Screen Scale Y (PSP)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (uint8_t *)&config.psp_screen_scale_y, NULL, 0 },
+  { "Screen Scale X (PS1)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (uint8_t *)&config.ps1_screen_scale_x, NULL, 0 },
+  { "Screen Scale Y (PS1)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (uint8_t *)&config.ps1_screen_scale_y, NULL, 0 },
   { "Memory Stick Location",     MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.ms_location, ms_location_options, sizeof(ms_location_options) / sizeof(char **) },
   { "USB device",                MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.usbdevice, usbdevice_options, sizeof(usbdevice_options) / sizeof(char **) },
-  { "Use DS3/DS4 controller",    MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.use_ds3_ds4, no_yes_options, sizeof(no_yes_options) / sizeof(char **) },
   { "Skip Adrenaline Boot Logo", MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.skip_logo, no_yes_options, sizeof(no_yes_options) / sizeof(char **) },
   { "Reset Adrenaline Settings", MENU_ENTRY_TYPE_CALLBACK, 0, ResetAdrenalineSettings, NULL, NULL, 0 },
 };
@@ -265,7 +264,7 @@ void drawMenu() {
 
         if (menu_entries[i].type == MENU_ENTRY_TYPE_OPTION) {
           // Option
-          int value = *(menu_entries[i].value);
+          uint8_t value = *((uint8_t*)menu_entries[i].value);
           pgf_draw_text((SCREEN_WIDTH / 2.0f) + 10.0f, y, GREEN, FONT_SIZE, menu_entries[i].options[value]);
         } else if (menu_entries[i].type == MENU_ENTRY_TYPE_SCALE) {
             // Option

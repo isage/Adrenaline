@@ -536,6 +536,34 @@ static int ScePspemuGetStartupPngPatched(int num, void *png_buf, int *png_size, 
   return num_startup_png;
 }
 
+static void migrate_config_717(AdrenalineConfig717* old, AdrenalineConfig* new) {
+	new->graphics_filtering = old->graphics_filtering;
+	new->no_smooth_graphics = old->no_smooth_graphics;
+	new->flux_mode = old->flux_mode;
+	new->ms_location = old->ms_location;
+	new->skip_logo = old->skip_logo;
+	new->usbdevice = old->usbdevice;
+	new->psp_screen_scale_x = old->psp_screen_scale_x;
+	new->psp_screen_scale_y = old->psp_screen_scale_y;
+	new->ps1_screen_scale_x = old->ps1_screen_scale_x;
+	new->ps1_screen_scale_y = old->ps1_screen_scale_y;
+	new->magic[1] = ADRENALINE_CFG_MAGIC_2;
+}
+
+/** Migrate the configuration if necessary */
+static void migrate_config() {
+	switch (config.magic[1]) {
+		case ADRENALINE717_CFG_MAGIC_2:
+			sceClibPrintf("Adrenaline: [INFO]: Found 7.1.7 configuration\n");
+			AdrenalineConfig717 config_compat = {0};
+			ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config_compat, sizeof(AdrenalineConfig717));
+			migrate_config_717(&config_compat, &config);
+			sceClibPrintf("Adrenaline: [INFO]: Migrated 7.1.7 configuration\n");
+			break;
+		default:
+			break;
+	}
+}
 
 void _start() __attribute__ ((weak, alias("module_start")));
 int module_start(SceSize args, void *argp) {
@@ -576,6 +604,7 @@ int module_start(SceSize args, void *argp) {
   // Read config
   memset(&config, 0, sizeof(AdrenalineConfig));
   ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+  migrate_config();
   if ((uint32_t)config.psp_screen_scale_x == 0)
     config.psp_screen_scale_x = 2.0f;
   if ((uint32_t)config.psp_screen_scale_y == 0)
