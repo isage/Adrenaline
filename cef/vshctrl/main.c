@@ -695,11 +695,13 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 
 	if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
 		if (pad_data->Buttons & PSP_CTRL_SELECT) {
-			if (!sceKernelFindModuleByName("htmlviewer_plugin_module") &&
-			   !sceKernelFindModuleByName("sceVshOSK_Module") &&
-			   !sceKernelFindModuleByName("camera_plugin_module")) {
+			if (!sceKernelFindModuleByName("htmlviewer_plugin_module")
+				&& !sceKernelFindModuleByName("sceVshOSK_Module")
+				&& !sceKernelFindModuleByName("camera_plugin_module")) {
 				modid = sceKernelLoadModule("flash0:/vsh/module/satelite.prx", 0, NULL);
+
 				if (modid >= 0) {
+					sceKernelDelayThread(4000);
 					sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 					pad_data->Buttons &= ~PSP_CTRL_SELECT;
 				}
@@ -813,7 +815,7 @@ void PatchVshMain(u32 text_addr) {
 	IoPatches();
 
 	SceModule2 *mod = sceKernelFindModuleByName("sceVshBridge_Driver");
-	MAKE_CALL(mod->text_addr + 0x25C, sceCtrlReadBufferPositivePatched);
+	sctrlHENHookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, sceCtrlReadBufferPositivePatched, 0);
 	sctrlHENPatchSyscall(K_EXTRACT_IMPORT(&sceCtrlReadBufferPositive), sceCtrlReadBufferPositivePatched);
 
 	// Dummy usb detection functions
