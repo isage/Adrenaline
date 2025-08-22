@@ -173,7 +173,6 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 	SceModule2 *mod = sceKernelFindModuleByUID(modid);
 	SceUID fpl = -1;
 	char *plug_buf = NULL;
-	char *p;
 	int res;
 
 	if (mod == NULL) {
@@ -231,8 +230,6 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 		}
 
 		if (sceKernelFindModuleByName(waitmodule) != NULL) {
-			char plugin[64];
-
 			plugindone = 1;
 
 			int type = sceKernelInitKeyConfig();
