@@ -13,30 +13,36 @@ int isRunlevelEnabled(char* line) {
 	return (strcasecmp(line, "on") == 0 || strcasecmp(line, "1") == 0 || strcasecmp(line, "enabled") == 0 || strcasecmp(line, "true") == 0);
 }
 
-// Whitespace Detection
 static int isspace(int c) {
-	// Whitespaces
-	if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == '\n')
+	if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == '\n') {
 		return 1;
+	}
 
-	// Normal Character
 	return 0;
 }
 
-// Trim Leading and Trailing Whitespaces
-char * strtrim(char * text) {
-	// Invalid Argument
-	if (text == NULL) return NULL;
+// Trim leading and trailing whitespaces
+static char * strtrim(char * text) {
+	// Invalid argument
+	if (text == NULL) {
+		return NULL;
+	}
 
-	// Remove Leading Whitespaces
-	while (isspace(text[0])) text++;
+	// Remove leading whitespaces
+	while (isspace(text[0])) {
+		text++;
+	}
 
-	// Scan Position
+	// Scan position
 	int pos = strlen(text)-1;
-	if (pos<0) return text;
+	if (pos<0) {
+		return text;
+	}
 
-	// Find Trailing Whitespaces
-	while (isspace(text[pos])) pos--;
+	// Find trailing whitespaces
+	while (isspace(text[pos])) {
+		pos--;
+	}
 
 	// Terminate String
 	text[pos+1] = (char)0;
@@ -70,60 +76,65 @@ int readLine(char* source, char *str) {
 }
 
 // Parse and Process Line
-static int processLine(char * line, int (process_line)(char*, char*)) {
-	// Skip Comment Lines
-	if (line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#')
+static int processLine(char * line, int (process_line)(char*, char*, char*)) {
+	// Skip lines comments
+	if (line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#') {
 		return 0;
+	}
 
 	// String Token
-	char * path = line;
+	char * runlevel = line;
+	char * path = NULL;
 	char * enabled = NULL;
 
-	// Original String Length
+	// Original string length
 	unsigned int length = strlen(line);
 
-	// Fetch String Token
-	unsigned int i = 0;
-	for (; i < length; i++) {
+	// Fetch string token
+	for (u32 i = 0; i < length; i++) {
 		// Got all required Token
 		if (enabled != NULL) {
-			// Handle Trailing Comments as Terminators
+			// Handle trailing comments as terminators
 			if (strncmp(line + i, "//", 2) == 0 || line[i] == ';' || line[i] == '#') {
-				// Terminate String
+				// Terminate dtring
 				line[i] = 0;
 
-				// Stop Token Scan
+				// Stop token scan
 				break;
 			}
 		}
 
-		// Found Delimiter
-		if (line[i] == ' ' || line[i] == '\t') {
-			// Terminate String
+		if (line[i] == LINE_TOKEN_DELIMITER) {
+			// Terminate string
 			line[i] = 0;
 
-			// Path Start
-			if(path == NULL) path = line + i + 1;
-
-			// Enabled Start
-			else if(enabled == NULL) enabled = line + i + 1;
-
-			// Got all Data
-			else break;
+			// Path start
+			if(path == NULL) {
+				path = line + i + 1;
+			} else if(enabled == NULL) {
+				// Enabled start
+				enabled = line + i + 1;
+			} else {
+				// Got all data
+				break;
+			}
 		}
 	}
 
-	// Insufficient Plugin Information
-	if (enabled == NULL) return 0;
+	// Insufficient plugin information
+	if (enabled == NULL) {
+		return 0;
+	}
 
-	// Trim Whitespaces
+	// Trim whitespaces
+	runlevel = strtrim(runlevel);
 	path = strtrim(path);
 	enabled = strtrim(enabled);
 
-	return process_line(path, enabled);
+	return process_line(runlevel, path, enabled);
 }
 
-void ProcessConfigFile(char* path, int (process_line)(char*, char*), void (*process_custom)(char*)) {
+void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*), void (*process_custom)(char*)) {
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
 	// Opened Plugin Config

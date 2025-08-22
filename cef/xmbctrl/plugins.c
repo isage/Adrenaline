@@ -15,7 +15,7 @@ static char* sample_plugin_path = "ULUS01234, ms0:/SEPLUGINS/example.prx";
 
 int cur_place = 0;
 
-static void list_cleaner(void* item){
+static void list_cleaner(void* item) {
 	Plugin* plugin = (Plugin*)item;
 	user_free(plugin->path);
 	if (plugin->name) user_free(plugin->name);
@@ -23,7 +23,7 @@ static void list_cleaner(void* item){
 	user_free(plugin);
 }
 
-static void processCustomLine(char* line){
+static void processCustomLine(char* line) {
 	Plugin* plugin = (Plugin*)user_malloc(sizeof(Plugin));
 	memset(plugin, 0, sizeof(Plugin));
 	plugin->path = line;
@@ -31,7 +31,7 @@ static void processCustomLine(char* line){
 	add_list(&plugins, plugin);
 }
 
-static void processPlugin(char* path, char* enabled) {
+static void processPlugin(char* runlevel, char* path, char* enabled) {
 	int n = plugins.count;
 	char* name = user_malloc(20);
 	snprintf(name, 20, "plugin_%d", n);
@@ -43,10 +43,15 @@ static void processPlugin(char* path, char* enabled) {
 	char* full_path = (char*)user_malloc(path_len);
 	snprintf(full_path, path_len, "%s", path);
 
+	int run_level_len = strlen(runlevel) + 10;
+	char* run_level = (char*)user_malloc(run_level_len);
+	snprintf(run_level, run_level_len, "%s", runlevel);
+
 	Plugin* plugin = (Plugin*)user_malloc(sizeof(Plugin));
 	plugin->name = name;
 	plugin->surname = surname;
 	plugin->path = full_path;
+	plugin->runlevel = run_level;
 	plugin->place = cur_place;
 	plugin->active = isRunlevelEnabled(enabled);
 
@@ -54,23 +59,9 @@ static void processPlugin(char* path, char* enabled) {
 }
 
 void loadPlugins(){
-	sctrlSEGetConfig(&se_config);
 	clear_list(&plugins, &list_cleaner);
 
-	if (!se_config.no_xmb_plugins) {
-		cur_place = PLACE_VSH;
-		ProcessConfigFile("ms0:/seplugins/vsh.txt", &processPlugin, &processCustomLine);
-	}
-
-	if (!se_config.no_game_plugins) {
-		cur_place = PLACE_GAME;
-		ProcessConfigFile("ms0:/seplugins/game.txt", &processPlugin, &processCustomLine);
-	}
-
-	if (!se_config.no_pops_plugins) {
-		cur_place = PLACE_POPS;
-		ProcessConfigFile("ms0:/seplugins/pops.txt", &processPlugin, &processCustomLine);
-	}
+	ProcessConfigFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
 
 	if (plugins.count == 0){
 		// Add example plugin
@@ -100,31 +91,28 @@ void savePlugins() {
 
 	sctrlSEGetConfig(&se_config);
 
-	int fd[3] = {
-		(!se_config.no_xmb_plugins)? sceIoOpen("ms0:/seplugins/vsh.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
-		(!se_config.no_game_plugins)? sceIoOpen("ms0:/seplugins/game.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
-		(!se_config.no_pops_plugins)? sceIoOpen("ms0:/seplugins/pops.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777) : -1,
-	};
+	int fd = sceIoOpen("ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+
+	if (fd < 0) {
+		return;
+	}
 
 	for (int i = 0; i < plugins.count; i++) {
 		Plugin *plugin = (Plugin *)(plugins.table[i]);
-		if (fd[plugin->place] != -1) {
-			if (plugin->active == PLUGIN_REMOVED) {
-				continue;
-			}
 
-			if (plugin->name != NULL) {
-				char buf[128] = {0};
-				char *enabled = (plugin->active) ? "1" : "0";
-				sprintf(buf, "%s %s\n", plugin->path, enabled);
-				sceIoWrite(fd[plugin->place], buf, strlen(buf));
-			}
+		if (plugin->active == PLUGIN_REMOVED) {
+			continue;
+		}
+
+		if (plugin->name != NULL) {
+			char buf[256] = {0};
+			char *enabled = (plugin->active) ? "on" : "off";
+			sprintf(buf, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
+			sceIoWrite(fd, buf, strlen(buf));
 		}
 	}
 
-	for (int i = 0; i < 3; i++) {
-		if (fd[i] != -1) {
-			sceIoClose(fd[i]);
-		}
+	if (fd >= 0) {
+		sceIoClose(fd);
 	}
 }

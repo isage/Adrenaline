@@ -26,6 +26,7 @@ typedef struct{
 	char* name;
 	char* path;
 	char* surname;
+	char* runlevel;
 	int active;
 	int place;
 } Plugin;

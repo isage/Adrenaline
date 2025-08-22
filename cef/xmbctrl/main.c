@@ -499,16 +499,12 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 						int len = (int)(p2 - (p + 1));
 						sce_paf_private_strncpy(file, p + 1, len);
 
-						if (plugin->place == PLACE_VSH) {
-							sce_paf_private_strncpy(file + len, " [vsh]", 6);
-							file[len+6] = '\0';
-						} else if (plugin->place == PLACE_GAME) {
-							sce_paf_private_strncpy(file + len, " [game]", 7);
-							file[len+7] = '\0';
-						} else if (plugin->place == PLACE_POPS) {
-							sce_paf_private_strncpy(file + len, " [pops]", 7);
-							file[len+7] = '\0';
-						}
+						char buf[64] = {0};
+						snprintf(buf, 63, " [%s]", plugin->runlevel);
+						int rl_len = sce_paf_private_strlen(buf);
+
+						sce_paf_private_strncpy(file + len, buf, rl_len);
+						file[len+rl_len] = '\0';
 					}
 				}
 

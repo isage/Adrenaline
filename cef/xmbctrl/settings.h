@@ -22,6 +22,6 @@ enum{
 
 int isRunlevelEnabled(char* line);
 
-void ProcessConfigFile(char* path, int (process_line)(char*, char*), void (*process_custom)(char*));
+void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*), void (*process_custom)(char*));
 
 #endif
