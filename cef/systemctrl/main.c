@@ -47,7 +47,6 @@ STMOD_HANDLER module_handler;
 STMOD_HANDLER game_previous = NULL;
 
 RebootexConfig rebootex_config;
-
 AdrenalineConfig config;
 
 int idle = 0;
@@ -534,6 +533,8 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 static int OnModuleStart(SceModule2 *mod) {
 	static int ready_gamepatch_mod = 0;
 
+	PatchGameInfoGetter(mod);
+
 	char *modname = mod->modname;
 	u32 text_addr = mod->text_addr;
 
@@ -628,6 +629,8 @@ static int OnModuleStart(SceModule2 *mod) {
 
 	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod);
+		findAndSetGameId();
+		logmsg3("[INFO]: Game ID: %s\n", rebootex_config.game_id);
 
 	} else if (strcmp(modname, "sceMediaSync") == 0) {
 		PatchMediaSync(mod);
@@ -654,8 +657,6 @@ static int OnModuleStart(SceModule2 *mod) {
 
 	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
 		ready_gamepatch_mod = 1;
-		findAndSetGameId();
-		logmsg3("[INFO]: Game ID: %s\n", rebootex_config.game_id);
 		PatchGameByGameId();
 
 	} else if (strcmp(modname, "VLF_Module") == 0) {

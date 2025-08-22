@@ -99,3 +99,28 @@ void findAndSetGameId() {
 		memcpy(adrenaline->titleid, rebootex_config.game_id, 9);
 	}
 }
+
+SceGameInfo* sceKernelGetGameInfoPatched() {
+	SceGameInfo* gameinfo = sceKernelGetGameInfo();
+
+	if (gameinfo == NULL) {
+		return gameinfo;
+	}
+
+	if (rebootex_config.game_id[0] != 0) {
+		memcpy(gameinfo->game_id, rebootex_config.game_id, 9);
+	}
+
+	return gameinfo;
+}
+
+void PatchGameInfoGetter(SceModule2* mod) {
+	// Kernel module
+	if((mod->text_addr & 0x80000000) != 0) {
+		u32 func = sctrlHENFindFunctionInMod(mod, "SysMemForKernel", 0xEF29061C);
+
+		if (func != 0) {
+			REDIRECT_FUNCTION(func, sceKernelGetGameInfoPatched);
+		}
+	}
+}

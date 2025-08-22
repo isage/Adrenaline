@@ -1,6 +1,7 @@
 /*
 	Adrenaline
 	Copyright (C) 2025, GrayJack
+	Copyright (C) 2021, ARK-4 CFW
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -16,13 +17,13 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __GAMEINFO_H__
-#define __GAMEINFO_H__
+#ifndef _PLUGIN_H_
+#define _PLUGIN_H_
 
-/** Find and set game_id on rebootex (Not on DISC, for disc, patch _sceLoadExecVSHWithApitype) */
-void findAndSetGameId(void);
-int readGameIdFromDisc(void);
+extern int disable_plugins;
 
-void PatchGameInfoGetter(SceModule2* mod);
+// Load Plugins
+void loadPlugins(void);
 
 #endif
+

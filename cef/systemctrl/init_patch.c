@@ -22,6 +22,7 @@
 
 #include "main.h"
 #include "init_patch.h"
+#include "plugin.h"
 
 // init.prx Custom sceKernelStartModule Handler
 int (* custom_start_module_handler)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
@@ -231,8 +232,6 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 
 		if (sceKernelFindModuleByName(waitmodule) != NULL) {
 			char plugin[64];
-			int i, size;
-			SceUID fd;
 
 			plugindone = 1;
 
@@ -246,59 +245,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 				goto START_MODULE;
 			}
 
-			char *file = NULL;
-			if (type == PSP_INIT_KEYCONFIG_VSH && !config.no_xmb_plugins) {
-				file = "ms0:/seplugins/vsh.txt";
-			} else if (type == PSP_INIT_KEYCONFIG_GAME && !config.no_game_plugins) {
-				file = "ms0:/seplugins/game.txt";
-			} else if (type == PSP_INIT_KEYCONFIG_POPS && !config.no_pops_plugins) {
-				file = "ms0:/seplugins/pops.txt";
-			}
-
-			if (!file) {
-				goto START_MODULE;
-			}
-
-			for (i = 0; i < 0x10; i++) {
-				fd = sceIoOpen(file, PSP_O_RDONLY, 0);
-
-				if (fd >= 0) {
-					break;
-				}
-
-				sceKernelDelayThread(20000);
-			}
-
-			if (fd < 0) {
-				goto START_MODULE;
-			}
-
-			fpl = sceKernelCreateFpl("", PSP_MEMORY_PARTITION_KERNEL, 0, 1024, 1, NULL);
-			if (fpl < 0)
-				goto START_MODULE;
-
-			sceKernelAllocateFpl(fpl, (void *)&plug_buf, NULL);
-
-			size = sceIoRead(fd, plug_buf, 1024);
-			p = plug_buf;
-
-			do {
-				int activated = 0;
-				memset(plugin, 0, sizeof(plugin));
-
-				res = GetPlugin(p, size, plugin, &activated);
-
-				if (res > 0) {
-					if (activated) {
-						LoadStartModule(plugin);
-					}
-
-					size -= res;
-					p += res;
-				}
-			} while (res > 0);
-
-			sceIoClose(fd);
+			loadPlugins();
 		}
 	}
 
