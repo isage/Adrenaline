@@ -329,6 +329,8 @@ void ImportClassicPlugins(int sel) {
 			sceIoWrite(plugins_fd, &buf[i], 1);
 		}
 	}
+	// Newline at the end
+	sceIoWrite(plugins_fd, "\n", 1);
 	sceIoClose(vsh_fd);
 
 	// game
@@ -344,6 +346,8 @@ void ImportClassicPlugins(int sel) {
 			sceIoWrite(plugins_fd, &buf[i], 1);
 		}
 	}
+	// Newline at the end
+	sceIoWrite(plugins_fd, "\n", 1);
 	sceIoClose(game_fd);
 
 	// POPS
@@ -351,7 +355,7 @@ void ImportClassicPlugins(int sel) {
 	while ( (read = sceIoRead(pops_fd, buf, CHUNK_SIZE)) > 0 ) {
 		for (int i = 0; i < read; i++) {
 			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0') {
-				sceIoWrite(plugins_fd, "vsh, ", 5);
+				sceIoWrite(plugins_fd, "pops, ", 6);
 			}
 			if (buf[i] == ' ' && i != 0) {
 				sceIoWrite(plugins_fd, ",", 1);
@@ -359,6 +363,8 @@ void ImportClassicPlugins(int sel) {
 			sceIoWrite(plugins_fd, &buf[i], 1);
 		}
 	}
+	// Newline at the end
+	sceIoWrite(plugins_fd, "\n", 1);
 	sceIoClose(pops_fd);
 
 	sceIoClose(plugins_fd);
