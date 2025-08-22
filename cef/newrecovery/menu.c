@@ -312,6 +312,7 @@ Entry advanced_entries[] = {
   { "POPS plugins", NULL, endisabled, sizeof(endisabled), &config.no_pops_plugins },
   { "", NULL, NULL, 0, NULL },
   { "Button assign", SetButtonAssign, buttonassign, sizeof(buttonassign), (int *)&button_assign_value },
+  { "Import classic plugins", ImportClassicPlugins, NULL, 0, NULL },
   { "Activate WMA", SetWMA, NULL, 0, NULL },
   { "Activate Flash Player", SetFlashPlayer, NULL, 0, NULL },
   { "", NULL, NULL, 0, NULL },

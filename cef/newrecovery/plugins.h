@@ -21,6 +21,8 @@
 
 int Plugins();
 
+void ImportClassicPlugins(int sel);
+
 #define MAX_PLUGINS_PER_MODE 8
 #define MAX_PLUGINS MAX_PLUGINS_PER_MODE * 3
 
