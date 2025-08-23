@@ -594,8 +594,12 @@ static int OnModuleStart(SceModule2 *mod) {
 
 		sctrlSEGetConfig(&config);
 
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_GAME  && config.force_high_memory) {
-			sctrlHENSetMemory(52, 0);
+		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
+			if (config.force_high_memory == HIGHMEM_OPT_STABLE) {
+				sctrlHENSetMemory(40, 12);
+			} else if (config.force_high_memory == HIGHMEM_OPT_MAX) {
+				sctrlHENSetMemory(52, 0);
+			}
 			ApplyMemory();
 		} else {
 			// If not force-high-memory. Make sure to make p11 as big as

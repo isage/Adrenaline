@@ -300,7 +300,7 @@ Entry general_entries[] = {
 };
 
 Entry advanced_entries[] = {
-  { "Force high memory layout", NULL, disenabled, sizeof(disenabled), &config.force_high_memory },
+  { "Force high memory layout", NULL, highmem, sizeof(highmem), &config.force_high_memory },
   { "Execute BOOT.BIN in UMD/ISO", NULL, disenabled, sizeof(disenabled), &config.execute_boot_bin },
   { "Inferno ISO cache policy", NULL, iso_cache, sizeof(iso_cache), &config.iso_cache },
   { "Inferno ISO cache number", NULL, iso_cache_num, sizeof(iso_cache_num), &config.iso_cache_num },

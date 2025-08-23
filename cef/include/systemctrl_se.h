@@ -79,6 +79,7 @@ enum CpuBusSpeed {
 
 enum ForceHighMemory {
 	HIGHMEM_OPT_OFF,
+	HIGHMEM_OPT_STABLE,
 	HIGHMEM_OPT_MAX,
 };
 

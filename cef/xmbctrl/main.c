@@ -135,6 +135,8 @@ char *region_options[] = {
 	"Russia",         "China",         "Debug I",   "Debug II"
 };
 
+char *highmem_options[] = {"Disabled", "Stable", "Max"};
+
 char *use_extended_color_option[] = {
 	"Disabled", "02g", "03g"
 };
@@ -169,7 +171,7 @@ struct {
 	{2, boolean_options},           // Use Sony PSP OSK
 	{2, boolean_options},           // Use NoDRM Engine
 	{2, boolean_options},           // XMB Control
-	{2, boolean_options},           // Force high memory layout
+	{3, highmem_options},           // Force high memory layout
 	{2, boolean_options},           // Execute BOOT.BIN in Game
 	{NELEMS(iso_cache_options), iso_cache_options}, // ISO cache kind
 	{NELEMS(iso_cache_num_options), iso_cache_num_options}, // ISO cache number

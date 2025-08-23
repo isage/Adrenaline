@@ -25,6 +25,7 @@ static char *endisabled[] = { "Enabled", "Disabled" };
 static char *umdmodes[] = { "Inferno", "M33 Driver", "Sony NP9660" };
 static char *extendedcolors[] = { "Disabled", "02g", "03g" };
 static char *cpuspeeds[] = { "Default", "20/10", "75/37", "100/50", "133/66", "222/111", "266/133", "300/150", "333/166" };
+static char *highmem[] = { "Default", "Stable", "Max" };
 
 static char *buttonassign[] = { "O is enter", "X is enter" };
 
