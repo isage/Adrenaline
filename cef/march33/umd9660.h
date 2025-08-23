@@ -6,14 +6,11 @@
 
 #define MAX_DESCRIPTORS	8
 
-typedef struct UmdFD
-{
+typedef struct UmdFD {
 	int busy;
 	int discpointer;
 } UmdFD;
 
-#define GetUmdFile sctrlSEGetUmdFile
-void SetUmdFile(char *file);
 int  OpenIso();
 int  ReadUmdFileRetry(void *buf, int size, int fpointer);
 int  Umd9660ReadSectors(int lba, int nsectors, void *buf);

@@ -8,17 +8,14 @@
 #include <systemctrl_se.h>
 #include <adrenaline_log.h>
 
+#include <iso_common.h>
 #include "malloc.h"
 #include "umd9660.h"
-#include "isoread.h"
-#include "csoread.h"
 
 int game_group = 0;
 
 
-char *umdfile = NULL;
 SceUID umdsema = -1;
-SceUID umdfd = -1;
 
 int discsize=0x7FFFFFFF;
 
@@ -28,8 +25,6 @@ UmdFD descriptors[MAX_DESCRIPTORS];
 
 //u8 *umdsector = NULL;
 u8 *umdpvd = NULL;
-
-int cso = 0, mounted = 0;
 
 #define N_GAME_GROUP1	4
 #define N_GAME_GROUP2	1
@@ -42,13 +37,6 @@ char *game_group2[N_GAME_GROUP2] = {
 	"TERTURADOR" // NPUG-80086 (flow PSN)
 };
 
-int GetDiscSize() {
-	if (cso == 0) {
-		return IsofileGetDiscSize(umdfd);
-	}
-
-	return CisofileGetDiscSize(umdfd);
-}
 
 /*typedef struct {
 	int lba;
@@ -137,31 +125,16 @@ int g_args[3];
 		return -1;
 
 
-int ReadUmdFile_(int *args) {
-	int offset = args[0];
-	void *buf = (void *)args[1];
-	int outsize = args[2];
-	int res;
-
-	if (!cso) {
-		res = ReadUmdFileRetry(buf, outsize, offset);
-	} else {
-		res = CisoReadFile(buf, outsize, offset);
-	}
-
-	return res;
-}
-
 int ReadUmdFile(int offset, void *buf, int outsize) {
 	int res;
 
 	LOCK();
 
-	g_args[0] = offset;
-	g_args[1] = (int)buf;
-	g_args[2] = outsize;
+	g_read_arg.offset = offset;
+    g_read_arg.address = buf;
+    g_read_arg.size = outsize;
 
-	res = sceKernelExtendKernelStack(0x2000, (void *)ReadUmdFile_, g_args);
+	res = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
 
 	UNLOCK();
 
@@ -182,70 +155,6 @@ void WaitMs() {
 	}
 }
 
-int OpenIso() {
-	logmsg("%s: Wait Ms.\n", __func__);
-	WaitMs();
-	logmsg("%s: Wait Ms finished.\n", __func__);
-
-	mounted = 0;
-	sceIoClose(umdfd);
-
-	logmsg("%s: Opening %s\n", __func__, umdfile);
-
-	umdfd = sceIoOpen(umdfile, PSP_O_RDONLY | 0x000f0000, 0777);
-	if (umdfd >= 0) {
-		cso = 0;
-		if (CisoOpen(umdfd) >= 0) {
-			cso = 1;
-		}
-
-		discsize = GetDiscSize();
-		//lastLBA = -1;
-		mounted = 1;
-		logmsg("%s: Mounted succesfull, size %d\n", __func__, discsize);
-		return 0;
-	}
-
-	logmsg("%s: Mounted unsuccessful.\n", __func__);
-	return -1;
-}
-
-int ReadUmdFileRetry(void *buf, int size, int fpointer) {
-	int res = 0;
-
-	int i;
-	for (i = 0; i < 0x10; i++) {
-		if (sceIoLseek32(umdfd, fpointer, PSP_SEEK_SET) < 0) {
-			OpenIso();
-		} else {
-			break;
-		}
-	}
-
-	if (i == 0x10) {
-		res = SCE_ENODEV;
-		goto out;
-	}
-
-	for (i = 0; i < 0x10; i++) {
-		int read = sceIoRead(umdfd, buf, size);
-
-		if (read < 0) {
-			OpenIso();
-		} else {
-			res = read;
-			goto out;
-			// return read;
-		}
-	}
-
-	res = SCE_ENODEV;
-
-out:
-	logmsg("%s: buf:0x%p, size=0x%08X, fpointer:0x%08X -> 0x%08X\n", __func__, buf, size, fpointer, res);
-	return res;
-}
-
 int umd_init(PspIoDrvArg* arg) {
 	int i;
 	logmsg("%s: start.\n", __func__);
@@ -263,19 +172,19 @@ int umd_init(PspIoDrvArg* arg) {
 		return umdsema;
 	}
 
-	while (!mounted) {
+	while (!g_iso_opened) {
 		logmsg("%s: Attempting to open iso.\n", __func__);
-		OpenIso();
+		iso_open();
 		sceKernelDelayThread(20000);
 	}
 
 	memset(&descriptors, 0, sizeof(descriptors));
 
-	g_args[0] = 0x10*SECTOR_SIZE;
-	g_args[1] = (int)umdpvd;
-	g_args[2] = SECTOR_SIZE;
+	g_read_arg.offset = 0x10*SECTOR_SIZE;
+	g_read_arg.address = umdpvd;
+	g_read_arg.size = SECTOR_SIZE;
 
-	ReadUmdFile_(g_args);
+	iso_read(&g_read_arg);
 
 	char *gamecode = (char *)umdpvd+0x373;
 
@@ -333,22 +242,19 @@ int umd_umount(PspIoDrvFileArg *arg) {
 }
 
 int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
-	//sceKernelWaitSema(umdsema, 1, NULL);
 	int res = 0;
 	int i;
 	for (i = 0; i < 0x10; i++) {
-		if (sceIoLseek32(umdfd, 0, PSP_SEEK_SET) < 0) {
-			OpenIso();
+		if (sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET) < 0) {
+			iso_open();
 		} else {
 			break;
 		}
 	}
 
 	if (i == 0x10) {
-		//sceKernelSignalSema(umdsema, 1);
 		res = SCE_ENODEV;
 		goto out;
-		// return SCE_ERROR_ERRNO_ENODEV;
 	}
 
 	LOCK();
@@ -373,7 +279,7 @@ int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 
 out:
 	logmsg("%s: arg=0x%p, file=%s, flags=0x%08X, mode=0x%08X -> 0x%08X\n", __func__, arg, file, flags, mode, res);
-	return 0;
+	return res;
 }
 
 int umd_close(PspIoDrvFileArg *arg) {
@@ -810,7 +716,16 @@ int InitUmd9660() {
 
 	sceKernelRegisterSysEventHandler(&event_handler);
 
-	umdfile = sctrlSEGetUmdFile();
+	// Get ISO path
+	memset(g_iso_fn, 0, sizeof(g_iso_fn));
+	strncpy(g_iso_fn, sctrlSEGetUmdFile(), sizeof(g_iso_fn)-1);
+	logmsg3("[INFO] UMD File: %s\n", g_iso_fn);
+
+	// Leave NP9660 alone, we got no ISO
+	if(g_iso_fn[0] == 0) {
+		return SCE_ENOMEDIUM;
+	}
+
 	res = sceIoAddDrv(&umd_driver);
 
 	if (res < 0) {
