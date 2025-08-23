@@ -640,6 +640,7 @@ static int OnModuleStart(SceModule2 *mod) {
 		PatchImposeDriver(mod);
 		findAndSetGameId();
 		logmsg3("[INFO]: Game ID: %s\n", rebootex_config.game_id);
+		CheckControllerInput();
 
 	} else if (strcmp(modname, "sceMediaSync") == 0) {
 		PatchMediaSync(mod);

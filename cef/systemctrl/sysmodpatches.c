@@ -18,12 +18,14 @@
 */
 
 #include <common.h>
+#include <adrenaline_log.h>
 
 #include "main.h"
 #include "adrenaline.h"
 #include "../../adrenaline_compat.h"
 
 #include "rebootex.h"
+#include "plugin.h"
 
 #define EXIT_TO_VSH_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_SELECT | PSP_CTRL_DOWN)
 
@@ -553,6 +555,16 @@ int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
 	}
 
 	return count;
+}
+
+/** Checks controller input and modifies CFW context when certain buttons are hold at the start of an application */
+void CheckControllerInput() {
+	SceCtrlData pad_data;
+	_sceCtrlPeekBufferPositive(&pad_data, 1);
+	if ((pad_data.Buttons & PSP_CTRL_LTRIGGER) == PSP_CTRL_LTRIGGER) {
+		disable_plugins = 1;
+		logmsg3("[INFO]: Plugins disabled by holding `L` at the application start\n");
+	}
 }
 
 void PatchController(SceModule2* mod) {

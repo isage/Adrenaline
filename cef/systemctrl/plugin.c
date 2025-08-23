@@ -436,7 +436,7 @@ static int ProcessConfigFile(const char* parent, const char* path, void (*enable
 
 void loadPlugins() {
 	if (disable_plugins) {
-		return; // don't load plugins in recovery mode
+		return;
 	}
 	is_plugins_loading = 1;
 	// allocate resources

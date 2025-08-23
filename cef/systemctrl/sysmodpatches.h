@@ -31,6 +31,7 @@ int ApplyMemory();
 */
 void ApplyAndResetMemory();
 void UnprotectExtraMemory();
+void CheckControllerInput();
 
 void PatchLoadExec(SceModule2* mod);
 void PatchChkreg();
