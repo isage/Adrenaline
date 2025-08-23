@@ -67,8 +67,7 @@ static int (*_sceMeAudio_2AB4FE43)(void *buf, int size) = NULL;
 int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 	if (NULL == _sceMeAudio_2AB4FE43) {
 		logmsg("%s: [ERROR]: Pointer to original function was not set\n", __func__);
-		// Illegal addr error
-		return 0x800200d3;
+		return SCE_KERR_ILLEGAL_ADDR;
 	}
 
 	u32 k1 = pspSdkSetK1(0);

@@ -26,6 +26,7 @@
 #include <pspumd.h>
 #include <psprtc.h>
 #include <macros.h>
+#include <psperror.h>
 
 #include <adrenaline_log.h>
 
@@ -98,7 +99,7 @@ int sceUmdRegisterUMDCallBack(int cbid) {
 	int ret = sceKernelGetThreadmanIdType(cbid);
 
 	if (ret != SCE_KERNEL_TMID_Callback) {
-		ret = 0x80010016;
+		ret = SCE_EINVAL;
 		goto exit;
 	}
 
@@ -115,7 +116,7 @@ exit:
 
 int sceUmdUnRegisterUMDCallBack(int cbid) {
 	u32 k1 = pspSdkSetK1(0);
-	int ret = 0x80010016;
+	int ret = SCE_EINVAL;
 
 	int intr;
 	uidControlBlock *type;
@@ -144,7 +145,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	int ret;
 
 	if (!check_memory(info, sizeof(*info))) {
-		ret = 0x80010016;
+		ret = SCE_EINVAL;
 		goto exit;
 	}
 
@@ -154,7 +155,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 		info->type = g_disc_type;
 		ret = 0;
 	} else {
-		ret = 0x80010016;
+		ret = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
@@ -205,7 +206,7 @@ int sceUmdManUnRegisterImposeCallBack(void) {
 
 int sceUmdManUnRegisterInsertEjectUMDCallBack(u32 id) {
 	if (g_ie_callback_id != id) {
-		return 0x80010002;
+		return SCE_ENOENT;
 	}
 
 	g_prev_gp = 0;
@@ -237,7 +238,7 @@ static inline void set_gp(u32 gp) {
 // for now 6.20/6.35 share the same patch
 int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
 	if (0 != g_ie_callback_id) {
-		return 0x8001000C;
+		return SCE_ENOMEM;
 	}
 
 	g_ie_callback_id = id;
@@ -311,7 +312,7 @@ int sceUmd9660_driver_7CB291E3(void) {
 
 int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout) {
 	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	u32 result;
@@ -324,7 +325,7 @@ int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout) {
 
 int sceUmdWaitDriveStatCB(int stat, SceUInt timeout) {
 	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	u32 result;
@@ -337,7 +338,7 @@ int sceUmdWaitDriveStatCB(int stat, SceUInt timeout) {
 
 int sceUmdWaitDriveStat(int stat) {
 	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	u32 result;
@@ -350,11 +351,11 @@ int sceUmdWaitDriveStat(int stat) {
 
 int sceUmdActivate(int unit, const char* drive) {
 	if (!g_iso_opened) {
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	if (drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	u32 k1 = pspSdkSetK1(0);
@@ -362,7 +363,7 @@ int sceUmdActivate(int unit, const char* drive) {
 	if (0 != strcmp(drive, "disc0:")) {
 		pspSdkSetK1(k1);
 
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	int value = 1;
@@ -390,7 +391,7 @@ int sceUmdActivate(int unit, const char* drive) {
 
 int sceUmdDeactivate(int unit, const char *drive) {
 	if (drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	u32 k1 = pspSdkSetK1(0);
@@ -468,20 +469,20 @@ int sceUmd_004F4BE5(int orig_error_code) {
 	compiled_version = sceKernelGetCompiledSdkVersion();
 
 	if (compiled_version == 0) {
-		if (error_code == 0x80010074) {
-			error_code = 0x8001006E;
-		} else if (error_code == 0x80010070) {
-			error_code = 0x80010062;
-		} else if (error_code == 0x8001005B) {
-			error_code = 0x80010062;
-		} else if (error_code == 0x80010071) {
-			error_code = 0x80010067;
-		} else if (error_code == 0x80010086) {
-			error_code = 0x8001B000;
-		} else if (error_code == 0x80010087) {
-			error_code = 0x8001007B;
-		} else if (error_code == 0x8001B006) {
-			error_code = 0x8001007C;
+		if (error_code == SCE_ETIMEDOUT) {
+			error_code = SCE_ERROR150_ETIMEDOUT;
+		} else if (error_code == SCE_EADDRINUSE) {
+			error_code = SCE_ERROR150_EADDRINUSE;
+		} else if (error_code == SCE_ENAMETOOLONG) {
+			error_code = SCE_ERROR150_EADDRINUSE;
+		} else if (error_code == SCE_ECONNABORTED) {
+			error_code = SCE_ERROR150_ECONNABORTED;
+		} else if (error_code == SCE_ENOSYS) {
+			error_code = SCE_ERROR150_ENOTSUP;
+		} else if (error_code == SCE_ENOMEDIUM) {
+			error_code = SCE_ERROR150_ENOMEDIUM;
+		} else if (error_code == SCE_EWRONGMEDIUM) {
+			error_code = SCE_ERROR150_EMEDIUMTYPE;
 		}
 	}
 

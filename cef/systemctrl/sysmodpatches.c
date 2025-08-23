@@ -126,7 +126,7 @@ void UnprotectExtraMemory() {
 
 int sctrlHENSetMemory(u32 p2, u32 p11) {
 	if ((p2 == 0) || ((p2 + p11) > 52)) {
-		return 0x80000107;
+		return SCE_ERR_INMODE;
 	}
 
 	// Disallow setting after game boot

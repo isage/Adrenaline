@@ -90,8 +90,9 @@ int removePath(const char *path) {
 int CreateDirectories(char **directories, int n) {
 	for (int i = 0; i < n; i++) {
 		int res = sceIoMkdir(directories[i], 0777);
-		if (res < 0 && res != 0x80010011)
+		if (res < 0 && res != SCE_EEXIST) {
 			return res;
+		}
 	}
 
 	return 0;

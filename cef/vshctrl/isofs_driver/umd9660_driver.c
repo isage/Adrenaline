@@ -51,13 +51,13 @@ int ReadUmdFileRetry(void *buf, int size, u32 offset) {
 				OpenIso();
 			}
 
-			return 0x80010013;
+			return SCE_ENODEV;
 		}
 
 		OpenIso();
 	}
 
-	return 0x80010013;
+	return SCE_ENODEV;
 }
 
 int Umd9660ReadSectors2(int lba, int nsectors, void *buf) {
@@ -71,7 +71,7 @@ int Umd9660ReadSectors2(int lba, int nsectors, void *buf) {
 		}
 
 		if (umd_open == 0) {
-			return 0x80010013;
+			return SCE_ENODEV;
 		}
 	}
 

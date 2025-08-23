@@ -584,7 +584,7 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 		if (strcmp(strrchr(file,'/')+1, "DOCINFO.EDAT") == 0)
 		{
 			pspSdkSetK1(k1);
-			return 0x80010002; // ENOENT
+			return SCE_ENOENT;
 		}
 		int res = virtualpbp_getstat(index, stat);
 		pspSdkSetK1(k1);

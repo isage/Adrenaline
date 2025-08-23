@@ -27,6 +27,7 @@
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
 #include <macros.h>
+#include <psperror.h>
 
 #include <adrenaline_log.h>
 
@@ -186,7 +187,7 @@ static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 	} while (i < 16);
 
 	if (i == 16) {
-		ret = 0x80010013;
+		ret = SCE_ENODEV;
 		goto exit;
 	}
 
@@ -209,7 +210,7 @@ static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 			return -1;
 		}
 
-		return 0x80010018;
+		return SCE_EMFILE;
 	}
 
 	arg->arg = (void*)i;
@@ -240,7 +241,7 @@ static int IoClose(PspIoDrvFileArg *arg) {
 
 	int retv;
 	if (!g_open_slot[offset].enabled) {
-		retv = 0x80010016;
+		retv = SCE_EINVAL;
 	} else {
 		g_open_slot[offset].enabled = 0;
 		retv = 0;
@@ -338,7 +339,7 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 			goto exit;
 		}
 
-		ret = 0x80010016;
+		ret = SCE_EINVAL;
 		goto exit;
 	}
 
@@ -375,7 +376,7 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 	} else if (cmd == 0x01D20001) {
 		/* added more data len checks */
 		if (outdata == NULL || outlen < 4) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -403,7 +404,7 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 		struct IoIoctlSeekCmd *seek_cmd;
 
 		if (indata == NULL || inlen < sizeof(struct IoIoctlSeekCmd)) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -414,14 +415,14 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 		u32 len;
 
 		if (indata == NULL || inlen < 4) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
 		len = *(u32*)indata;
 
 		if (outdata == NULL || outlen < len) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -430,7 +431,7 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 	}
 
 	logmsg("%s: Unknown ioctl 0x%08X\n", __func__, cmd);
-	ret = 0x80010086;
+	ret = SCE_ENOSYS;
 exit:
 	logmsg("%s: cmd:0x%08X -> 0x%08X\n", __func__, cmd, ret);
 	return ret;
@@ -441,7 +442,7 @@ static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param) {
 	u32 byte_size_total = param->byte_size_total;
 
 	if (outlen < byte_size_total) {
-		return 0x80010069;
+		return SCE_ENOBUFS;
 	}
 
 	u32 lba_top = param->lba_top;
@@ -483,7 +484,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 	} else if (cmd == 0x01F100A3) {
 		/* missing cmd in march33, seek UMD disc (raw). */
 		if (indata == NULL || inlen < 4) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -495,7 +496,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 
 		/* missing cmd in march33, prepare UMD data into cache */
 		if (indata == NULL || inlen < 16) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -510,12 +511,12 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 
 		/* missing cmd in march33, prepare UMD data into cache */
 		if (indata == NULL || inlen < 16) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
 		if (outdata == NULL || outlen < 4) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -530,7 +531,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 	} else if (cmd == 0x01F300A7 || cmd == 0x01F300A8 || cmd == 0x01F300A9) {
 		/* missing cmd in march33, cache control */
 		if (indata == NULL || inlen < 4) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -545,15 +546,15 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		ret = 1;
 		goto exit;
 	} else if (cmd == 0x01E180D3) {
-		ret = 0x80010086;
+		ret = SCE_ENOSYS;
 		goto exit;
 	} else if (cmd == 0x01E080A8) {
-		ret = 0x80010086;
+		ret = SCE_ENOSYS;
 		goto exit;
 	} else if (cmd == 0x01E28035) {
 		/* Added check for outdata */
 		if (outdata == NULL || outlen < 4) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -564,7 +565,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 	} else if (cmd == 0x01E280A9) {
 		/* Added check for outdata */
 		if (outdata == NULL || outlen < 4) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -574,7 +575,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		goto exit;
 	} else if (cmd == 0x01E38034) {
 		if (indata == NULL || outdata == NULL) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -589,7 +590,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		 * 0x01F200A2: read sectors dircache
 		 */
 		if (indata == NULL || outdata == NULL) {
-			ret = 0x80010016;
+			ret = SCE_EINVAL;
 			goto exit;
 		}
 
@@ -613,7 +614,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		goto exit;
 	} else {
 		logmsg("%s: Unknown cmd 0x%08X\n", __func__, cmd);
-		ret = 0x80010086;
+		ret = SCE_ENOSYS;
 	}
 
 exit:
