@@ -223,9 +223,8 @@ int ReadUmdFileRetry(void *buf, int size, int fpointer) {
 	}
 
 	if (i == 0x10) {
-		res = SCE_ERROR_ERRNO_ENODEV;
+		res = SCE_ENODEV;
 		goto out;
-		// return SCE_ERROR_ERRNO_ENODEV;
 	}
 
 	for (i = 0; i < 0x10; i++) {
@@ -240,8 +239,7 @@ int ReadUmdFileRetry(void *buf, int size, int fpointer) {
 		}
 	}
 
-	res = SCE_ERROR_ERRNO_ENODEV;
-	// return SCE_ERROR_ERRNO_ENODEV;
+	res = SCE_ENODEV;
 
 out:
 	logmsg("%s: buf:0x%p, size=0x%08X, fpointer:0x%08X -> 0x%08X\n", __func__, buf, size, fpointer, res);
@@ -348,7 +346,7 @@ int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 
 	if (i == 0x10) {
 		//sceKernelSignalSema(umdsema, 1);
-		res = SCE_ERROR_ERRNO_ENODEV;
+		res = SCE_ENODEV;
 		goto out;
 		// return SCE_ERROR_ERRNO_ENODEV;
 	}
@@ -363,9 +361,8 @@ int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 
 	if (i == MAX_DESCRIPTORS) {
 		UNLOCK();
-		res = 0x80010018; // EM_FILE
+		res = SCE_EMFILE;
 		goto out;
-		// return 0x80010018; // EM_FILE
 	}
 
 	arg->arg = (void *)i;
@@ -386,7 +383,7 @@ int umd_close(PspIoDrvFileArg *arg) {
 	LOCK();
 
 	if (!descriptors[i].busy) {
-		res = 0x80010016;
+		res = SCE_EINVAL;
 	} else {
 		descriptors[i].busy = 0;
 	}
@@ -438,7 +435,7 @@ SceOff umd_lseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 		descriptors[i].discpointer = discsize-ofs;
 	} else {
 		UNLOCK();
-		return SCE_ERROR_ERRNO_EINVAL;
+		return SCE_EINVAL;
 	}
 
 	if (descriptors[i].discpointer > discsize) {
@@ -484,7 +481,7 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 		case 0x01f100a6: // SCE_UMD_SEEK_FILE
 		{
 			if (!indata || inlen < 4)
-				return 0x80010016;
+				return SCE_EINVAL;
 
 			SceUmdSeekParam *seekparam = (SceUmdSeekParam *)indata;
 
@@ -493,18 +490,20 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 
 		case 0x01f30003: // SCE_UMD_UNCACHED_READ
 		{
-			if (!indata || inlen < 4)
-				return 0x80010016;
+			if (!indata || inlen < 4) {
+				return SCE_EINVAL;
+			}
 
-			if (!outdata || outlen < indata32[0])
-				return 0x80010016;
+			if (!outdata || outlen < indata32[0]) {
+				return SCE_EINVAL;
+			}
 
 			return umd_read(arg, outdata, indata32[0]);
 		}
 	}
 
 	Kprintf("Unknown ioctl 0x%08X\n", cmd);
-	return 0x80010086;
+	return SCE_ENOSYS;
 }
 
 /*int ProcessDevctlRead(u32 *indata, u8 *outdata, int outdatasize)
@@ -585,7 +584,7 @@ int ProcessDevctlRead(void *outdata, int size, u32 *indata) {
 	int offset;
 
 	if (size < datasize) {
-		return 0x80010069;
+		return SCE_ENOBUFS;
 	}
 
 	if (dataoffset == 0) {
@@ -612,10 +611,6 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 	u32 *outdata32 = (u32 *)outdata;
 	int res;
 
-	//sceKernelWaitSema(umdsema, 1, NULL);
-
-	//Kprintf("umd_devctl: %08X\n", cmd);
-
 	// Devctl seen in np9660, and not in isofs:
 	// 01e18024 -> return 0x80010086
 	// 01e000d5 -> return 0x80010086
@@ -629,26 +624,22 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 		case 0x01e28035:
 		{
 			*outdata32 = (u32)umdpvd;
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 
 		case 0x01e280a9:
 		{
 			*outdata32 = 0x800;
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 
 		case 0x01e380c0: case 0x01f200a1: case 0x01f200a2:
 		{
-			if (!indata ||!outdata)
-			{
-				return SCE_ERROR_ERRNO_EINVAL;
+			if (!indata ||!outdata) {
+				return SCE_EINVAL;
 			}
 
 			res = ProcessDevctlRead(outdata, outlen, indata);
-			//sceKernelWaitSema(umdsema, 1);
 
 			return res;
 		}
@@ -656,34 +647,31 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 		case 0x01e18030:
 		{
 			// region related
-			//sceKernelWaitSema(umdsema, 1);
 			return 1;
 		}
 
 		case 0x01e38012:
 		{
-			if (outlen < 0)
+			if (outlen < 0) {
 				outlen += 3;
+			}
 
 			memset(outdata32, 0, outlen);
 			outdata32[0] = 0xe0000800;
 			outdata32[7] = outdata32[9] = discsize;
 			outdata32[2] = 0;
 
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 
 		case 0x01e38034:
 		{
-			if (!indata || !outdata)
-			{
-				return SCE_ERROR_ERRNO_EINVAL;
+			if (!indata || !outdata) {
+				return SCE_EINVAL;
 			}
 
 			*outdata32 = 0;
 
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 
@@ -692,13 +680,11 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 			outdata32[1] = 0x10; /* game */
 			outdata32[0] = 0xFFFFFFFF;
 
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 
 		case 0x01f00003:
 		{
-			//sceKernelWaitSema(umdsema, 1); /* activate driver */
 			return 0;
 		}
 
@@ -706,26 +692,22 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 		{
 			//Kprintf("Warning: get last lba devctl.\n");
 			outdata32[0] = discsize;
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 
 		case 0x01f20003:
 		{
 			*outdata32 = discsize;
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 
 		case 0x01e180d3: case 0x01e080a8:
 		{
-			//sceKernelWaitSema(umdsema, 1);
-			return 0x80010086;
+			return SCE_ENOSYS;
 		}
 
 		case 0x01f100a3: case 0x01f100a4: case 0x01f010db:
 		{
-			//sceKernelWaitSema(umdsema, 1);
 			return 0;
 		}
 	}
@@ -734,22 +716,18 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 	//WriteFile("ms0:/unknown_devctl.bin", &cmd, 4);
 	//WriteFile("ms0:/unknown_devctl_indata.bin", indata, inlen);
 
-	//sceKernelWaitSema(umdsema, 1);
-	return 0x80010086;
+	return SCE_ENOSYS;
 }
 
 int sceUmd9660_driver_C0933C16() {
-	//Kprintf("9660 1.\n");
 	return 0;
 }
 
 int sceUmd9660_driver_887C3193() {
-	//Kprintf("9660 2.\n");
 	return 0;
 }
 
 int sceUmd9660_driver_7EB57F56() {
-	//Kprintf("9660 3.\n");
 	return 0;
 }
 
@@ -832,22 +810,21 @@ int InitUmd9660() {
 
 	sceKernelRegisterSysEventHandler(&event_handler);
 
-	umdfile = GetUmdFile();
+	umdfile = sctrlSEGetUmdFile();
 	res = sceIoAddDrv(&umd_driver);
 
-	if (res < 0)
+	if (res < 0) {
 		return res;
+	}
 
 	sceKernelSetQTGP3(dummy_umd_id);
-
-	//Kprintf("umd9660 inited.\n");
 
 	return 0;
 }
 
 int module_stop(SceSize args, void *argp) {
-	sceIoDelDrv("umd");
 	sceKernelUnregisterSysEventHandler(&event_handler);
+	sceIoDelDrv("umd");
 	return 0;
 }
 

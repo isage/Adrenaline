@@ -1,6 +1,7 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspsysmem_kernel.h>
+#include <psperror.h>
 
 #include <adrenaline_log.h>
 
@@ -48,7 +49,7 @@ int sceUmdActivate(const int mode, const char *aliasname) {
 
 		res = 0;
 	} else {
-		res = SCE_ERROR_ERRNO_EINVAL;
+		res = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
@@ -78,7 +79,7 @@ int sceUmdGetDiscInfo(SceUmdDiscInfo *disc_info) {
 	if (disc_info && disc_info->uiSize == 8) {
 		disc_info->uiMediaType = SCE_UMD_FMT_GAME;
 	} else {
-		res = SCE_ERROR_ERRNO_EINVAL;
+		res = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
@@ -94,7 +95,7 @@ int sceUmdRegisterUMDCallBack(SceUID cbid) {
 		umdcallback = cbid;
 		UmdCallback(drivestat);
 	} else {
-		res = SCE_ERROR_ERRNO_EINVAL;
+		res = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
@@ -108,7 +109,7 @@ int sceUmdUnRegisterUMDCallBack(SceUID cbid) {
 	uidControlBlock *block;
 
 	if (sceKernelGetUIDcontrolBlock(cbid, &block) != 0 || cbid != umdcallback) {
-		res = SCE_ERROR_ERRNO_EINVAL;
+		res = SCE_EINVAL;
 	} else {
 		umdcallback = -1;
 	}
@@ -212,7 +213,7 @@ static int WaitDriveStat(int stat, SceUInt timer, int cb) {
 			}
 		}
 	} else {
-		res = SCE_ERROR_ERRNO_EINVAL;
+		res = SCE_EINVAL;
 	}
 
 	if (cb) {
@@ -266,33 +267,20 @@ int sceUmd_040A7090(int error) {
 		return error;
 	}
 
-	switch (error) {
-		case 0x8001005b:
-			error = 0x80010024;
-
-		case 0x80010070:
-			error = 0x80010062;
-			break;
-
-		case 0x80010071:
-			error = 0x80010067;
-			break;
-
-		case 0x80010074:
-			error = 0x8001006e;
-			break;
-
-		case 0x80010086:
-			error = 0x8001b000;
-			break;
-
-		case 0x80010087:
-			error = 0x8001007b;
-			break;
-
-		case 0x8001b006:
-			error = 0x8001007c;
-			break;
+	if (error == SCE_ETIMEDOUT) {
+		error = SCE_ERROR150_ETIMEDOUT;
+	} else if (error == SCE_EADDRINUSE) {
+		error = SCE_ERROR150_EADDRINUSE;
+	} else if (error == SCE_ENAMETOOLONG) {
+		error = SCE_ERROR150_EADDRINUSE;
+	} else if (error == SCE_ECONNABORTED) {
+		error = SCE_ERROR150_ECONNABORTED;
+	} else if (error == SCE_ENOSYS) {
+		error = SCE_ERROR150_ENOTSUP;
+	} else if (error == SCE_ENOMEDIUM) {
+		error = SCE_ERROR150_ENOMEDIUM;
+	} else if (error == SCE_EWRONGMEDIUM) {
+		error = SCE_ERROR150_EMEDIUMTYPE;
 	}
 
 	logmsg("%s: error=0x%08X -> 0x%08X\n", __func__, error, error);
