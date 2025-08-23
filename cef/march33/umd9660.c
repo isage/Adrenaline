@@ -21,9 +21,6 @@ int discsize=0x7FFFFFFF;
 
 UmdFD descriptors[MAX_DESCRIPTORS];
 
-//int lastLBA = -1;
-
-//u8 *umdsector = NULL;
 u8 *umdpvd = NULL;
 
 #define N_GAME_GROUP1	4
@@ -37,85 +34,6 @@ char *game_group2[N_GAME_GROUP2] = {
 	"TERTURADOR" // NPUG-80086 (flow PSN)
 };
 
-
-/*typedef struct {
-	int lba;
-	int nsectors;
-	void *buf;
-	int result;
-} ReadSectorsParams;
-
-ReadSectorsParams params;
-
-int Umd9660ReadSectors_() {
-	if (!mounted) {
-		int i;
-
-		for (i = 0; i < 0x10; i++) {
-			if (sceIoLseek32(umdfd, 0, PSP_SEEK_CUR) < 0)
-				OpenIso();
-			else
-				break;
-		}
-	}
-
-	if (!mounted)
-	{
-		return SCE_ERROR_ERRNO_ENODEV;
-	}
-
-	if (!cso)
-	{
-		return IsofileReadSectors(params.lba, params.nsectors, params.buf);
-	}
-
-	return CisofileReadSectors(params.lba, params.nsectors, params.buf);
-}
-
-int Umd9660ReadSectors2(int lba, int nsectors, void *buf)
-{
-	//Kprintf("umd read.\n");
-
-	if (!mounted)
-	{
-		int i;
-
-		for (i = 0; i < 0x10; i++)
-		{
-			if (sceIoLseek32(umdfd, 0, PSP_SEEK_CUR) < 0)
-				OpenIso();
-			else
-				break;
-		}
-	}
-
-	if (!mounted)
-	{
-		//Kprintf("read not mounted.\n");
-		return SCE_ERROR_ERRNO_ENODEV;
-	}
-
-	if (!cso)
-	{
-		return IsofileReadSectors(lba, nsectors, buf);
-	}
-
-	return CisofileReadSectors(lba, nsectors, buf);
-}
-
-int Umd9660ReadSectors(int lba, int nsectors, void *buf)
-{
-	//Kprintf("begin read stacked, lba = 0x%08X\n", lba);
-
-	params.lba = lba;
-	params.nsectors = nsectors;
-	params.buf = buf;
-
-	return sceKernelExtendKernelStack(0x2000, (void *)Umd9660ReadSectors_, NULL);
-}*/
-
-int g_args[3];
-
 #define LOCK() \
 	if (sceKernelWaitSema(umdsema, 1, NULL) < 0) \
 		return -1;
@@ -125,7 +43,8 @@ int g_args[3];
 		return -1;
 
 
-int ReadUmdFile(int offset, void *buf, int outsize) {
+// iso_read_with_stack
+static int ReadUmdFile(int offset, void *buf, int outsize) {
 	int res;
 
 	LOCK();
@@ -141,25 +60,10 @@ int ReadUmdFile(int offset, void *buf, int outsize) {
 	return res;
 }
 
-void WaitMs() {
-	u32 status = 0;
-
-	while (1) {
-		if (sceIoDevctl("mscmhc0:", 0x02025801, 0, 0, &status, 4) >= 0) {
-			if (status == 4) {
-				break;
-			}
-		}
-
-		sceKernelDelayThread(20000);
-	}
-}
-
 int umd_init(PspIoDrvArg* arg) {
 	int i;
 	logmsg("%s: start.\n", __func__);
 
-	//umdsector = (u8 *)oe_malloc(SECTOR_SIZE);
 	umdpvd = (u8 *)oe_malloc(SECTOR_SIZE);
 
 	if (!umdpvd) {
@@ -213,11 +117,6 @@ int umd_exit(PspIoDrvArg* arg) {
 	SceUInt timeout = 500000;
 
 	sceKernelWaitSema(umdsema, 1, &timeout);
-
-	/*if (umdsector)
-	{
-		oe_free(umdsector);
-	}*/
 
 	if (umdpvd) {
 		oe_free(umdpvd);
@@ -323,7 +222,6 @@ int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 		UNLOCK();
 	}
 
-	//sceKernelWaitSema(umdsema, 1);
 	logmsg("%s: arg=0x%p, data=%s, len=0x%08X -> 0x%08X\n", __func__, arg, data, len, res);
 	return res;
 }
@@ -348,7 +246,6 @@ SceOff umd_lseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 		descriptors[i].discpointer = discsize;
 	}
 
-	//sceKernelWaitSema(umdsema, 1);
 	int res = descriptors[i].discpointer;
 
 	UNLOCK();
@@ -367,7 +264,6 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 	u32 *indata32 = (u32 *)indata;
 	int i = (int)arg->arg;
 
-	//sceKernelWaitSema(umdsema, 1, NULL);
 	switch (cmd) {
 		case 0x01d20001: // SCE_UMD_GET_FILEPOINTER
 		{
@@ -408,80 +304,10 @@ int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, v
 		}
 	}
 
-	Kprintf("Unknown ioctl 0x%08X\n", cmd);
+	logmsg("%s: Unknown ioctl 0x%08X\n", __func__, cmd);
 	return SCE_ENOSYS;
 }
 
-/*int ProcessDevctlRead(u32 *indata, u8 *outdata, int outdatasize)
-{
-	int dataoffset = indata[6];
-	int lba = indata[2];
-	int datasize = indata[4];
-	int dirsectors;
-	u8 *p = outdata;
-	int remaining = datasize;
-
-	if (outdatasize < datasize)
-		return 0x80010069;
-
-	//Kprintf("devctl read, outsize 0x%08X.\n", outdatasize);
-
-	if (dataoffset != 0)
-	{
-		if (indata[5] != 0 || indata[7] != 0)
-		{
-			dataoffset = SECTOR_SIZE - dataoffset;
-		}
-	}
-
-	if (datasize <= 0)
-	{
-		return 0;
-	}
-
-	if (dataoffset != 0)
-	{
-		// Read and write the first incomplete sector
-
-		//Kprintf("dataoffset 0x%08X.\n", dataoffset);
-		int x = (SECTOR_SIZE - dataoffset);
-
-		if (x > datasize)
-			x = datasize;
-
-		ReadOneSector(lba);
-		memcpy(p, umdsector+dataoffset, x);
-
-		//Kprintf("x = 0x%08X.\n", x);
-
-		lba += 1;
-		p += x;
-		datasize -= x;
-		remaining = datasize;
-	}
-
-	dirsectors = datasize / SECTOR_SIZE; // n of sectors that can be directly written
-
-	if (dirsectors != 0)
-	{
-		//Kprintf("dirsectors 0x%08X\n", dirsectors);
-
-		Umd9660ReadSectors(lba, dirsectors, p); //
-		p += (dirsectors*SECTOR_SIZE);
-		lba += dirsectors;
-		remaining = datasize - (dirsectors*SECTOR_SIZE);
-	}
-
-	if ((datasize % SECTOR_SIZE) != 0)
-	{
-		// Read one and write the remaining
-		ReadOneSector(lba);
-		memcpy(p, umdsector, remaining);
-		//Kprintf("Remaining data 0x%08X.\n", remaining);
-	}
-
-	return indata[3];
-}*/
 int ProcessDevctlRead(void *outdata, int size, u32 *indata) {
 	int datasize = indata[4]; // 0x10
 	int lba = indata[2]; // 0x08
@@ -494,24 +320,17 @@ int ProcessDevctlRead(void *outdata, int size, u32 *indata) {
 	}
 
 	if (dataoffset == 0) {
-		offset = lba*0x800;
+		offset = lba*ISO_SECTOR_SIZE;
 	} else if (indata[5] != 0) {
-		offset = (lba*0x800)-dataoffset+0x800;
+		offset = (lba*ISO_SECTOR_SIZE)-dataoffset+ISO_SECTOR_SIZE;
 	} else if (indata[7] == 0) {
-		offset = (lba*0x800)+dataoffset;
+		offset = (lba*ISO_SECTOR_SIZE)+dataoffset;
 	} else {
-		offset = (lba*0x800)-dataoffset+0x800;
+		offset = (lba*ISO_SECTOR_SIZE)-dataoffset+ISO_SECTOR_SIZE;
 	}
 
 	return ReadUmdFile(offset, outdata, datasize);
 }
-
-/*void WriteFile(char *file, void *buf, int size)
-{
-	SceUID fd = sceIoOpen(file, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	sceIoWrite(fd, buf, size);
-	sceIoClose(fd);
-}*/
 
 int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	u32 *outdata32 = (u32 *)outdata;
@@ -535,7 +354,7 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 
 		case 0x01e280a9:
 		{
-			*outdata32 = 0x800;
+			*outdata32 = ISO_SECTOR_SIZE;
 			return 0;
 		}
 
@@ -596,7 +415,6 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 
 		case 0x01f20002:
 		{
-			//Kprintf("Warning: get last lba devctl.\n");
 			outdata32[0] = discsize;
 			return 0;
 		}
@@ -618,7 +436,7 @@ int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void
 		}
 	}
 
-	Kprintf("unknown devctl 0x%08X\n", cmd);
+	logmsg("%s: Unknown devctl 0x%08X\n", __func__, cmd);
 	//WriteFile("ms0:/unknown_devctl.bin", &cmd, 4);
 	//WriteFile("ms0:/unknown_devctl_indata.bin", indata, inlen);
 
@@ -742,37 +560,3 @@ int module_stop(SceSize args, void *argp) {
 	sceIoDelDrv("umd");
 	return 0;
 }
-
-/* Disasm np9660
-int ProcssDevctlRead(void *outdata, int size, u32 *indata)
-{
-	int datasize = indata[4]; // 0x10
-	int lba = indata[2]; // 0x08
-	int dataoffset = indata[6]; // 0x18
-	int u14 = indata[5]; // 0x14
-	int u1C = indata[7]; // 0x1C
-
-	if (size < datasize)
-		return 0x80010069;
-
-	if (dataoffset == 0)
-	{
-		res = Read13(lba*0x800, outdata, datasize);
-		goto end;
-	}
-
-	if (u14 != 0)
-	{
-		res = Read13((lba*0x800)-dataoffset+0x800, outdata, datasize);
-		goto end;
-	}
-
-	if (u1C == 0)
-	{
-		res = Read13((lba*0x800)+dataoffset, outdata, outdatasize);
-		goto end;
-	}
-
-	res = Read13((lba*0x800)-dataoffset+0x800
-}*/
-
