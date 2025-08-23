@@ -4,7 +4,7 @@ release: all
 TARGET = systemctrl
 OBJS = main.o adrenaline.o executable_patch.o libraries_patch.o io_patch.o init_patch.o power_patch.o usbcam_patch.o utility_patch.o sysmodpatches.o \
 	   nodrm.o conf.o malloc.o kubridge.o systemctrl.o ttystdio.o LflashFatfmt.o string_clone.o setjmp_clone.o exports.o \
-	   lz4.o minilzo.o sysclibforuser.o gameinfo.o plugin.o
+	   lz4.o minilzo.o sysclibforuser.o gameinfo.o plugin.o pgd.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -Wno-builtin-declaration-mismatch -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__ -D__SCTRL_PRIVATE__
@@ -24,7 +24,7 @@ BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
 LIBDIR = ../lib
-LIBS = -lpspsemaphore -lpspinit_kernel -lpspthreadman_kernel -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
+LIBS = -lpspsemaphore -lpspamctrl_driver -lpspinit_kernel -lpspthreadman_kernel -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
 
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1

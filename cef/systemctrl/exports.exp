@@ -288,6 +288,13 @@ PSP_EXPORT_FUNC_NID(sctrlGetInitTextAddr, 0x72F29A6E)
 PSP_EXPORT_END
 # END SystemCtrlForKernel
 
+# Things that are not part of the CFW API but we have to export
+PSP_EXPORT_START(SystemCtrlPrivate, 0, 0x4001)
+PSP_EXPORT_FUNC(sceIoOpenDrmPatched)
+PSP_EXPORT_FUNC(sceIoOpenAsyncDrmPatched)
+PSP_EXPORT_END
+# END SysclibForUser
+
 PSP_EXPORT_START(SysclibForUser, 0, 0x4001)
 PSP_EXPORT_FUNC(user_malloc)
 PSP_EXPORT_FUNC(user_free)

@@ -22,5 +22,7 @@
 #include <psploadcore.h>
 
 void PatchNpDrmDriver(SceModule2* mod);
+void PatchNp9660Driver(SceModule2* mod);
+void PatchDrmGameModule(SceModule2* mod);
 
 #endif

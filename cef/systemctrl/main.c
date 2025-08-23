@@ -540,6 +540,8 @@ static int OnModuleStart(SceModule2 *mod) {
 
 	if (ready_gamepatch_mod) {
 		PatchGamesByMod(mod);
+		PatchDrmGameModule(mod);
+		ready_gamepatch_mod = 0;
 	}
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {
@@ -615,6 +617,9 @@ static int OnModuleStart(SceModule2 *mod) {
 
 	} else if (strcmp(modname, "scePspNpDrm_Driver") == 0) {
 		PatchNpDrmDriver(mod);
+
+	} else if (strcmp(modname, "sceNp9660_driver") == 0) {
+		PatchNp9660Driver(mod);
 
 	} else if (strcmp(modname, "sceUmd_driver") == 0) {
 		REDIRECT_FUNCTION(text_addr + 0xC80, sceUmdRegisterUMDCallBackPatched);
