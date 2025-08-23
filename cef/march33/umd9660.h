@@ -11,12 +11,7 @@ typedef struct UmdFD {
 	int discpointer;
 } UmdFD;
 
-int  OpenIso();
-int  ReadUmdFileRetry(void *buf, int size, int fpointer);
-int  Umd9660ReadSectors(int lba, int nsectors, void *buf);
 int  InitUmd9660();
-
-
 
 #endif
 

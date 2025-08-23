@@ -8,7 +8,7 @@
 #include "umd9660.h"
 #include "mediaman.h"
 
-PSP_MODULE_INFO("pspMarch33_Driver", 0x1006, 1, 0);
+PSP_MODULE_INFO("EPI-March33Driver", 0x1006, 2, 0);
 PSP_MAIN_THREAD_ATTR(0);
 
 int module_start(SceSize args, void *argp) {

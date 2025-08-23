@@ -18,9 +18,7 @@
 #define SCE_UMD_FMT_AUDIO			0x00040	/* AUDIO */
 #define SCE_UMD_FMT_CLEAN			0x00080	/* CLEANNING */
 
-
-typedef struct SceUmdDiscInfo 
-{
+typedef struct SceUmdDiscInfo {
 	unsigned int uiSize;
 	unsigned int uiMediaType;
 } SceUmdDiscInfo;

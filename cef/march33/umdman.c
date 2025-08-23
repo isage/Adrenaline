@@ -1,5 +1,6 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
+#include <psperror.h>
 
 #include <systemctrl.h>
 #include <macros.h>
@@ -14,13 +15,10 @@ void *arg_iecallback;
 int (* iecallback)(int id, void *arg, int unk);
 
 int sceUmdManRegisterImposeCallBack(int id, void *callback) {
-	//Kprintf("Register Impose.\n");
-
 	return 0;
 }
 
 int sceUmdManUnRegisterImposeCallback(int id) {
-	//Kprintf("UnRegister Impose.\n");
 	return 0;
 }
 
@@ -35,9 +33,8 @@ int sceUmdManRegisterInsertEjectUMDCallBack(int id, void *callback, void *arg) {
 	int res = 0;
 
 	if (id_iecallback != 0) {
-		res = SCE_ERROR_ERRNO_ENOMEM;
+		res = SCE_ENOMEM;
 		goto out;
-		// return SCE_ERROR_ERRNO_ENOMEM;
 	}
 
 	id_iecallback = id;
@@ -52,10 +49,6 @@ int sceUmdManRegisterInsertEjectUMDCallBack(int id, void *callback, void *arg) {
 	MAKE_INSTRUCTION(text_addr+0x4024, 0x00001021);
 	MAKE_INSTRUCTION(text_addr+0x40D8, 0x00001021);
 	MAKE_INSTRUCTION(text_addr+0x42B4, 0x00001021);
-	// _sw(0x00001021, text_addr+0x3FEC);
-	// _sw(0x00001021, text_addr+0x4024);
-	// _sw(0x00001021, text_addr+0x40D8);
-	// _sw(0x00001021, text_addr+0x42B4);
 
 	sctrlFlushCache();
 
@@ -69,9 +62,8 @@ out:
 int sceUmdManUnRegisterInsertEjectUMDCallBack(int id) {
 	int res = 0;
 	if (id != id_iecallback) {
-		res = SCE_ERROR_ERRNO_ENOENT;
+		res = SCE_ENOENT;
 		goto out;
-		// return SCE_ERROR_ERRNO_ENOENT;
 	}
 
 	id_iecallback = 0;
@@ -85,13 +77,9 @@ out:
 }
 
 int sceUmdManIsDvdDrive() {
-	//Kprintf("6093.\n");
-
 	return 0;
 }
 
 int InitUmdMan() {
-	//Kprintf("UmdMan Inited.\n");
-
 	return 0;
 }
