@@ -54,19 +54,32 @@ int readGameIdFromPBP() {
 
 // 0 - Not able to get | 1 - Able to get
 int readGameIdFromISO() {
-	int (*isoGetGameId)(char game_id[10]) = (void*)FindProc("EPI-InfernoDriver", "inferno_driver", 0xFF8838D4);
+	int (*isoGetGameId)(char game_id[10]) = NULL;
+	int boot_conf = rebootex_config.bootfileindex;
 
-	if (isoGetGameId == NULL) {
-		// Try galaxy
-		isoGetGameId = (void*)FindProc("EPI-GalaxyController", "galaxy_driver", 0xFF8838D4);
+	switch (boot_conf) {
+		case BOOT_INFERNO:
+			isoGetGameId = (void*)FindProc("EPI-InfernoDriver", "inferno_driver", 0xFF8838D4);
+			break;
 
-		if (isoGetGameId == NULL) {
-			// FIXME: Add logic for M33 driver once we have the M33 driver code on Adrenaline
-			return 0;
-		}
+		case BOOT_MARCH33:
+			isoGetGameId = (void*)FindProc("EPI-March33Driver", "march33_driver", 0xFF8838D4);
+			break;
+
+		case BOOT_NP9660:
+			isoGetGameId = (void*)FindProc("EPI-GalaxyController", "galaxy_driver", 0xFF8838D4);
+			break;
+
+		default:
+			break;
 	}
 
-	logmsg("%s: Found `isoGetGameId`\n", __func__);
+	if (isoGetGameId == NULL) {
+		logmsg4("%s: [DEBUG]: Not found `isoGetGameId`\n", __func__);
+		return 0;
+	}
+
+	logmsg4("%s: [DEBUG]: Found `isoGetGameId`\n", __func__);
 
 	return isoGetGameId(rebootex_config.game_id);
 }
@@ -78,7 +91,7 @@ void findAndSetGameId() {
 	}
 
 	if (rebootex_config.game_id[0] == '\0') {
-		int is_iso = sceKernelFindModuleByName("EPI-InfernoDriver") != NULL || sceKernelFindModuleByName("EPI-GalaxyController") != NULL;
+		int is_iso = rebootex_config.bootfileindex == BOOT_INFERNO || rebootex_config.bootfileindex == BOOT_MARCH33 || rebootex_config.bootfileindex == BOOT_NP9660;
 		if (is_iso) {
 			readGameIdFromISO();
 		} else {
