@@ -292,6 +292,7 @@ PSP_EXPORT_END
 PSP_EXPORT_START(SystemCtrlPrivate, 0, 0x4001)
 PSP_EXPORT_FUNC(sceIoOpenDrmPatched)
 PSP_EXPORT_FUNC(sceIoOpenAsyncDrmPatched)
+PSP_EXPORT_FUNC(vshCheckBootable)
 PSP_EXPORT_END
 # END SysclibForUser
 

@@ -23,6 +23,9 @@
 
 void PatchNpDrmDriver(SceModule2* mod);
 void PatchNp9660Driver(SceModule2* mod);
+void PatchVshForDrm(SceModule2 *mod);
+void PatchDrmOnVsh();
+void PatchSysconfForDrm(SceModule2 *mod);
 void PatchDrmGameModule(SceModule2* mod);
 
 #endif

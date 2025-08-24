@@ -17,6 +17,7 @@
 */
 
 #include <common.h>
+#include <adrenaline_log.h>
 
 #include "main.h"
 #include "pgd.h"
@@ -328,6 +329,101 @@ void PatchNpDrmDriver(SceModule2* mod) {
 		HIJACK_FUNCTION(FindProc("sceModuleManager", "ModuleMgrForUser", 0xF2D8D1B4), sceKernelLoadModuleNpDrmPatched, _sceKernelLoadModuleNpDrm);
 
 		sctrlFlushCache();
+	}
+}
+
+void *vshCheckBootable(void *dst, const void *src, int size) {
+	SFO *sfo = (SFO *)src;
+
+	int i;
+
+	for (i = 0; i < sfo->nitems; i++) {
+		if (!strcmp((char *)((u32)src + sfo->fields_table_offs + sfo->sfotable[i].label_offset), "BOOTABLE")) {
+			if (VREAD32((u32)src + sfo->values_table_offs + sfo->sfotable[i].data_offset) == 2) {
+				VWRITE32((u32)src + sfo->values_table_offs + sfo->sfotable[i].data_offset, 1);
+			}
+
+			break;
+		}
+	}
+
+	return memcpy(dst, src, size);
+}
+
+void PatchVshForDrm(SceModule2 *mod) {
+	// Do not patch if configured to not patch it
+	if (config.no_nodrm_engine) {
+		return;
+	}
+
+	u32 addr;
+	int syscall = sceKernelQuerySystemCall(vshCheckBootable);
+
+	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
+		if ((VREAD32(addr) == 0x10400004) && (VREAD32(addr + 16) == 0x02003021)) {
+			MAKE_INSTRUCTION(addr + 12, VREAD32(addr + 16));
+			MAKE_INSTRUCTION(addr + 16, SYSCALL(syscall) & 0x03FFFFFF);
+
+			sceKernelDcacheWritebackInvalidateRange((const void *)(addr + 12), 8);
+			sceKernelIcacheInvalidateRange((const void *)(addr + 12), 8);
+			break;
+		}
+	}
+}
+
+void PatchDrmOnVsh() {
+	// Do not patch if configured to not patch it
+	if (config.no_nodrm_engine) {
+		return;
+	}
+
+	u32 addr;
+	SceModule2 *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
+
+	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
+		if (VREAD32(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
+			HIJACK_FUNCTION(addr - 8, setupEbootVersionKeyPatched, _setupEbootVersionKey);
+			break;
+		}
+	}
+
+	addr = K_EXTRACT_IMPORT(sceIoOpen) + 4;
+
+	while (1) {
+		if ((VREAD32(addr) & 0xFC000000) == 0x0C000000) {
+			do_open = (void *)(((VREAD32(addr) & 0x03FFFFFF) << 2) | 0x80000000);
+			MAKE_CALL(addr, do_open_patched);
+			break;
+		}
+
+		addr += 4;
+	}
+
+	sctrlFlushCache();
+}
+
+void PatchSysconfForDrm(SceModule2 *mod) {
+	// Do not patch if configured to not patch it
+	if (config.no_nodrm_engine) {
+		return;
+	}
+
+	//patch sysconf act/rif check, call official function first, then patch to return 0 if it fails.
+	for (u32 addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
+		if (VREAD32(addr) == 0x0062200B) { // movn       $a0, $v1, $v0
+			MAKE_CALL(addr + 4, 0x08802000);
+			MAKE_INSTRUCTION(0x08802000, 0x27BDFFF0) // addiu      $sp, $sp, -16
+			MAKE_INSTRUCTION(0x08802004, 0xAFBF0000) // sw         $ra, 0($sp)
+			MAKE_CALL(0x08802008, mod->text_addr + 0xA1D0) // jal
+			MAKE_NOP(0x0880200C);
+			MAKE_INSTRUCTION(0x08802010, 0x0002100B); // movn       $v0, $zr, $v0
+			MAKE_INSTRUCTION(0x08802014, 0x8FBF0000); // lw         $ra, 0($sp)
+			MAKE_INSTRUCTION(0x08802018, 0x03E00008); // jr         $ra
+			MAKE_INSTRUCTION(0x0880201C, 0x27BD0010); // addiu      $sp, $sp, 16
+
+			sctrlFlushCache();
+			break;
+		}
 	}
 }
 

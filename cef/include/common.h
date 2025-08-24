@@ -86,6 +86,23 @@ typedef struct __attribute__((packed)) {
 	u16 unk4;
 } SFODir;
 
+typedef struct {
+	u16 label_offset;
+	u16 type;
+	u32 size;
+	u32 size_padded;
+	u32 data_offset;
+} SFOtable;
+
+typedef struct {
+	u32 signature;
+	u32 version;
+	u32 fields_table_offs;
+	u32 values_table_offs;
+	int nitems;
+	SFOtable sfotable[];
+} SFO;
+
 typedef struct BtcnfHeader {
 	u32 signature; // 0
 	u32 devkit;		// 4
