@@ -5,7 +5,6 @@
 
 void VshCtrlSetUmdFile(char *file);
 
-int ReadUmdFileRetry(void *buf, int size, u32 offset);
 int Umd9660ReadSectors2(int lba, int nsectors, void *buf);
 
 #endif

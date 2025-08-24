@@ -25,7 +25,7 @@
 #include "isofs_driver/umd9660_driver.h"
 #include "isofs_driver/isofs_driver.h"
 
-PSP_MODULE_INFO("VshControl", 0x1007, 1, 1);
+PSP_MODULE_INFO("VshControl", 0x1007, 1, 2);
 
 #define BOOT_BIN "disc0:/PSP_GAME/SYSDIR/BOOT.BIN"
 #define EBOOT_BIN "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"
@@ -166,10 +166,13 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 
 		// Set umd_mode
 		if (config.umd_mode == MODE_INFERNO) {
+			logmsg2("[INFO]: Launching with Inferno Driver\n");
 			sctrlSESetBootConfFileIndex(BOOT_INFERNO);
 		} else if (config.umd_mode == MODE_MARCH33) {
+			logmsg2("[INFO]: Launching with March33 Driver\n");
 			sctrlSESetBootConfFileIndex(BOOT_MARCH33);
 		} else if (config.umd_mode == MODE_NP9660) {
+			logmsg2("[INFO]: Launching with NP9660 Driver\n");
 			sctrlSESetBootConfFileIndex(BOOT_NP9660);
 		}
 

@@ -1,84 +1,37 @@
 #include <common.h>
-#include "psperror.h"
+#include <psperror.h>
+
+#include <iso_common.h>
 
 #include "umd9660_driver.h"
-#include "csoread.h"
-
-SceUID umdfd;
-int umd_open;
-int umd_is_cso;
-
-char umdfilename[256];
 
 void VshCtrlSetUmdFile(char *file) {
 	SetUmdFile(file);
-	strncpy(umdfilename, file, 255);
-	sceIoClose(umdfd);
-	umd_open = 0;
-	umdfd = -1;
-}
-
-int IsofileReadSectors(int lba, int nsectors, void *buf) {
-	int read = ReadUmdFileRetry(buf, SECTOR_SIZE * nsectors, lba * SECTOR_SIZE);
-	if (read < 0) return read;
-
-	return read / SECTOR_SIZE;
-}
-
-int OpenIso() {
-	umd_open = 0;
-	sceIoClose(umdfd);
-
-	if ((umdfd = sceIoOpen(umdfilename, PSP_O_RDONLY | 0xF0000, 0)) < 0) {
-		return -1;
-	}
-
-	umd_is_cso = 0;
-	if (CisoOpen(umdfd) >= 0) umd_is_cso = 1;
-	umd_open = 1;
-
-	return 0;
-}
-
-int ReadUmdFileRetry(void *buf, int size, u32 offset) {
-	int i;
-	for (i = 0; i < 0x10; i++) {
-		if (sceIoLseek32(umdfd, offset, PSP_SEEK_SET) >= 0) {
-			for (i = 0; i < 0x10; i++) {
-				int read = sceIoRead(umdfd, buf, size);
-				if (read >= 0) return read;
-
-				OpenIso();
-			}
-
-			return SCE_ENODEV;
-		}
-
-		OpenIso();
-	}
-
-	return SCE_ENODEV;
+	iso_close();
+	strncpy(g_iso_fn, file, sizeof(g_iso_fn)-1);
 }
 
 int Umd9660ReadSectors2(int lba, int nsectors, void *buf) {
-	if (umd_open == 0) {
+	if (g_iso_opened == 0) {
 		for (int i = 0; i < 0x10; i++) {
-			if (sceIoLseek32(umdfd, 0, PSP_SEEK_CUR) >= 0) {
+			if (sceIoLseek32(g_iso_fd, 0, PSP_SEEK_CUR) >= 0) {
 				break;
 			}
 
-			OpenIso();
+			iso_open();
 		}
 
-		if (umd_open == 0) {
+		if (g_iso_opened == 0) {
 			return SCE_ENODEV;
 		}
 	}
 
-	if (umd_is_cso == 0) {
-		return IsofileReadSectors(lba, nsectors, buf);
-	} else
-	{
-		return CisofileReadSectors(lba, nsectors, buf);
-	}
+	IoReadArg read_arg = {
+		.offset = lba * SECTOR_SIZE,
+		.address = buf,
+		.size = SECTOR_SIZE * nsectors
+	};
+
+	int read = iso_read(&read_arg);
+	return read/SECTOR_SIZE;
 }
