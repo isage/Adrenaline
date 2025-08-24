@@ -458,7 +458,7 @@ void sceUmdSetDriveStatus(int status) {
 	do_umd_notify(g_drive_status);
 }
 
-int sceUmd_004F4BE5(int orig_error_code) {
+int sceUmd_040A7090(int orig_error_code) {
 	u32 compiled_version;
 	int error_code = orig_error_code;
 
