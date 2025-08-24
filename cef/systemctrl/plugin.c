@@ -214,7 +214,7 @@ static int matchingRunlevel(char * runlevel) {
 	}
 
 	if (isHomebrewRunlevel() && !config.no_game_plugins) {
-		if (strstr(runlevel, "app") != NULL || strstr(runlevel, "hbw") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "game") != NULL) {
+		if (strstr(runlevel, "hbw") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "app") != NULL || strstr(runlevel, "game") != NULL) {
 			// homebrews only
 			return 1;
 		}
@@ -226,7 +226,7 @@ static int matchingRunlevel(char * runlevel) {
 			return 1;
 		}
 		// check keywords
-		if (strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "game") != NULL) {
+		if (strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "app") != NULL || strstr(runlevel, "game") != NULL) {
 			// Retail games only
 			return 1;
 		}
