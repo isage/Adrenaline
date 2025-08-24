@@ -22,6 +22,7 @@ target_link_libraries(adrenaline_vsh
   taihen_stub
   SceLibKernel_stub
   SceAppMgr_stub
+  SceKernelThreadMgr_stub
   SceLsdb_stub_weak
   SceIofilemgr_stub
 )

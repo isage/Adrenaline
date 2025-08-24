@@ -85,6 +85,9 @@ static int sceSysmoduleUnloadModuleInternalWithArgPatched(SceUInt32 id, SceSize 
   return res;
 }
 
+// real name is sceAppMgrLaunchApp2, but oh well...
+int sceAppMgrLaunchAppByPath4(const char* path, const char* titleid, int unk1, char* params, int unk3, void* unk4);
+
 void _start() __attribute__ ((weak, alias("module_start")));
 int module_start(SceSize args, void *argp) {
   tai_module_info_t info;
@@ -97,9 +100,22 @@ int module_start(SceSize args, void *argp) {
   }
 
   // Destroy
-  sceAppMgrDestroyAppByName(ADRENALINE_TITLEID);
+  int ret = sceAppMgrDestroyAppByName(ADRENALINE_TITLEID);
+  sceKernelDelayThread(500000);
 
-  // TODO: autoreload
+  //Relaunch if we killed
+  if (ret >= 0)
+  {
+    char params[0x400];
+    sceClibSnprintf(params, 0x400, "originalpath=ux0:app/PSPEMUCFW&selfpath=ux0:app/PSPEMUCFW/eboot.bin&discid=PSPEMUCFW&parentallevel=0&gamedataid=&appver=00.00&bootable=&category=gd");
+
+    // we need to run pspemu but with adrenaline titleid
+    sceAppMgrLaunchAppByPath4("vs0:app/NPXS10028/eboot.bin", "PSPEMUCFW", 0, params, 0, 0);
+
+    // for some reason, sceAppMgrLaunchAppByPath4 creates process, but doesn't start/activate it
+    // call sceAppMgrLaunchAppByName to *properly* start and activate already properly created pspemu process
+    sceAppMgrLaunchAppByName(0x60000, "PSPEMUCFW",params);
+  }
 
   return SCE_KERNEL_START_SUCCESS;
 }
