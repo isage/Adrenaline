@@ -516,7 +516,7 @@ static int __logmsg(char *fmt, ...) {
 
 int _logmsg(char *fmt, ...) {
 	extern SceModuleInfo module_info;
-	int res = __logmsg("[%s v%d.%d]: ", module_info.modname, module_info.modversion[0], module_info.modversion[1]);
+	int res = __logmsg("[%s v%d.%d]: ", module_info.modname, module_info.modversion[1], module_info.modversion[0]);
 
 	va_list args;
 	int printed_len;
