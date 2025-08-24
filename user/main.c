@@ -558,6 +558,7 @@ static void migrate_config() {
 			AdrenalineConfig717 config_compat = {0};
 			ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config_compat, sizeof(AdrenalineConfig717));
 			migrate_config_717(&config_compat, &config);
+			WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
 			sceClibPrintf("Adrenaline: [INFO]: Migrated 7.1.7 configuration\n");
 			break;
 		default:
