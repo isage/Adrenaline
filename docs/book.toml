@@ -1,0 +1,11 @@
+[book]
+authors = ["GrayJack"]
+language = "en"
+src = "src"
+title = "Adrenaline Manual/Wiki"
+description = "Manual/Wiki for Adrenaline App and Adrenaline CFW"
+
+[output.html]
+default-theme = "rust"
+
+[preprocessor.callouts]
