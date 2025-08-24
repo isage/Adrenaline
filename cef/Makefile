@@ -1,4 +1,4 @@
-all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
 SYSTEM_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel pspvshbridge_user psppower_user pspreg_user psppaf pspvsh pspvshcommongui
 
@@ -98,6 +98,13 @@ _galaxy: | _libs
 	psp-packer galaxy/galaxy.prx
 	cp "galaxy/galaxy.prx" "../user/flash0/kd/galaxy.prx"
 	make -C galaxy clean
+
+_march33: | _libs
+	make -C march33 clean
+	make -C march33
+	psp-packer march33/march33.prx
+	cp "march33/march33.prx" "../user/flash0/kd/march33.prx"
+	make -C march33 clean
 
 _inferno: | _libs
 	make -C inferno clean
