@@ -89,8 +89,8 @@ Changelog
 ### Changelog v6.8
 - Added sharp bilinear without scanlines filter. Thanks to rsn8887.
 - Fixed PS1 slowdowns. Thanks to rsn8887.
-- Fixed compatiblity with h-encore 2.0.
-- Fixed compatiblity with udcd_uvc.skprx plugin.
+- Fixed compatibility with h-encore 2.0.
+- Fixed compatibility with udcd_uvc.skprx plugin.
 
 ### Changelog v6.7
 - Added support for PS1 multiplayer on PS Vita using an upcoming DS3/DS4 plugin.
@@ -122,7 +122,7 @@ Changelog
 - Added f.lux by Rinnegatamante.
 - Fixed PS1 framerate when using custom screen.
 - Fixed bug where exiting a game with 'High memory layout' would crash.
-- Fixed compatiblity with 'Kingdom Hearts: Birth by Sleep' english patch, again.
+- Fixed compatibility with 'Kingdom Hearts: Birth by Sleep' english patch, again.
 
 ### Changelog v6.1
 - Added support for 3.65/3.67.
@@ -164,11 +164,11 @@ Changelog
 ### Changelog v4
 - Added custom graphics filtering support for PS1 games.
 - Added screen mode adjustment for PS1 games. If you're using this feature on a PS Vita, select 'Original' screen mode in the
-offical settings, then apply the custom screen mode. On the other hand, if you want to the screen mode of the official settings,
+official settings, then apply the custom screen mode. On the other hand, if you want to the screen mode of the official settings,
 	select 'Original' screen mode in Adrenaline settings. On a PS TV this will finally allow you to play your games in fullscreen.
 - Added screenshot support in PS1 games.
 - Added network update feature for future updates.
-- Fixed a bug in msfs driver that caused weird behaviour in XMB after resuming from standby.
+- Fixed a bug in msfs driver that caused weird behavior in XMB after resuming from standby.
 - Removed 'Official' graphics filtering in order to support the features mentioned above.
 
 ### Changelog v3.1
@@ -184,7 +184,7 @@ offical settings, then apply the custom screen mode. On the other hand, if you w
 ### Changelog v3
 - Added ability to launch PS1 games from XMB and play them with full sound.
 - Added ability to save and load states using the 'States' tab in the Adrenaline menu.
-- Added possiblity to connect USB in XMB and added 'Toggle USB' option to recovery menu.
+- Added possibility to connect USB in XMB and added 'Toggle USB' option to recovery menu.
 - Added ability to return to livearea by double tapping the PS button.
 - Added Adrenaline startup image designed by Freakler.
 - Added option to force high memory layout. For 'The Elder Scrolls Travels: Oblivion' Demo.
