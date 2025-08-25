@@ -7,5 +7,6 @@ description = "Manual/Wiki for Adrenaline App and Adrenaline CFW"
 
 [output.html]
 default-theme = "rust"
+additional-css = ["custom.css"]
 
 [preprocessor.callouts]

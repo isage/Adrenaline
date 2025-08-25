@@ -1,6 +1,6 @@
 # Summary
 
-- [Introduction](./01-Intro.md)
+- [Adrenaline](./01-Intro.md)
 - [Installation and Update](./02-Install.md)
 - [Adrenaline Menu](./03-AdrenalineMenu.md)
 	- [Save State](./03-AdrenalineMenu/01-SaveState.md)
@@ -8,3 +8,19 @@
 - [PSP Homebrew Support](./04-HomebrewSupport.md)
 	- [PSP Plugins](./04-HomebrewSupport/01-Plugin.md)
 	- [Plugin Configuration Format](./04-HomebrewSupport/02-PluginConfigFormat.md)
+- [PSP Playback](./05-PSPPlayback.md)
+	- [Compressed ISO Formats](./05-PSPPlayback/01-CompressedIsoFormats.md)
+	- [Inferno Driver](./05-PSPPlayback/02-Inferno.md)
+	- [March33 Driver](./05-PSPPlayback/03-March33.md)
+	- [Galaxy Controller](./05-PSPPlayback/04-Galaxy.md)
+
+<!--
+- [PS1 Playback]
+- [VSH Menu]
+- [CFW Settings]
+- [Recovery Menu]
+- [Development]
+-->
+
+[Glossary](./XX-Glossary.md)
+[Credits](./XX-Credits.md)
