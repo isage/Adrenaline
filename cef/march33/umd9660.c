@@ -13,15 +13,15 @@
 #include "umd9660.h"
 
 int game_group = 0;
-
-
 SceUID umdsema = -1;
-
 int discsize=0x7FFFFFFF;
-
 UmdFD descriptors[MAX_DESCRIPTORS];
-
 u8 *umdpvd = NULL;
+
+u8 umd_seek = 0;
+u8 umd_speed = 0;
+u32 cur_offset = 0;
+u32 last_read_offset = 0;
 
 #define N_GAME_GROUP1	4
 #define N_GAME_GROUP2	1
@@ -45,19 +45,38 @@ char *game_group2[N_GAME_GROUP2] = {
 
 // iso_read_with_stack
 static int ReadUmdFile(int offset, void *buf, int outsize) {
-	int res;
-
 	LOCK();
 
 	g_read_arg.offset = offset;
-    g_read_arg.address = buf;
-    g_read_arg.size = outsize;
+	g_read_arg.address = buf;
+	g_read_arg.size = outsize;
 
-	res = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
+	int res = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
 
 	UNLOCK();
 
+
+	if (umd_seek){
+		// simulate seek time
+		u32 diff = 0;
+		last_read_offset = offset+outsize;
+		if (cur_offset>last_read_offset) diff = cur_offset-last_read_offset;
+		else diff = last_read_offset-cur_offset;
+		cur_offset = last_read_offset;
+		u32 seek_time = (diff*umd_seek)/1024;
+		sceKernelDelayThread(seek_time);
+	}
+	if (umd_speed){
+		// simulate read time
+		sceKernelDelayThread(outsize*umd_speed);
+	}
+
 	return res;
+}
+
+void isoSetUmdDelay(int seek, int speed) {
+	umd_seek = seek;
+	umd_speed = speed;
 }
 
 int umd_init(PspIoDrvArg* arg) {

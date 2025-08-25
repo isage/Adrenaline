@@ -68,6 +68,10 @@ PSP_EXPORT_FUNC_NID(sceNp9660_driver_B925CA6C, 0xB925CA6C)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(march33_driver, 0x0011, 0x0001)
+# march33_driver_FAEC97D6
+PSP_EXPORT_FUNC(isoSetUmdDelay)
+# Compat with inferno 2
+PSP_EXPORT_FUNC_NID(isoSetUmdDelay, 0xB6522E93)
 # march33_driver_FF8838D4
 PSP_EXPORT_FUNC(isoGetGameId)
 PSP_EXPORT_END

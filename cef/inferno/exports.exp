@@ -130,6 +130,8 @@ PSP_EXPORT_FUNC(infernoCacheSetPolicy)
 PSP_EXPORT_FUNC(infernoCacheInit)
 # inferno_driver_B6522E93
 PSP_EXPORT_FUNC(infernoSetUmdDelay)
+# Compat with march33 2
+PSP_EXPORT_FUNC_NID(infernoSetUmdDelay, 0xFAEC97D6)
 # inferno_driver_B573209C
 PSP_EXPORT_FUNC(iso_read_with_stack)
 # inferno_driver_FF8838D4

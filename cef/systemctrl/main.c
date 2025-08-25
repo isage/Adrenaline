@@ -372,11 +372,16 @@ static void PatchGameByGameId() {
 	} else if (strcasecmp("ULES00590", game_id) == 0 || strcasecmp("ULJM05075", game_id) == 0) {
 		// Patch Aces of War anti-CFW check (UMD speed)
 		if (config.umd_seek == 0 && config.umd_speed == 0) {
-			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xB6522E93);
+			void (*SetUmdDelay)(int, int) = NULL;
+			if (rebootex_config.bootfileindex == BOOT_INFERNO) {
+				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xB6522E93);
+			} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
+				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-March33Driver", "inferno_driver", 0xFAEC97D6);
+			}
+
 			if (SetUmdDelay != NULL) {
 				SetUmdDelay(1, 1);
 			}
-
 		}
 
 	}
@@ -388,19 +393,31 @@ static void PatchGamesByMod(SceModule2* mod) {
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
 
-		if (config.iso_cache != CACHE_CONFIG_OFF) {
+		if (rebootex_config.bootfileindex == BOOT_INFERNO) {
 			SceModule2* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 
-			// enable UMD reading speed
-			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
-			if (SetUmdDelay != NULL) {
-				SetUmdDelay(2, 2);
+			if (config.umd_seek == 0 && config.umd_speed == 0) {
+				// enable UMD reading speed
+				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
+				if (SetUmdDelay != NULL) {
+					SetUmdDelay(2, 2);
+				}
 			}
 
-			// Disable Inferno cache
-			int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
-			if (CacheInit != NULL) {
-				CacheInit(0, 0, 0);
+			if (config.iso_cache != CACHE_CONFIG_OFF) {
+				// Disable Inferno cache
+				int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+				if (CacheInit != NULL) {
+					CacheInit(0, 0, 0);
+				}
+			}
+		} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
+			if (config.umd_seek == 0 && config.umd_speed == 0) {
+				// enable UMD reading speed
+				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-March33Driver", "inferno_driver", 0xFAEC97D6);
+				if (SetUmdDelay != NULL) {
+					SetUmdDelay(2, 2);
+				}
 			}
 		}
 
