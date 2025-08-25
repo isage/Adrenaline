@@ -573,12 +573,6 @@ void _start() __attribute__ ((weak, alias("module_start")));
 int module_start(SceSize args, void *argp) {
   int res;
 
-  int vol = adrStopBlanking();
-  if (vol > 0)
-  {
-    if(sceAVConfigSetMasterVol(vol) < 0)
-      sceAVConfigSetSystemVol(vol);
-  }
 
   res = sceSysmoduleLoadModule(SCE_SYSMODULE_LIVEAREA);
 
@@ -624,6 +618,14 @@ int module_start(SceSize args, void *argp) {
     config.ps1_screen_scale_x = 1.0f;
   if ((uint32_t)config.ps1_screen_scale_y == 0)
     config.ps1_screen_scale_y = 1.0f;
+
+  int vol = adrStopBlanking();
+  if (vol > 0)
+  {
+    if(sceAVConfigSetMasterVol(vol) < 0)
+      sceAVConfigSetSystemVol(vol);
+  }
+
 
   // Tai module info
   tai_module_info_t tai_info;
