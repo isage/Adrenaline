@@ -17,6 +17,7 @@
 */
 
 #include <psp2/appmgr.h>
+#include <psp2/avconfig.h>
 #include <psp2/io/dirent.h>
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
@@ -88,6 +89,12 @@ static int sceSysmoduleUnloadModuleInternalWithArgPatched(SceUInt32 id, SceSize 
 // real name is sceAppMgrLaunchApp2, but oh well...
 int sceAppMgrLaunchAppByPath4(const char* path, const char* titleid, int unk1, char* params, int unk3, void* unk4);
 
+int adrStartBlanking(uint32_t vol);
+
+int sceAppMgrGetStatusByName(char* name, SceAppMgrAppState* state);
+int sceAVConfigGetMasterVol(int* vol);
+int sceAVConfigSetMasterVol(int vol);
+
 void _start() __attribute__ ((weak, alias("module_start")));
 int module_start(SceSize args, void *argp) {
   tai_module_info_t info;
@@ -99,9 +106,24 @@ int module_start(SceSize args, void *argp) {
     hooks[3] = taiHookFunctionImport(&sceLsdbGetTypeRef, "SceShell", 0x6BC25E17, 0xDEC358E4, sceLsdbGetTypePatched);
   }
 
+  // check if eboot is running and blank screen/sound until restart
+  SceAppMgrAppState state;
+  sceClibMemset(&state, 0, sizeof(SceAppMgrAppState));
+
+  int vol = 0;
+
+  if (sceAVConfigGetMasterVol(&vol) < 0) // PSTV
+    sceAVConfigGetSystemVol(&vol); // Vita
+
+  if (sceAppMgrGetStatusByName("PSPEMUCFW", &state) == 0)
+  {
+    if (sceAVConfigSetMasterVol(0) < 0)
+      sceAVConfigSetSystemVol(0);
+    adrStartBlanking(vol);
+  }
+
   // Destroy
   int ret = sceAppMgrDestroyAppByName(ADRENALINE_TITLEID);
-  sceKernelDelayThread(500000);
 
   //Relaunch if we killed
   if (ret >= 0)

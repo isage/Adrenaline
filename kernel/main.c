@@ -23,6 +23,8 @@
 #include <psp2kern/kernel/sysmem.h>
 #include <psp2kern/kernel/sysroot.h>
 #include <psp2kern/kernel/cpu.h>
+#include <psp2kern/kernel/debug.h>
+#include <psp2common/display.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -43,12 +45,18 @@ static tai_hook_ref_t SceGrabForDriver_E9C25A28_ref;
 static tai_hook_ref_t sceCompatSecSetSSRAMAclRef;
 static tai_hook_ref_t ksceSblAimgrIsDEXRef;
 static tai_hook_ref_t ksceKernelStartPreloadedModulesRef;
+static tai_hook_ref_t ksceDisplaySetFrameBufInternalRef;
 
-static int hooks[8];
+static int hooks[9];
 static int n_hooks = 0;
 
 static SceUID extra_1_blockid = -1, extra_2_blockid = -1;
 static uint32_t module_nid;
+
+static uint8_t blanking = 0;
+static uint32_t blackline;
+static SceUID blackline_uid = 0;
+static uint32_t volume = 0;
 
 static SceUID ksceKernelAllocMemBlockPatched(const char *name, SceKernelMemBlockType type, int size, SceKernelAllocMemBlockKernelOpt *optp) {
   SceUID blockid = TAI_CONTINUE(SceUID, ksceKernelAllocMemBlockRef, name, type, size, optp);
@@ -140,6 +148,21 @@ static int ksceKernelStartPreloadedModulesPatched(SceUID pid) {
   return res;
 }
 
+int ksceDisplaySetFrameBufInternalPatched(int head, int index, const SceDisplayFrameBuf *pParam, int sync) {
+    if (!head || !pParam) goto DISPLAY_HOOK_RET;
+
+    if (!blanking) goto DISPLAY_HOOK_RET;
+
+    for( int i = 0; i < pParam->height; i++)
+    {
+        int off = i * pParam->pitch * 4;
+        ksceKernelMemcpyKernelToUser(pParam->base + off, (const void*)blackline, pParam->pitch * 4);
+    }
+
+DISPLAY_HOOK_RET:
+    return TAI_CONTINUE(int, ksceDisplaySetFrameBufInternalRef, head, index, pParam, sync);
+}
+
 int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count) {
   uint32_t state;
   ENTER_SYSCALL(state);
@@ -160,6 +183,33 @@ int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count) {
 
   EXIT_SYSCALL(state);
   return res;
+}
+
+int adrStartBlanking(int vol) {
+  uint32_t state;
+  ENTER_SYSCALL(state);
+
+  blackline_uid = ksceKernelAllocMemBlock("blackline", SCE_KERNEL_MEMBLOCK_TYPE_KERNEL_RW, 1024*4, NULL);
+  ksceKernelGetMemBlockBase(blackline_uid, (void *)&blackline);
+
+  blanking = 1;
+  volume = vol;
+
+  EXIT_SYSCALL(state);
+  return 0;
+}
+
+uint32_t adrStopBlanking() {
+  uint32_t state;
+  ENTER_SYSCALL(state);
+
+  blanking = 0;
+
+  if (blackline_uid >= 0)
+    ksceKernelFreeMemBlock(blackline_uid);
+
+  EXIT_SYSCALL(state);
+  return volume;
 }
 
 void _start() __attribute__ ((weak, alias("module_start")));
@@ -211,6 +261,8 @@ int module_start(SceSize args, void *argp) {
     hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelStartPreloadedModulesRef, "SceKernelModulemgr", 0x92C9FFC2, 0x998C7AE9, ksceKernelStartPreloadedModulesPatched);
   n_hooks++;
 
+  hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceDisplaySetFrameBufInternalRef, "SceDisplay", 0x9FED47AC, 0x16466675, ksceDisplaySetFrameBufInternalPatched);
+
   SceUID shell_pid = ksceKernelSysrootGetShellPid();
   ksceKernelLoadStartModuleForPid(shell_pid, "ux0:app/" ADRENALINE_TITLEID "/sce_module/adrenaline_vsh.suprx", 0, NULL, 0, NULL, NULL);
 
@@ -218,6 +270,7 @@ int module_start(SceSize args, void *argp) {
 }
 
 int module_stop(SceSize args, void *argp) {
+  taiHookReleaseForKernel(hooks[--n_hooks], ksceDisplaySetFrameBufInternalRef);
   taiHookReleaseForKernel(hooks[--n_hooks], ksceKernelStartPreloadedModulesRef);
   taiHookReleaseForKernel(hooks[--n_hooks], ksceSblAimgrIsDEXRef);
   taiHookReleaseForKernel(hooks[--n_hooks], SceGrabForDriver_E9C25A28_ref);

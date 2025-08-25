@@ -11,3 +11,5 @@ AdrenalineKernel:
       syscall: true
       functions:
         - kuCtrlPeekBufferPositive
+        - adrStartBlanking
+        - adrStopBlanking

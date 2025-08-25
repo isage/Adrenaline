@@ -140,6 +140,7 @@ extern uint32_t text_addr, text_size, data_addr, data_size;
 
 int sceKernelIsPSVitaTV();
 int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count);
+uint32_t adrStopBlanking(void);
 
 void lockPower();
 void unlockPower();

@@ -92,6 +92,7 @@ target_link_libraries(adrenaline_user
   SceUsbstorVStorDriver_stub
   SceVshBridge_stub
   SceLiveArea_stub_weak
+  SceAVConfig_stub
 )
 
 vita_create_self(adrenaline_user.suprx adrenaline_user CONFIG exports.yml UNSAFE)

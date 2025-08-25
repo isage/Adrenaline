@@ -17,6 +17,7 @@
 */
 
 #include <psp2/appmgr.h>
+#include <psp2/avconfig.h>
 #include <psp2/ctrl.h>
 #include <psp2/display.h>
 #include <psp2/power.h>
@@ -566,9 +567,18 @@ static void migrate_config() {
 	}
 }
 
+int sceAVConfigSetMasterVol(int vol);
+
 void _start() __attribute__ ((weak, alias("module_start")));
 int module_start(SceSize args, void *argp) {
   int res;
+
+  int vol = adrStopBlanking();
+  if (vol > 0)
+  {
+    if(sceAVConfigSetMasterVol(vol) < 0)
+      sceAVConfigSetSystemVol(vol);
+  }
 
   res = sceSysmoduleLoadModule(SCE_SYSMODULE_LIVEAREA);
 
