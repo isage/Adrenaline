@@ -1,6 +1,6 @@
 # Adrenaline Galaxy Controller
 
-A core Adrenaline CFW plugin that tricks the Sony NP9660 Driver into executing ISO and CSO files.
+A core Adrenaline CFW plugin that tricks the Sony's NP9660 Driver into executing ISO and Compressed ISO formats.
 
 This plugin allows the usage of the Sony NP9660 UMD Driver as one of the ISO Drivers available to Adrenaline.
 
