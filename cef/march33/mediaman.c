@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <iso_common.h>
 #include "mediaman.h"
 #include "psperror.h"
 
@@ -120,6 +121,14 @@ int sceUmdUnRegisterUMDCallBack(SceUID cbid) {
 }
 
 int sceUmdCheckMedium() {
+	if (g_iso_fn[0] == '\0'){
+		return 0;
+	}
+
+	while (!g_iso_opened) {
+		sceKernelDelayThread(10000);
+	}
+
 	return 1;
 }
 
