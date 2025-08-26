@@ -8,7 +8,7 @@ Adrenaline CFW has several settings options that modify the behavior of the syst
 > Not to be confused with [`Adrenaline Application Settings`](./03-AdrenalineMenu/02-AdrenalineSettings.md), which is another thing.
 
 <!-- TODO: Links -->
-You can use the [XMB]() or the [Recovery Menu](./09-RecoveryMenu.md) to easily modify the CFW settings.
+You can use the [XMB](./10-XmbCfwMenus.md#-adrenaline-cfw-settings) or the [Recovery Menu](./09-RecoveryMenu.md) to easily modify the CFW settings.
 
 ## General Settings
 
@@ -143,7 +143,7 @@ Advanced settings are called that for a reason. They provide powerful options th
 Incorrect configuration may lead to unexpected issues, so proceed with caution and consult documentation or community resources if unsure.
 
 > [!TIP]
-> On the XMB menu, advanced settings are marked with the `▲` symbol.
+> On the XMB CFW menu, advanced settings are marked with the `▲` symbol.
 
 ### Force high memory layout
 

@@ -20,10 +20,9 @@
 - [VSH Menu](./07-VSHMenu.md)
 - [Adrenaline Custom Firmware Settings](./08-CfwConfiguration.md)
 - [Recovery Menu](./09-RecoveryMenu.md)
+- [XMB CFW Menus](./10-XmbCfwMenus.md)
 
 <!--
-- [XMB Extra Menus ]
-
 # Developer Manual
 - [Development]
 -->
