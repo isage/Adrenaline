@@ -28,4 +28,5 @@
 -->
 
 [Glossary](./XX-Glossary.md)
+[Changelog](./XX-Changelog.md)
 [Credits](./XX-Credits.md)
