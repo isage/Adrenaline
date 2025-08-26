@@ -8,13 +8,13 @@ Adrenaline CFW has several settings options that modify the behavior of the syst
 > Not to be confused with [`Adrenaline Application Settings`](./03-AdrenalineMenu/02-AdrenalineSettings.md), which is another thing.
 
 <!-- TODO: Links -->
-You can use the [XMB]() or the [Recovery Menu]() to easily modify the CFW settings.
+You can use the [XMB]() or the [Recovery Menu](./09-RecoveryMenu.md) to easily modify the CFW settings.
 
 ## General Settings
 
 ### CPU/BUS clock speed in XMB
 
-Configures the CPU/BUS clock speed on when the system is on the XMB/VSH
+Configures the CPU/BUS clock speed on when the system is on the XMB/VSH.
 
 #### Options:
 
@@ -30,7 +30,7 @@ Configures the CPU/BUS clock speed on when the system is on the XMB/VSH
 
 ### CPU/BUS clock speed in PSP game/app
 
-Configures the CPU/BUS clock speed on when the system is running a PSP game, PSP app or PSP homebrew
+Configures the CPU/BUS clock speed on when the system is running a PSP game, PSP app or PSP homebrew.
 
 #### Options:
 
@@ -141,6 +141,9 @@ Configures the color of the Recovery Menu.
 Advanced settings are called that for a reason. They provide powerful options that can significantly alter system behavior, stability, or compatibility. These settings are intended for experienced users and tinkerers exploring the best set of configuration for cases of bad compatibility with apps and games (anti-CFW checks, slowdowns not solved by general settings, etc).
 
 Incorrect configuration may lead to unexpected issues, so proceed with caution and consult documentation or community resources if unsure.
+
+> [!TIP]
+> On the XMB menu, advanced settings are marked with the `▲` symbol.
 
 ### Force high memory layout
 

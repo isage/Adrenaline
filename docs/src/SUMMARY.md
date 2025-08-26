@@ -19,9 +19,9 @@
 - [PS1 Playback](./06-PS1Playback.md)
 - [VSH Menu](./07-VSHMenu.md)
 - [Adrenaline Custom Firmware Settings](./08-CfwConfiguration.md)
+- [Recovery Menu](./09-RecoveryMenu.md)
 
 <!--
-- [Recovery Menu]
 - [XMB Extra Menus ]
 
 # Developer Manual
