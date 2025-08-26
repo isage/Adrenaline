@@ -283,9 +283,9 @@ Entry general_entries[] = {
   { "Skip Sony logo on coldboot", NULL, disenabled, sizeof(disenabled), &config.skip_logo },
   { "Skip Sony logo on gameboot", NULL, disenabled, sizeof(disenabled), &config.skip_game_boot_logo },
   { "Hide corrupt icons in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_corrupt },
-  { "Hide MAC address", NULL, disenabled, sizeof(disenabled), &config.hide_mac_addr },
   { "Hide DLCs in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_dlcs },
   { "Hide PIC0/PIC1 in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_pic0pic1 },
+  { "Hide MAC address", NULL, disenabled, sizeof(disenabled), &config.hide_mac_addr },
   { "Autorun /PSP/GAME/BOOT/EBOOT.PBP", NULL, disenabled, sizeof(disenabled), &config.startup_program },
   { "Fake VSH Region", NULL, regions, sizeof(regions), &config.fake_region },
   { "Extended screen colors mode", NULL, extendedcolors, sizeof(extendedcolors), &config.extended_colors },
@@ -301,7 +301,7 @@ Entry general_entries[] = {
 
 Entry advanced_entries[] = {
   { "Force high memory layout", NULL, highmem, sizeof(highmem), &config.force_high_memory },
-  { "Execute BOOT.BIN in UMD/ISO", NULL, disenabled, sizeof(disenabled), &config.execute_boot_bin },
+  { "Execute BOOT.BIN in UMDemu ISO", NULL, disenabled, sizeof(disenabled), &config.execute_boot_bin },
   { "Inferno ISO cache policy", NULL, iso_cache, sizeof(iso_cache), &config.iso_cache },
   { "Inferno ISO cache number", NULL, iso_cache_num, sizeof(iso_cache_num), &config.iso_cache_num },
   { "Inferno ISO cache size", NULL, iso_cache_size, sizeof(iso_cache_size), &config.iso_cache_size },

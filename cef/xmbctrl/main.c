@@ -1,3 +1,4 @@
+
 /*
 	Adrenaline, XmbControl
 	Copyright (C) 2011, Total_Noob
@@ -92,7 +93,7 @@ GetItem GetItemes[] = {
 	{15, 0, "NoDRM engine", 1, 0},
 	{16, 0, "XMB Control", 1, 0},
 	{17, 0, "Force high memory layout", 1, 1},
-	{18, 0, "Execute BOOT.BIN in Game", 1, 1},
+	{18, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1},
 	{19, 0, "Inferno ISO cache policy", 0, 1},
 	{20, 0, "Inferno ISO cache number", 0, 1},
 	{21, 0, "Inferno ISO cache size", 0, 1},

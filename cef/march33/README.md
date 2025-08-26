@@ -2,7 +2,7 @@
 
 A core Adrenaline CFW plugin.
 
-It is a custom PSP image driver with support for ISO and many Compressed ISO formats.
+It is a custom PSP UMDemu driver with support for ISO and many Compressed ISO formats.
 
 ## Credits
 

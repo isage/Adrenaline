@@ -11,6 +11,7 @@
 - `Rinnegatamante` for f.lux on Adrenaline.
 - `meetpatty` for fixing autoboot on Adrenaline.
 - `ARK-4` team: Acid_Snake, Krazynez for Inferno 2, being a good fellow CFW-makers and helping a many ways.
+	- And for allowing us to reuse parts of ARK-4 documentation for thing that both Adrenaline and ARK-4 support (this reduced so much time used for writing this doc 😁)
 - `Codestation` for his incredible work improving CSO speeds and creating the ZSO format.
 - `UnkownBrackets` (maxcso) for creating the CSOv2 format.
 - `Cat` (aka. `isage`) for everything that he has done for Adrenaline and continued improving it along the way.
