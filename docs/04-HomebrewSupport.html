@@ -29,6 +29,7 @@
         <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -414,11 +415,11 @@
 </style>
 <h1 id="psp-homebrew-support"><a class="header" href="#psp-homebrew-support">PSP Homebrew Support</a></h1>
 <hr />
-<p>Adrenaline has support for launching unsigned homebrew applications directly from the XMB/VSH, and loading plugins with a powerful configuration format.</p>
-<p>All user-mode PSP homebrew since PSP FirmWare (FW) 3.71 onwards should work fine. Kernel-mode PSP homebrew, on the other hand, may require a build targeted specifically to PSP FW 6.60 or 6.61 to work on Adrenaline.</p>
+<p>Adrenaline support launching unsigned homebrew applications directly from the XMB/VSH, and loading plugins with a powerful configuration format.</p>
+<p>All user-mode PSP homebrew since PSP Firmware (FW) 3.71 onwards should work fine. Kernel-mode PSP homebrew, on the other hand, may require a build specifically targeted to PSP firmware 6.60 or 6.61 to work on Adrenaline.</p>
 <h2 id="homebrew-apps"><a class="header" href="#homebrew-apps">Homebrew Apps</a></h2>
-<p>PSP homebrew applications are custom software created by the community that can run on the PSP hardware. These range from games, emulators, and utilities (like media players and file managers).</p>
-<p>Homebrew applications must be put on <code>???0:/pspemu/PSP/GAME/</code> directory to show up in the XMB/VSH.</p>
+<p>PSP homebrew applications are custom software created by the community that can run on the PSP hardware, ranging from games, emulators, and utilities (like media players and file managers).</p>
+<p>Homebrew applications must be live on <code>???0:/pspemu/PSP/GAME/</code> directory to appear in the XMB/VSH.</p>
 <h2 id="homebrew-plugins"><a class="header" href="#homebrew-plugins">Homebrew plugins</a></h2>
 <p>Homebrew plugins are programs in the form of <code>PRX</code> files that can add extra features and/or modify the behavior of the PSP system and games.</p>
 <p>Homebrew plugins <code>.prx</code> files must be put in the <code>???0:/pspemu/seplugins/</code> folder and be added to the configuration file <code>???0:/pspemu/seplugins/EPIplugins.txt</code>.</p>
@@ -427,12 +428,12 @@
   <span class="mdbook-callouts-icon"></span>
   info
 </p>
-<p>PSP filepaths are case insensitive. For that reason, files and directories inside Vita/PSTV <code>???0:/pspemu/</code> directory can be all upper case letter, lower case letters or a mix and it will work normally.</p>
-<p>So don't worry if you find variations in paths like <code>/SEPLUGINS/epiplugins.txt</code>, or even crazy path like <code>/SePlUgInS/EpIpLuGiNs.TxT</code>.</p>
+<p>PSP filepaths are case insensitive. For that reason, files and directories inside the Vita/PSTV <code>???0:/pspemu/</code> directory can be all uppercase letters, lowercase letters, or a mix, and it will work normally.</p>
+<p>So don't worry if you find variations in paths like <code>/SEPLUGINS/epiplugins.txt</code>, or even crazy paths like <code>/SePlUgInS/EpIpLuGiNs.TxT</code>.</p>
 </div>
-<p>The following pages go into greater detail on plugins.</p>
+<p>The following pages provide more detailed information on plugins.</p>
 <h2 id="legacy-150-homebrew"><a class="header" href="#legacy-150-homebrew">Legacy 1.50 Homebrew</a></h2>
-<p>There are some support for legacy FW 1.50 homebrew, but it is not very well tested. If you have any legacy 1.50 homebrew, try and find out if it works on Adrenaline.</p>
+<p>There is some support for legacy FW 1.50 homebrew, but it is not very well tested. If you have any legacy 1.50 homebrew, try to find out if it works on Adrenaline.</p>
 <div class="mdbook-callouts mdbook-callouts-question">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>

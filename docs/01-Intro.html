@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Adrenaline Manual/Wiki</title>
+        <title>Adrenaline - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -29,6 +29,7 @@
         <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -414,31 +415,32 @@
 </style>
 <h1 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h1>
 <hr />
-<p>Adrenaline is two softwares projects in one: Adrenaline Application (1) and Adrenaline CFW (2).</p>
+<p>Adrenaline is two software projects in one: Adrenaline Application (1) and Adrenaline CFW (2).</p>
 <ol>
-<li>A software that modifies the official PSP Emulator (PSPemu/ePSP) using <a href="https://github.com/yifanlu/taiHEN">taiHEN CFW framework</a> to make possible to run a PSP 6.61 Custom FirmWare (CFW).</li>
-<li>A Custom FirmWare for the Vita's PSPemu that, besides usual PSP CFW features, enables access to PSP XMB and most of the PSP native environment in the PSPemu</li>
+<li>A software that modifies the official PSP Emulator (PSPemu/ePSP) using <a href="https://github.com/yifanlu/taiHEN">taiHEN CFW framework</a> to make it possible to run a PSP 6.61 Custom Firmware (CFW).</li>
+<li>A Custom Firmware for the Vita's PSPemu that, besides usual PSP CFW features, enables access to PSP XMB and most of the PSP native environment in the PSPemu</li>
 </ol>
 <div class="mdbook-callouts mdbook-callouts-info">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
   info
 </p>
-<p>Sony's unmodified PSPemu has a more limited environment, tailored to be enough to run what Sony released on PS Store.</p>
+<p>Sony's unmodified PSPemu has a more limited environment, tailored to be enough to run what Sony released on the PS Store.</p>
 </div>
 <div class="mdbook-callouts mdbook-callouts-info">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
   info
 </p>
-<p>Thanks to the power of taiHEN, Adrenaline can inject custom code into the IPL which allows unsigned code to run at boot-time.</p>
+<p>Thanks to the power of taiHEN, Adrenaline can inject custom code into the IPL, which allows unsigned code to run at boot-time.</p>
 </div>
 <h2 id="quick-feature-set-overview"><a class="header" href="#quick-feature-set-overview">Quick Feature Set Overview</a></h2>
+<hr />
 <h3 id="adrenaline-application"><a class="header" href="#adrenaline-application">Adrenaline Application</a></h3>
 <ul>
 <li>Compatible with all PS Vita models on firmware 3.60 up to 3.74</li>
-<li>Support to 7 graphical filtering options</li>
-<li>Support to color filter</li>
+<li>Support 7 graphical filtering options</li>
+<li>Support color filter</li>
 <li>Support for PS2/PS3 &lt;-&gt; PSP game link</li>
 <li>Configurable PSP and PS1 screen scale</li>
 <li>Configurable Memory Stick driver location</li>
@@ -450,28 +452,30 @@
 <li>XMB/VSH on ePSP</li>
 <li>Almost entire PSP 6.61 environment available on ePSP (we call it <strong>Virtual PSP</strong>, or <strong>vPSP</strong> for shortness)</li>
 <li>Support executing PSP unsigned code execution (homebrew software, PSP/PS1 backups)</li>
-<li>Support executing PS1 custom games with support for external configuration files that allows easy fixing of games.</li>
+<li>Support executing PS1 custom games with support for external configuration files that allow easy fixing of games.</li>
 <li>Support manual for game images (ISO/CSO/etc)</li>
 <li>Support for game updates and DLC for both game images (ISO/CSO/etc) and EBOOT</li>
 <li>Configurable CPU/BUS clock for XMB/VSH and PSP games/homebrew/apps</li>
 <li>Three ISO image driver options: Inferno, March33, NP9660</li>
-<li>Support for ISO, CSO, JSO, ZSO, CSOv2 and DAX image formats</li>
+<li>Support for ISO, CSO, JSO, ZSO, CSOv2, and DAX image formats</li>
 <li>Built-in anti-CFW, fixes some protections and bugs in games. Compatible with NoDRM plugins</li>
 <li>Built-in CFW configuration and plugin manager on XMB/VSH for easy CFW management</li>
-<li>Support to autoboot software on system launch if enabled</li>
-<li>Extensive CFW API with good compatibility with M33, ME, PRO and ARK-4 API
+<li>Support for autoboot software on system launch if enabled</li>
+<li>Extensive CFW API with good compatibility with M33, ME, PRO, and ARK-4 API
 <ul>
 <li>Resulting in good compatibility with plugins and homebrew apps and/or easier porting effort for projects using CFW API</li>
 </ul>
 </li>
 </ul>
 <h2 id="key-combos-cheat-sheet"><a class="header" href="#key-combos-cheat-sheet">Key Combos Cheat Sheet</a></h2>
+<hr />
 <div class="table-wrapper"><table><thead><tr><th>Key Combo</th><th>Event</th><th>Availability</th></tr></thead><tbody>
 <tr><td>L+R+Down+Select</td><td>Fast exit to VSH</td><td>Anytime</td></tr>
 <tr><td>L+Select</td><td>Toggle PS1 Fast Forward</td><td>PS1/POPS Apps and Games</td></tr>
 <tr><td>Select</td><td>Open VSH Menu</td><td>XMB/VSH</td></tr>
-<tr><td>Hold L</td><td>Plugins disabled</td><td>Reset/Power on/booting application</td></tr>
+<tr><td>Hold L</td><td>Plugins disabled</td><td>Reset/Power on/booting PSP/PS1 application</td></tr>
 <tr><td>Hold R</td><td>Start Adrenaline CFW on Recovery mode</td><td>On Adrenaline App bubble start</td></tr>
+<tr><td>PS button 2x</td><td>Return to Vita live area</td><td>Anytime</td></tr>
 </tbody></table>
 </div>
                     </main>

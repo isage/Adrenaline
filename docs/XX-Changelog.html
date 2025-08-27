@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Save State - Adrenaline Manual/Wiki</title>
+        <title>Changelog - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -12,35 +12,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../custom.css">
+        <link rel="stylesheet" href="custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Adrenaline Manual/Wiki</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -413,86 +413,299 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="adrenaline-save-state"><a class="header" href="#adrenaline-save-state">Adrenaline Save State</a></h1>
+<h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <hr />
-<p>Adrenaline has native support to Save States, accessible in the <a href="../04-AdrenalineMenu.html">Adrenaline Menu</a>. It supports the creation of up to 31 save states.</p>
-<p align="center">
-<img src="../assets/03-epi-menu-main-states.png" width="70%" />
-</p>
-<h2 id="what-is-a-save-state"><a class="header" href="#what-is-a-save-state">What is a Save State</a></h2>
-<p>A save state is a snapshot of the current status of a game, allowing you to save and restore your progress at any point. Unlike traditional in-game saves, save states capture everything in memory, so you can resume exactly where you left off, even if the game itself doesn’t support saving at that moment.</p>
-<h2 id="creating-save-state"><a class="header" href="#creating-save-state">Creating Save State</a></h2>
-<p>To create a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+<h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
+<hr />
+<ul>
+<li>
+<p><strong>Breaking change:</strong> New plugin configuration format</p>
+<ul>
+<li>Only one configuration file <code>/pspemu/seplugins/EPIplugins.txt</code></li>
+<li>Finer control over when to enable/disable plugins</li>
+<li>Support for plugins in specific games</li>
+<li>Support for plugin only on homebrew apps</li>
+</ul>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Save State</strong>, and press <code>X</code> to save the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-save.png" width="70%" />
-</p>
-<p>Alternatively, you can save the state by substituting a previously saved state (i.e. overwriting the save state):</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open the PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+<li>
+<p>Added <code>Scale2x</code> graphical filter options</p>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Overwrite State</strong>, and press <code>X</code> to overwrite the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-overwrite.png" width="70%" />
-</p>
-<h2 id="loading-save-state"><a class="header" href="#loading-save-state">Loading Save State</a></h2>
-<p>To load a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+<li>
+<p>Added support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver.</p>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Load State</strong>, and press <code>X</code> to load the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-load.png" width="70%" />
-</p>
-<h2 id="deleting-save-state"><a class="header" href="#deleting-save-state">Deleting Save State</a></h2>
-<p>To delete a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+<li>
+<p>Update the Inferno Driver to Inferno 2</p>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Delete State</strong> and press <code>X</code> to delete the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-delete.png" width="70%" />
-</p>
+<li>
+<p>Introduce March33 Driver v2: An evolution of the March33 ISO driver</p>
+</li>
+<li>
+<p>Improved the speed and efficiency of all ISO drivers</p>
+</li>
+<li>
+<p>Introduce CFW Settings on the XMB</p>
+</li>
+<li>
+<p>Introduce Plugin Manager on the XMB</p>
+</li>
+<li>
+<p>Patch to remove the "overclocked" message on ATV Pro</p>
+</li>
+<li>
+<p>Improve stability of the <code>Force High Memory</code> option.</p>
+</li>
+<li>
+<p>Fix issue with PBP collection games (e.g. Ys I&amp;II, Sega Genesis Collection)</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Introduce the CFW library <code>SysclibForUser</code>: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Expand CFW libraries API</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK-4): <code>KUBridge</code>, <code>SystemCtrlForUser</code>, <code>SystemCtrlForKernel</code>, and <code>SysclibForUser</code></p>
+</li>
+<li>
+<p><strong>DEV:</strong> Introduce <code>Adrenaline Log</code>, a C header library that developers can use even outside of Adrenaline (i.e. your project)</p>
+</li>
+<li>
+<p><strong>Internal:</strong> Some code reorganization</p>
+</li>
+<li>
+<p><strong>Internal:</strong> Code clean ups</p>
+</li>
+</ul>
+<h2 id="v717"><a class="header" href="#v717">v7.1.7</a></h2>
+<hr />
+<ul>
+<li>Fix autoboot.</li>
+<li>Support vita firmwares 3.71-3.74.</li>
+</ul>
+<h2 id="v716"><a class="header" href="#v716">v7.1.6</a></h2>
+<hr />
+<ul>
+<li>Fix recovery plugin manager.</li>
+</ul>
+<h2 id="v715"><a class="header" href="#v715">v7.1.5</a></h2>
+<hr />
+<ul>
+<li>New recovery/installer.</li>
+<li>Support for displaying manuals for ISO-format games.</li>
+</ul>
+<h2 id="v714"><a class="header" href="#v714">v7.1.4</a></h2>
+<hr />
+<ul>
+<li>Revert fancier recovery for now (breaks installer)</li>
+</ul>
+<h2 id="v713"><a class="header" href="#v713">v7.1.3</a></h2>
+<hr />
+<ul>
+<li>Don't load plugins in recovery (for real).</li>
+<li>Support for downloading official updates for EBOOT/ISO.</li>
+<li>Support for updates/dlc for EBOOT/ISO.</li>
+<li>Support for autoboot /PSP/GAME/EBOOT.PBP.</li>
+<li>Update version in LiveArea automatically.</li>
+<li>Support for logging psp printf's via catlog.</li>
+</ul>
+<h2 id="v712"><a class="header" href="#v712">v7.1.2</a></h2>
+<hr />
+<ul>
+<li>Fixed photo/video browser.</li>
+<li>Don't load plugins in recovery.</li>
+</ul>
+<h2 id="v711"><a class="header" href="#v711">v7.1.1</a></h2>
+<hr />
+<ul>
+<li>Fixed version info.</li>
+</ul>
+<h2 id="v71"><a class="header" href="#v71">v7.1</a></h2>
+<hr />
+<ul>
+<li>Fixed XMB camera app.</li>
+<li>Added support for PS2/PS3 &lt;-&gt; PSP game link.</li>
+<li>Cleaner recovery with adjustable color.</li>
+</ul>
+<h2 id="v7"><a class="header" href="#v7">v7</a></h2>
+<hr />
+<ul>
+<li>Fixed issue where plugins were loaded in recovery mode.</li>
+<li>Moved native display buffer to a different location, so GePatch works for some more games. Please note that only GePatch v0.18 or above will only work, older versions will cause a black screen. If you're using GTANativeRes, please download the latest binary as well.</li>
+</ul>
+<h2 id="v69"><a class="header" href="#v69">v6.9</a></h2>
+<hr />
+<ul>
+<li>Added support for native resolution patches.</li>
+</ul>
+<h2 id="v68"><a class="header" href="#v68">v6.8</a></h2>
+<hr />
+<ul>
+<li>Added sharp bilinear without scanlines filter. Thanks to rsn8887.</li>
+<li>Fixed PS1 slowdowns. Thanks to rsn8887.</li>
+<li>Fixed compatibility with h-encore 2.0.</li>
+<li>Fixed compatibility with udcd_uvc.skprx plugin.</li>
+</ul>
+<h2 id="v67"><a class="header" href="#v67">v6.7</a></h2>
+<hr />
+<ul>
+<li>Added support for PS1 multiplayer on PS Vita using an upcoming DS3/DS4 plugin.</li>
+</ul>
+<h2 id="v66"><a class="header" href="#v66">v6.6</a></h2>
+<hr />
+<ul>
+<li>Fixed bug from previous update that caused black screen in other DJ max games.</li>
+<li>Inferno driver was not included correcty, now it is.</li>
+<li>Tekken 6 can now be played with any CPU speed.</li>
+</ul>
+<h2 id="v65"><a class="header" href="#v65">v6.5</a></h2>
+<hr />
+<ul>
+<li>Added updated inferno driver by codestation which improves performance of CSO reading.</li>
+<li>Added option to choose USB device.</li>
+<li>Added xmc0: option.</li>
+<li>Fixed stupid mistake that made DJ max portable 1 crash. <strong>Install it again, because this has been added post-release</strong></li>
+<li>Fixed little bug in msfs.</li>
+<li>Removed savestate version restriction, old savestates will not disappear anymore.</li>
+</ul>
+<h2 id="v64"><a class="header" href="#v64">v6.4</a></h2>
+<hr />
+<ul>
+<li>Added ability to fast forward in PS1 games by pressing L+SELECT.</li>
+<li>Fixed double launch bug when using without enso. You need to add the kernel module to config to do so.</li>
+</ul>
+<h2 id="v63"><a class="header" href="#v63">v6.3</a></h2>
+<hr />
+<ul>
+<li>Added support for 3.68.</li>
+<li>Added ability to freely adjust the screen size to your desire in both psp and ps1 modes.</li>
+<li>Removed 'Screen Mode' and 'Screen Size' from menu.</li>
+<li>Improved Adrenaline Menu.</li>
+</ul>
+<h2 id="v62"><a class="header" href="#v62">v6.2</a></h2>
+<hr />
+<ul>
+<li>Added f.lux by Rinnegatamante.</li>
+<li>Fixed PS1 framerate when using custom screen.</li>
+<li>Fixed bug where exiting a game with 'High memory layout' would crash.</li>
+<li>Fixed compatibility with 'Kingdom Hearts: Birth by Sleep' english patch, again.</li>
+</ul>
+<h2 id="v61"><a class="header" href="#v61">v6.1</a></h2>
+<hr />
+<ul>
+<li>Added support for 3.65/3.67.</li>
+</ul>
+<h2 id="v6-fix"><a class="header" href="#v6-fix">v6 fix</a></h2>
+<hr />
+<ul>
+<li>Fixed bug where CSO games freezed up the system.</li>
+</ul>
+<h2 id="v6"><a class="header" href="#v6">v6</a></h2>
+<hr />
+<ul>
+<li>Redesigned boot process. Adrenaline does now not require any basegame or activation anymore.</li>
+<li>Added 'uma0:' to 'Memory Stick Location'.</li>
+<li>Added support for longer ISO filenames.</li>
+<li>Fixed Memory Stick free space integer overflow in games like Outrun.</li>
+<li>Fixed bug where ISO games did not show up when the folder 'PSP/GAME' was missing.</li>
+<li>Improved core and fixed some small bugs.</li>
+</ul>
+<h2 id="v51"><a class="header" href="#v51">v5.1</a></h2>
+<hr />
+<ul>
+<li>Added ability to skip adrenaline boot logo.</li>
+<li>Added message for original filter.</li>
+<li>Fixed bug where payloadex was not updated and caused some bugs.</li>
+<li>Fixed '20000006' bug on PS TV. Network update will work on PS TV in the future.</li>
+<li>Changed CPU clock back to 333 MHz.</li>
+</ul>
+<h2 id="v5"><a class="header" href="#v5">v5</a></h2>
+<hr />
+<ul>
+<li>Added 'Hide DLC's in game menu' functionality.</li>
+<li>Readded 'Original' graphics filtering, since PS1 games have got framedrops using custom filters.</li>
+<li>Fixed corrupted icons bug that was introduced in the previous update.</li>
+<li>Fixed bug where the framebuffer was corrupted after loading savestate.</li>
+<li>Adrenaline icon is now hidden in game menu.</li>
+</ul>
+<h2 id="v42"><a class="header" href="#v42">v4.2</a></h2>
+<hr />
+<ul>
+<li>Added support for ISO sorting using 'Game Categories Lite' plugin.</li>
+<li>Fixed compatiblity with 'Kingdom Hearts: Birth by Sleep' english patch.</li>
+</ul>
+<h2 id="v41"><a class="header" href="#v41">v4.1</a></h2>
+<hr />
+<ul>
+<li>Fixed bug where holding R trigger while launching Adrenaline didn't open the recovery menu.</li>
+<li>Fixed msfs truncation bug that caused savedata corruption for Little Big Planet and maybe other games.</li>
+<li>Fixed wrong scale of PS1 games on PS TV.</li>
+</ul>
+<h2 id="v4"><a class="header" href="#v4">v4</a></h2>
+<hr />
+<ul>
+<li>Added custom graphics filtering support for PS1 games.</li>
+<li>Added screen mode adjustment for PS1 games. If you're using this feature on a PS Vita, select 'Original' screen mode in the
+official settings, then apply the custom screen mode. On the other hand, if you want to the screen mode of the official settings,
+select 'Original' screen mode in Adrenaline settings. On a PS TV this will finally allow you to play your games in fullscreen.</li>
+<li>Added screenshot support in PS1 games.</li>
+<li>Added network update feature for future updates.</li>
+<li>Fixed a bug in msfs driver that caused weird behavior in XMB after resuming from standby.</li>
+<li>Removed 'Official' graphics filtering in order to support the features mentioned above.</li>
+</ul>
+<h2 id="v31"><a class="header" href="#v31">v3.1</a></h2>
+<hr />
+<ul>
+<li>Added support for cwcheat in PS1 games.</li>
+<li>Fixed sound problems after exiting a PS1 game.</li>
+<li>Fixed 'Please wait...' bug in some games.</li>
+<li>Fixed problem where mounting ur0: as USB device would cause problems in livearea.</li>
+</ul>
+<h2 id="v3-fix"><a class="header" href="#v3-fix">v3 fix</a></h2>
+<hr />
+<ul>
+<li>Fixed bug where 'Cannot find application' would show up instead of returning to livearea.</li>
+<li>Fixed bug where you couldn't access the Adrenaline Menu after enabling/disabling wifi.</li>
+</ul>
+<h2 id="v3"><a class="header" href="#v3">v3</a></h2>
+<hr />
+<ul>
+<li>Added ability to launch PS1 games from XMB and play them with full sound.</li>
+<li>Added ability to save and load states using the 'States' tab in the Adrenaline menu.</li>
+<li>Added possibility to connect USB in XMB and added 'Toggle USB' option to recovery menu.</li>
+<li>Added ability to return to livearea by double tapping the PS button.</li>
+<li>Added Adrenaline startup image designed by Freakler.</li>
+<li>Added option to force high memory layout. For 'The Elder Scrolls Travels: Oblivion' Demo.</li>
+<li>Added option to execute 'BOOT.BIN' in UMD/ISO. For 'Saints Row: Undercover' Demo.</li>
+<li>Added correct enter and cancel buttons assignment.</li>
+<li>Fixed volatile memory allocation bug that made 'Star Wars: The Force Unleashed',
+'Tony Hawk's Project 8' and maybe more games crashing.</li>
+<li>Fixed bug that was introduced in v2 which caused some games to crashed at PMF sequences.</li>
+<li>Fixed NoDrm engine bug where fan translated games couldn't load PGD decrypted files.</li>
+<li>Fixed msfs directory filter bug that caused some games not to recognize savedatas.</li>
+<li>Fixed compatiblity of base games, any game should now be able to use Adrenaline to the fullest.</li>
+</ul>
+<h2 id="v2"><a class="header" href="#v2">v2</a></h2>
+<hr />
+<ul>
+<li>Added 64MB RAM support for homebrews.</li>
+<li>Added ability to use the 'ur0:' partition as Memory Stick.</li>
+<li>Added Advanced AA filter (disable 'Smooth Graphics' for that filter).</li>
+<li>Added ability to change smooth graphics (GPU internal bilinear filter).</li>
+<li>Added ability to change screen size (2.0x, 1.75x, 1.5x, 1.25x, 1.0x).</li>
+<li>Fixed sound issue in 'MotorStorm' and some other games.</li>
+<li>Fixed bug where 'ms0:/MUSIC' and 'ms0:/PICTURE' were not found in XMB.</li>
+<li>Fixed bug where changing options in the official settings menu didn't have any effect.</li>
+</ul>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../03-AdrenalineMenu.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="XX-Glossary.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="XX-Credits.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -502,11 +715,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../03-AdrenalineMenu.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="XX-Glossary.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="XX-Credits.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -521,13 +734,13 @@
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
 

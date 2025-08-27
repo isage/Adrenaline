@@ -29,6 +29,7 @@
         <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -414,7 +415,7 @@
 </style>
 <h1 id="plugin-configuration-format"><a class="header" href="#plugin-configuration-format">Plugin Configuration Format</a></h1>
 <hr />
-<p>The configuration format for the plugins on Adrenaline is composed of three sections per line: runlevel(s), plugin path and switch state (on/off); separated by comma.</p>
+<p>The configuration format for the plugins on Adrenaline is composed of three sections per line: runlevel(s), plugin path, and switch state (on/off), separated by a comma.</p>
 <p>It also accepts line comments with <code>//</code> and <code>#</code>.</p>
 <h2 id="runlevels"><a class="header" href="#runlevels">Runlevels</a></h2>
 <p>The available runlevels are:</p>
@@ -425,16 +426,21 @@
 <li><code>hbw</code>/<code>homebrew</code>: Homebrew runlevel — Plugins configuration for homebrew application and games</li>
 <li><code>app</code>/<code>game</code>: UMD + Homebrew — Plugins configuration for any PSP application or game; retail or homebrew</li>
 <li><code>always</code>/<code>all</code>: All runlevels — Plugins configuration for all runlevels</li>
-<li><code>⟨GAME ID⟩</code>: Application/Game specific runlevel — Plugins configuration for specific application which has the specified ID</li>
-<li><code>⟨PATH⟩</code>: Path specific runlevel — Plugins configuration for an application or game in the specified path. <strong>This is more advanced</strong></li>
+<li><code>⟨GAME ID⟩</code>: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID</li>
+<li><code>⟨PATH⟩</code>: Path-specific runlevel — Plugins configuration for an application or game in the specified path. <strong>This is more advanced</strong></li>
 </ul>
 <p>You can specify more than one runlevel for a specific plugin by separating with a space character, more on <a href="#example">example</a>.</p>
 <h2 id="plugin-path"><a class="header" href="#plugin-path">Plugin Path</a></h2>
-<p>The plugin path can be an absolute path or a relative path.</p>
-<p>The absolute path must be a PSP Memory Stick absolute path, i.e. starting with <code>ms0:/</code>. The relative path starts on <code>ms0:/seplugins/</code>, e.g. if the file is on <code>ms0:/seplugins/my_plugin.prx</code>, you can use <code>my_plugin.prx</code>.</p>
+<p>The plugin path can be an <strong>absolute path</strong> or a <strong>relative path</strong>.</p>
+<p>The <strong>absolute path</strong> must be a PSP Memory Stick absolute path, i.e. starting with <code>ms0:/</code>. The <strong>relative path</strong> starts on <code>ms0:/seplugins/</code>, e.g. if the file is on <code>ms0:/seplugins/my_plugin.prx</code>, you can use <code>my_plugin.prx</code>.</p>
 <h2 id="switch-state"><a class="header" href="#switch-state">Switch state</a></h2>
-<p>The switch state define if the plugin is enabled or not. The accepted "On" values are <code>on</code>, <code>enabled</code>, <code>true</code> and <code>1</code> and the "off" values are <code>off</code>, <code>disabled</code>, <code>false</code> and <code>0</code>.</p>
-<h2 id="example"><a class="header" href="#example">Example</a></h2>
+<p>The switch state defines whether the plugin is enabled or not. The accepted "On" values are <code>on</code>, <code>enabled</code>, <code>true</code>, and <code>1</code>; and the "off" values are <code>off</code>, <code>disabled</code>, <code>false</code>, and <code>0</code>.</p>
+<br>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
 <pre><code class="language-ini"># VSH Example
 xmb, ms0:/seplugins/category_lite.prx, on
 
@@ -448,10 +454,10 @@ hbw, ms0:/seplugins/example.prx, off
 pops, ms0:/seplugins/cwcheat/cwcheatpops.prx, on
 
 # Any PSP (game and homebrew)
-app, ms0:/seplugins/exaple.prx, off
+app, ms0:/seplugins/example.prx, off
 
 # Always
-always, ms0:/seplugins/exaple.prx, off
+always, ms0:/seplugins/example.prx, off
 
 # Game ID example
 ULES00151, ms0:/seplugins/gta_remastered.prx, on
@@ -472,6 +478,7 @@ psp, ms0:/seplugins/cwcheat/cwcheat.prx, on
 # This will filter out GTA LCS (US) and GTA VCS (EU)
 ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </code></pre>
+</div>
 <div class="mdbook-callouts mdbook-callouts-important">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -481,17 +488,17 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <p>Homebrew plugins used to be put in one of three files:</p>
 <ul>
 <li>In <code>/pspemu/seplugins/VSH.TXT</code> file for the plugin to loaded on XMB/VSH</li>
-<li>In <code>/pspemu/seplugins/GAME.TXT</code> file for the plugin to loaded on PSP games and homebrews</li>
+<li>In <code>/pspemu/seplugins/GAME.TXT</code> file for the plugin to be loaded on PSP games and homebrews</li>
 <li>In <code>/pspemu/seplugins/POPS.TXT</code> file for the plugin to loaded on PS1 games and homebrews</li>
 </ul>
 <p>And following the format of <code>⟨PLUGIN PATH⟩ ⟨0 or 1⟩</code> per plugin.</p>
-<p>If you just updated from previous version, Adrenaline provides an easy way to import the old style to the new:</p>
+<p>If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:</p>
 <ol>
 <li>Open Recovery Menu</li>
 <li>Go to the <code>Advanced</code> section</li>
 <li>Select and click on <code>Import classic plugins</code></li>
 </ol>
-<p align="center"> <img src="../assets/04-import-plugins.png" width="70%" /> </p>
+<p align="center"> <img src="../assets/04-import-plugins.png" width="700em" /> </p>
 </div>
 
                     </main>
@@ -502,6 +509,9 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next prefetch" href="../05-PSPPlayback.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -513,6 +523,9 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next prefetch" href="../05-PSPPlayback.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

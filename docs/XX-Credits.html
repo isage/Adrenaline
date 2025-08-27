@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Save State - Adrenaline Manual/Wiki</title>
+        <title>Credits - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -12,35 +12,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../custom.css">
+        <link rel="stylesheet" href="custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Adrenaline Manual/Wiki</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -413,88 +413,38 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="adrenaline-save-state"><a class="header" href="#adrenaline-save-state">Adrenaline Save State</a></h1>
+<h1 id="credits"><a class="header" href="#credits">Credits</a></h1>
 <hr />
-<p>Adrenaline has native support to Save States, accessible in the <a href="../04-AdrenalineMenu.html">Adrenaline Menu</a>. It supports the creation of up to 31 save states.</p>
-<p align="center">
-<img src="../assets/03-epi-menu-main-states.png" width="70%" />
-</p>
-<h2 id="what-is-a-save-state"><a class="header" href="#what-is-a-save-state">What is a Save State</a></h2>
-<p>A save state is a snapshot of the current status of a game, allowing you to save and restore your progress at any point. Unlike traditional in-game saves, save states capture everything in memory, so you can resume exactly where you left off, even if the game itself doesn’t support saving at that moment.</p>
-<h2 id="creating-save-state"><a class="header" href="#creating-save-state">Creating Save State</a></h2>
-<p>To create a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+<ul>
+<li><code>Ancient gods</code> of the PSP scene: M33 Team, Proxima, zecoxao, among other tinkerers for starting it all.</li>
+<li><code>M33 Team</code>: Dark_AleX, adrahil, Mathieulh for creating M33 CFW and open-sourcing it.</li>
+<li><code>Team Molecule</code>: yifanlu, xyz, Proxima, Davee for Henkaku.</li>
+<li><code>TheFl0w</code> (aka. <code>Total_Noob</code>) for his advancements and research in CFW development, starting Adrenaline, and overall contributions to the scene.</li>
+<li><code>xerpi</code> for vita2dlib and VITA reversing work.</li>
+<li><code>qwikrazor87</code> for his hard work on reversing DRM.</li>
+<li><code>frangarcj</code> for graphics filtering on Adrenaline.</li>
+<li><code>Rinnegatamante</code> for f.lux on Adrenaline.</li>
+<li><code>meetpatty</code> for fixing autoboot on Adrenaline.</li>
+<li><code>ARK-4</code> team: Acid_Snake, Krazynez, for Inferno 2, being a good fellow CFW-makers and helping in many ways.
+<ul>
+<li>And for allowing us to reuse parts of ARK-4 documentation for things that both Adrenaline and ARK-4 support (this reduced so much time used for writing this doc 😁)</li>
+</ul>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Save State</strong>, and press <code>X</code> to save the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-save.png" width="70%" />
-</p>
-<p>Alternatively, you can save the state by substituting a previously saved state (i.e. overwriting the save state):</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open the PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Overwrite State</strong>, and press <code>X</code> to overwrite the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-overwrite.png" width="70%" />
-</p>
-<h2 id="loading-save-state"><a class="header" href="#loading-save-state">Loading Save State</a></h2>
-<p>To load a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Load State</strong>, and press <code>X</code> to load the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-load.png" width="70%" />
-</p>
-<h2 id="deleting-save-state"><a class="header" href="#deleting-save-state">Deleting Save State</a></h2>
-<p>To delete a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Delete State</strong> and press <code>X</code> to delete the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-delete.png" width="70%" />
-</p>
+<li><code>Codestation</code> for his incredible work improving CSO speeds and creating the ZSO format.</li>
+<li><code>UnkownBrackets</code> (maxcso) for creating the CSOv2 format.</li>
+<li><code>Cat</code> (aka. <code>isage</code>) for everything that he has done for Adrenaline and continued improving it along the way.</li>
+<li><code>GrayJack</code> for everything that they have done for Adrenaline and help Cat maintain it.</li>
+<li>Every other giant shoulder we are standing on.</li>
+</ul>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../03-AdrenalineMenu.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="XX-Changelog.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -502,13 +452,10 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../03-AdrenalineMenu.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="XX-Changelog.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>
@@ -521,13 +468,13 @@
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
 

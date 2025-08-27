@@ -29,6 +29,7 @@
         <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -415,30 +416,32 @@
 <h1 id="installation--updates"><a class="header" href="#installation--updates">Installation &amp; Updates</a></h1>
 <hr />
 <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<hr />
 <p>It is recommended to do this approach for a fresh installation. Otherwise, use the <a href="#update">Update</a> section.</p>
 <ol>
 <li>Remove the Adrenaline bubble and the <code>ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx</code> path from the taiHEN config.txt and finally reboot your device.</li>
 <li>Download <a href="https://github.com/isage/Adrenaline/releases">Adrenaline.vpk</a> and install it using <a href="https://github.com/RealYoti/VitaShell/releases">VitaShell</a>.</li>
-<li>Launch Adrenaline and press <code>X</code> to download the 6.61 firmware. After finishing it will automatically terminate.</li>
-<li>Relaunch Adrenaline, this time it will go into pspemu mode. Follow the instructions on screen.</li>
+<li>Launch Adrenaline and press <code>X</code> to download the 6.61 firmware. After finishing, it will automatically terminate.</li>
+<li>Relaunch Adrenaline; this time, it will go into PSPemu mode. Follow the instructions on the screen.</li>
 </ol>
 <div class="mdbook-callouts mdbook-callouts-tip">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
-  getting rid of double launch bug
+  getting rid of the double launch bug
 </p>
-<p>Adrenaline need to launch twice every time you reboot your device. To get rid of such limitation, simply write this line to <code>*KERNEL</code>:</p>
+<p>Adrenaline needs to launch twice every time you reboot your device. To get rid of such a limitation, simply write this line to <code>*KERNEL</code>:</p>
 <pre><code>*KERNEL
 ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </code></pre>
 <p>After that, Adrenaline will only need to be launched once.</p>
 </div>
 <h2 id="update"><a class="header" href="#update">Update</a></h2>
-<p>If you have already been using Adrenaline, you have three update options: Manual, Update PBP and Network.</p>
+<hr />
+<p>If you have already been using Adrenaline, you have three update options: Manual, Update PBP, and Network.</p>
 <h3 id="manual"><a class="header" href="#manual">Manual</a></h3>
 <ol>
 <li>Download <a href="https://github.com/isage/Adrenaline/releases">Adrenaline.vpk</a></li>
-<li>Open the vpk file as zip</li>
+<li>Open the vpk file as a zip</li>
 <li>Copy all files from <code>sce_module</code> directory to <code>ux0:app/PSPEMUCFW/sce_module</code></li>
 </ol>
 <h3 id="update-pbp"><a class="header" href="#update-pbp">Update PBP</a></h3>
@@ -459,7 +462,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
   <span class="mdbook-callouts-icon"></span>
   important
 </p>
-<p>If you have installed a version below v7.1.0, network update won't work, you will have to update with one of the other two remaining methods.</p>
+<p>If you have installed a version below v7.1.0, the network update won't work; you will have to update with one of the other two remaining methods.</p>
 </div>
 
                     </main>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Save State - Adrenaline Manual/Wiki</title>
+        <title>PSP Playback - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -12,35 +12,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../custom.css">
+        <link rel="stylesheet" href="custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Adrenaline Manual/Wiki</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -413,86 +413,69 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="adrenaline-save-state"><a class="header" href="#adrenaline-save-state">Adrenaline Save State</a></h1>
+<h1 id="psp-playback"><a class="header" href="#psp-playback">PSP Playback</a></h1>
 <hr />
-<p>Adrenaline has native support to Save States, accessible in the <a href="../04-AdrenalineMenu.html">Adrenaline Menu</a>. It supports the creation of up to 31 save states.</p>
-<p align="center">
-<img src="../assets/03-epi-menu-main-states.png" width="70%" />
+<p>Adrenaline allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having three available drivers: <code>Inferno 2</code>, <code>March33 2</code>, and <code>Sony's NP9660</code></p>
+<p>There are three formats of PSP game images: <code>PBP</code>, <code>ISO</code>, and <code>Compressed ISO</code>.</p>
+<p>The <code>PBP</code> image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Adrenaline always uses the original <code>Sony's NP9660</code> driver. Usually, <code>PBP</code> files live on <code>???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/</code> directory.</p>
+<p>The <code>ISO</code> image format is a 1:1 copy of a Universal Media Disc (UMD), while <code>Compressed ISO</code> is an <code>ISO</code> image compressed in some way to reduce space usage. There are a few competing formats for <code>Compressed ISO</code>: <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>, each with different tradeoffs. Adrenaline supports all of those formats and allows you to choose between the three UMDemu drivers available. All of those image options should go in <code>??0:/pspemu/ISO/</code> directory.</p>
+<div class="mdbook-callouts mdbook-callouts-info">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  info
 </p>
-<h2 id="what-is-a-save-state"><a class="header" href="#what-is-a-save-state">What is a Save State</a></h2>
-<p>A save state is a snapshot of the current status of a game, allowing you to save and restore your progress at any point. Unlike traditional in-game saves, save states capture everything in memory, so you can resume exactly where you left off, even if the game itself doesn’t support saving at that moment.</p>
-<h2 id="creating-save-state"><a class="header" href="#creating-save-state">Creating Save State</a></h2>
-<p>To create a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+<p>There is a <a href="./05-PSPPlayback/01-CompressedIsoFormats.html">page</a> explaining the different compressed image formats and their tradeoffs.</p>
+</div>
+<h2 id="umdemu-iso-drivers"><a class="header" href="#umdemu-iso-drivers">UMDemu ISO Drivers</a></h2>
+<p>This is a brief overview of the features of each driver in the versions that come with Adrenaline.</p>
+<h3 id="inferno-2"><a class="header" href="#inferno-2">Inferno 2</a></h3>
+<p>This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on <code>ARK-4</code>, with minor modifications for better code reuse with other drivers and integration with the Adrenaline CFW.</p>
+<ul>
+<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code></li>
+<li><strong>Emulation of empty UMD drive</strong>: Several bugs existed that caused malfunction when the driver was used without an ISO file specified on other drivers and older versions of this driver.</li>
+<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
+<li><strong>Inferno Cache</strong>: Usage of overall caches as another read-time speedup hack. The amount of cache is configurable in the CFW configuration option, limiting a maximum to allow for enough free space for other features or plugins. It is also possible to configure the cache policy strategy between two algorithms: Least Recently Used (<code>LRU</code>, default) and Round Robin (<code>RR</code>).
+<ul>
+<li><strong><code>LRU</code></strong>: Uses fewer CPU cycles because it will just remove the calls from the queue that have not been used in a timeframe.</li>
+<li><strong><code>RR</code></strong>: Uses more CPU cycles, making it slower because there's more data to process in the queue, but can be better in cases where there are highly uniform or cyclical data access patterns or require predictable cache replacement.</li>
+</ul>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Save State</strong>, and press <code>X</code> to save the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-save.png" width="70%" />
-</p>
-<p>Alternatively, you can save the state by substituting a previously saved state (i.e. overwriting the save state):</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open the PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+<li><strong>Configurable seek and read speed delays</strong>: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+<ul>
+<li>By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.</li>
+<li>This feature is incompatible with <strong>Inferno Cache</strong>, enabling this will cause <strong>Inferno Cache</strong> to be disabled.</li>
+</ul>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Overwrite State</strong>, and press <code>X</code> to overwrite the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-overwrite.png" width="70%" />
-</p>
-<h2 id="loading-save-state"><a class="header" href="#loading-save-state">Loading Save State</a></h2>
-<p>To load a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
+</ul>
+<h3 id="march-33-2"><a class="header" href="#march-33-2">March 33 2</a></h3>
+<p>March33 driver was originally developed for the March33 CFW by the M33 Team. Adrenaline comes with a modified version with ISO and Compressed ISO read improvements; other than that, there were no other significant changes in the source code.</p>
+<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
+<ul>
+<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
+<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
+<li><strong>Configurable seek and read speed delays</strong>: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+<ul>
+<li>By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.</li>
+</ul>
 </li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Load State</strong>, and press <code>X</code> to load the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-load.png" width="70%" />
-</p>
-<h2 id="deleting-save-state"><a class="header" href="#deleting-save-state">Deleting Save State</a></h2>
-<p>To delete a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Delete State</strong> and press <code>X</code> to delete the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-delete.png" width="70%" />
-</p>
+</ul>
+<h3 id="sonys-np9660"><a class="header" href="#sonys-np9660">Sony's NP9660</a></h3>
+<p>It is the original PSP UMDemu driver from Sony, but with patches to trick it into running ISO and Compressed ISO formats. This driver is also the one used on <code>PBP</code> games; it has guaranteed compatibility with all games that Sony released on PSN.</p>
+<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
+<ul>
+<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
+<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
+</ul>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../03-AdrenalineMenu.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="04-HomebrewSupport/02-PluginConfigFormat.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="05-PSPPlayback/01-CompressedIsoFormats.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -502,11 +485,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../03-AdrenalineMenu.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="04-HomebrewSupport/02-PluginConfigFormat.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="05-PSPPlayback/01-CompressedIsoFormats.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -521,13 +504,13 @@
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
 

@@ -29,6 +29,7 @@
         <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="../custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -414,7 +415,18 @@
 </style>
 <h1 id="psp-plugin"><a class="header" href="#psp-plugin">PSP Plugin</a></h1>
 <hr />
+<p>PSP plugins are small programs (usually <code>.prx</code> files) that add new features or modify the behavior of the PSP system or games.</p>
+<p>Adrenaline should be compatible with most of the plugins made for classic PSP CFW, but incompatibilities may happen. Plugins that replace the VSH Menu (i.e. System Menu, Ultimate VSH Menu, etc) are not supported.</p>
+<div class="mdbook-callouts mdbook-callouts-tip">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  tip
+</p>
+<p>If you find a plugin that is not working, first open an issue on the plugin project issue tracker before opening an issue on the Adrenaline issue tracker.</p>
+<p>If you end up opening an issue on Adrenaline's issue tracker, be mindful that issue resolution depends on many factors, as developers' time, developers' interest in the issue, external contributions, and more; as with any hobbyist open-source project.</p>
+</div>
 <h2 id="adding-a-plugin"><a class="header" href="#adding-a-plugin">Adding a plugin</a></h2>
+<hr />
 <ol>
 <li>
 <p>Put the <code>.prx</code> file somewhere on <code>???0:/pspemu/seplugins/</code> directory (create if it doesn't exist)</p>
@@ -425,7 +437,9 @@
 <li>
 <p>Add to the configuration line in the general format: <code>⟨RUNLEVELS⟩, ⟨PLUGIN PATH⟩, ⟨on/off⟩</code></p>
 <ul>
-<li>You can find more information on the format <a href="./02-PluginConfigFormat.html">here</a></li>
+<li>Example: <code>psp, ms0:/seplugins/my_plugin.prx, on</code></li>
+<li>You can find detailed information on the format <a href="./02-PluginConfigFormat.html">on the next page</a></li>
+<li>You can find a configuration example <a href="./02-PluginConfigFormat.html#example">here</a></li>
 </ul>
 </li>
 </ol>
@@ -435,15 +449,16 @@
   important
 </p>
 <p>Before version 8.0.0, Adrenaline used another format and files for the plugins</p>
-<p>If you just updated from previous version, Adrenaline provides an easy way to import the old style to the new:</p>
+<p>If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:</p>
 <ol>
 <li>Open Recovery Menu</li>
 <li>Go to the <code>Advanced</code> section</li>
 <li>Select and click on <code>Import classic plugins</code></li>
 </ol>
-<p align="center"> <img src="../assets/04-import-plugins.png" width="70%" /> </p>
+<p align="center"> <img src="../assets/04-import-plugins.png" width="700em" /> </p>
 </div>
 <h2 id="managing-plugins"><a class="header" href="#managing-plugins">Managing Plugins</a></h2>
+<hr />
 <p>Adrenaline offers two ways to manage plugins already added.</p>
 <h3 id="first-method-xmb-settings"><a class="header" href="#first-method-xmb-settings">First method: XMB Settings</a></h3>
 <ol>
@@ -451,23 +466,24 @@
 <p>On XMB, go to the <code>Settings</code></p>
 </li>
 <li>
-<p>Find the <code>★ Plugins Manager</code> and the confirmation button, a list of added plugins will show up</p>
+<p>Find the <code>★ Plugins Manager</code> and the confirmation button, and a list of added plugins will show up</p>
 </li>
 <li>
 <p>Select the plugin, click the confirmation button.</p>
 </li>
 <li>
-<p>Select the the state (<code>on</code>/<code>off</code>/<code>remove</code>), confirm with the confirmation button.</p>
+<p>Select the state (<code>on</code>/<code>off</code>/<code>remove</code>), confirm with the confirmation button.</p>
 <ul>
-<li>The <code>remove</code> option will remove the line of the configuration file and restart the system</li>
+<li>The <code>remove</code> option will remove the line from the configuration file and restart the system</li>
 </ul>
 </li>
 <li>
-<p>Return back to save configuration.</p>
+<p>Return to save configuration.</p>
 </li>
 </ol>
 <p align="center">
-<img src="../assets/04-xmb-plugin.png" width="49%" /> <img src="../assets/04-xmb-plugin-state.png" width="49%" />
+<img src="../assets/04-xmb-plugin.png" width="49%" alt="XMB Plugin Manager - Plugin list" />
+<img src="../assets/04-xmb-plugin-state.png" width="49%" alt="XMB Plugin Manager - Plugin states" />
 </p>
 <!-- ![Plugin List](../assets/04-xmb-plugin.png) ![Plugin state](../assets/04-xmb-plugin-state.png) -->
 <div class="mdbook-callouts mdbook-callouts-warning">
@@ -480,14 +496,15 @@
 <h3 id="second-method-recovery-menu"><a class="header" href="#second-method-recovery-menu">Second method: Recovery Menu</a></h3>
 <!-- TODO: LINK TO RECOVERY MENU -->
 <ol>
-<li>Open Recovery Menu</li>
+<li>Open <a href="../09-RecoveryMenu.html">Recovery Menu</a></li>
 <li>Go to the <code>Plugins</code> section</li>
 <li>Go over your plugins and use <code>←</code>/<code>→</code> to select the plugin state</li>
 <li>Go back to the <code>General</code> section</li>
 <li>Exit the Recovery Menu</li>
 </ol>
 <p align="center">
-<img src="../assets/04-rec-plugin.png" width="49%" /> <img src="../assets/04-rec-exit.png" width="49%" />
+<img src="../assets/04-rec-plugin.png" width="49%" alt="Recovery Menu plugin section" />
+<img src="../assets/04-rec-exit.png" width="49%" alt="Recovery Menu exit" />
 </p>
                     </main>
 

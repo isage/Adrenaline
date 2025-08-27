@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Save State - Adrenaline Manual/Wiki</title>
+        <title>Inferno Driver - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -413,86 +413,39 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="adrenaline-save-state"><a class="header" href="#adrenaline-save-state">Adrenaline Save State</a></h1>
+<h1 id="inferno-driver"><a class="header" href="#inferno-driver">Inferno Driver</a></h1>
 <hr />
-<p>Adrenaline has native support to Save States, accessible in the <a href="../04-AdrenalineMenu.html">Adrenaline Menu</a>. It supports the creation of up to 31 save states.</p>
-<p align="center">
-<img src="../assets/03-epi-menu-main-states.png" width="70%" />
-</p>
-<h2 id="what-is-a-save-state"><a class="header" href="#what-is-a-save-state">What is a Save State</a></h2>
-<p>A save state is a snapshot of the current status of a game, allowing you to save and restore your progress at any point. Unlike traditional in-game saves, save states capture everything in memory, so you can resume exactly where you left off, even if the game itself doesn’t support saving at that moment.</p>
-<h2 id="creating-save-state"><a class="header" href="#creating-save-state">Creating Save State</a></h2>
-<p>To create a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Save State</strong>, and press <code>X</code> to save the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-save.png" width="70%" />
-</p>
-<p>Alternatively, you can save the state by substituting a previously saved state (i.e. overwriting the save state):</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open the PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Overwrite State</strong>, and press <code>X</code> to overwrite the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-overwrite.png" width="70%" />
-</p>
-<h2 id="loading-save-state"><a class="header" href="#loading-save-state">Loading Save State</a></h2>
-<p>To load a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Load State</strong>, and press <code>X</code> to load the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-load.png" width="70%" />
-</p>
-<h2 id="deleting-save-state"><a class="header" href="#deleting-save-state">Deleting Save State</a></h2>
-<p>To delete a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Delete State</strong> and press <code>X</code> to delete the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-delete.png" width="70%" />
-</p>
+<p>The Adrenaline version of the <strong>Inferno 2</strong> driver is an adaptation from the ARK-4 version of the driver. The ARK-4 version is an evolution of the Inferno Driver found, among others, in the PRO CFW, for which ARK itself is an evolution of.</p>
+<h2 id="evolution-of-the-driver"><a class="header" href="#evolution-of-the-driver">Evolution of the driver</a></h2>
+<p>Several different versions of the <code>Inferno</code> driver were created for different purposes. So let's look at all of them and try to add a versioning system to them, so we can have an idea of the evolution of this driver. We will start with PRO-C, which we will call <code>Inferno 1</code>.</p>
+<ul>
+<li><strong><code>Inferno 1</code></strong>: The original <code>Inferno</code> driver as seen in PRO-C. It includes the <code>block offset cache</code> speedup hack that greatly improved speed with <code>CSO</code> format in comparison to traditional drivers such as <code>March33 Driver</code>. It also included an overall cache that could use the extra RAM on PSP slims to improve speed, this is known as <code>Inferno Cache</code>, though it had conflicts with the <code>Force Extra RAM</code> patch.</li>
+<li><strong><code>Inferno 1V</code></strong>: The original <code>Inferno</code> driver port for <code>PROVITA</code>, used up to ARK-3. It was a stripped-down version of the one in PRO-C, minus the <code>Inferno Cache</code> since the Vita lacked the PSP Slim's extra RAM.</li>
+<li><strong><code>Inferno 1S</code></strong>: An experimental <code>Inferno 1V</code> fork that added support for Splitted ISO files (<code>SSO</code>), it was meant to improve the experience of transferring ISO files via <code>FTP</code>, it was scrapped and never used but source code can still be found in the original ARK-1 repository under the name <code>inferno.new</code>.</li>
+<li><strong><code>Inferno 1D</code></strong>: A port of <code>Inferno 1</code> to the ME CFW with added support for the <code>DAX</code> file format. It uses two separate algorithms to handle <code>CSO</code> and <code>DAX</code>.</li>
+<li><strong><code>Inferno 1.5</code></strong>: Available in PRO-C2, 1.5 is one of the greatest updates to a PSP ISO Driver ever made in regards to Compressed ISO reading speed. Thanks to the research of developer <code>Codestation</code>, we were able to figure out a new speedup hack that proved to be the biggest one yet. It uses the fact that whenever a game requests data, the compressed data is always going to be smaller than the requested data, thus the buffer given by the game can be used to read all the compressed data at once and process each block in place, thus hugely reducing the amount of IO calls to satisfy the data request (which for an ISO is only one IO call), to put it in technical forms, the algorithm went from having a linear O(n) complexity (where n = amount of IO calls) to having the same constant O(1) complexity as an ISO. During this research, Codestation also developed a lightweight version of <code>CSO</code> called <code>ZSO</code>, which is structurally identical to a <code>CSO</code> file but data is compressed using the <code>LZ4</code> instead of the standard <code>DEFLATE</code> algorithm, which offers the fastest decompression speed available, while being identical to <code>CSO</code> in its structure allowed the same algorithm to be used for both formats.</li>
+<li><strong><code>Inferno 1.5V</code></strong>: A stripped-down version of the newly updated <code>Inferno 1.5</code> ported over to Adrenaline. It gets rid of <code>Inferno Cache</code> as it was considered unnecessary on PS Vita, and also removes support for <code>ZSO</code> format, while maintaining the speedup hacks for <code>CSO</code>. This was the version that Adrenaline used up to version <code>7.1.7</code>.</li>
+</ul>
+<p>Now that we've covered the evolution of the <code>Inferno</code> Driver over the years, we can focus on all the changes made to it in ARK-4 that justify it being called <code>Inferno 2</code>.</p>
+<ul>
+<li><strong><code>Dynamic Patching</code></strong>: all static offset patching done to the isofs library has been replaced with dynamic patching algorithms. This makes <code>Inferno</code> capable of working on a wide variety of configurations, including the original PSP, unmodified PS Vita Emulator, Adrenaline-patched PS Vita Emulator, and PSP Toolkits such as testkits and devkits.</li>
+<li><strong><code>Emulation of Empty UMD Drive</code></strong>: On older versions of Inferno, as well as other UMDemu ISO Drivers, it was never intended for the driver to run without an ISO file to be mounted, thus several bugs existed that caused malfunction when the driver was used without an ISO file specified, this prevented emulation of an empty UMD drive, which was needed on PS Vita to run certain homebrew that checked for a UMD. The main bug was in the implementation of the function <code>sceUmdCheckMedium</code>, a boolean function used to check if a UMD is inserted in the drive. On the ISO driver, this function was hardcoded to always return true, except if an ISO driver is not specified, then it was hardcoded to wait in an infinite loop until one is (which never happens). The solution used by eCFW, such as ARK (up to ARK-3) and TN-CEF (including Adrenaline), was to include a small dummy fake.cso file to mount when no ISO file is specified. On the new <code>Inferno 2</code> driver, among other things, this function has been corrected to behave exactly like the original, simply returning False if no ISO has been specified, thus allowing the ISO driver to simulate an empty UMD drive by loading it without an ISO file specified.</li>
+<li><strong><code>Completely revamped Compressed ISO Reader</code></strong>: The <code>CSO</code> driver available with the original Inferno was heavily hardcoded to work only with <code>CSO</code> and only with the PSP. The entire reader was completely rewritten from scratch with much less and lighter code, much more portability (it has been ported to PC, PS2/OPL, and Wii/Nintendont), as well as a much more generic and configurable structure, allowing for easily adding support for other formats without changing the core reader.</li>
+<li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks seen on <code>Inferno 1.5</code>.</li>
+<li><strong><code>Support for other compressed formats</code></strong>: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only <code>CSO</code> and <code>ZSO</code> as seen on <code>Inferno 1.5</code>, but also adds support for <code>DAX</code> as seen on ME's Inferno update as well as early SE/OE CFW, as well as the rarely seen before <code>JSO</code> and <code>CSOv2</code> formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.</li>
+<li><strong><code>Improved Inferno Cache compatibility</code></strong>: Issues between Inferno Cache and Force Extra RAM have been resolved, including being able to use it with PRO Online, as well as allowing the use of Inferno Cache on PS Vita and PSP 1K. The Cache size is no longer configurable, but it adjusts automatically depending on device/configuration, while also allowing for enough free space for other features or plugins.</li>
+<li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games</li>
+</ul>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../03-AdrenalineMenu.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../05-PSPPlayback/01-CompressedIsoFormats.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../05-PSPPlayback/03-March33.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -502,11 +455,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../03-AdrenalineMenu.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../05-PSPPlayback/01-CompressedIsoFormats.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../05-PSPPlayback/03-March33.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

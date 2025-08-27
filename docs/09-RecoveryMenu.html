@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Save State - Adrenaline Manual/Wiki</title>
+        <title>Recovery Menu - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -12,35 +12,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon.svg">
-        <link rel="shortcut icon" href="../favicon.png">
-        <link rel="stylesheet" href="../css/variables.css">
-        <link rel="stylesheet" href="../css/general.css">
-        <link rel="stylesheet" href="../css/chrome.css">
-        <link rel="stylesheet" href="../css/print.css" media="print">
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="../fonts/fonts.css">
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="../custom.css">
+        <link rel="stylesheet" href="custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex.js";
+            window.path_to_searchindex_js = "searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc.js"></script>
+        <script src="toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Adrenaline Manual/Wiki</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -413,86 +413,69 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="adrenaline-save-state"><a class="header" href="#adrenaline-save-state">Adrenaline Save State</a></h1>
+<h1 id="adrenaline-recovery-menu"><a class="header" href="#adrenaline-recovery-menu">Adrenaline Recovery Menu</a></h1>
 <hr />
-<p>Adrenaline has native support to Save States, accessible in the <a href="../04-AdrenalineMenu.html">Adrenaline Menu</a>. It supports the creation of up to 31 save states.</p>
+<p>The Adrenaline Recover Menu allows the user to modify the Adrenaline CFW Settings, work as a plugin manager and extra features.</p>
+<p>There are two ways to enter in the Recovery Menu. Either on XMB, by opening the <a href="./07-VSHMenu.html">VSH Menu</a> and selecting the <code>RECOVERY MENU</code> option, or opening the Adrenaline Application while holding the <code>R</code> button.</p>
+<p>The Recovery Menu has three sections: <code>General</code>, <code>Advanced</code> and <code>Plugin</code>.</p>
 <p align="center">
-<img src="../assets/03-epi-menu-main-states.png" width="70%" />
+<img src="./assets/09-rec-menu-general.png" width="33%" />
+<img src="./assets/09-rec-menu-advanced.png" width="33%" />
+<img src="./assets/09-rec-menu-plugins.png" width="33%" />
 </p>
-<h2 id="what-is-a-save-state"><a class="header" href="#what-is-a-save-state">What is a Save State</a></h2>
-<p>A save state is a snapshot of the current status of a game, allowing you to save and restore your progress at any point. Unlike traditional in-game saves, save states capture everything in memory, so you can resume exactly where you left off, even if the game itself doesn’t support saving at that moment.</p>
-<h2 id="creating-save-state"><a class="header" href="#creating-save-state">Creating Save State</a></h2>
-<p>To create a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Save State</strong>, and press <code>X</code> to save the state</li>
-</ol>
+<h2 id="general"><a class="header" href="#general">General</a></h2>
+<hr />
+<p>This section is more focused on the <a href="./08-CfwConfiguration.html#general-settings">General CFW Settings</a>. But it contains a couple of extra itens detailed bellow.</p>
 <p align="center">
-<img src="../assets/03-state-save.png" width="70%" />
+<img src="./assets/09-rec-menu-general.png" width="50%" />
 </p>
-<p>Alternatively, you can save the state by substituting a previously saved state (i.e. overwriting the save state):</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open the PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select an empty state slot</li>
-<li>Press <code>X</code>, select <strong>Overwrite State</strong>, and press <code>X</code> to overwrite the state</li>
-</ol>
+<h3 id="toggle-usb"><a class="header" href="#toggle-usb">Toggle USB</a></h3>
+<p>Switch the state of USB connection while on Recovery Mode.</p>
+<h3 id="exit"><a class="header" href="#exit">Exit</a></h3>
+<p>Exit the Recovery Menu and restart the vPSP system.</p>
+<h2 id="advanced"><a class="header" href="#advanced">Advanced</a></h2>
+<hr />
+<p>This section is more focused on the <a href="./08-CfwConfiguration.html#advanced-settings">Advanced CFW Settings</a>. But it contains a few extra itens detailed bellow.</p>
 <p align="center">
-<img src="../assets/03-state-overwrite.png" width="70%" />
+<img src="./assets/09-rec-menu-advanced.png" width="50%" />
 </p>
-<h2 id="loading-save-state"><a class="header" href="#loading-save-state">Loading Save State</a></h2>
-<p>To load a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Load State</strong>, and press <code>X</code> to load the state</li>
-</ol>
-<p align="center">
-<img src="../assets/03-state-load.png" width="70%" />
+<h3 id="button-assign"><a class="header" href="#button-assign">Button assign</a></h3>
+<p>Configures what button is used for confirmation/enter.</p>
+<h4 id="options"><a class="header" href="#options">Options:</a></h4>
+<ul>
+<li><code>⭕️ is enter</code></li>
+<li><code>❌ is enter</code></li>
+</ul>
+<h3 id="import-classic-plugins"><a class="header" href="#import-classic-plugins">Import classic plugins</a></h3>
+<p>Imports the classic plugin configuration (<code>/seplugins/vsh.txt</code>, <code>/seplugins/game.txt</code>, <code>/seplugins/pops.txt</code>) to the new format at <code>???0:/pspemu/seplugins/EPIplugins.txt</code>.</p>
+<div class="mdbook-callouts mdbook-callouts-warning">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  warning
 </p>
-<h2 id="deleting-save-state"><a class="header" href="#deleting-save-state">Deleting Save State</a></h2>
-<p>To delete a save state, do the following:</p>
-<ol>
-<li>Open <strong>Adrenaline Menu</strong>
-<ol>
-<li>Hold the <code>HOME</code> button to open PSVita/PSTV's <strong>Quick Menu</strong></li>
-<li>Click on the <code>Settings</code> button on the screen</li>
-</ol>
-</li>
-<li>Press <code>L</code> or <code>R</code> until you reach the <strong>States</strong> tab</li>
-<li>Select a saved state slot</li>
-<li>Press <code>X</code>, select <strong>Delete State</strong> and press <code>X</code> to delete the state</li>
-</ol>
+<p>If you already have a <code>???0:/pspemu/seplugins/EPIplugins.txt</code> file, it will be overwritten by this action.</p>
+</div>
+<h3 id="activate-wma"><a class="header" href="#activate-wma">Activate WMA</a></h3>
+<p>Enables WMA playback without connecting to the internet.</p>
+<h3 id="activate-flash-player"><a class="header" href="#activate-flash-player">Activate Flash Player</a></h3>
+<p>Enables Flash Player  without connecting to the internet.</p>
+<h3 id="reset-settings"><a class="header" href="#reset-settings">Reset settings</a></h3>
+<p>Resets the CFW settings to the default values.</p>
+<h2 id="plugins"><a class="header" href="#plugins">Plugins</a></h2>
+<hr />
+<p>This is the Recovery Menu plugin manager. Here you can select a plugin and change its value to <code>Disabled</code> or <code>Enabled</code>.</p>
 <p align="center">
-<img src="../assets/03-state-delete.png" width="70%" />
+<img src="./assets/09-rec-menu-plugins.png" width="50%" />
 </p>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../03-AdrenalineMenu.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="08-CfwConfiguration.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="10-XmbCfwMenus.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -502,11 +485,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../03-AdrenalineMenu.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="08-CfwConfiguration.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../03-AdrenalineMenu/02-AdrenalineSettings.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="10-XmbCfwMenus.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -521,13 +504,13 @@
         </script>
 
 
-        <script src="../elasticlunr.min.js"></script>
-        <script src="../mark.min.js"></script>
-        <script src="../searcher.js"></script>
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
 
-        <script src="../clipboard.min.js"></script>
-        <script src="../highlight.js"></script>
-        <script src="../book.js"></script>
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
 
         <!-- Custom JS scripts -->
 
