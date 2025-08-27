@@ -369,4 +369,5 @@ void ImportClassicPlugins(int sel) {
 
 	sceIoClose(plugins_fd);
 	user_free(buf);
+	readPlugins();
 }
