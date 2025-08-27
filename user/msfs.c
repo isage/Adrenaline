@@ -44,11 +44,25 @@ static void buildPspemuMsfsPath(char *out_path, const char *in_path) {
 }
 
 static void convertFileStat(SceIoStat *stat) {
+  int mode = 0777;
+  if ((stat->st_mode & 0202) == 0)
+  {
+    mode = 0555;
+  }
+
+  mode = (stat->st_mode & 0170000) | mode;
+
   if (stat->st_mode & SCE_S_IFDIR)
+  {
     stat->st_attr |= SCE_SO_IFDIR;
+  }
 
   if (stat->st_mode & SCE_S_IFREG)
+  {
     stat->st_attr |= SCE_SO_IFREG;
+  }
+
+  stat->st_mode = mode;
 
   ScePspemuConvertStatTimeToLocaltime(stat);
 }
