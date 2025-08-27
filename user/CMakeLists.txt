@@ -11,8 +11,45 @@ endif()
 project(adrenaline_user)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
+include(ExternalProject)
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostartfiles -fno-lto -nostdlib -fno-builtin")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
+
+ExternalProject_Add(libvita2dfbo
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    GIT_REPOSITORY https://github.com/frangarcj/vita2dlib.git
+    GIT_TAG        fbo
+    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/libvita2dfbo
+    BUILD_IN_SOURCE 1
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND make -C libvita2d
+    INSTALL_COMMAND ""
+)
+
+add_library(libvita2dfbo_libA STATIC IMPORTED GLOBAL)
+set_property(TARGET libvita2dfbo_libA 
+    PROPERTY IMPORTED_LOCATION 
+    ${CMAKE_CURRENT_BINARY_DIR}/libvita2dfbo/libvita2d/libvita2d.a
+)
+
+ExternalProject_Add(vitashadercollection
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
+    URL https://github.com/frangarcj/vita-shader-collection/releases/download/master-0.1-v86/vita-shader-collection.tar.gz
+    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/vitashadercollection
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+    BUILD_IN_SOURCE 1
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+)
+
+add_library(vitashadercollection_libA STATIC IMPORTED GLOBAL)
+set_property(TARGET vitashadercollection_libA 
+    PROPERTY IMPORTED_LOCATION 
+    ${CMAKE_CURRENT_BINARY_DIR}/vitashadercollection/lib/libvitashaders.a
+)
+
 
 # Builds
 FUNCTION(ADD_RESOURCES out_var)
@@ -57,12 +94,17 @@ add_executable(adrenaline_user
   lz4/lz4.c
 )
 
+add_dependencies(adrenaline_user libvita2dfbo)
+add_dependencies(adrenaline_user vitashadercollection)
+
+target_include_directories(adrenaline_user PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/libvita2dfbo/libvita2d/include)
+target_include_directories(adrenaline_user PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/vitashadercollection/includes)
 target_link_directories(adrenaline_user PRIVATE ${CMAKE_BINARY_DIR}/kernel)
 target_link_libraries(adrenaline_user
   AdrenalineKernel_stub
   taihen_stub
-  vita2d
-  vitashaders
+  libvita2dfbo_libA
+  vitashadercollection_libA
   SceRtabi_stub
   SceLibc_stub
   SceAppMgr_stub
