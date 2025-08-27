@@ -172,8 +172,9 @@ static int is_licensed_eboot(const char *path) {
 		sceIoLseek(fd, tou32(buf + 0x24), 0);
 		sceIoRead(fd, buf, 0xC);
 
-		if (!memcmp(buf, "NPUMDIMG", 8))
+		if (!memcmp(buf, "NPUMDIMG", 8)) {
 			ret = memcmp(buf + 8, "\x03\x00\x00\x01", 4); //disable patch if fixed key version is detected.
+		}
 	}
 
 	sceIoClose(fd);
@@ -272,7 +273,7 @@ void PatchNp9660Driver(SceModule2* mod) {
 	g_np9660_mod = mod;
 
 	// Do not patch in pops mode
-	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+	if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
 		return;
 	}
 
@@ -295,6 +296,8 @@ void PatchNp9660Driver(SceModule2* mod) {
 			break;
 		}
 	}
+
+	sctrlFlushCache();
 }
 
 void PatchNpDrmDriver(SceModule2* mod) {
@@ -456,4 +459,6 @@ void PatchDrmGameModule(SceModule2* mod) {
 
 	sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, sceIoOpenDrmPatched,0);
 	sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x89AA9906, sceIoOpenAsyncDrmPatched,0);
+
+	sctrlFlushCache();
 }
