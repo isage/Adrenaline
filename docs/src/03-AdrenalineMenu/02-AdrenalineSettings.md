@@ -1,7 +1,7 @@
 # Adrenaline Application Settings
 ---
 
-A tab in the [Adrenaline Menu](../04-AdrenalineMenu.md) that allows to adjusts various settings related to Adrenaline Application.
+A tab in the [Adrenaline Menu](../04-AdrenalineMenu.md) that allows adjusting various settings related to Adrenaline Application.
 
 <p align="center">
 <img src="../assets/03-epi-menu-settings.png" width="70%" />
@@ -9,7 +9,7 @@ A tab in the [Adrenaline Menu](../04-AdrenalineMenu.md) that allows to adjusts v
 
 ## Graphics Filtering
 
-Applies graphical filters in the Vita/PSTV screen while Adrenaline App is open.
+Applies graphical filters in the Vita/PSTV screen while the Adrenaline App is open.
 
 It offers these options:
 
@@ -22,7 +22,7 @@ It offers these options:
 - **Scale2x**: Doubles the resolution using pixel interpolation, making graphics less blocky.
 
 > [!IMPORTANT]
-> When the **Original** option is selected, all graphics related options are not going to take effect.
+> When the **Original** option is selected, all graphics-related options will not take effect.
 
 ## Smooth Graphics
 
@@ -41,14 +41,14 @@ The available options are:
 
 ## Screen Scale X/Y (PSP)
 
-Allows to adjust the horizontal (X) and vertical (Y) scaling of the PSP screen within Adrenaline on XMB/VSH and PSP games/homebrew/applications. This allows you to change the size and aspect ratio of the application display to better fit your Vita/PSTV screen and/or the user preference.
+Allows to adjust the horizontal (X) and vertical (Y) scaling of the PSP screen within Adrenaline on XMB/VSH and PSP games/homebrew/applications. This allows you to change the size and aspect ratio of the application display to better fit your Vita/PSTV screen and/or the users' preferences.
 
 ## Screen Scale X/Y (PS1)
 
 Same as [Screen Scale X/Y (PSP)](#screen-scale-xy-psp), but exclusively on PS1 games/homebrew.
 
 > [!TIP] GrayJack Personal Preference
-> For this config, I like to set to `1.215` on both X and Y axis. Maximizes the size while maintaining the original game proportions.
+> For this config, I like to set it to `1.215` on both X and Y axis. Maximizes the size while maintaining the original game proportions.
 
 ## Memory Stick Location
 
@@ -64,7 +64,7 @@ The options are:
 
 ## USB device
 
-Selects the device that will be show up when connecting the Vita into a system via USB.
+Selects the device that will show up when connecting the Vita to a system via USB.
 
 The options are:
 
@@ -75,4 +75,5 @@ The options are:
 
 ## Skip Adrenaline Boot Logo
 
-When enabled, skips the Adrenaline logo at the start of Adrenaline Application.
+When enabled, it skips the Adrenaline logo at the start of the Adrenaline Application.
+

@@ -11,6 +11,7 @@ Adrenaline CFW has several settings options that modify the behavior of the syst
 You can use the [XMB](./10-XmbCfwMenus.md#-adrenaline-cfw-settings) or the [Recovery Menu](./09-RecoveryMenu.md) to easily modify the CFW settings.
 
 ## General Settings
+---
 
 ### CPU/BUS clock speed in XMB
 
@@ -70,7 +71,7 @@ Corrupt icons happens in the case a game folder does not contain an `EBOOT.PBP` 
 
 ### Hide DLCs in game menu
 
-When enabled, hides DLC from showing up as duplicate games.
+When enabled, hides DLC from showing up as duplicate games when you have DLC installed for your ISO game.
 
 ### Hide PIC0/PIC1 in game menu
 
@@ -137,6 +138,7 @@ Configures the color of the Recovery Menu.
 
 
 ## Advanced Settings
+---
 
 Advanced settings are called that for a reason. They provide powerful options that can significantly alter system behavior, stability, or compatibility. These settings are intended for experienced users and tinkerers exploring the best set of configuration for cases of bad compatibility with apps and games (anti-CFW checks, slowdowns not solved by general settings, etc).
 

@@ -14,6 +14,7 @@ The Recovery Menu has three sections: `General`, `Advanced` and `Plugin`.
 </p>
 
 ## General
+---
 
 This section is more focused on the [General CFW Settings](./08-CfwConfiguration.md#general-settings). But it contains a couple of extra itens detailed bellow.
 
@@ -31,6 +32,7 @@ Exit the Recovery Menu and restart the vPSP system.
 
 
 ## Advanced
+---
 
 This section is more focused on the [Advanced CFW Settings](./08-CfwConfiguration.md#advanced-settings). But it contains a few extra itens detailed bellow.
 
@@ -67,6 +69,7 @@ Enables Flash Player  without connecting to the internet.
 Resets the CFW settings to the default values.
 
 ## Plugins
+---
 
 This is the Recovery Menu plugin manager. Here you can select a plugin and change its value to `Disabled` or `Enabled`.
 

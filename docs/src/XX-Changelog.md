@@ -5,12 +5,12 @@
 ---
 
 - **Breaking change:** New plugin configuration format
-	- Only one configuration file `/pspemu/seplugins/EPIplugins.txt`
-	- Finer control when to enable/disable plugins
-	- Support for plugin in specific games
-	- Support for plugin only on homebrew apps
+    - Only one configuration file `/pspemu/seplugins/EPIplugins.txt`
+    - Finer control over when to enable/disable plugins
+    - Support for plugins in specific games
+    - Support for plugin only on homebrew apps
 - Added `Scale2x` graphical filter options
-- Added support for launching `JSO`, `ZSO`, `CSOv2` and `DAX` compressed ISO formats using any ISO driver.
+- Added support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver.
 - Update the Inferno Driver to Inferno 2
 - Introduce March33 Driver v2: An evolution of the March33 ISO driver
 - Improved the speed and efficiency of all ISO drivers
@@ -23,8 +23,8 @@
 
 - **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size
 - **DEV:** Expand CFW libraries API
-- **DEV:** Improve CFW API compatibility with other CFW's API (M33, ME, PRO and ARK-4): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel` and `SysclibForUser`
-- **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use in even outside of Adrenaline (i.e. your project)
+- **DEV:** Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK-4): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel`, and `SysclibForUser`
+- **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use even outside of Adrenaline (i.e. your project)
 
 - **Internal:** Some code reorganization
 - **Internal:** Code clean ups
