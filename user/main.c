@@ -350,7 +350,7 @@ int AdrenalineCompat(SceSize args, void *argp) {
       sceClibPrintf(adrenaline->printbuf);
       res = 0;
     } else if (request->cmd == ADRENALINE_VITA_CMD_UPDATE) {
-      res = sceSysmoduleLoadModule(SCE_SYSMODULE_LIVEAREA);
+      res = sceSysmoduleIsLoaded(SCE_SYSMODULE_LIVEAREA);
 
       if ( res == 0 ) {
         char frameXmlStr[512] = {0};
@@ -364,7 +364,6 @@ int AdrenalineCompat(SceSize args, void *argp) {
                 "app0:/",
                 0);
         }
-        sceSysmoduleUnloadModule(SCE_SYSMODULE_LIVEAREA);
       }
     }
 
@@ -603,7 +602,6 @@ int module_start(SceSize args, void *argp) {
             "app0:/",
             0
     );
-    sceSysmoduleUnloadModule(SCE_SYSMODULE_LIVEAREA);
   }
 
   // Read config
