@@ -9,6 +9,7 @@
     - Finer control over when to enable/disable plugins
     - Support for plugins in specific games
     - Support for plugin only on homebrew apps
+	- Migration instructions below
 - Added `Scale2x` graphical filter options
 - Added support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver.
 - Update the Inferno Driver to Inferno 2
@@ -28,6 +29,15 @@
 
 - **Internal:** Some code reorganization
 - **Internal:** Code clean ups
+
+> [!IMPORTANT] Plugin Migration Instructions
+> This is how to migrate your plugins to the new format after updating Adrenaline to 8.0.0
+>
+> 1. Open Recovery Menu
+> 2. Go to the `Advanced` section
+> 3. Select and click on `Import classic plugins`
+>
+> <p align="center"> <img src="./assets/04-import-plugins.png" width="700em" /> </p>
 
 ## v7.1.7
 ---
