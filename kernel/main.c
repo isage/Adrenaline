@@ -208,8 +208,11 @@ uint32_t adrStopBlanking() {
   if (blackline_uid >= 0)
     ksceKernelFreeMemBlock(blackline_uid);
 
+  int vol = volume;
+  volume = 0;
+
   EXIT_SYSCALL(state);
-  return volume;
+  return vol;
 }
 
 void _start() __attribute__ ((weak, alias("module_start")));
