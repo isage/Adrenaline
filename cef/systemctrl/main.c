@@ -642,11 +642,6 @@ static int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "sceNp9660_driver") == 0) {
 		PatchNp9660Driver(mod);
 
-	} else if (strcmp(modname, "sceIsofs_driver") == 0) {
-		findAndSetGameId();
-		logmsg3("[INFO]: Game ID: %s\n", rebootex_config.game_id);
-		CheckControllerInput();
-
 	} else if (strcmp(modname, "sceUmd_driver") == 0) {
 		REDIRECT_FUNCTION(text_addr + 0xC80, sceUmdRegisterUMDCallBackPatched);
 		sctrlFlushCache();
@@ -657,6 +652,9 @@ static int OnModuleStart(SceModule2 *mod) {
 
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
+		findAndSetGameId();
+		logmsg3("[INFO]: Game ID: %s\n", rebootex_config.game_id);
+		CheckControllerInput();
 
 	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod);
