@@ -411,6 +411,12 @@ void PatchSysconfForDrm(SceModule2 *mod) {
 		return;
 	}
 
+	// Only patch on VSH
+	int app_type = sceKernelApplicationType();
+	if (app_type != SCE_APPTYPE_VSH) {
+		return;
+	}
+
 	//patch sysconf act/rif check, call official function first, then patch to return 0 if it fails.
 	for (u32 addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
 		if (VREAD32(addr) == 0x0062200B) { // movn       $a0, $v1, $v0
@@ -449,6 +455,12 @@ SceUID sceIoOpenAsyncDrmPatched(const char *path, int flags, SceMode mode) {
 void PatchDrmGameModule(SceModule2* mod) {
 	// Do not patch if configured to not patch it
 	if (config.no_nodrm_engine) {
+		return;
+	}
+
+	// Do not patch on POPS
+	int app_type = sceKernelApplicationType();
+	if (app_type == SCE_APPTYPE_POPS) {
 		return;
 	}
 

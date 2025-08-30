@@ -679,14 +679,14 @@ static int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "sceSAScore") == 0) {
 		PatchSasCore(mod);
 
-	} else if(strcmp(modname, "sceUSBCam_Driver") == 0) {
+	} else if (strcmp(modname, "sceUSBCam_Driver") == 0) {
 		PatchUSBCamDriver(mod);
 
-	} else if(strcmp(modname, "vsh_module") == 0) {
+	} else if (strcmp(modname, "vsh_module") == 0) {
 		PatchVshForDrm(mod);
 		PatchDrmOnVsh();
 
-	} else if(strcmp(modname, "sysconf_plugin_module") == 0) {
+	} else if (strcmp(modname, "sysconf_plugin_module") == 0) {
 		PatchSysconfForDrm(mod);
 
 	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
