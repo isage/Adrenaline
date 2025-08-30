@@ -232,13 +232,13 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 		if (sceKernelFindModuleByName(waitmodule) != NULL) {
 			plugindone = 1;
 
-			int type = sceKernelInitKeyConfig();
+			int type = sceKernelApplicationType();
 
-			if (type == PSP_INIT_KEYCONFIG_VSH && !config.no_xmbctrl) {
+			if (type == SCE_APPTYPE_VSH && !config.no_xmbctrl) {
 				loadXmbControl();
 			}
 
-			if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
+			if (type == SCE_APPTYPE_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
 				goto START_MODULE;
 			}
 

@@ -124,7 +124,7 @@ static int isVshRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype >= SCE_EXEC_APITYPE_KERNEL1) {
+		if (apitype >= SCE_APITYPE_VSH_KERNEL) {
 			cur_runlevel = RUNLEVEL_VSH;
 		}
 	}
@@ -135,7 +135,7 @@ static int isPopsRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_EXEC_APITYPE_MS5 || apitype == SCE_EXEC_APITYPE_EF5) {
+		if (apitype == SCE_APITYPE_MS5 || apitype == SCE_APITYPE_EF5) {
 			cur_runlevel = RUNLEVEL_POPS;
 		}
 	}
@@ -146,10 +146,10 @@ static int isUmdRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_EXEC_APITYPE_DISC || apitype == SCE_EXEC_APITYPE_DISC2
-			|| (apitype >= SCE_EXEC_APITYPE_DISC_EMU_MS1 && apitype <= SCE_EXEC_APITYPE_DISC_EMU_EF2)
-			|| apitype == SCE_EXEC_APITYPE_USBWLAN || apitype == SCE_EXEC_APITYPE_DISC2
-			|| (apitype >= SCE_EXEC_APITYPE_GAME_EBOOT && apitype <= SCE_EXEC_APITYPE_EMU_BOOT_EF)) {
+		if (apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2
+			|| (apitype >= SCE_APITYPE_UMD_EMU_MS1 && apitype <= SCE_APITYPE_UMD_EMU_EF2)
+			|| apitype == SCE_APITYPE_USBWLAN
+			|| (apitype >= SCE_APITYPE_GAME_EBOOT && apitype <= SCE_APITYPE_EMU_BOOT_EF)) {
 
 			cur_runlevel = RUNLEVEL_UMD;
 		}
@@ -161,7 +161,7 @@ static int isHomebrewRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_EXEC_APITYPE_MS2 || apitype == SCE_EXEC_APITYPE_EF2) {
+		if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2) {
 			cur_runlevel = RUNLEVEL_HOMEBREW;
 		}
 	}

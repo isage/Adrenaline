@@ -307,7 +307,7 @@ void PatchNpDrmDriver(SceModule2* mod) {
 	}
 
 	u32 text_addr = mod->text_addr;
-	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
+	if (sceKernelBootFrom() == SCE_BOOT_DISC) {
 		SceModule2 *mod = sceKernelFindModuleByName("sceIOFileManager");
 
 		for (int i = 0; i < mod->text_size; i += 4) {

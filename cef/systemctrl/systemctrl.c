@@ -234,7 +234,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 	// obtain game id
     u32 gameid_size = sizeof(rebootex_config.game_id);
     memset(rebootex_config.game_id, 0, gameid_size);
-    if (apitype == SCE_EXEC_APITYPE_DISC || apitype == SCE_EXEC_APITYPE_DISC2){
+    if (apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2){
         readGameIdFromDisc();
     } else {
         sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, rebootex_config.game_id);
@@ -248,51 +248,51 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 }
 
 int sctrlKernelLoadExecVSHMs1(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS1, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS1, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs2(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS2, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS2, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS3, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS3, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs4(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS4, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS4, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs5(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_MS5, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS5, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf1(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF1, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF1, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf2(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF2, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF2, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf3(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF3, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF3, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf4(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF4, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF4, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf5(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_EF5, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF5, file, param);
 }
 
 int sctrlKernelLoadExecVSHDisc(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_DISC, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_UMD, file, param);
 }
 
 int sctrlKernelLoadExecVSHDiscUpdater(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_EXEC_APITYPE_DISC_UPDATER, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_UMD_UPDATER, file, param);
 }
 
 int sctrlKernelQuerySystemCall(void *function) {

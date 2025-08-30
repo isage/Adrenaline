@@ -50,6 +50,7 @@ Adrenaline is two software projects in one: Adrenaline Application (1) and Adren
 | Key Combo       | Event                                 | Availability                                 |
 |-----------------|---------------------------------------|----------------------------------------------|
 | L+R+Down+Select | Fast exit to VSH                      | Anytime                                      |
+| L+R+Down+Start  | Fast exit to VSH                      | Anytime                                      |
 | L+Select        | Toggle PS1 Fast Forward               | PS1/POPS Apps and Games                      |
 | Select          | Open VSH Menu                         | XMB/VSH                                      |
 | Hold L          | Plugins disabled                      | Reset/Power on/booting PSP/PS1 application   |

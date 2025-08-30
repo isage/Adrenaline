@@ -137,7 +137,7 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 	// Do not allow in pops and vsh
 	int apitype = sceKernelInitApitype();
-	if (apitype == SCE_EXEC_APITYPE_MS5 || apitype == SCE_EXEC_APITYPE_EF5 || apitype >= SCE_EXEC_APITYPE_KERNEL1) {
+	if (apitype == SCE_APITYPE_MS5 || apitype == SCE_APITYPE_EF5 || apitype >= SCE_APITYPE_VSH_KERNEL) {
 		return -1;
 	}
 
@@ -406,9 +406,9 @@ void PatchImposeDriver(SceModule2* mod) {
 
 	HIJACK_FUNCTION(text_addr + 0x381C, SetIdleCallbackPatched, SetIdleCallback);
 
-	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+	if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
 		SetupCallbacks();
-		MAKE_DUMMY_FUNCTION(text_addr + 0x91C8, PSP_INIT_KEYCONFIG_GAME);
+		MAKE_DUMMY_FUNCTION(text_addr + 0x91C8, SCE_APPTYPE_GAME);
 	}
 
 	REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
@@ -440,7 +440,7 @@ void SetSpeed(int cpu, int bus) {
 		scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x737486F2);
 		scePowerSetClockFrequency_k(cpu, cpu, bus);
 
-		if (sceKernelInitKeyConfig() != PSP_INIT_KEYCONFIG_VSH) {
+		if (sceKernelApplicationType() != SCE_APPTYPE_VSH) {
 			MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
 			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
 			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);

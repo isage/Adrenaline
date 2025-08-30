@@ -72,7 +72,7 @@ static int o_flags = 0xF0000 | PSP_O_RDONLY;
 static void wait_until_ms0_ready(void) {
 	int ret, status = 0;
 
-	if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_VSH) {
+	if (sceKernelApplicationType() == SCE_APPTYPE_VSH) {
 		o_flags = PSP_O_RDONLY;
 		max_retries = 10;
 		return; // no wait on VSH

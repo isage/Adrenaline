@@ -76,14 +76,14 @@ int getSfoTitle(char *title, int n) {
 	memset(title, 0, n);
 
 	int bootfrom = sceKernelBootFrom();
-	if (bootfrom == PSP_BOOT_DISC) {
+	if (bootfrom == SCE_BOOT_DISC) {
         fd = sceIoOpen("disc0:/PSP_GAME/PARAM.SFO", PSP_O_RDONLY, 0);
 		if (fd < 0)
 			return fd;
 
 		size = sceIoLseek(fd, 0, PSP_SEEK_END);
 		sceIoLseek(fd, 0, PSP_SEEK_SET);
-	} else if (bootfrom == PSP_BOOT_MS) {
+	} else if (bootfrom == SCE_BOOT_MS) {
 		char *filename = sceKernelInitFileName();
 		if (!filename)
 			return -1;
@@ -134,12 +134,12 @@ int getSfoTitle(char *title, int n) {
 void initAdrenalineInfo() {
 	memset(adrenaline, 0, sizeof(SceAdrenaline));
 
-	int keyconfig = sceKernelInitKeyConfig();
-	if (keyconfig == PSP_INIT_KEYCONFIG_GAME) {
+	int keyconfig = sceKernelApplicationType();
+	if (keyconfig == SCE_APPTYPE_GAME) {
 		getSfoTitle(adrenaline->title, 128);
-	} else if (keyconfig == PSP_INIT_KEYCONFIG_POPS) {
+	} else if (keyconfig == SCE_APPTYPE_POPS) {
 		getSfoTitle(adrenaline->title, 128);
-	} else if (keyconfig == PSP_INIT_KEYCONFIG_VSH) {
+	} else if (keyconfig == SCE_APPTYPE_VSH) {
 		strcpy(adrenaline->title, "XMB\xE2\x84\xA2");
 	} else {
 		strcpy(adrenaline->title, "Unknown");
@@ -153,7 +153,7 @@ void initAdrenalineInfo() {
 	if (filename)
 		strcpy(adrenaline->filename, filename);
 
-	adrenaline->pops_mode = sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS;
+	adrenaline->pops_mode = sceKernelApplicationType() == SCE_APPTYPE_POPS;
 }
 
 int adrenaline_interrupt() {

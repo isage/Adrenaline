@@ -310,7 +310,7 @@ int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 }
 
 static void PatchVolatileMemBug() {
-	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
+	if (sceKernelBootFrom() == SCE_BOOT_DISC) {
 		sceKernelVolatileMemTryLock = (void *)FindProc("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
 		sctrlHENPatchSyscall((u32)sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
 		sctrlFlushCache();
@@ -569,7 +569,7 @@ static int OnModuleStart(SceModule2 *mod) {
 		}
 
 		// Protect pops memory
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+		if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
 			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
 		}
 
@@ -605,13 +605,13 @@ static int OnModuleStart(SceModule2 *mod) {
 	} else if (strcmp(modname, "scePower_Service") == 0) {
 		logmsg3("[INFO]: Built: %s %s\n", __DATE__, __TIME__);
 		logmsg3("[INFO]: Boot From: 0x%X\n", sceKernelBootFrom());
-		logmsg3("[INFO]: Key Config: 0x%X\n", sceKernelInitKeyConfig());
+		logmsg3("[INFO]: App Type: 0x%X\n", sceKernelApplicationType());
 		logmsg3("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
 		logmsg3("[INFO]: Filename: %s\n", sceKernelInitFileName());
 
 		sctrlSEGetConfig(&config);
 
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
+		if (sceKernelApplicationType() == SCE_APPTYPE_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
 			if (config.force_high_memory == HIGHMEM_OPT_STABLE) {
 				sctrlHENSetMemory(40, 12);
 			} else if (config.force_high_memory == HIGHMEM_OPT_MAX) {
@@ -703,7 +703,7 @@ static int OnModuleStart(SceModule2 *mod) {
 		sctrlFlushCache();
 
 	} else if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+		if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
 			sctrlHENHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched, 0);
 			sctrlHENHookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched, 0);
 			sctrlFlushCache();

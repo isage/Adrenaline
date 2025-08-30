@@ -66,7 +66,7 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 		if (execInfo->isDecrypted) {
 			// Static ELF
 			if (header->e_type == 2) {
-				execInfo->apiType = PSP_INIT_APITYPE_DISC;
+				execInfo->apiType = SCE_APITYPE_UMD;
 
 				// Find moduleInfoOffset
 				if (execInfo->moduleInfoOffset == 0) {
