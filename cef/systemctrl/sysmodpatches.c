@@ -28,6 +28,7 @@
 #include "plugin.h"
 
 #define EXIT_TO_VSH_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_SELECT | PSP_CTRL_DOWN)
+#define EXIT_TO_VSH2_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
 int (* _sceChkregGetPsCode)(u8 *pscode);
 
@@ -505,7 +506,7 @@ int sceCtrlPeekBufferPositivePatched(SceCtrlData *pad_data, int count) {
 
 	count = _sceCtrlPeekBufferPositive(pad_data, count);
 
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK) {
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == EXIT_TO_VSH2_MASK) {
 		startExitThread();
 	}
 
@@ -520,7 +521,7 @@ int sceCtrlPeekBufferNegativePatched(SceCtrlData *pad_data, int count) {
 
 	count = _sceCtrlPeekBufferNegative(pad_data, count);
 
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0) {
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0 || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == 0) {
 		startExitThread();
 	}
 
@@ -535,7 +536,7 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 
 	count = _sceCtrlReadBufferPositive(pad_data, count);
 
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK) {
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == EXIT_TO_VSH2_MASK) {
 		startExitThread();
 	}
 
@@ -550,7 +551,7 @@ int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
 
 	count = _sceCtrlReadBufferNegative(pad_data, count);
 
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0) {
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0 || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == 0) {
 		startExitThread();
 	}
 
@@ -577,4 +578,6 @@ void PatchController(SceModule2* mod) {
 	HIJACK_FUNCTION(_sceCtrlPeekBufferNegative, sceCtrlPeekBufferNegativePatched, _sceCtrlPeekBufferNegative);
 	HIJACK_FUNCTION(_sceCtrlReadBufferPositive, sceCtrlReadBufferPositivePatched, _sceCtrlReadBufferPositive);
 	HIJACK_FUNCTION(_sceCtrlReadBufferNegative, sceCtrlReadBufferNegativePatched, _sceCtrlReadBufferNegative);
+
+	sctrlFlushCache();
 }
