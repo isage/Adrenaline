@@ -472,6 +472,7 @@
 <hr />
 <div class="table-wrapper"><table><thead><tr><th>Key Combo</th><th>Event</th><th>Availability</th></tr></thead><tbody>
 <tr><td>L+R+Down+Select</td><td>Fast exit to VSH</td><td>Anytime</td></tr>
+<tr><td>L+R+Down+Start</td><td>Fast exit to VSH</td><td>Anytime</td></tr>
 <tr><td>L+Select</td><td>Toggle PS1 Fast Forward</td><td>PS1/POPS Apps and Games</td></tr>
 <tr><td>Select</td><td>Open VSH Menu</td><td>XMB/VSH</td></tr>
 <tr><td>Hold L</td><td>Plugins disabled</td><td>Reset/Power on/booting PSP/PS1 application</td></tr>
@@ -2560,6 +2561,415 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <li>Select and click on <code>Import classic plugins</code></li>
 </ol>
 <p align="center"> <img src="04-HomebrewSupport/../assets/04-import-plugins.png" width="700em" /> </p>
+</div>
+<div style="break-before: page; page-break-before: always;"></div><style>
+.mdbook-callouts {
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  /* border-left: 0.25em solid var(--mdbook-callouts-color); */
+  background: var(--mdbook-callouts-background);
+}
+
+.mdbook-callouts > *:first-child {
+  margin-top: 0;
+}
+
+.mdbook-callouts > *:last-child {
+  margin-bottom: 0;
+}
+
+.mdbook-callouts-title {
+  display: flex;
+  font-weight: 600;
+  align-items: center;
+  line-height: 1;
+  color: var(--mdbook-callouts-color);
+  text-transform: capitalize;
+}
+
+.mdbook-callouts-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.2em;
+  background-color: currentColor;
+  -webkit-mask: no-repeat center / 100%;
+  mask: no-repeat center / 100%;
+  -webkit-mask-image: var(--mdbook-callouts-icon);
+  mask-image: var(--mdbook-callouts-icon);
+}
+
+/* icons at: https://lucide.dev/icons/ */
+
+.mdbook-callouts-info {
+  --mdbook-callouts-color: rgb(var(--color-blue-rgb));
+  --mdbook-callouts-background: rgba(var(--color-blue-rgb), 0.1);
+  /* https://lucide.dev/icons/info */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWluZm8iPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PHBhdGggZD0iTTEyIDE2di00Ii8+PHBhdGggZD0iTTEyIDhoLjAxIi8+PC9zdmc+');
+}
+
+.mdbook-callouts-note {
+  --mdbook-callouts-color: rgb(var(--color-blue-rgb));
+  --mdbook-callouts-background: rgba(var(--color-blue-rgb), 0.1);
+  /* https://lucide.dev/icons/pencil */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXBlbmNpbCI+PHBhdGggZD0iTTE3IDNhMi44NSAyLjgzIDAgMSAxIDQgNEw3LjUgMjAuNSAyIDIybDEuNS01LjVaIi8+PHBhdGggZD0ibTE1IDUgNCA0Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-tip,
+.mdbook-callouts-hint {
+  --mdbook-callouts-color: rgb(var(--color-cyan-rgb));
+  --mdbook-callouts-background: rgba(var(--color-cyan-rgb), 0.1);
+  /* https://lucide.dev/icons/flame */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWZsYW1lIj48cGF0aCBkPSJNOC41IDE0LjVBMi41IDIuNSAwIDAgMCAxMSAxMmMwLTEuMzgtLjUtMi0xLTMtMS4wNzItMi4xNDMtLjIyNC00LjA1NCAyLTYgLjUgMi41IDIgNC45IDQgNi41IDIgMS42IDMgMy41IDMgNS41YTcgNyAwIDEgMS0xNCAwYzAtMS4xNTMuNDMzLTIuMjk0IDEtM2EyLjUgMi41IDAgMCAwIDIuNSAyLjV6Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-important {
+  --mdbook-callouts-color: rgb(var(--color-purple-rgb));
+  --mdbook-callouts-background: rgba(var(--color-purple-rgb), 0.1);
+  /* https://lucide.dev/icons/alert-circle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFsZXJ0LWNpcmNsZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjgiIHkyPSIxMiIvPjxsaW5lIHgxPSIxMiIgeDI9IjEyLjAxIiB5MT0iMTYiIHkyPSIxNiIvPjwvc3ZnPg==');
+}
+
+.mdbook-callouts-success,
+.mdbook-callouts-check,
+.mdbook-callouts-done {
+  --mdbook-callouts-color: rgb(var(--color-green-rgb));
+  --mdbook-callouts-background: rgba(var(--color-green-rgb), 0.1);
+  /* https://lucide.dev/icons/check */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZWNrIj48cGF0aCBkPSJNMjAgNiA5IDE3bC01LTUiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-question,
+.mdbook-callouts-help,
+.mdbook-callouts-faq {
+  --mdbook-callouts-color: rgb(var(--color-pink-rgb));
+  --mdbook-callouts-background: rgba(var(--color-pink-rgb), 0.1);
+  /* https://lucide.dev/icons/help-circle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWhlbHAtY2lyY2xlIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik05LjA5IDlhMyAzIDAgMCAxIDUuODMgMWMwIDItMyAzLTMgMyIvPjxwYXRoIGQ9Ik0xMiAxN2guMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-warning,
+.mdbook-callouts-warn {
+  --mdbook-callouts-color: rgb(var(--color-orange-rgb));
+  --mdbook-callouts-background: rgba(var(--color-orange-rgb), 0.1);
+  /* https://lucide.dev/icons/alert-triangle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFsZXJ0LXRyaWFuZ2xlIj48cGF0aCBkPSJtMjEuNzMgMTgtOC0xNGEyIDIgMCAwIDAtMy40OCAwbC04IDE0QTIgMiAwIDAgMCA0IDIxaDE2YTIgMiAwIDAgMCAxLjczLTNaIi8+PHBhdGggZD0iTTEyIDl2NCIvPjxwYXRoIGQ9Ik0xMiAxN2guMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-caution {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/shield-alert */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXNoaWVsZC1hbGVydCI+PHBhdGggZD0iTTEyIDIyczgtNCA4LTEwVjVsLTgtMy04IDN2N2MwIDYgOCAxMCA4IDEwIi8+PHBhdGggZD0iTTEyIDh2NCIvPjxwYXRoIGQ9Ik0xMiAxNmguMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-failure,
+.mdbook-callouts-fail,
+.mdbook-callouts-missing {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/x */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXgiPjxwYXRoIGQ9Ik0xOCA2IDYgMTgiLz48cGF0aCBkPSJtNiA2IDEyIDEyIi8+PC9zdmc+');
+}
+
+.mdbook-callouts-error,
+.mdbook-callouts-danger {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/zap */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXphcCI+PHBvbHlnb24gcG9pbnRzPSIxMyAyIDMgMTQgMTIgMTQgMTEgMjIgMjEgMTAgMTIgMTAgMTMgMiIvPjwvc3ZnPg==');
+}
+
+.mdbook-callouts-bug {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/bug */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJ1ZyI+PHBhdGggZD0ibTggMiAxLjg4IDEuODgiLz48cGF0aCBkPSJNMTQuMTIgMy44OCAxNiAyIi8+PHBhdGggZD0iTTkgNy4xM3YtMWEzLjAwMyAzLjAwMyAwIDEgMSA2IDB2MSIvPjxwYXRoIGQ9Ik0xMiAyMGMtMy4zIDAtNi0yLjctNi02di0zYTQgNCAwIDAgMSA0LTRoNGE0IDQgMCAwIDEgNCA0djNjMCAzLjMtMi43IDYtNiA2Ii8+PHBhdGggZD0iTTEyIDIwdi05Ii8+PHBhdGggZD0iTTYuNTMgOUM0LjYgOC44IDMgNy4xIDMgNSIvPjxwYXRoIGQ9Ik02IDEzSDIiLz48cGF0aCBkPSJNMyAyMWMwLTIuMSAxLjctMy45IDMuOC00Ii8+PHBhdGggZD0iTTIwLjk3IDVjMCAyLjEtMS42IDMuOC0zLjUgNCIvPjxwYXRoIGQ9Ik0yMiAxM2gtNCIvPjxwYXRoIGQ9Ik0xNy4yIDE3YzIuMS4xIDMuOCAxLjkgMy44IDQiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-examples,
+.mdbook-callouts-example {
+  --mdbook-callouts-color: rgb(var(--color-purple-rgb));
+  --mdbook-callouts-background: rgba(var(--color-purple-rgb), 0.1);
+  /* https://lucide.dev/icons/list */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpc3QiPjxsaW5lIHgxPSI4IiB4Mj0iMjEiIHkxPSI2IiB5Mj0iNiIvPjxsaW5lIHgxPSI4IiB4Mj0iMjEiIHkxPSIxMiIgeTI9IjEyIi8+PGxpbmUgeDE9IjgiIHgyPSIyMSIgeTE9IjE4IiB5Mj0iMTgiLz48bGluZSB4MT0iMyIgeDI9IjMuMDEiIHkxPSI2IiB5Mj0iNiIvPjxsaW5lIHgxPSIzIiB4Mj0iMy4wMSIgeTE9IjEyIiB5Mj0iMTIiLz48bGluZSB4MT0iMyIgeDI9IjMuMDEiIHkxPSIxOCIgeTI9IjE4Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-quote {
+  --mdbook-callouts-color: rgb(158, 158, 158);
+  --mdbook-callouts-background: rgba(158, 158, 158, 0.1);
+  /* https://lucide.dev/icons/quote */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXF1b3RlIj48cGF0aCBkPSJNMyAyMWMzIDAgNy0xIDctOFY1YzAtMS4yNS0uNzU2LTIuMDE3LTItMkg0Yy0xLjI1IDAtMiAuNzUtMiAxLjk3MlYxMWMwIDEuMjUuNzUgMiAyIDIgMSAwIDEgMCAxIDF2MWMwIDEtMSAyLTIgMnMtMSAuMDA4LTEgMS4wMzFWMjBjMCAxIDAgMSAxIDF6Ii8+PHBhdGggZD0iTTE1IDIxYzMgMCA3LTEgNy04VjVjMC0xLjI1LS43NTctMi4wMTctMi0yaC00Yy0xLjI1IDAtMiAuNzUtMiAxLjk3MlYxMWMwIDEuMjUuNzUgMiAyIDJoLjc1YzAgMi4yNS4yNSA0LTIuNzUgNHYzYzAgMSAwIDEgMSAxeiIvPjwvc3ZnPg==');
+}
+
+
+.ayu {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.light {
+  --color-red-rgb: 233, 49, 71;
+  --color-red: #e93147;
+  --color-orange-rgb: 236, 117, 0;
+  --color-orange: #ec7500;
+  --color-yellow-rgb: 224, 172, 0;
+  --color-yellow: #e0ac00;
+  --color-green-rgb: 8, 185, 78;
+  --color-green: #08b94e;
+  --color-cyan-rgb: 0, 191, 188;
+  --color-cyan: #00bfbc;
+  --color-blue-rgb: 8, 109, 221;
+  --color-blue: #086ddd;
+  --color-purple-rgb: 120, 82, 238;
+  --color-purple: #7852ee;
+  --color-pink-rgb: 213, 57, 132;
+  --color-pink: #d53984;
+}
+
+.coal {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.navy {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.rust {
+  --color-red-rgb: 233, 49, 71;
+  --color-red: #e93147;
+  --color-orange-rgb: 236, 117, 0;
+  --color-orange: #ec7500;
+  --color-yellow-rgb: 224, 172, 0;
+  --color-yellow: #e0ac00;
+  --color-green-rgb: 8, 185, 78;
+  --color-green: #08b94e;
+  --color-cyan-rgb: 0, 191, 188;
+  --color-cyan: #00bfbc;
+  --color-blue-rgb: 8, 109, 221;
+  --color-blue: #086ddd;
+  --color-purple-rgb: 120, 82, 238;
+  --color-purple: #7852ee;
+  --color-pink-rgb: 213, 57, 132;
+  --color-pink: #d53984;
+}
+</style>
+<h1 id="notable-plugins"><a class="header" href="#notable-plugins">Notable Plugins</a></h1>
+<hr />
+<h2 id="cxmb"><a class="header" href="#cxmb">CXMB</a></h2>
+<hr />
+<p>One of the most important plugins for customization. With this plugin you can install custom XMB themes made by the community.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>This plugins must be installed in the <code>/seplugins/cxmb/cxmb.prx</code> path or else it will refuse to work.</p>
+</div>
+<p><a href="https://wololo.net/talk/download/file.php?id=3995&amp;sid=e959a08b2f9096913455fac40e7ef84c">Download CXMB Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>xmb, ms0:/seplugins/cxmb/cxmb.prx, on
+</code></pre>
+</div>
+<h2 id="game-categories-lite"><a class="header" href="#game-categories-lite">Game Categories Lite</a></h2>
+<hr />
+<p>This plugin lets you organize your games in subfolders where you can more easily find them and have the XMB load them faster. An important plugin these days of high capacity memory sticks that fit hundreds of games, way more than the PSP was supposed to handle with its limited memory.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>vsh, ms0:/seplugins/category_lite.prx, on
+</code></pre>
+</div>
+<h2 id="pro-online"><a class="header" href="#pro-online">PRO Online</a></h2>
+<hr />
+<p>An important plugin that brings back Online functionality to the PSP on many games.</p>
+<p>On Adrenaline this plugin is compatible with the "Inferno Cache" settings.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>This plugin should be enabled for <code>GAME ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong></p>
+</div>
+<p><a href="https://github.com/Kethen/aemu/releases">Download PRO Online Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example if for <strong>Motorstorm Artic Edge</strong> US version, change or add <code>GAME ID</code>s according to the games you want that it enabled.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>UCES01250, ms0:/seplugins/atpro.prx, on
+</code></pre>
+</div>
+<h2 id="gepatch"><a class="header" href="#gepatch">GePatch</a></h2>
+<hr />
+<p>An experimental plugin for Adrenaline that allows to run a few games in native resolution.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>This plugin should be enabled for <code>GAME ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong>.</p>
+<p>And this plugins in incompatible with the <code>Force High Memory</code> CFW configuration, so it is best to disable this configuration before starting a game with this plugin</p>
+</div>
+<p><a href="https://github.com/TheOfficialFloW/GePatch/releases">Download GePatch Here</a></p>
+<p><a href="https://docs.google.com/spreadsheets/d/1aZlmKwELcdpCb9ezI5iRfgcX9hoGxgL4tNC-673aKqk/edit#gid=0">Link to the compatibility list spreadsheet</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example if for <strong>Final Fantasy III</strong> US version, change or add <code>GAME ID</code>s according to the games you want that it enabled.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>NPUH10125, ms0:/seplugins/ge_patch.prx, on
+</code></pre>
+</div>
+<h2 id="remastered-controls-collection"><a class="header" href="#remastered-controls-collection">Remastered Controls Collection</a></h2>
+<hr />
+<p>A collection of plugins for Adrenaline and ARK (on PSVita/PSTV) that enhance the controls of various PSP titles to better use the PSVita/PSTV controller inputs (like the right joystick).</p>
+<p>It includes plugins for:</p>
+<ul>
+<li><code>Kingdom Hearts: Birth by Sleep</code> and <code>Kingdom Hearts: Birth by Sleep Final Mix</code></li>
+<li><code>Grand Theft Auto: Liberty City Stories</code> and <code>Grand Theft Auto: Vice City Stories</code></li>
+<li><code>Tomb Raider: Anniversary</code> and <code>Tomb Raider: Legend</code></li>
+<li><code>Splinter Cell: Essentials</code></li>
+<li><code>Resitance: Retribution</code></li>
+<li><code>Prince Of Persia: Revelations</code> and <code>Prince Of Persia: Rival Swords</code></li>
+<li><code>Metal Gear Solid: Peace Walker</code>, <code>Metal Gear Solid: Portable Ops</code> and <code>Metal Gear Solid: Portable Ops Plus</code></li>
+<li><code>The Warriors</code></li>
+<li><code>Tony Hawk's Project 8</code></li>
+</ul>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>This plugin should be enabled for <code>GAME ID</code> <strong>ONLY</strong>.</p>
+</div>
+<p><a href="https://github.com/TheOfficialFloW/RemasteredControls/releases">Download Remastered Controls Plugins Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example if for <strong>Kingdom Hearts: Birth By Sleep</strong> US version, change or add <code>GAME ID</code>s and plugin path according to the games you want that it enabled.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>ULUS10505, ms0:/seplugins/khbbs_remastered.prx, on
+</code></pre>
+</div>
+<h2 id="tempar-psp"><a class="header" href="#tempar-psp">TempAR PSP</a></h2>
+<hr />
+<p>TempAR is a complete rewrite of the popular PSP cheat device NitePR/MKULTRA, with additional features and improvements created by raing3.</p>
+<p><a href="https://github.com/raing3/tempar/releases/latest">Download TempAR PSP Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following lines:</p>
+<p><strong>For PSP games:</strong></p>
+<pre><code>psp, ms0:/seplugins/TempAR/tempar.prx, on
+</code></pre>
+<p><strong>For PS1 games:</strong></p>
+<pre><code>pops, ms0:/seplugins/TempAR/tempar_lite.prx, on
+</code></pre>
+</div>
+<h2 id="cwcheat"><a class="header" href="#cwcheat">CWCheat</a></h2>
+<hr />
+<p>A cheat device compatible with every game. Requires an updated cheat database to recognize most games.</p>
+<p>It can be enabled on every game, but should be disabled for GTA games where their specific cheatdevice is preferred.</p>
+<p><a href="https://drive.google.com/open?id=1-PF-CmVGVvW5i-IXFxan4HLXZP8bUrm1">Download CWCheat Here</a></p>
+<p><a href="https://github.com/Saramagrean/CWCheat-Database-Plus-">Download latest cheat database Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following lines:</p>
+<p><strong>For PSP games:</strong></p>
+<pre><code>psp, ms0:/seplugins/cwcheat/cwcheat.prx, on
+</code></pre>
+<p><strong>For PS1 games:</strong></p>
+<pre><code>pops, ms0:/seplugins/cwcheat/cwcheatpops.prx, on
+</code></pre>
+</div>
+<h2 id="gta-lcs-and-vcs-cheatdevice-remastered"><a class="header" href="#gta-lcs-and-vcs-cheatdevice-remastered">GTA LCS and VCS cheatdevice remastered</a></h2>
+<hr />
+<p>A must have plugin for every fan of GTA on the PSP console. Allows for cheats as well as mods.</p>
+<p>It is recommended to enable these plugins only on the specific GTA games where you'll be loading them using Adrenaline's per-game plugins configuration.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>If you have cwcheat also installed and enabled, it is recommended to have it disabled for the specific GTA games that you'll be using with cheat device, you can use ARK's per-game plugins configuration.</p>
+</div>
+<p><a href="https://github.com/Freakler/CheatDeviceRemastered/releases/latest">Download CheatDeviceRemastered Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example is for the US version of those games. Change them according to your region.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following lines:</p>
+<pre><code>ULUS10041 ULUS10160, ms0:seplugins/cheatdevice_remastered.prx, on
+</code></pre>
 </div>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {

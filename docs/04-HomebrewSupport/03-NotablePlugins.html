@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>PSP Playback - Adrenaline Manual/Wiki</title>
+        <title>Notable Plugins - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -12,35 +12,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="highlight-css" href="../highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="../tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="custom.css">
+        <link rel="stylesheet" href="../custom.css">
 
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "../searchindex.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="../toc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Adrenaline Manual/Wiki</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -413,69 +413,188 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="psp-playback"><a class="header" href="#psp-playback">PSP Playback</a></h1>
+<h1 id="notable-plugins"><a class="header" href="#notable-plugins">Notable Plugins</a></h1>
 <hr />
-<p>Adrenaline allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having three available drivers: <code>Inferno 2</code>, <code>March33 2</code>, and <code>Sony's NP9660</code></p>
-<p>There are three formats of PSP game images: <code>PBP</code>, <code>ISO</code>, and <code>Compressed ISO</code>.</p>
-<p>The <code>PBP</code> image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Adrenaline always uses the original <code>Sony's NP9660</code> driver. Usually, <code>PBP</code> files live on <code>???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/</code> directory.</p>
-<p>The <code>ISO</code> image format is a 1:1 copy of a Universal Media Disc (UMD), while <code>Compressed ISO</code> is an <code>ISO</code> image compressed in some way to reduce space usage. There are a few competing formats for <code>Compressed ISO</code>: <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>, each with different tradeoffs. Adrenaline supports all of those formats and allows you to choose between the three UMDemu drivers available. All of those image options should go in <code>??0:/pspemu/ISO/</code> directory.</p>
-<div class="mdbook-callouts mdbook-callouts-info">
+<h2 id="cxmb"><a class="header" href="#cxmb">CXMB</a></h2>
+<hr />
+<p>One of the most important plugins for customization. With this plugin you can install custom XMB themes made by the community.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
-  info
+  important
 </p>
-<p>There is a <a href="./05-PSPPlayback/01-CompressedIsoFormats.html">page</a> explaining the different compressed image formats and their tradeoffs.</p>
+<p>This plugins must be installed in the <code>/seplugins/cxmb/cxmb.prx</code> path or else it will refuse to work.</p>
 </div>
-<h2 id="umdemu-iso-drivers"><a class="header" href="#umdemu-iso-drivers">UMDemu ISO Drivers</a></h2>
-<p>This is a brief overview of the features of each driver in the versions that come with Adrenaline.</p>
-<h3 id="inferno-2"><a class="header" href="#inferno-2">Inferno 2</a></h3>
-<p>This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on <code>ARK-4</code>, with minor modifications for better code reuse with other drivers and integration with the Adrenaline CFW.</p>
+<p><a href="https://wololo.net/talk/download/file.php?id=3995&amp;sid=e959a08b2f9096913455fac40e7ef84c">Download CXMB Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>xmb, ms0:/seplugins/cxmb/cxmb.prx, on
+</code></pre>
+</div>
+<h2 id="game-categories-lite"><a class="header" href="#game-categories-lite">Game Categories Lite</a></h2>
+<hr />
+<p>This plugin lets you organize your games in subfolders where you can more easily find them and have the XMB load them faster. An important plugin these days of high capacity memory sticks that fit hundreds of games, way more than the PSP was supposed to handle with its limited memory.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>vsh, ms0:/seplugins/category_lite.prx, on
+</code></pre>
+</div>
+<h2 id="pro-online"><a class="header" href="#pro-online">PRO Online</a></h2>
+<hr />
+<p>An important plugin that brings back Online functionality to the PSP on many games.</p>
+<p>On Adrenaline this plugin is compatible with the "Inferno Cache" settings.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>This plugin should be enabled for <code>GAME ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong></p>
+</div>
+<p><a href="https://github.com/Kethen/aemu/releases">Download PRO Online Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example if for <strong>Motorstorm Artic Edge</strong> US version, change or add <code>GAME ID</code>s according to the games you want that it enabled.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>UCES01250, ms0:/seplugins/atpro.prx, on
+</code></pre>
+</div>
+<h2 id="gepatch"><a class="header" href="#gepatch">GePatch</a></h2>
+<hr />
+<p>An experimental plugin for Adrenaline that allows to run a few games in native resolution.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>This plugin should be enabled for <code>GAME ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong>.</p>
+<p>And this plugins in incompatible with the <code>Force High Memory</code> CFW configuration, so it is best to disable this configuration before starting a game with this plugin</p>
+</div>
+<p><a href="https://github.com/TheOfficialFloW/GePatch/releases">Download GePatch Here</a></p>
+<p><a href="https://docs.google.com/spreadsheets/d/1aZlmKwELcdpCb9ezI5iRfgcX9hoGxgL4tNC-673aKqk/edit#gid=0">Link to the compatibility list spreadsheet</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example if for <strong>Final Fantasy III</strong> US version, change or add <code>GAME ID</code>s according to the games you want that it enabled.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>NPUH10125, ms0:/seplugins/ge_patch.prx, on
+</code></pre>
+</div>
+<h2 id="remastered-controls-collection"><a class="header" href="#remastered-controls-collection">Remastered Controls Collection</a></h2>
+<hr />
+<p>A collection of plugins for Adrenaline and ARK (on PSVita/PSTV) that enhance the controls of various PSP titles to better use the PSVita/PSTV controller inputs (like the right joystick).</p>
+<p>It includes plugins for:</p>
 <ul>
-<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code></li>
-<li><strong>Emulation of empty UMD drive</strong>: Several bugs existed that caused malfunction when the driver was used without an ISO file specified on other drivers and older versions of this driver.</li>
-<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
-<li><strong>Inferno Cache</strong>: Usage of overall caches as another read-time speedup hack. The amount of cache is configurable in the CFW configuration option, limiting a maximum to allow for enough free space for other features or plugins. It is also possible to configure the cache policy strategy between two algorithms: Least Recently Used (<code>LRU</code>, default) and Round Robin (<code>RR</code>).
-<ul>
-<li><strong><code>LRU</code></strong>: Uses fewer CPU cycles because it will just remove the calls from the queue that have not been used in a timeframe.</li>
-<li><strong><code>RR</code></strong>: Uses more CPU cycles, making it slower because there's more data to process in the queue, but can be better in cases where there are highly uniform or cyclical data access patterns or require predictable cache replacement.</li>
+<li><code>Kingdom Hearts: Birth by Sleep</code> and <code>Kingdom Hearts: Birth by Sleep Final Mix</code></li>
+<li><code>Grand Theft Auto: Liberty City Stories</code> and <code>Grand Theft Auto: Vice City Stories</code></li>
+<li><code>Tomb Raider: Anniversary</code> and <code>Tomb Raider: Legend</code></li>
+<li><code>Splinter Cell: Essentials</code></li>
+<li><code>Resitance: Retribution</code></li>
+<li><code>Prince Of Persia: Revelations</code> and <code>Prince Of Persia: Rival Swords</code></li>
+<li><code>Metal Gear Solid: Peace Walker</code>, <code>Metal Gear Solid: Portable Ops</code> and <code>Metal Gear Solid: Portable Ops Plus</code></li>
+<li><code>The Warriors</code></li>
+<li><code>Tony Hawk's Project 8</code></li>
 </ul>
-</li>
-<li><strong>Configurable seek and read speed delays</strong>: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
-<ul>
-<li>By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.</li>
-<li>This feature is incompatible with <strong>Inferno Cache</strong>, enabling this will cause <strong>Inferno Cache</strong> to be disabled.</li>
-</ul>
-</li>
-</ul>
-<h3 id="march-33-2"><a class="header" href="#march-33-2">March 33 2</a></h3>
-<p>March33 driver was originally developed for the March33 CFW by the M33 Team. Adrenaline comes with a modified version with ISO and Compressed ISO read improvements; other than that, there were no other significant changes in the source code.</p>
-<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
-<ul>
-<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
-<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
-<li><strong>Configurable seek and read speed delays</strong>: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
-<ul>
-<li>By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.</li>
-</ul>
-</li>
-</ul>
-<h3 id="sonys-np9660"><a class="header" href="#sonys-np9660">Sony's NP9660</a></h3>
-<p>It is the original PSP UMDemu driver from Sony, but with patches to trick it into running ISO and Compressed ISO formats. This driver is also the one used on <code>PBP</code> games; it has guaranteed compatibility with all games that Sony released on PSN.</p>
-<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
-<ul>
-<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
-<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
-</ul>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>This plugin should be enabled for <code>GAME ID</code> <strong>ONLY</strong>.</p>
+</div>
+<p><a href="https://github.com/TheOfficialFloW/RemasteredControls/releases">Download Remastered Controls Plugins Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example if for <strong>Kingdom Hearts: Birth By Sleep</strong> US version, change or add <code>GAME ID</code>s and plugin path according to the games you want that it enabled.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>ULUS10505, ms0:/seplugins/khbbs_remastered.prx, on
+</code></pre>
+</div>
+<h2 id="tempar-psp"><a class="header" href="#tempar-psp">TempAR PSP</a></h2>
+<hr />
+<p>TempAR is a complete rewrite of the popular PSP cheat device NitePR/MKULTRA, with additional features and improvements created by raing3.</p>
+<p><a href="https://github.com/raing3/tempar/releases/latest">Download TempAR PSP Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following lines:</p>
+<p><strong>For PSP games:</strong></p>
+<pre><code>psp, ms0:/seplugins/TempAR/tempar.prx, on
+</code></pre>
+<p><strong>For PS1 games:</strong></p>
+<pre><code>pops, ms0:/seplugins/TempAR/tempar_lite.prx, on
+</code></pre>
+</div>
+<h2 id="cwcheat"><a class="header" href="#cwcheat">CWCheat</a></h2>
+<hr />
+<p>A cheat device compatible with every game. Requires an updated cheat database to recognize most games.</p>
+<p>It can be enabled on every game, but should be disabled for GTA games where their specific cheatdevice is preferred.</p>
+<p><a href="https://drive.google.com/open?id=1-PF-CmVGVvW5i-IXFxan4HLXZP8bUrm1">Download CWCheat Here</a></p>
+<p><a href="https://github.com/Saramagrean/CWCheat-Database-Plus-">Download latest cheat database Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following lines:</p>
+<p><strong>For PSP games:</strong></p>
+<pre><code>psp, ms0:/seplugins/cwcheat/cwcheat.prx, on
+</code></pre>
+<p><strong>For PS1 games:</strong></p>
+<pre><code>pops, ms0:/seplugins/cwcheat/cwcheatpops.prx, on
+</code></pre>
+</div>
+<h2 id="gta-lcs-and-vcs-cheatdevice-remastered"><a class="header" href="#gta-lcs-and-vcs-cheatdevice-remastered">GTA LCS and VCS cheatdevice remastered</a></h2>
+<hr />
+<p>A must have plugin for every fan of GTA on the PSP console. Allows for cheats as well as mods.</p>
+<p>It is recommended to enable these plugins only on the specific GTA games where you'll be loading them using Adrenaline's per-game plugins configuration.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+<p>If you have cwcheat also installed and enabled, it is recommended to have it disabled for the specific GTA games that you'll be using with cheat device, you can use ARK's per-game plugins configuration.</p>
+</div>
+<p><a href="https://github.com/Freakler/CheatDeviceRemastered/releases/latest">Download CheatDeviceRemastered Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<p>Note that this example is for the US version of those games. Change them according to your region.</p>
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following lines:</p>
+<pre><code>ULUS10041 ULUS10160, ms0:seplugins/cheatdevice_remastered.prx, on
+</code></pre>
+</div>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="04-HomebrewSupport/03-NotablePlugins.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../04-HomebrewSupport/02-PluginConfigFormat.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="05-PSPPlayback/01-CompressedIsoFormats.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../05-PSPPlayback.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -485,11 +604,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="04-HomebrewSupport/03-NotablePlugins.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../04-HomebrewSupport/02-PluginConfigFormat.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="05-PSPPlayback/01-CompressedIsoFormats.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../05-PSPPlayback.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -504,13 +623,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 
