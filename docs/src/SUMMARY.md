@@ -11,6 +11,7 @@
 - [PSP Homebrew Support](./04-HomebrewSupport.md)
 	- [PSP Plugins](./04-HomebrewSupport/01-Plugin.md)
 	- [Plugin Configuration Format](./04-HomebrewSupport/02-PluginConfigFormat.md)
+	- [Notable Plugins](./04-HomebrewSupport/03-NotablePlugins.md)
 - [PSP Playback](./05-PSPPlayback.md)
 	- [Compressed ISO Formats](./05-PSPPlayback/01-CompressedIsoFormats.md)
 	- [Inferno Driver](./05-PSPPlayback/02-Inferno.md)
