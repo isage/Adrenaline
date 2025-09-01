@@ -47,13 +47,15 @@ Adrenaline is two software projects in one: Adrenaline Application (1) and Adren
 ## Key Combos Cheat Sheet
 ---
 
-| Key Combo       | Event                                 | Availability                                 |
-|-----------------|---------------------------------------|----------------------------------------------|
-| L+R+Down+Select | Fast exit to VSH                      | Anytime                                      |
-| L+R+Down+Start  | Fast exit to VSH                      | Anytime                                      |
-| L+Select        | Toggle PS1 Fast Forward               | PS1/POPS Apps and Games                      |
-| Select          | Open VSH Menu                         | XMB/VSH                                      |
-| Hold L          | Plugins disabled                      | Reset/Power on/booting PSP/PS1 application   |
-| Hold R          | Start Adrenaline CFW on Recovery mode | On Adrenaline App bubble start               |
-| PS button 2x    | Return to Vita live area              | Anytime                                      |
+| Key Combo         | Event                                 | Availability                                 |
+|-------------------|---------------------------------------|----------------------------------------------|
+| L+R+Down+Select   | Fast exit to VSH                      | Anytime                                      |
+| L+R+Down+Start    | Fast exit to VSH                      | Anytime                                      |
+| L2+R2+Down+Select | Fast exit to VSH                      | PS1 Application on Vita                      |
+| L2+R2+Down+Start  | Fast exit to VSH                      | PS1 Application on Vita                      |
+| L+Select          | Toggle PS1 Fast Forward               | PS1/POPS Apps and Games                      |
+| Select            | Open VSH Menu                         | XMB/VSH                                      |
+| Hold L            | Plugins disabled                      | Reset/Power on/booting PSP/PS1 application   |
+| Hold R            | Start Adrenaline CFW on Recovery mode | On Adrenaline App bubble start               |
+| PS button 2x      | Return to Vita live area              | Anytime                                      |
 
