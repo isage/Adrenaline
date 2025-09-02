@@ -722,6 +722,8 @@ u32 sctrlHENFakeDevkitVersion();
 #include <pspkernel.h>
 #include <pspinit.h>
 
+#include <rebootexconfig.h>
+
 /**
  * Loads a module on next reboot. Only kernel mode.
  *

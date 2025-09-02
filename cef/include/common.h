@@ -31,6 +31,7 @@
 #include <psputility.h>
 #include <pspcrypt.h>
 
+#include <rebootexconfig.h>
 #include <macros.h>
 
 // If COMMON_H_SYSCLIB_USER is defined, it includes the sysclib_user.h definitions
@@ -141,22 +142,6 @@ typedef struct {
 	void *buffer;
 	u32 size;
 } BootFile;
-
-typedef struct {
-	int bootfileindex;
-	u8 iso_disc_type;
-
-	char *module_after;
-	void *buf;
-	int size;
-	int flags;
-
-	u32 ram2;
-	u32 ram11;
-
-	char umdfilename[256];
-	char game_id[10];
-} RebootexConfig;
 
 int sctrlGetUsbState();
 int sctrlStartUsb();
