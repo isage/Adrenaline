@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Adrenaline - Adrenaline Manual/Wiki</title>
+        <title>Contributing - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -413,80 +413,114 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h1>
+<h1 id="contributing-to-adrenaline"><a class="header" href="#contributing-to-adrenaline">Contributing to Adrenaline</a></h1>
 <hr />
-<p>Adrenaline is two software projects in one: Adrenaline Application (1) and Adrenaline CFW (2).</p>
+<p>Contribution to the project is always welcome. The process is straight-forward:</p>
 <ol>
-<li>A software that modifies the official PSP Emulator (PSPemu/ePSP) using <a href="https://github.com/yifanlu/taiHEN">taiHEN CFW framework</a> to make it possible to run a PSP 6.61 Custom Firmware (CFW).</li>
-<li>A Custom Firmware for the Vita's PSPemu that, besides usual PSP CFW features, enables access to PSP XMB and most of the PSP native environment in the PSPemu</li>
+<li>Create a fork of the <a href="https://github.com/isage/Adrenaline">project on GitHub</a></li>
+<li>Commit your changes (remember to do good commit messages)</li>
+<li>Send a Pull Request (PR) to the project</li>
 </ol>
-<div class="mdbook-callouts mdbook-callouts-info">
+<p>This is the gist of it, but you will need to be able to compile the project to test before sending a PR.</p>
+<h2 id="project-parts-overview"><a class="header" href="#project-parts-overview">Project parts overview</a></h2>
+<hr />
+<h3 id="vita-side"><a class="header" href="#vita-side">VITA-side</a></h3>
+<ul>
+<li><code>bubble</code>: The bubble launcher for Adrenaline</li>
+<li><code>user</code>: The userspace plugin that patches the PSPemu and allows extra communication between the VITA-side with the PSP-side</li>
+<li><code>kernel</code>: The kernel plugin that do the necessary patches to fix the double launch bug</li>
+<li><code>usbdevice</code>: The plugin that do the necessary patches to allow communication of PSP &lt;-&gt; PS3/PS4</li>
+<li><code>vsh</code>: The plugin that patches VITA VSH for Adrenaline</li>
+</ul>
+<h3 id="ecfw-aka-epsp-side"><a class="header" href="#ecfw-aka-epsp-side">eCFW (a.k.a. ePSP-side)</a></h3>
+<p>The eCFW part can be separated in two parts: The <code>core</code> parts and the <code>extra</code> parts.</p>
+<p>The <code>core</code> parts are essential to support the most basic functionality of a CFW. The <code>extra</code> parts are not necessary for the CFW, but might provide quality of life features for end-users.</p>
+<p><strong>Core parts:</strong></p>
+<ul>
+<li><code>cef/systemctrl</code>: The heart of the eCFW, therefore it's name <code>SystemControl</code>. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW module and third-party plugins.</li>
+<li><code>cef/vshctrl</code>: The <code>VshControl</code> module handles the main patches for the <code>XMB</code>/<code>VSH</code> to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on <code>XMB</code>/<code>VSH</code> contexts.</li>
+<li><code>cef/galaxy</code>: The <code>GalaxyController</code> module provide patches to use ISO and Compressed ISO with the Sony's NP9660 driver.</li>
+<li><code>cef/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
+<li><code>cef/march33</code>: The <code>March33Driver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
+<li><code>cef/popcorn</code>: The <code>PopcornManager</code> module allows the PS1 emulator (POPS) to launch custom PS1 images.</li>
+<li><code>cef/newrecovery</code>: The <code>Recovery Menu</code> module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.</li>
+<li><code>cef/kermit_idstorage</code>: A custom implementation of <code>sceIdStorage_driver</code> that enables the vPSP environment to work properly.</li>
+<li><code>cef/payloadex</code> and <code>cef/rebootex</code>: Handles the actual injection of the CFW in the (re)boot process. <code>Payloadex</code> is used by <code>user</code> to launch Adrenaline CFW, while <code>Rebootex</code> is set to relaunch it during a ePSP reboot.</li>
+</ul>
+<p><strong>Extra Parts:</strong></p>
+<ul>
+<li><code>cef/satelite</code>: Provides the <code>VSH Menu</code> to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.</li>
+<li><code>cef/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section.</li>
+</ul>
+<h2 id="building-the-project"><a class="header" href="#building-the-project">Building the project</a></h2>
+<hr />
+<p>First, you need to compile the eCFW (ePSP-side) code:</p>
+<pre><code class="language-sh">make -C cef -j1
+</code></pre>
+<p>Then, you have to build the VITA-side part:</p>
+<pre><code class="language-sh">cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+</code></pre>
+<p>For every change, you must recompile the project for the changes to take effect. This may be obvious for many programmers, but absolute novice in compiled languages may not understand this right away.</p>
+<div class="mdbook-callouts mdbook-callouts-quote">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
-  info
+  grayjack comment
 </p>
-<p>Sony's unmodified PSPemu has a more limited environment, tailored to be enough to run what Sony released on the PS Store.</p>
+<p>I do not recommend to start in a project as complex as this one. Going through the complexity ladder with small steps is statistically a better way to learn.</p>
+<p>That being said, over 10 years ago, I started with baremetal software on the 3DS. I had many frustrations as a novice, but I end up just fine. So if you absolutely want to start with Adrenaline, who am I to stop you.</p>
 </div>
-<div class="mdbook-callouts mdbook-callouts-info">
+<div class="mdbook-callouts mdbook-callouts-tip">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
-  info
+  tip
 </p>
-<p>Thanks to the power of taiHEN, Adrenaline can inject custom code into the IPL, which allows unsigned code to run at boot-time.</p>
+<p>If you <strong>did not</strong> change a thing on the <code>cef</code> directory, you <strong>don't</strong> need to recompile the eCFW.</p>
 </div>
-<h2 id="quick-feature-set-overview"><a class="header" href="#quick-feature-set-overview">Quick Feature Set Overview</a></h2>
+<h2 id="manually-testing-the-project"><a class="header" href="#manually-testing-the-project">Manually testing the project</a></h2>
 <hr />
-<h3 id="adrenaline-application"><a class="header" href="#adrenaline-application">Adrenaline Application</a></h3>
-<ul>
-<li>Compatible with all PS Vita models on firmware 3.60 up to 3.74</li>
-<li>Support 7 graphical filtering options</li>
-<li>Support color filter</li>
-<li>Support for PS2/PS3 &lt;-&gt; PSP game link</li>
-<li>Configurable PSP and PS1 screen scale</li>
-<li>Configurable Memory Stick driver location</li>
-<li>Configurable USB device to use when connecting Vita to devices via USB</li>
-<li>Save states</li>
-</ul>
-<h3 id="adrenaline-cfw"><a class="header" href="#adrenaline-cfw">Adrenaline CFW</a></h3>
-<ul>
-<li>XMB/VSH on ePSP</li>
-<li>Almost entire PSP 6.61 environment available on ePSP (we call it <strong>Virtual PSP</strong>, or <strong>vPSP</strong> for shortness)</li>
-<li>Support executing PSP unsigned code execution (homebrew software, PSP/PS1 backups)</li>
-<li>Support executing PS1 custom games with support for external configuration files that allow easy fixing of games.</li>
-<li>Support manual for game images (ISO/CSO/etc)</li>
-<li>Support for game updates and DLC for both game images (ISO/CSO/etc) and EBOOT</li>
-<li>Configurable CPU/BUS clock for XMB/VSH and PSP games/homebrew/apps</li>
-<li>Three ISO image driver options: Inferno, March33, NP9660</li>
-<li>Support for ISO, CSO, JSO, ZSO, CSOv2, and DAX image formats</li>
-<li>Built-in anti-CFW, fixes some protections and bugs in games. Compatible with NoDRM plugins</li>
-<li>Built-in CFW configuration and plugin manager on XMB/VSH for easy CFW management</li>
-<li>Support for autoboot software on system launch if enabled</li>
-<li>Extensive CFW API with good compatibility with M33, ME, PRO, and ARK-4 API
-<ul>
-<li>Resulting in good compatibility with plugins and homebrew apps and/or easier porting effort for projects using CFW API</li>
-</ul>
-</li>
-</ul>
-<h2 id="key-combos-cheat-sheet"><a class="header" href="#key-combos-cheat-sheet">Key Combos Cheat Sheet</a></h2>
+<p>After building the project, you have to install it. For that you can follow the <a href="./02-Install.html#manual">manual update instructions</a>.</p>
+<p>Then you have to reboot your vita and launch Adrenaline to start testing.</p>
+<p>Test things your code change affect.</p>
+<h2 id="logs"><a class="header" href="#logs">Logs</a></h2>
 <hr />
-<div class="table-wrapper"><table><thead><tr><th>Key Combo</th><th>Event</th><th>Availability</th></tr></thead><tbody>
-<tr><td>L+R+Down+Select</td><td>Fast exit to VSH</td><td>Anytime</td></tr>
-<tr><td>L+R+Down+Start</td><td>Fast exit to VSH</td><td>Anytime</td></tr>
-<tr><td>L2+R2+Down+Select</td><td>Fast exit to VSH</td><td>PS1 Application on Vita</td></tr>
-<tr><td>L2+R2+Down+Start</td><td>Fast exit to VSH</td><td>PS1 Application on Vita</td></tr>
-<tr><td>L+Select</td><td>Toggle PS1 Fast Forward</td><td>PS1/POPS Apps and Games</td></tr>
-<tr><td>Select</td><td>Open VSH Menu</td><td>XMB/VSH</td></tr>
-<tr><td>Hold L</td><td>Plugins disabled</td><td>Reset/Power on/booting PSP/PS1 application</td></tr>
-<tr><td>Hold R</td><td>Start Adrenaline CFW on Recovery mode</td><td>On Adrenaline App bubble start</td></tr>
-<tr><td>PS button 2x</td><td>Return to Vita live area</td><td>Anytime</td></tr>
-</tbody></table>
+<p>On the <strong>ePSP-side</strong>, you can pass next the definition to the <code>make</code> call that enables logging on the subprojects that form the Adrenaline ePSP CFW. The ones available are:</p>
+<ul>
+<li><code>GALAXY_DEBUG</code>: Enables logs only on the <code>cef/galaxy</code> module</li>
+<li><code>INFERNO_DEBUG</code>: Enables logs only on the <code>cef/inferno</code> module</li>
+<li><code>MARCH33_DEBUG</code>: Enables logs only on the <code>cef/march33</code> module</li>
+<li><code>KERMIT_IDSTORAGE_DEBUG</code>: Enables logs only on the <code>cef/kermit_idstorage</code> module</li>
+<li><code>RECOVERY_DEBUG</code>: Enables logs only on the <code>cef/newrecovery</code> module</li>
+<li><code>POPCORN_DEBUG</code>: Enables logs only on the <code>cef/popcorn</code> module</li>
+<li><code>SATELITE_DEBUG</code>: Enables logs only on the <code>cef/satelite</code> module</li>
+<li><code>SCTRL_DEBUG</code>: Enables logs only on the <code>cef/systemctrl</code> module</li>
+<li><code>VSHCTRL_DEBUG</code>: Enables logs only on the <code>cef/vshctrl</code> module</li>
+<li><code>XMBCTRL_DEBUG</code>: Enables logs only on the <code>cef/xmbctrl</code> module</li>
+<li><code>DEBUG</code>: Enables logs to all subprojects with the same level</li>
+</ul>
+<p>It is recommended to use the specific ones. Another recommendation is to avoid using more than level <code>2</code> unless really necessary, as the excessive logging message can make the vPSP system very slow.</p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+<pre><code class="language-sh">make -C cef -j1 SCTRL_DEBUG=2 VSHCTRL_DEBUG=1
+</code></pre>
 </div>
+<p>On the <strong>VITA-side</strong>, we don't have something super well stablished, you can use <code>sceClibPrintf</code> function, and the messages will show up in the <code>tty</code>, that you can access through log homebrews (we recommend <a href="https://github.com/isage/catlog">catlog</a>).</p>
+<h3 id="accessing-the-logs"><a class="header" href="#accessing-the-logs">Accessing the logs</a></h3>
+<p>You can access in real-time and in your computer all logs by using logs homebrew such as <a href="https://github.com/isage/catlog">catlog</a>. This is the easiest way to access them.</p>
+<p>For the <strong>eCFW</strong> modules, you can later access them by looking into log files at the <code>???0:/pspemu/</code> directory. They are all named using the following pattern: <code>log_⟨MODULE_NAME⟩.txt</code>.</p>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="10-XmbCfwMenus.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="02-Install.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="12-UsingCFWAPI.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -496,8 +530,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="10-XmbCfwMenus.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="02-Install.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="12-UsingCFWAPI.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
