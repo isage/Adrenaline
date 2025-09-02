@@ -23,10 +23,9 @@
 - [Recovery Menu](./09-RecoveryMenu.md)
 - [XMB CFW Menus](./10-XmbCfwMenus.md)
 
-<!--
 # Developer Manual
-- [Development]
--->
+- [Contributing](./11-Contributing.md)
+
 
 [Glossary](./XX-Glossary.md)
 [Changelog](./XX-Changelog.md)
