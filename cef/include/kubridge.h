@@ -1,5 +1,24 @@
-#ifndef __KULIBRARY__
+/*
+	Adrenaline Kernel-User Bridge (KUBridge)
+	Copyright (C) 2016-2018, TheFloW
+	Copyright (C) 2024-2025, isage
+	Copyright (C) 2025, GrayJack
 
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef __KULIBRARY__
 #define __KULIBRARY__
 
 #include <pspsdk.h>
@@ -31,27 +50,27 @@ typedef struct KernelCallArg {
 */
 
 /**
-  * Load a module using ModuleMgrForKernel.
-  *
-  * @param path - The path to the module to load.
-  * @param flags - Unused, always 0 .
-  * @param option  - Pointer to a mod_param_t structure. Can be NULL.
-  *
-  * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
+ * Load a module using ModuleMgrForKernel.
+ *
+ * @param path - The path to the module to load.
+ * @param flags - Unused, always 0 .
+ * @param option  - Pointer to a mod_param_t structure. Can be NULL.
+ *
+ * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
  */
 SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option);
 
 
 /**
-  * Load a module with a specific apitype
-  *
-  * @param apìtype - The apitype
-  * @param path - The path to the module to load.
-  * @param flags - Unused, always 0 .
-  * @param option  - Pointer to a mod_param_t structure. Can be NULL.
-  *
-  * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
-  */
+ * Load a module with a specific apitype
+ *
+ * @param apìtype - The apitype
+ * @param path - The path to the module to load.
+ * @param flags - Unused, always 0 .
+ * @param option  - Pointer to a mod_param_t structure. Can be NULL.
+ *
+ * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
+ */
 SceUID kuKernelLoadModuleWithApitype2(int apitype, const char *path, int flags, SceKernelLMOption *option);
 
 /**

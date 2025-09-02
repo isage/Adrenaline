@@ -102,14 +102,14 @@ int vshKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param);
 int vshLflashFatfmtStartFatfmt(int argc, char *argv[]);
 
 /**
-  * Load a module.
-  *
-  * @param path - The path to the module to load.
-  * @param flags - Unused, always 0 .
-  * @param option  - Pointer to a mod_param_t structure. Can be NULL.
-  *
-  * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
-  */
+ * Load a module.
+ *
+ * @param path - The path to the module to load.
+ * @param flags - Unused, always 0 .
+ * @param option  - Pointer to a mod_param_t structure. Can be NULL.
+ *
+ * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
+ */
 SceUID vshKernelLoadModuleVSH(const char *path, int flags, SceKernelLMOption *option);
 
 #ifdef __cplusplus

@@ -34,15 +34,15 @@ typedef struct SceModule {
 	struct SceModule	*next;
 	unsigned short		attribute;
 	unsigned char		version[2];
-	char				modname[27];
-	char				terminal;
+	char modname[27];
+	char terminal;
 	unsigned int		unknown1;
 	unsigned int		unknown2;
-	SceUID				modid;
+	SceUID modid;
 	unsigned int		unknown3[4];
-	void *				ent_top;
+	void * ent_top;
 	unsigned int		ent_size;
-	void *				stub_top;
+	void * stub_top;
 	unsigned int		stub_size;
 	unsigned int		unknown4[4];
 	unsigned int		entry_addr;
@@ -66,92 +66,92 @@ typedef s32 (*SceKernelRebootPhaseForKernel)(s32 arg1, void *arg2, s32 arg3, s32
 /** The SceModule structure represents a loaded module in memory. */
 typedef struct SceModule2 {
 	/** Pointer to the next registered module. Modules are connected via a linked list. */
-	struct SceModule2	*next; // 0
+	struct SceModule2* next; // 0
 	/** The attributes of a module. One or more of ::SceModuleAttribute and ::SceModulePrivilegeLevel. */
-	u16					attribute; // 4
+	u16 attribute; // 4
 	/**
      * The version of the module. Consists of a major and minor part. There can be several modules
      * loaded with the same name and version.
      */
-	u8					version[2]; // 6
+	u8 version[2]; // 6
 	/** The module's name. There can be several modules loaded with the same name. */
-	char				modname[27]; // 8
+	char modname[27]; // 8
 	/** String terminator (always '\0'). */
-	char				terminal; // 0x23
+	char terminal; // 0x23
 	/**
      * The status of the module. Contains information whether the module has been started, stopped,
      * is a user module, etc.
      */
-	u16				mod_state;	// 0x24
-	char				padding[2]; // 0x26
+	u16 mod_state;	// 0x24
+	char padding[2]; // 0x26
 	/** A secondary ID for the module. */
-	SceUID					sec_id;	// 0x28
+	SceUID sec_id;	// 0x28
 	/** The module's UID. */
-	SceUID				mod_id; // 0x2C
+	SceUID mod_id; // 0x2C
 	/** The thread ID of a user module. */
-	SceUID					user_mod_thid; // 0x30
+	SceUID user_mod_thid; // 0x30
 	/** The ID of the memory block belonging to the module. */
-	SceUID				mem_id; // 0x34
+	SceUID mem_id; // 0x34
 	/** The ID of the TEXT segment's memory partition. */
-	u32					mpid_text;	// 0x38
+	u32 mpid_text;	// 0x38
 	/** The ID of the DATA segment's memory partition. */
-	u32					mpid_data; // 0x3C
+	u32 mpid_data; // 0x3C
 	/** Pointer to the first resident library entry table of the module. */
-	void *				ent_top; // 0x40
+	void * ent_top; // 0x40
 	/** The size of all resident library entry tables of the module. */
-	SceSize				ent_size; // 0x44
+	SceSize ent_size; // 0x44
 	/** Pointer to the first stub library entry table of the module. */
-	void *				stub_top; // 0x48
+	void * stub_top; // 0x48
 	/** The size of all stub library entry tables of the module. */
-	SceSize				stub_size; // 0x4C
+	SceSize stub_size; // 0x4C
 	/**
      * A pointer to the (required) module's start entry function. This function is executed during
      * the module's startup.
      */
-	SceKernelThreadEntry					module_start; // 0x50
+	SceKernelThreadEntry module_start; // 0x50
 	/**
      * A pointer to the (required) module's stop entry function. This function is executed during
      * the module's stopping phase.
      */
-	SceKernelThreadEntry					module_stop; // 0x54
+	SceKernelThreadEntry module_stop; // 0x54
 	/**
      * A pointer to a module's Bootstart entry function. This function is probably executed after
      * a reboot.
      */
-	SceKernelThreadEntry					module_bootstart; // 0x58
+	SceKernelThreadEntry module_bootstart; // 0x58
 	/**
      * A pointer to a module's rebootBefore entry function. This function is probably executed
      * before a reboot.
      */
-	SceKernelRebootBeforeForKernel			module_reboot_before; // 0x5C
+	SceKernelRebootBeforeForKernel module_reboot_before; // 0x5C
 	/**
      * A pointer to a module's rebootPhase entry function. This function is probably executed
      * during a reboot.
      */
-	SceKernelRebootPhaseForKernel			moduleRebootPhase; // 0x60
+	SceKernelRebootPhaseForKernel moduleRebootPhase; // 0x60
 	/**
      * The entry address of the module. It is the offset from the start of the TEXT segment to the
      * program's entry point.
      */
-	u32					entry_addr; // 0x64
+	u32 entry_addr; // 0x64
 	/** Contains the offset from the start of the TEXT segment of the program's GP register value. */
-	u32					gp_value; // 0x68
+	u32 gp_value; // 0x68
 	/** The start address of the TEXT segment. */
-	u32					text_addr; // 0x6C
+	u32 text_addr; // 0x6C
 	/** The size of the TEXT segment. */
-	u32					text_size; // 0x70
+	u32 text_size; // 0x70
 	/** The size of the DATA segment. */
-	u32					data_size;	// 0x74
+	u32 data_size;	// 0x74
 	/** The size of the BSS segment. */
-	u32					bss_size; // 0x78
+	u32 bss_size; // 0x78
 	/** The number of segments the module consists of. */
-	u8					nsegment; // 0x7C
+	u8 nsegment; // 0x7C
 	/** Reserved. */
-	u8					padding2[3]; // 0x7D
+	u8 padding2[3]; // 0x7D
 	/** An array containing the start address of each segment. */
-	u32					segment_addr[4]; // 0x80
+	u32 segment_addr[4]; // 0x80
 	/** An array containing the size of each segment. */
-	SceSize				segment_size[4]; // 0x90
+	SceSize segment_size[4]; // 0x90
 	/** An array containing the alignment information of each segment. */
     u32 segment_align[4]; // 0xA0
     /** The priority of the module start thread. */
@@ -203,7 +203,7 @@ typedef struct SceLibraryEntryTable {
 	unsigned short		stubcount;
 	/** Pointer to the entry table; an array of NIDs followed by
 	    pointers to functions and variables. */
-	void *				entrytable;
+	void * entrytable;
 } SceLibraryEntryTable;
 
 /** Specifies a library and a set of imports from that library.  Use the len
@@ -224,9 +224,9 @@ typedef struct SceLibraryStubTable {
 	/** Pointer to an array of NIDs. */
 	unsigned int *		nidtable;
 	/** Pointer to the imported function stubs. */
-	void *				stubtable;
+	void * stubtable;
 	/** Pointer to the imported variable stubs. */
-	void *				vstubtable;
+	void * vstubtable;
 } SceLibraryStubTable;
 
 typedef struct SceLoadCoreExecFileInfo {

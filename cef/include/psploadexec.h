@@ -34,48 +34,48 @@ extern "C" {
 /** Structure to pass to loadexec */
 typedef struct SceKernelLoadExecParam {
 	/** Size of the structure */
-	SceSize     size;
+	SceSize size;
 	/** Size of the arg string */
-	SceSize     args;
+	SceSize args;
 	/** Pointer to the arg string */
-	void *  argp;
+	void * argp;
 	/** Encryption key ? */
-	const char *    key;
+	const char * key;
 } SceKernelLoadExecParam;
 
 /** Structure for LoadExecVSH* functions */
 typedef struct SceKernelLoadExecVSHParam {
 /** Size of the structure in bytes */
-    SceSize     size;
+	SceSize size;
 /** Size of the arguments string */
-    SceSize     args;
+	SceSize args;
 /** Pointer to the arguments strings */
-    void * argp;
+	void * argp;
 /** The key, usually "game", "updater" or "vsh" */
-    const char * key;
+	const char * key;
 /** The size of the vshmain arguments */
-    u32 vshmain_args_size;
+	u32 vshmain_args_size;
 /** vshmain arguments that will be passed to vshmain after the program has exited */
-    void *vshmain_args;
+	void *vshmain_args;
 /** "/kd/pspbtcnf_game.txt" or "/kd/pspbtcnf.txt" if not supplied (max. 256 chars) */
-    char *configfile;
+	char *configfile;
 /** An unknown string (max. 256 chars) probably used in 2nd stage of loadexec */
-    u32 unk4;
+	u32 unk4;
 /** unknown flag default value = 0x10000 */
-    u32 unk5;
+	u32 unk5;
 } SceKernelLoadExecVSHParam;
 
 typedef struct {
-    u32 api_type;
-    s32 args;
-    // Sometimes contains filename (args is then set to 0)
-    void *argp;
-    SceKernelLoadExecVSHParam *vsh_param;
-    void *opt4;
-    char *np_drm1;
-    s32 np_drm2_1;
-    s32 np_drm2_2;
-    void *np_drm_arg;
+	u32 api_type;
+	s32 args;
+	// Sometimes contains filename (args is then set to 0)
+	void *argp;
+	SceKernelLoadExecVSHParam *vsh_param;
+	void *opt4;
+	char *np_drm1;
+	s32 np_drm2_1;
+	s32 np_drm2_2;
+	void *np_drm_arg;
 } RunExecParams;
 
 #ifdef __USER__
