@@ -429,7 +429,7 @@
 <li><code>bubble</code>: The bubble launcher for Adrenaline</li>
 <li><code>user</code>: The userspace plugin that patches the PSPemu and allows extra communication between the VITA-side with the PSP-side</li>
 <li><code>kernel</code>: The kernel plugin that do the necessary patches to fix the double launch bug</li>
-<li><code>usbdevice</code>: The plugin that do the necessary patches to allow communication of PSP &lt;-&gt; PS3/PS4</li>
+<li><code>usbdevice</code>: The USB mass storage plugin</li>
 <li><code>vsh</code>: The plugin that patches VITA VSH for Adrenaline</li>
 </ul>
 <h3 id="ecfw-aka-epsp-side"><a class="header" href="#ecfw-aka-epsp-side">eCFW (a.k.a. ePSP-side)</a></h3>
@@ -480,7 +480,7 @@ cmake --build build
 <h2 id="manually-testing-the-project"><a class="header" href="#manually-testing-the-project">Manually testing the project</a></h2>
 <hr />
 <p>After building the project, you have to install it. For that you can follow the <a href="./02-Install.html#manual">manual update instructions</a>.</p>
-<p>Then you have to reboot your vita and launch Adrenaline to start testing.</p>
+<p>You need to reboot the system if there was any modifications on the <code>vsh</code> or <code>kernel</code> code.</p>
 <p>Test things your code change affect.</p>
 <h2 id="logs"><a class="header" href="#logs">Logs</a></h2>
 <hr />
