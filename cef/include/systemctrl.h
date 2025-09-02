@@ -756,6 +756,17 @@ typedef int (* HEN_REG_HOMEBREW_LOADER_HANDLER)(const char *path, int flags, Sce
 int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
 
 /**
+ * Get the rebootex configuration.
+ *
+ * @param config - A pointer to where the config will be copied, or NULL
+ *
+ * @returns A pointer to the global rebootex configuration.
+ *
+ * @note Compat with ARK-4
+ */
+RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config);
+
+/**
  * Set custom start module handler
  *
  * It can be used to replace a system module

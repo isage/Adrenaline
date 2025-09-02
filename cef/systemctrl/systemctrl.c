@@ -665,3 +665,11 @@ SceUID sctrlGetThreadUIDByName(const char* name) {
 u32 sctrlHENFakeDevkitVersion() {
 	return FW_660;
 }
+
+RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config) {
+	if (config != NULL) {
+		memcpy(config, &rebootex_config, sizeof(RebootexConfig));
+	}
+
+	return &rebootex_config;
+}
