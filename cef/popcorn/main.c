@@ -483,7 +483,7 @@ int module_start(SceSize args, void *argp) {
 		return res;
 	}
 
-	setPsxCompiledFwVersion(0x06060110);
+	setPsxCompiledFwVersion(FW_661);
 
 	previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 

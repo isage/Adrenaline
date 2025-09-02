@@ -7,7 +7,7 @@ OBJS = main.o adrenaline.o executable_patch.o libraries_patch.o io_patch.o init_
 	   lz4.o minilzo.o sysclibforuser.o gameinfo.o plugin.o pgd.o
 
 INCDIR = ../include
-CFLAGS = -Os -G0 -Wall -Wno-builtin-declaration-mismatch -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__ -D__SCTRL_PRIVATE__
+CFLAGS = -Os -G0 -Wall -Wno-builtin-declaration-mismatch -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661

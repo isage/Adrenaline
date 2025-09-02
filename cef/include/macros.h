@@ -1,3 +1,22 @@
+/*
+	Adrenaline Helper Macros
+	Copyright (C) 2016-2018, TheFloW
+	Copyright (C) 2024-2025, isage
+	Copyright (C) 2025, GrayJack
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef __ADRN_MACROS_H__
 #define __ADRN_MACROS_H__
@@ -9,6 +28,36 @@
 #define PSP_MAGIC 0x5053507E
 #define BTCNF_MAGIC 0x0F803001
 #define SFO_MAGIC 0x46535000
+
+#define FW_661 0x06060110
+#define FW_660 0x06060010
+#define FW_639 0x06030910
+#define FW_635 0x06030510
+#define FW_620 0x06020010
+#define FW_610 0x06010010
+#define FW_600 0x06000010
+#define FW_551 0x05050110
+#define FW_550 0x05050010
+#define FW_503 0x05000310
+#define FW_501 0x05000110
+#define FW_500 0x05000010
+#define FW_401 0x04000110
+#define FW_396 0x03090610
+#define FW_395 0x03090510
+#define FW_393 0x03090310
+#define FW_390 0x03090010
+#define FW_380 0x03080010
+#define FW_372 0x03070210
+#define FW_371 0x03070110
+#define FW_352 0x03050210
+#define FW_351 0x03050110
+#define FW_350 0x03050010
+#define FW_340 0x03040010
+#define FW_330 0x03030010
+#define FW_311 0x03010110
+#define FW_310 0x03010010
+#define FW_303 0x03000310
+#define FW_302 0x03000210
 
 #define FW_TO_FIRMWARE(f) ((((f >> 8) & 0xF) << 24) | (((f >> 4) & 0xF) << 16) | ((f & 0xF) << 8) | 0x10)
 #define FIRMWARE_TO_FW(f) ((((f >> 24) & 0xF) << 8) | (((f >> 16) & 0xF) << 4) | ((f >> 8) & 0xF))
@@ -155,16 +204,5 @@
 	MAKE_CALL(a, f); \
 }
 
-#ifdef __SCTRL_PRIVATE__
-u32 _findJAL(u32 addr, int reversed, int skip);
-#define findFirstJAL(addr) _findJAL(addr, 0, 0)
-#define findFirstJALReverse(addr) _findJAL(addr, 1, 0)
-#define findJAL(addr, pos) _findJAL(addr, 0, pos)
-#define findJALReverse(addr, pos) _findJAL(addr, 1, pos)
-#define findFirstJALForFunction(modname, libname, uid) findFirstJAL(FindFunction(modname, libname, uid))
-#define findJALForFunction(modname, libname, uid, pos) findJAL(FindFunction(modname, libname, uid), pos)
-#define findFirstJALReverseForFunction(modname, libname, uid) findFirstJALReverse(FindFunction(modname, libname, uid))
-#define findJALReverseForFunction(modname, libname, uid, pos) findJALReverse(FindFunction(modname, libname, uid), pos)
-#endif // __SCTRL_PRIVATE__
 
 #endif // __ADRN_MACROS_H__
