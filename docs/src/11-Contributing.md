@@ -17,7 +17,7 @@ This is the gist of it, but you will need to be able to compile the project to t
 - `bubble`: The bubble launcher for Adrenaline
 - `user`: The userspace plugin that patches the PSPemu and allows extra communication between the VITA-side with the PSP-side
 - `kernel`: The kernel plugin that do the necessary patches to fix the double launch bug
-- `usbdevice`: The plugin that do the necessary patches to allow communication of PSP <-> PS3/PS4
+- `usbdevice`: The USB mass storage plugin
 - `vsh`: The plugin that patches VITA VSH for Adrenaline
 
 ### eCFW (a.k.a. ePSP-side)
@@ -75,7 +75,7 @@ For every change, you must recompile the project for the changes to take effect.
 
 After building the project, you have to install it. For that you can follow the [manual update instructions](./02-Install.md#manual).
 
-Then you have to reboot your vita and launch Adrenaline to start testing.
+You need to reboot the system if there was any modifications on the `vsh` or `kernel` code.
 
 Test things your code change affect.
 
