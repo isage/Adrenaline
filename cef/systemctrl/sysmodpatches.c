@@ -92,7 +92,7 @@ int ApplyMemory() {
 		}
 
 		if (!GetPartition) {
-			return -1;
+			return SCE_KERR_ILLEGAL_ADDR;
 		}
 
 		user_size = (rebootex_config.ram2 * 1024 * 1024);
@@ -197,13 +197,20 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 			}
 		}
 
-		if (largememory) {
+		if (largememory == 1) {
 			sctrlHENSetMemory(52, 0);
 			ApplyMemory();
+		} else if (largememory == 2) {
+			sctrlHENSetMemory(40, 12);
+			ApplyMemory();
+		} else if (largememory > 2) {
+			// Invalid value, but just to be safe, unlock stable extra RAM, but
+			// left in a state that can be re-set
+			sctrlHENSetMemory(40, 12);
+			ApplyAndResetMemory();
 		}
 	} else {
-		ApplyMemory();
-		rebootex_config.ram2 = 0;
+		ApplyAndResetMemory();
 	}
 
 	return sceSystemFileGetIndex(sfo, a1, a2);
