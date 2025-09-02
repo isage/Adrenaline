@@ -2,11 +2,7 @@ all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _march33 _i
 
 SYSTEM_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel pspvshbridge_user psppower_user pspreg_user psppaf pspvsh pspvshcommongui
 
-_libs:
-	make -C lib/system_stubs clean
-	make -C lib/system_stubs -j $(SYSTEM_STUBS:%=.%)
-	cp lib/system_stubs/*.a "lib/"
-
+_cfw_libs:
 	make -C lib/libpspkubridge clean
 	make -C lib/libpspkubridge
 	cp "lib/libpspkubridge/libpspkubridge.a" "lib/"
@@ -27,12 +23,18 @@ _libs:
 	make -C lib/libpspsysc_user
 	cp "lib/libpspsysc_user/libpspsysc_user.a" "lib/"
 
-	make -C lib/system_stubs clean
 	make -C lib/libpspkubridge clean
 	make -C lib/libpspsystemctrl_kernel clean
 	make -C lib/libpspsystemctrl_user clean
 	make -C lib/libpspvshctrl clean
 	make -C lib/libpspsysc_user clean
+
+_libs: _cfw_libs
+	make -C lib/system_stubs clean
+	make -C lib/system_stubs -j $(SYSTEM_STUBS:%=.%)
+	cp lib/system_stubs/*.a "lib/"
+
+	make -C lib/system_stubs clean
 
 _btcnf:
 	make -C btcnf/pspbtcnf_inferno clean

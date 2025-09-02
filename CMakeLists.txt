@@ -38,6 +38,23 @@ add_custom_target(updater
   DEPENDS user_all kernel_all vsh_all
 )
 
+add_custom_target(cfw-libs
+  COMMAND make -C ${CMAKE_SOURCE_DIR}/cef _cfw_libs
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspkubridge.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsystemctrl_kernel.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsystemctrl_user.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsysc_user.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspvshctrl.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/kubridge.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl_se.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/sysclib_user.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/vshctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/macros.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+)
+
 #add_dependencies(updater "kernel_all")
 #add_dependencies(updater "user_all")
 #add_dependencies(updater "vsh_all")
