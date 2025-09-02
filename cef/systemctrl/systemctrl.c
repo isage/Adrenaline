@@ -661,3 +661,7 @@ SceUID sctrlGetThreadUIDByName(const char* name) {
 
 	return SCE_ERR_NOTFOUND;
 }
+
+u32 sctrlHENFakeDevkitVersion() {
+	return FW_660;
+}

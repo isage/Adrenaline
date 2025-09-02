@@ -80,6 +80,7 @@ PSP_EXPORT_FUNC(sctrlHENIsSystemBooted)
 PSP_EXPORT_FUNC(sctrlHENSetMemory)
 PSP_EXPORT_FUNC(sctrlHENSetSpeed)
 PSP_EXPORT_FUNC(sctrlHENSetStartModuleHandler)
+PSP_EXPORT_FUNC(sctrlHENFakeDevkitVersion)
 
 # sctrlKernel
 PSP_EXPORT_FUNC(sctrlKernelExitVSH)

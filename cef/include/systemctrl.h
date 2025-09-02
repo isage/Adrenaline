@@ -709,6 +709,11 @@ int sctrlDeflateDecompress(void* dest, void* src, int size);
  */
 int sctrlGzipDecompress(void* dest, void* src, int size);
 
+/**
+ * @note Compat with ARK-4
+ */
+u32 sctrlHENFakeDevkitVersion();
+
 #endif // __USER__
 
 // KERNEL ONLY
