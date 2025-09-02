@@ -25,6 +25,7 @@
 
 # Developer Manual
 - [Contributing](./11-Contributing.md)
+- [Using CFW APIs](./12-UsingCFWAPI.md)
 
 
 [Glossary](./XX-Glossary.md)
