@@ -3,12 +3,10 @@
 
 Adrenaline CFW has several settings options that modify the behavior of the system. The settings can be split in two categories: `General Settings` and `Advanced Settings`.
 
+You can use the [XMB](./10-XmbCfwMenus.md#-adrenaline-cfw-settings) or the [Recovery Menu](./09-RecoveryMenu.md) to easily modify the CFW settings.
 
 > [!CAUTION]
 > Not to be confused with [`Adrenaline Application Settings`](./03-AdrenalineMenu/02-AdrenalineSettings.md), which is another thing.
-
-<!-- TODO: Links -->
-You can use the [XMB](./10-XmbCfwMenus.md#-adrenaline-cfw-settings) or the [Recovery Menu](./09-RecoveryMenu.md) to easily modify the CFW settings.
 
 ## General Settings
 ---

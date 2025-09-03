@@ -16,6 +16,7 @@ A custom PS1 game/app needs to be in the PSP `EBOOT.PBP` format and be stored on
 Adrenaline comes with a set of added features tailored for better support of custom PS1 games/apps.
 
 ## CDDA Support
+---
 
 **CD Direct Audio** was one of the methods (along with the proprietary XA format) to encode sound in PS1 games.
 Games that use CDDA are usually separated into different tracks, with the first one being the main data track and the rest being CD audio tracks. Many regular CD players were capable of playing these audio tracks when a PS1 disc was inserted.
@@ -28,13 +29,15 @@ A plugin known as `cdda_enabler` developed by `theFl0w` was released to re-enabl
 The patch to re-enable CDDA has been added to Adrenaline's `PopCorn` module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the `cdda_enabler` plugin on Adrenaline.
 
 ## Custom POPS Configuration
+---
 
 The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.
 
 With Adrenaline, you can implement these custom patches in a single external file `CONFIG.BIN`, stored alongside the `EBOOT.PBP` of the custom PS1 game/app (i.e. `???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/`), without the need to be injected into the `EBOOT.PBP` file; as the CFW will do that for you on-the-fly.
 
 ## Anti-LibCrypt patch
+---
 
-Adrenaline contains a patch to defeat `libcrypt` protection for known games without requiring rebuilding the `PBP`file.
+Adrenaline contains a patch to defeat `libcrypt` protection for known games without requiring rebuilding the `PBP` file.
 
 This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.

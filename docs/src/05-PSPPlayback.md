@@ -13,6 +13,7 @@ The `ISO` image format is a 1:1 copy of a Universal Media Disc (UMD), while `Com
 > There is a [page](./05-PSPPlayback/01-CompressedIsoFormats.md) explaining the different compressed image formats and their tradeoffs.
 
 ## UMDemu ISO Drivers
+---
 
 This is a brief overview of the features of each driver in the versions that come with Adrenaline.
 
@@ -49,3 +50,19 @@ This driver is made available mostly for compatibility reasons, as historically 
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`.
 - **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.
+
+## Other ISO features
+---
+
+Adrenaline offers a few other functionalities related to `ISO` and `Compressed ISO` that are worth mentioning.
+
+### Support for game update and DLC
+
+Adrenaline supports launching ISO games with updates and DLC when installed in their usual place (`???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/PBOOT.PBP`). But, as a downside, having this file without `EBOOT.PBP` in the same folder causes the XMB/VSH to show duplicated items; to solve that, you can enable the [Hide DLCs in game menu](./08-CfwConfiguration.md#hide-dlcs-in-game-menu) CFW setting.
+
+### Support for manuals
+
+Adrenaline also supports manuals for ISO games. For it to work, the `.DAT` file must be in the `???0:/pspemu/ISO/` directory with the same name as the `ISO` game file.
+
+> [!EXAMPLE]
+> For the ISO file in `???0:/pspemu/ISO/my_game.cso`, the `DAT` file should be at `???0:/pspemu/ISO/my_game.DAT`
