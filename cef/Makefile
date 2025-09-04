@@ -4,23 +4,23 @@ SYSTEM_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psp
 
 _cfw_libs:
 	make -C lib/libpspkubridge clean
-	make -C lib/libpspkubridge
+	make -C lib/libpspkubridge -j
 	cp "lib/libpspkubridge/libpspkubridge.a" "lib/"
 
 	make -C lib/libpspsystemctrl_kernel clean
-	make -C lib/libpspsystemctrl_kernel
+	make -C lib/libpspsystemctrl_kernel -j
 	cp "lib/libpspsystemctrl_kernel/libpspsystemctrl_kernel.a" "lib/"
 
 	make -C lib/libpspsystemctrl_user clean
-	make -C lib/libpspsystemctrl_user
+	make -C lib/libpspsystemctrl_user -j
 	cp "lib/libpspsystemctrl_user/libpspsystemctrl_user.a" "lib/"
 
 	make -C lib/libpspvshctrl clean
-	make -C lib/libpspvshctrl
+	make -C lib/libpspvshctrl -j
 	cp "lib/libpspvshctrl/libpspvshctrl.a" "lib/"
 
 	make -C lib/libpspsysc_user clean
-	make -C lib/libpspsysc_user
+	make -C lib/libpspsysc_user -j
 	cp "lib/libpspsysc_user/libpspsysc_user.a" "lib/"
 
 	make -C lib/libpspkubridge clean
@@ -64,88 +64,88 @@ _btcnf:
 
 _payloadex:
 	make -C payloadex clean
-	make -C payloadex
+	make -C payloadex -j
 	cp "payloadex/payloadex.bin" "../user/flash0/payloadex.bin"
 	make -C payloadex clean
 
 _rebootex:
 	make -C rebootex clean
-	make -C rebootex
+	make -C rebootex -j
 	bin2c rebootex/rebootex.bin systemctrl/rebootex.h rebootex
 	make -C rebootex clean
 
 _binary:
 	make -C binary clean
-	make -C binary
+	make -C binary -j
 	bin2c binary/binary.bin systemctrl/binary.h binary
 	make -C binary clean
 
 _systemctrl: | _libs _rebootex _binary
 	make -C systemctrl clean
-	make -C systemctrl
+	make -C systemctrl -j
 	psp-packer systemctrl/systemctrl.prx
 	cp "systemctrl/systemctrl.prx" "../user/flash0/kd/systemctrl.prx"
 	make -C systemctrl clean
 
 _popcorn: | _libs
 	make -C popcorn clean
-	make -C popcorn
+	make -C popcorn -j
 	psp-packer popcorn/popcorn.prx
 	cp "popcorn/popcorn.prx" "../user/flash0/kd/popcorn.prx"
 	make -C popcorn clean
 
 _galaxy: | _libs
 	make -C galaxy clean
-	make -C galaxy
+	make -C galaxy -j
 	psp-packer galaxy/galaxy.prx
 	cp "galaxy/galaxy.prx" "../user/flash0/kd/galaxy.prx"
 	make -C galaxy clean
 
 _march33: | _libs
 	make -C march33 clean
-	make -C march33
+	make -C march33 -j
 	psp-packer march33/march33.prx
 	cp "march33/march33.prx" "../user/flash0/kd/march33.prx"
 	make -C march33 clean
 
 _inferno: | _libs
 	make -C inferno clean
-	make -C inferno
+	make -C inferno -j
 	psp-packer inferno/inferno.prx
 	cp "inferno/inferno.prx" "../user/flash0/kd/inferno.prx"
 	make -C inferno clean
 
 _vshctrl: | _libs
 	make -C vshctrl clean
-	make -C vshctrl
+	make -C vshctrl -j
 	psp-packer vshctrl/vshctrl.prx
 	cp "vshctrl/vshctrl.prx" "../user/flash0/kd/vshctrl.prx"
 	make -C vshctrl clean
 
 _kermit_idstorage: | _libs
 	make -C kermit_idstorage clean
-	make -C kermit_idstorage
+	make -C kermit_idstorage -j
 	psp-packer kermit_idstorage/kermit_idstorage.prx
 	cp "kermit_idstorage/kermit_idstorage.prx" "../user/flash0/kd/kermit_idstorage.prx"
 	make -C kermit_idstorage clean
 
 _xmbctrl: | _libs
 	make -C xmbctrl clean
-	make -C xmbctrl
+	make -C xmbctrl -j
 	psp-packer xmbctrl/xmbctrl.prx
 	cp "xmbctrl/xmbctrl.prx" "../user/flash0/vsh/module/xmbctrl.prx"
 	make -C xmbctrl clean
 
 _satelite: | _libs
 	make -C satelite clean
-	make -C satelite
+	make -C satelite -j
 	psp-packer satelite/satelite.prx
 	cp "satelite/satelite.prx" "../user/flash0/vsh/module/satelite.prx"
 	make -C satelite clean
 
 _recovery: | _libs
 	make -C recovery clean
-	make -C recovery
+	make -C recovery -j
 	psp-packer recovery/recovery.prx
 	cp "recovery/recovery.prx" "../user/flash0/vsh/module/recovery.prx"
 	make -C recovery clean
