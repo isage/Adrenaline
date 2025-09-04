@@ -19,12 +19,13 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
-#include "debugscreen.h"
+#include "vgraph.h"
 
-#define printf rDebugScreenPrintf
+//#define printf rDebugScreenPrintf
 
 extern AdrenalineConfig config;
 extern u32 select_color;
+extern u8 theme;
 
 void MainMenu();
 void ToggleUSB();

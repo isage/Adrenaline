@@ -26,7 +26,7 @@
 
 #include "options.h"
 
-PSP_MODULE_INFO("Recovery mode", 0, 1, 0);
+PSP_MODULE_INFO("EPI-RecoveryMode", 0, 2, 0);
 PSP_DISABLE_NEWLIB();
 PSP_DISABLE_AUTOSTART_PTHREAD();
 
@@ -38,83 +38,16 @@ u32 button_assign_value = 0;
 
 AdrenalineConfig config;
 
-Entry main_entries[] = {
-	{ "Toggle USB", ToggleUSB, NULL, 0, NULL },
-	{ "Configuration ->", Configuration, NULL, 0, NULL },
-	{ "Run program at /PSP/GAME/RECOVERY/EBOOT.PBP", RunRecovery, NULL, 0, NULL },
-	{ "Advanced ->", Advanced, NULL, 0, NULL },
-	{ "CPU speed ->", CpuSpeed, NULL, 0, NULL },
-	{ "Plugins ->", Plugins, NULL, 0, NULL },
-	{ "Registry hacks ->", RegistryHacks, NULL, 0, NULL },
-	{ "Exit", Exit, NULL, 0, NULL },
-};
-
-Entry configuration_entries[] = {
-	{ "Back", MainMenu, NULL, 0, NULL },
-	{ "Skip Sony logo", NULL, disenabled, sizeof(disenabled), &config.skip_logo },
-	{ "Skip gameboot", NULL, disenabled, sizeof(disenabled), &config.skip_game_boot_logo },
-	{ "Hide corrupt icons", NULL, disenabled, sizeof(disenabled), &config.hide_corrupt },
-	{ "Hide MAC address", NULL, disenabled, sizeof(disenabled), &config.hide_mac_addr },
-	{ "Autorun program at /PSP/GAME/BOOT/EBOOT.PBP", NULL, disenabled, sizeof(disenabled), &config.startup_program },
-	{ "UMD mode", NULL, umdmodes, sizeof(umdmodes), &config.umd_mode },
-	{ "Fake region", NULL, regions, sizeof(regions), &config.fake_region },
-	{ "Hide DLC's in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_dlcs },
-	{ "Hide PIC0.PNG and PIC1.PNG in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_pic0pic1 },
-	{ "Use extended colors", NULL, extendedcolors, sizeof(extendedcolors), &config.extended_colors },
-	{ "Recovery color", Setrecovery_color, colors, sizeof(colors), &config.recovery_color },
-	{ "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.use_sony_psposk },
-	{ "Use NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.no_nodrm_engine },
-	{ "Enable XMBControl", NULL, endisabled, sizeof(endisabled), &config.no_xmbctrl },
-};
-
-Entry advanced_entries[] = {
-	{ "Back", MainMenu, NULL, 0, NULL },
-	{ "Advanced configuration ->", AdvancedConfiguration, NULL, 0, NULL },
-	{ "Reset settings", ResetSettings, NULL, 0, NULL },
-};
-
-Entry advanced_configuration_entries[] = {
-	{ "Back", Advanced, NULL, 0, NULL },
-	{ "Force high memory layout", NULL, disenabled, sizeof(disenabled), &config.force_high_memory },
-	{ "Execute BOOT.BIN in UMD/ISO", NULL, disenabled, sizeof(disenabled), &config.execute_boot_bin },
-	{ "XMB  plugins", NULL, endisabled, sizeof(endisabled), &config.no_xmb_plugins },
-	{ "GAME plugins", NULL, endisabled, sizeof(endisabled), &config.no_game_plugins },
-	{ "POPS plugins", NULL, endisabled, sizeof(endisabled), &config.no_pops_plugins },
-};
-
-Entry cpu_speed_entries[] = {
-	{ "Back", MainMenu, NULL, 0, NULL },
-	{ "Speed in XMB", NULL, cpuspeeds, sizeof(cpuspeeds), &config.vsh_cpu_speed },
-	{ "Speed in UMD/ISO", NULL, cpuspeeds, sizeof(cpuspeeds), &config.app_cpu_speed },
-};
-
-Entry registry_hacks_entries[] = {
-	{ "Back", MainMenu, NULL, 0, NULL },
-	{ "Button assign", SetButtonAssign, buttonassign, sizeof(buttonassign), (int *)&button_assign_value },
-	{ "Activate WMA", SetWMA, NULL, 0, NULL },
-	{ "Activate Flash Player", SetFlashPlayer, NULL, 0, NULL },
-};
-
-void MainMenu() {
-	MenuReset(main_entries, sizeof(main_entries), "Main menu", 1);
-}
-
 void ToggleUSB() {
 	if (!usbStatus) {
-		printf(" > USB enabled");
 		sctrlStartUsb();
 		usbStatus = 1;
-		sceKernelDelayThread(1 * 1000 * 1000);
+		ShowDialog("USB enabled");
 	} else {
-		printf(" > USB disabled");
 		sctrlStopUsb();
 		usbStatus = 0;
-		sceKernelDelayThread(1 * 1000 * 1000);
+		ShowDialog("USB disabled");
 	}
-}
-
-void Configuration() {
-	MenuReset(configuration_entries, sizeof(configuration_entries), "Configuration", 3);
 }
 
 void RunRecovery() {
@@ -142,21 +75,8 @@ void RunRecovery() {
 	sctrlKernelLoadExecVSHMs2(param.argp, &param);
 }
 
-void Advanced() {
-	MenuReset(advanced_entries, sizeof(advanced_entries), "Advanced", 3);
-}
-
-void AdvancedConfiguration() {
-	MenuReset(advanced_configuration_entries, sizeof(advanced_configuration_entries), "Advanced configuration", 3);
-}
-
-void CpuSpeed() {
-	MenuReset(cpu_speed_entries, sizeof(cpu_speed_entries), "CPU speed", 3);
-}
-
 void RegistryHacks() {
 	GetRegistryData("/CONFIG/SYSTEM/XMB", "button_assign", REG_TYPE_INT, &button_assign_value, sizeof(u32));
-	MenuReset(registry_hacks_entries, sizeof(registry_hacks_entries), "Registry hacks", 3);
 }
 
 void SetButtonAssign(int sel) {
@@ -168,15 +88,12 @@ void SetWMA(int sel) {
 	GetRegistryData("/CONFIG/MUSIC", "wma_play", REG_TYPE_INT, &value, sizeof(u32));
 
 	if (value == 1) {
-		printf(" > WMA was already activated.");
+		ShowDialog("WMA Activated");
 	} else {
-		printf(" > Activating WMA...");
 		value = 1;
 		SetRegistryData("/CONFIG/MUSIC", "wma_play", REG_TYPE_INT, (void *)&value, sizeof(u32));
+		ShowDialog("WMA Activated");
 	}
-
-	sceKernelDelayThread(1 * 1000 * 1000);
-	MenuResetSelection();
 }
 
 void SetFlashPlayer(int sel) {
@@ -184,54 +101,40 @@ void SetFlashPlayer(int sel) {
 	GetRegistryData("/CONFIG/BROWSER", "flash_activated", REG_TYPE_INT, &value, sizeof(u32));
 
 	if (value == 1) {
-		printf(" > Flash Player was already activated.");
+		ShowDialog("Flash Activated");
 	} else {
-		printf(" > Activating Flash Player...");
 		value = 1;
 		SetRegistryData("/CONFIG/BROWSER", "flash_activated", REG_TYPE_INT, (void *)&value, sizeof(u32));
 		SetRegistryData("/CONFIG/BROWSER", "flash_play", REG_TYPE_INT, (void *)&value, sizeof(u32));
+		ShowDialog("Flash Activated");
 	}
-
-	sceKernelDelayThread(1 * 1000 * 1000);
-	MenuResetSelection();
 }
 
 void Setrecovery_color(int sel) {
-    u32 color_list[] = {
-        0x00FF0000, // Blue
-        0x0000FF00, // Green
-        0x000000FF, // Red
-        0x00808080, // Gray
-        0x00FF80FF, // Pink
-        0x00FF0080, // Purple
-        0x00FFFF00, // Cyan
-        0x004080FF, // Orange
-        0x0000FFFF  // Yellow
-    };
-    select_color = color_list[config.recovery_color];
+	theme = config.recovery_color;
 }
 
 void Exit() {
-	printf(" > Exiting recovery...");
-	sceKernelDelayThread(700 * 1000);
-
 	recovery_exit = 1;
 }
 
 int main(int argc, char *argv[]) {
-	rDebugScreenInit();
-
 	SceIoStat stat;
 	memset(&stat, 0, sizeof(SceIoStat));
-	if (sceIoGetstat("ms0:/__ADRENALINE__/flash0", &stat) < 0)
+	if (sceIoGetstat("ms0:/__ADRENALINE__/flash0", &stat) < 0) {
+		VGraphInit(0);
 		Installer();
+	}
 
+	VGraphInit(1);
 	sctrlSEGetConfig(&config);
 	Setrecovery_color(config.recovery_color);
-	MainMenu();
+
+	RegistryHacks();
+	UpdatePluginCount(Plugins());
 
 	while (!recovery_exit) {
-		MenuDisplayCtrl();
+		MenuLoop();
 	}
 
 	sctrlStopUsb();

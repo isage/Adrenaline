@@ -20,16 +20,34 @@
 #define __MENU_H__
 
 typedef struct {
-
 	char *name;
 	void (* function)(int sel);
 	char **options;
 	int size_options;
-	int *value;
+	u8 *value;
 } Entry;
 
-void MenuResetSelection();
-void MenuReset(Entry *entries, int size_entries, char *title, int x);
-void MenuDisplayCtrl();
+typedef struct {
+  u8 accent_color; // arrows, first letters
+  u8 text_color; // unselected text in main area
+  u8 main_bg; // main area bg
+
+  u8 select_text_color; // selected menu item
+  u8 select_text_bg; // selected menu item bg
+
+  u8 panel_text; // top/bottom panels
+  u8 panel_bg; // top/bottom panels
+  u8 panel_select_text; // top panel
+  u8 panel_select_bg; // top panel
+  u8 dialog_text; // message dialog
+  u8 dialog_bg; // message dialog
+
+  u8 default_value_color;
+  u8 changed_value_color;
+} Theme;
+
+void MenuLoop();
+void UpdatePluginCount(int count);
+void ShowDialog(char* message);
 
 #endif

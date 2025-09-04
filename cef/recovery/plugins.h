@@ -19,6 +19,10 @@
 #ifndef __PLUGINS_H__
 #define __PLUGINS_H__
 
-void Plugins();
+#define MAX_PLUGINS_PER_MODE 8
+#define MAX_PLUGINS MAX_PLUGINS_PER_MODE * 3
+
+int Plugins();
+void ImportClassicPlugins(int sel);
 
 #endif

@@ -17,6 +17,8 @@
 */
 
 #include <common.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <libpsardumper.h>
 
 #include "main.h"
@@ -85,24 +87,41 @@ int FindTablePath(char *table, int table_size, char *number, char *szOut) {
 
 char *GetVersion(char *buf) {
 	char *p = strrchr(buf, ',');
-	if (!p)
+	if (!p) {
 		return NULL;
+	}
 
 	return p + 1;
 }
 
 int is5Dnum(char *str) {
 	int len = strlen(str);
-	if (len != 5)
+	if (len != 5) {
 		return 0;
+	}
 
 	for (int i = 0; i < len; i++) {
-		if (str[i] < '0' || str[i] > '9')
+		if (str[i] < '0' || str[i] > '9') {
 			return 0;
+		}
 	}
 
 	return 1;
 }
+
+void DrawProgress(int progress) {
+	VGraphGoto(2, 9);
+	for (int i = 2; i < 58; i++) {
+		VGraphPrintf("\xB1");
+	}
+
+	VGraphGoto(2, 9);
+	int cprogress = ((float)progress / ((float)N_FILES / 56.f));
+	for (int i = 0; i < cprogress+1; i++) {
+		VGraphPrintf("\xDB");
+	}
+}
+
 
 void Installer() {
 	u32 size_written = 0;
@@ -120,25 +139,60 @@ void Installer() {
 	memset(flash_table, 0, sizeof(flash_table));
 	memset(flash_table_size, 0, sizeof(flash_table_size));
 
-	printf("Press X to install the PSP 6.61 firmware on your Memory Card.\n\n");
+	VGraphSetBackColor(0x0);
+	VGraphClear();
+
+	VGraphSetTextColor(0xF, 0x0);
+
+	VGraphPrintf("\xC9");
+	for (int i = 1; i < 59; i++) {
+		VGraphPrintf("\xCD");
+	}
+	VGraphPrintf("\xBB");
+
+	for (int i = 1; i < 32; i++) {
+		VGraphGoto(0, i);
+		VGraphClearLine(0x0);
+		VGraphPrintf("\xBA");
+		VGraphGoto(59, i);
+		VGraphPrintf("\xBA");
+	}
+
+	VGraphGoto(0, 32);
+	VGraphSetTextColor(0xF, 0x0);
+	VGraphPrintf("\xC8");
+	for (int i = 1; i < 59; i++) {
+		VGraphPrintf("\xCD");
+	}
+	VGraphPrintf("\xBC");
+
+
+	VGraphGoto(15, 2);
+	VGraphPrintf("Press X to install the PSP 6.61");
+	VGraphGoto(16, 3);
+	VGraphPrintf("firmware on your Memory Card.");
 
 	while (1) {
 		SceCtrlData pad;
 		sceCtrlPeekBufferPositive(&pad, 1);
 
-		if (pad.Buttons & PSP_CTRL_CROSS)
+		if (pad.Buttons & PSP_CTRL_CROSS) {
 			break;
+		}
 
 		sceKernelDelayThread(10 * 1000);
 	}
 
-	printf("Loading 661.PBP...");
-	sceKernelDelayThread(1 * 1000 * 1000);
+	VGraphGoto(2, 5);
+	VGraphPrintf("Loading 661.PBP...  ");
 
 	// Open file
 	SceUID fd = sceIoOpen("ms0:/__ADRENALINE__/661.PBP", PSP_O_RDONLY, 0);
 	if (fd < 0) {
-		printf("Cannot find ux0:app/" ADRENALINE_TITLEID "/661.PBP.\n");
+		VGraphGoto(2, 24);
+		// TODO:show error dialog
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("Cannot find ux0:app/" ADRENALINE_TITLEID "/661.PBP.");
 		goto EXIT;
 	}
 
@@ -154,29 +208,41 @@ void Installer() {
 
 	res = sceIoRead(fd, big_buffer, BIG_BUFFER_SIZE);
 	if (res <= 0) {
-		printf("Error reading 661.PBP (0x%08X).\n", res);
+		// TODO:show error dialog
+		VGraphGoto(2, 24);
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("Error reading 661.PBP (0x%08X).", res);
 		goto EXIT;
 	}
 
-	printf("OK\n\n");
-	sceKernelDelayThread(1 * 1000 * 1000);
+	VGraphSetTextColor(0x2, 0x0);
+	VGraphPrintf("OK");
+	VGraphSetTextColor(0xF, 0x0);
 
 	int psarVersion = big_buffer[4];
 
 	res = pspPSARInit(big_buffer, sm_buffer1, sm_buffer2);
 	if (res < 0) {
-		printf("pspPSARInit failed (0x%08X).\n", res);
+		VGraphGoto(2, 24);
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("pspPSARInit failed (0x%08X).", res);
 		goto EXIT;
 	}
 
 	char *version = GetVersion((char *)sm_buffer1 + 0x10);
-    if ((memcmp(version, "6.61", 4) != 0)) {
-		printf("Please optain the correct EBOOT.PBP for 6.61.\n");
+	if ((memcmp(version, "6.61", 4) != 0)) {
+		VGraphGoto(2, 24);
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("Please obtain the correct EBOOT.PBP for 6.61.");
 		goto EXIT;
 	}
 
 	if (psarVersion == 5) {
-		printf("Please optain the correct EBOOT.PBP for model 1000/2000/3000.\n");
+		VGraphGoto(2, 24);
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("Please obtain the correct EBOOT.PBP");
+		VGraphGoto(2, 25);
+		VGraphPrintf("for model 1000/2000/3000.");
 		goto EXIT;
 	}
 
@@ -184,8 +250,8 @@ void Installer() {
 	removePath("ms0:/__ADRENALINE__/flash0");
 	removePath("ms0:/__ADRENALINE__/flash1");
 
-	printf("Creating directories...");
-	sceKernelDelayThread(1 * 1000 * 1000);
+	VGraphGoto(2, 6);
+	VGraphPrintf("Creating directories...");
 
 	// Create directories
 	sceIoMkdir("ms0:/__ADRENALINE__/flash0", 0777);
@@ -195,23 +261,31 @@ void Installer() {
 
 	res = CreateDirectories(flash0_dirs, sizeof(flash0_dirs) / sizeof(char **));
 	if (res < 0) {
-		printf("Error creating directories (0x%08X).\n", res);
+		VGraphGoto(2, 24);
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("Error creating directories (0x%08X).", res);
 		goto EXIT;
 	}
 
 	res = CreateDirectories(flash1_dirs, sizeof(flash1_dirs) / sizeof(char **));
 	if (res < 0) {
-		printf("Error creating directories (0x%08X).\n", res);
+		VGraphGoto(2, 24);
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("Error creating directories (0x%08X).", res);
 		goto EXIT;
 	}
 
-	printf("OK\n\n");
-	sceKernelDelayThread(1 * 1000 * 1000);
+	VGraphSetTextColor(0x2, 0x0);
+	VGraphPrintf("OK");
+	VGraphSetTextColor(0xF, 0x0);
 
-	printf("Extracting firmware...\n");
-	sceKernelDelayThread(1 * 1000 * 1000);
+	VGraphGoto(2, 7);
+	VGraphPrintf("Extracting firmware...");
+	DrawProgress(0);
 
-    while (1) {
+	int progress = 0;
+
+	while (1) {
 		char name[128];
 		int cbExpanded;
 		int pos;
@@ -220,7 +294,9 @@ void Installer() {
 
 		if (res < 0) {
 			if (error) {
-				printf("Error decoding PSAR (0x%08X).\n", pos);
+				VGraphGoto(2, 24);
+				VGraphSetTextColor(0x4, 0x0);
+				VGraphPrintf("Error decoding PSAR (0x%08X).", pos);
 				goto EXIT;
 			}
 
@@ -231,7 +307,9 @@ void Installer() {
 			memmove(big_buffer, big_buffer + dpos, BIG_BUFFER_SIZE - dpos);
 			res = sceIoRead(fd, big_buffer + (BIG_BUFFER_SIZE - dpos), dpos);
 			if (res <= 0) {
-				printf("Error reading 661.PBP (0x%08X).\n", res);
+				VGraphGoto(2, 24);
+				VGraphSetTextColor(0x4, 0x0);
+				VGraphPrintf("Error reading 661.PBP (0x%08X).", res);
 				goto EXIT;
 			}
 
@@ -250,7 +328,9 @@ void Installer() {
 				if (num >= 1 && num <= 3) {
 					flash_table_size[num] = pspDecryptTable(sm_buffer2, sm_buffer1, cbExpanded, 4);
 					if (flash_table_size[num] <= 0) {
-						printf("Error decrypting table (0x%08X).\n", flash_table_size[num]);
+						VGraphGoto(2, 24);
+						VGraphSetTextColor(0x4, 0x0);
+						VGraphPrintf("Error decrypting table (0x%08X).", flash_table_size[num]);
 						goto EXIT;
 					}
 
@@ -276,16 +356,15 @@ void Installer() {
 									if (strcmp(name + 7, files[i]) == 0) {
 										char path[256];
 										sprintf(path, "ms0:/__ADRENALINE__/flash0/%s", name + 8);
-
-										printf("Writing %s (%d)...", name + 7, cbExpanded);
-
 										res = WriteFile(path, sm_buffer2, cbExpanded);
 										if (res != cbExpanded) {
-											printf("Error writing file (0x%08X).\n", res);
+											VGraphGoto(2, 24);
+											VGraphSetTextColor(0x4, 0x0);
+											VGraphPrintf("Error writing file (0x%08X).", res);
 											goto EXIT;
 										}
-
-										printf("OK\n");
+										progress++;
+										DrawProgress(progress);
 									}
 								}
 							}
@@ -304,22 +383,26 @@ void Installer() {
 		error = 0;
 	}
 
-	printf("\nThe firmware has been installed successfully.\n");
-	sceKernelDelayThread(2 * 1000 * 1000);
+	VGraphGoto(10, 15);
+	VGraphSetTextColor(0x2, 0x0);
+	VGraphPrintf("The firmware has been installed successfully.");
 
-	printf("Press X to boot the PSP XMB.\n");
+	VGraphGoto(15, 16);
+	VGraphSetTextColor(0xF, 0x0);
+	VGraphPrintf("Press X to boot the PSP XMB.");
 
 	while (1) {
 		SceCtrlData pad;
 		sceCtrlPeekBufferPositive(&pad, 1);
 
-		if (pad.Buttons & PSP_CTRL_CROSS)
+		if (pad.Buttons & PSP_CTRL_CROSS) {
 			break;
+		}
 
 		sceKernelDelayThread(10 * 1000);
 	}
 
-	sceKernelDelayThread(2 * 1000 * 1000);
+	sceKernelDelayThread(500 * 1000);
 	sctrlKernelExitVSH(NULL);
 
 EXIT:
@@ -329,8 +412,10 @@ EXIT:
 	free(sm_buffer2);
 	free(big_buffer);
 
-	sceKernelDelayThread(2 * 1000 * 1000);
-	printf("\nTo exit please hold the PS button, open 'Settings' and select 'Exit PspEmu Application'.");
+	VGraphGoto(5, 29);
+	VGraphPrintf("To exit please hold the PS button, open 'Settings'");
+	VGraphGoto(10, 30);
+	VGraphPrintf("and select 'Exit PspEmu Application'.");
 
 	while (1) {
 		sceKernelDelayThread(1 * 1000 * 1000);
@@ -338,8 +423,6 @@ EXIT:
 }
 
 void ResetSettings() {
-	printf(" > Resetting settings...");
-
 	removePath("ms0:/__ADRENALINE__/flash1");
 
 	sceIoMkdir("ms0:/__ADRENALINE__/flash1", 0777);
@@ -354,5 +437,4 @@ void ResetSettings() {
 
 EXIT:
 	sceKernelDelayThread(1 * 1000 * 1000);
-	MenuResetSelection();
 }

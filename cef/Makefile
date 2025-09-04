@@ -144,11 +144,11 @@ _satelite: | _libs
 	make -C satelite clean
 
 _recovery: | _libs
-	make -C newrecovery clean
-	make -C newrecovery
-	psp-packer newrecovery/recovery.prx
-	cp "newrecovery/recovery.prx" "../user/flash0/vsh/module/recovery.prx"
-	make -C newrecovery clean
+	make -C recovery clean
+	make -C recovery
+	psp-packer recovery/recovery.prx
+	cp "recovery/recovery.prx" "../user/flash0/vsh/module/recovery.prx"
+	make -C recovery clean
 
 clean:
 	make -C lib/libpspkubridge clean

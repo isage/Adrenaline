@@ -17,186 +17,357 @@
 */
 
 #include <common.h>
+#include <stdio.h>
 
 #include "main.h"
 #include "menu.h"
 #include "utils.h"
 
 #include "options.h"
+#include "plugins.h"
 
-#define MAX_PLUGINS_PER_MODE 8
-#define MAX_PLUGINS MAX_PLUGINS_PER_MODE * 3
+void *user_malloc(SceSize size);
+void user_free(void *ptr);
 
 typedef struct {
-	char name[64];
-	int activated;
-} PluginsInfo;
-PluginsInfo plugins_info[MAX_PLUGINS];
+	char name[138];
+	char path[128];
+	char runlevel[64];
+	int active;
+} Plugin;
 
-char plugins_path[MAX_PLUGINS][64]; //8 vsh, 8 game, 8 pops
+Entry plugins_tool_entries[MAX_PLUGINS + 1];
 
-Entry plugins_tool_entries[MAX_PLUGINS + 1]; //+ Back entry
+Plugin plugins[MAX_PLUGINS] = {0};
+int plugin_count = 0;
 
-int n_vsh = 0, n_game = 0, n_pops = 0;
+#define LINE_BUFFER_SIZE 1024
+#define LINE_TOKEN_DELIMITER ','
 
-void trim(char *str) {
-	for (int i = strlen(str) - 1; i >= 0; i--) {
-		if (str[i] == 0x20 || str[i] == '\t') {
-			str[i] = 0;
-		} else {
-			break;
+int findEmpySlot() {
+	for (int i = 0; i < MAX_PLUGINS; i++) {
+		if (plugins[i].name[0] == 0) {
+			return i;
 		}
 	}
+	return -1;
 }
 
-int GetPlugin(char *buf, int size, char *str, int *activated) {
-	int n = 0, i = 0;
-	char *s = str;
+int isRunlevelEnabled(char* line) {
+	return (strcasecmp(line, "on") == 0 || strcasecmp(line, "1") == 0 || strcasecmp(line, "enabled") == 0 || strcasecmp(line, "true") == 0);
+}
+
+static int is_space(int c) {
+	if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == '\n') {
+		return 1;
+	}
+
+	return 0;
+}
+
+// Trim leading and trailing whitespaces
+static char * strtrim(char * text) {
+	// Invalid argument
+	if (text == NULL) {
+		return NULL;
+	}
+
+	// Remove leading whitespaces
+	while (is_space(text[0])) {
+		text++;
+	}
+
+	// Scan position
+	int pos = strlen(text)-1;
+	if (pos<0) {
+		return text;
+	}
+
+	// Find trailing whitespaces
+	while (is_space(text[pos])) {
+		pos--;
+	}
+
+	// Terminate String
+	text[pos+1] = (char)0;
+
+	// Return Trimmed String
+	return text;
+}
+
+static int readLine(char* source, char *str) {
+	u8 ch = 0;
+	int n = 0;
+	int i = 0;
 
 	while (1) {
-		if (i >= size) {
-			break;
+		if ((ch = source[i]) == 0) {
+			*str = 0;
+			return n;
 		}
 
-		char ch = buf[i];
-
-		if (ch < 0x20 && ch != '\t') {
-			if (n != 0) {
-				i++;
-				break;
+		if(ch < 0x20) {
+			if(n != 0){
+				*str = 0;
+				return n;
 			}
 		} else {
 			*str++ = ch;
 			n++;
 		}
-
 		i++;
 	}
+}
 
-	trim(s);
+// Parse and Process Line
+static int processLine(char * line, int (process_line)(char*, char*, char*)) {
+	// Skip lines comments
+	if (line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#') {
+		return 0;
+	}
 
-	*activated = 0;
+	// String Token
+	char * runlevel = line;
+	char * path = NULL;
+	char * enabled = NULL;
 
-	if (i > 0) {
-		char *p = strpbrk(s, " \t");
-		if (p) {
-			char *q = p + 1;
+	// Original string length
+	unsigned int length = strlen(line);
 
-			while (*q < 0) {
-				q++;
+	// Fetch string token
+	for (u32 i = 0; i < length; i++) {
+		// Got all required Token
+		if (enabled != NULL) {
+			// Handle trailing comments as terminators
+			if (strncmp(line + i, "//", 2) == 0 || line[i] == ';' || line[i] == '#') {
+				// Terminate dtring
+				line[i] = 0;
+
+				// Stop token scan
+				break;
 			}
+		}
 
-			if (strcmp(q, "1") == 0) {
-				*activated = 1;
+		if (line[i] == LINE_TOKEN_DELIMITER) {
+			// Terminate string
+			line[i] = 0;
+
+			// Path start
+			if(path == NULL) {
+				path = line + i + 1;
+			} else if(enabled == NULL) {
+				// Enabled start
+				enabled = line + i + 1;
+			} else {
+				// Got all data
+				break;
 			}
-
-			*p = 0;
 		}
 	}
 
-	return i;
+	// Insufficient plugin information
+	if (enabled == NULL) {
+		return 0;
+	}
+
+	// Trim whitespaces
+	runlevel = strtrim(runlevel);
+	path = strtrim(path);
+	enabled = strtrim(enabled);
+
+	return process_line(runlevel, path, enabled);
 }
 
-void SavePlugins(char *mode, int start, int end) {
-	char file[64];
-	sprintf(file, "ms0:/seplugins/%s.txt", mode);
+static void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*), void (*process_custom)(char*)) {
+	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
-	SceUID fd = sceIoOpen(file, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	// Opened Plugin Config
 	if (fd >= 0) {
-		for (int i = start; i < end; i++) {
-			if (plugins_path[i][0] != '\0') {
-				char string[128];
-				sprintf(string, "%s %d\r\n", plugins_path[i], plugins_info[i].activated);
-				sceIoWrite(fd, string, strlen(string));
-			}
+		// allocate buffer and read entire file
+		int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
+		sceIoLseek(fd, 0, PSP_SEEK_SET);
+
+		u8* buf = user_malloc(fsize+1);
+		if (buf == NULL){
+			sceIoClose(fd);
+			return;
 		}
 
+		sceIoRead(fd, buf, fsize);
 		sceIoClose(fd);
-	}
-}
+		buf[fsize] = 0;
 
-int ReadPlugins(char *mode, int get_name, int n) {
-	int i = 0;
+		// Allocate Line Buffer
+		char* line = user_malloc(LINE_BUFFER_SIZE);
+		// Buffer Allocation Success
+		if (line != NULL) {
+			// Read Lines
+			int nread = 0;
+			int total_read = 0;
 
-	char file[64];
-	sprintf(file, "ms0:/seplugins/%s.txt", mode);
-
-	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
-	if (fd >= 0) {
-		char buffer[1024];
-		int size = sceIoRead(fd, buffer, sizeof(buffer));
-		char *p = buffer;
-
-		int res = 0;
-
-		do {
-			res = GetPlugin(p, size, plugins_path[n], &plugins_info[n].activated);
-
-			if (res > 0) {
-				char *q = strrchr(plugins_path[n], '/');
-				if (q) {
-					if (get_name) {
-						sprintf(plugins_info[n].name, "%s [%s]", q + 1, mode);
-					}
-
-					i++;
-					n++;
+			while ((nread=readLine((char*)buf+total_read, line)) > 0) {
+				total_read += nread;
+				if (line[0] == 0) continue; // empty line
+				char* dupline = user_malloc(strlen(line)+1);
+				strcpy(dupline, line);
+				// Process Line
+				if (processLine(strtrim(line), process_line)) {
+					user_free(dupline);
+				} else {
+					process_custom(dupline);
 				}
-
-				size -= res;
-				p += res;
 			}
-		} while (res > 0 && i < MAX_PLUGINS_PER_MODE);
-
+			user_free(line);
+		}
+		// Close Plugin Config
 		sceIoClose(fd);
 	}
+}
 
-	return i;
+// Ignore ill formed line
+static void processCustomLine(char* line) {
+	return;
+}
+
+static void processPlugin(char* runlevel, char* path, char* enabled) {
+	int idx = findEmpySlot();
+
+	int path_len = strlen(path) + 10;
+
+	char *p = strrchr(path, '/');
+
+	if (p != NULL) {
+		snprintf(plugins[idx].name, 138, "%s [%s]", p+1, runlevel);
+	} else {
+		snprintf(plugins[idx].name, 138, "%s [%s]", path, runlevel);
+	}
+
+	snprintf(plugins[idx].path, path_len, "%s", path);
+
+	int run_level_len = strlen(runlevel) + 10;
+	snprintf(plugins[idx].runlevel, run_level_len, "%s", runlevel);
+
+	plugins[idx].active = isRunlevelEnabled(enabled);
+
+	plugin_count += 1;
+}
+
+void savePlugins() {
+	if (plugin_count == 0) {
+		return;
+	}
+
+	int fd = sceIoOpen("ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+
+	if (fd < 0) {
+		return;
+	}
+
+	for (int i = 0; i < plugin_count; i++) {
+		Plugin* plugin = &plugins[i];
+
+		if (plugin->name[0] != 0) {
+			char buf[256] = {0};
+			char *enabled = (plugin->active) ? "on" : "off";
+			sprintf(buf, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
+			sceIoWrite(fd, buf, strlen(buf));
+		}
+	}
+
+	if (fd >= 0) {
+		sceIoClose(fd);
+	}
+}
+
+void readPlugins() {
+	memset(plugins, 0, MAX_PLUGINS*sizeof(Plugin));
+
+	ProcessConfigFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
 }
 
 void SetPlugins(int sel) {
-	char *mode = NULL;
-	int start = 0, end = 0;
-
-	sel -= 1;
-
-	if (sel >= 0 && sel < n_vsh) {
-		mode = "vsh";
-		start = 0;
-		end = n_vsh;
-	} else if (sel >= n_vsh && sel < n_vsh+n_game) {
-		mode = "game";
-		start = n_vsh;
-		end = n_vsh+n_game;
-	} else if (sel >= n_vsh+n_game && sel < n_vsh+n_game+n_pops) {
-		mode = "pops";
-		start = n_vsh+n_game;
-		end = n_vsh+n_game+n_pops;
-	}
-
-	// Save
-	SavePlugins(mode, start, end);
+	savePlugins();
 }
 
-void Plugins() {
+int Plugins() {
 	memset(plugins_tool_entries, 0, sizeof(plugins_tool_entries));
-	memset(plugins_path, 0, sizeof(plugins_path));
-	memset(plugins_info, 0, sizeof(plugins_info));
 
-	n_vsh = ReadPlugins("VSH", 1, 0);
-	n_game = ReadPlugins("GAME", 1, n_vsh);
-	n_pops = ReadPlugins("POPS", 1, n_vsh+n_game);
+	readPlugins();
 
-	plugins_tool_entries[0].name = "Back";
-	plugins_tool_entries[0].function = (void *)MainMenu;
-
-	for (int i = 0; i < (n_vsh+n_game+n_pops); i++) {
-		plugins_tool_entries[i + 1].name = plugins_info[i].name;
-		plugins_tool_entries[i + 1].function = (void *)SetPlugins;
-		plugins_tool_entries[i + 1].options = disenabled;
-		plugins_tool_entries[i + 1].size_options = sizeof(disenabled);
-		plugins_tool_entries[i + 1].value = &plugins_info[i].activated;
+	for (int i = 0; i < plugin_count; i++) {
+		Plugin* plugin = &plugins[i];
+	    printf(plugin->name);
+		plugins_tool_entries[i].name = plugin->name;
+		plugins_tool_entries[i].function = (void *)SetPlugins;
+		plugins_tool_entries[i].options = disenabled;
+		plugins_tool_entries[i].size_options = sizeof(disenabled);
+		plugins_tool_entries[i].value = &plugin->active;
 	}
+	return plugin_count;
+}
 
-	MenuReset(plugins_tool_entries, (n_vsh+n_game+n_pops + 1) * sizeof(Entry), "Plugins manager", 3);
+#define CHUNK_SIZE 512
+void ImportClassicPlugins(int sel) {
+	char* buf = user_malloc(CHUNK_SIZE);
+	int read = 0;
+
+	SceUID game_fd = sceIoOpen("ms0:/seplugins/game.txt", PSP_O_RDONLY, 0777);
+	SceUID vsh_fd = sceIoOpen("ms0:/seplugins/vsh.txt", PSP_O_RDONLY, 0777);
+	SceUID pops_fd = sceIoOpen("ms0:/seplugins/pops.txt", PSP_O_RDONLY, 0777);
+	SceUID plugins_fd = sceIoOpen("ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+
+	// XMB/VSH
+	memset(buf, 0, CHUNK_SIZE);
+	while ( (read = sceIoRead(vsh_fd, buf, CHUNK_SIZE)) > 0 ) {
+		for (int i = 0; i < read; i++) {
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0') {
+				sceIoWrite(plugins_fd, "vsh, ", 5);
+			}
+			if (buf[i] == ' ' && i != 0) {
+				sceIoWrite(plugins_fd, ",", 1);
+			}
+			sceIoWrite(plugins_fd, &buf[i], 1);
+		}
+	}
+	// Newline at the end
+	sceIoWrite(plugins_fd, "\n", 1);
+	sceIoClose(vsh_fd);
+
+	// game
+	memset(buf, 0, CHUNK_SIZE);
+	while ( (read = sceIoRead(game_fd, buf, CHUNK_SIZE)) > 0 ) {
+		for (int i = 0; i < read; i++) {
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0') {
+				sceIoWrite(plugins_fd, "game, ", 6);
+			}
+			if (buf[i] == ' ' && i != 0) {
+				sceIoWrite(plugins_fd, ",", 1);
+			}
+			sceIoWrite(plugins_fd, &buf[i], 1);
+		}
+	}
+	// Newline at the end
+	sceIoWrite(plugins_fd, "\n", 1);
+	sceIoClose(game_fd);
+
+	// POPS
+	memset(buf, 0, CHUNK_SIZE);
+	while ( (read = sceIoRead(pops_fd, buf, CHUNK_SIZE)) > 0 ) {
+		for (int i = 0; i < read; i++) {
+			if (i == 0 || buf[i-1] == '\n' || buf[i-1] == '\0') {
+				sceIoWrite(plugins_fd, "pops, ", 6);
+			}
+			if (buf[i] == ' ' && i != 0) {
+				sceIoWrite(plugins_fd, ",", 1);
+			}
+			sceIoWrite(plugins_fd, &buf[i], 1);
+		}
+	}
+	// Newline at the end
+	sceIoWrite(plugins_fd, "\n", 1);
+	sceIoClose(pops_fd);
+
+	sceIoClose(plugins_fd);
+	user_free(buf);
+	readPlugins();
 }

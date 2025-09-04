@@ -46,8 +46,9 @@ char *stristr(const char *str1, const char *str2) {
 
 int WriteFile(char *file, void *buf, int size) {
 	SceUID fd = sceIoOpen(file, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	if (fd < 0)
+	if (fd < 0) {
 		return fd;
+	}
 
 	int written = sceIoWrite(fd, buf, size);
 
@@ -152,8 +153,7 @@ int SetRegistryData(const char *dir, const char *name, int type, void *data, int
 		if (sceRegOpenCategory(h, dir, 2, &hd) == 0) {
 			if (sceRegSetKeyValue(hd, name, data, data_size) == 0) {
 				ret = 1;
-			} else
-			{
+			} else {
 				sceRegCreateKey(hd, name, type, data_size);
 				sceRegSetKeyValue(hd, name, data, data_size);
 				ret = 1;
