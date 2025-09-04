@@ -38,6 +38,7 @@
 #include "malloc.h"
 #include "ttystdio.h"
 #include "gameinfo.h"
+#include "plugin.h"
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
@@ -555,10 +556,18 @@ static int OnModuleStart(SceModule2 *mod) {
 	char *modname = mod->modname;
 	u32 text_addr = mod->text_addr;
 
+	// Game/App module patches
 	if (ready_gamepatch_mod) {
 		PatchGamesByMod(mod);
 		PatchDrmGameModule(mod);
 		ready_gamepatch_mod = 0;
+	}
+
+	// Third-party Plugins modules
+	if (isLoadingPlugins()) {
+		// Fix 6.60 plugins on 6.61
+		sctrlHENHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion, 0);
+        sctrlHENHookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion, 0);
 	}
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {

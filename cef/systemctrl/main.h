@@ -43,6 +43,8 @@ int sceChkregGetPsCode(u8 *pscode);
 int ReadFile(char *file, void *buf, int size);
 int WriteFile(char *file, void *buf, int size);
 
+u32 sctrlHENFakeDevkitVersion();
+
 u32 _findJAL(u32 addr, int reversed, int skip);
 #define findFirstJAL(addr) _findJAL(addr, 0, 0)
 #define findFirstJALReverse(addr) _findJAL(addr, 1, 0)
