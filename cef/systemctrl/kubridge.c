@@ -75,8 +75,8 @@ SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option
 	return res;
 }
 
-int kuKernelFindModuleByName(char *modname, SceModule2 *mod) {
-	SceModule2 *pmod;
+int kuKernelFindModuleByName(char *modname, SceModule *mod) {
+	SceModule *pmod;
 
 	if(modname == NULL || mod == NULL) {
 		return -1;
@@ -92,8 +92,8 @@ int kuKernelFindModuleByName(char *modname, SceModule2 *mod) {
 	return 0;
 }
 
-int kuKernelFindModuleByAddress(void *addr, SceModule2 *mod) {
-	SceModule2 *pmod;
+int kuKernelFindModuleByAddress(void *addr, SceModule *mod) {
+	SceModule *pmod;
 
 	if(addr == NULL || mod == NULL) {
 		return -1;

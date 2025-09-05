@@ -29,44 +29,16 @@ extern "C" {
 
 #define SCE_KERNEL_MAX_MODULE_SEGMENT (4)
 
-/** Describes a module.  This structure could change in future firmware revisions. */
-typedef struct SceModule {
-	struct SceModule	*next;
-	unsigned short		attribute;
-	unsigned char		version[2];
-	char modname[27];
-	char terminal;
-	unsigned int		unknown1;
-	unsigned int		unknown2;
-	SceUID modid;
-	unsigned int		unknown3[4];
-	void * ent_top;
-	unsigned int		ent_size;
-	void * stub_top;
-	unsigned int		stub_size;
-	unsigned int		unknown4[4];
-	unsigned int		entry_addr;
-	unsigned int		gp_value;
-	unsigned int		text_addr;
-	unsigned int		text_size;
-	unsigned int		data_size;
-	unsigned int		bss_size;
-	unsigned int		nsegment;
-	unsigned int		segmentaddr[4];
-	unsigned int		segmentsize[4];
-} SceModule;
-
 #ifndef __THREADMAN_H__
 typedef s32 (*SceKernelThreadEntry)(SceSize args, void *argp);
 #endif
 typedef s32 (*SceKernelRebootBeforeForKernel)(void *arg1, s32 arg2, s32 arg3, s32 arg4);
 typedef s32 (*SceKernelRebootPhaseForKernel)(s32 arg1, void *arg2, s32 arg3, s32 arg4);
 
-// For 1.50+
 /** The SceModule structure represents a loaded module in memory. */
-typedef struct SceModule2 {
+typedef struct SceModule {
 	/** Pointer to the next registered module. Modules are connected via a linked list. */
-	struct SceModule2* next; // 0
+	struct SceModule* next; // 0
 	/** The attributes of a module. One or more of ::SceModuleAttribute and ::SceModulePrivilegeLevel. */
 	u16 attribute; // 4
 	/**
@@ -128,7 +100,7 @@ typedef struct SceModule2 {
 	 * A pointer to a module's rebootPhase entry function. This function is probably executed
 	 * during a reboot.
 	 */
-	SceKernelRebootPhaseForKernel moduleRebootPhase; // 0x60
+	SceKernelRebootPhaseForKernel module_reboot_phase; // 0x60
 	/**
 	 * The entry address of the module. It is the offset from the start of the TEXT segment to the
 	 * program's entry point.
@@ -184,7 +156,7 @@ typedef struct SceModule2 {
 	 * have been registered, and its stub libraries have been linked.
 	 */
 	u32 compute_text_segment_checksum; // 0xE0
-} SceModule2;
+} SceModule;
 
 /** Defines a library and its exported functions and variables.  Use the len
 	member to determine the real size of the table (size = len * 4). */
@@ -348,7 +320,7 @@ typedef struct SceBootCallback {
  * @returns Pointer to the ::SceModule structure if found, otherwise NULL.
  */
 //SceModule * sceKernelFindModuleByName(const char *modname);
-SceModule2 *sceKernelFindModuleByName(const char *modname);
+SceModule *sceKernelFindModuleByName(const char *modname);
 
 /**
  * Find a module from an address.
@@ -358,7 +330,7 @@ SceModule2 *sceKernelFindModuleByName(const char *modname);
  * @returns Pointer to the ::SceModule structure if found, otherwise NULL.
  */
 //SceModule * sceKernelFindModuleByAddress(unsigned int addr);
-SceModule2 *sceKernelFindModuleByAddress(u32 addr);
+SceModule *sceKernelFindModuleByAddress(u32 addr);
 
 /**
  * Find a module by it's UID.
@@ -368,7 +340,7 @@ SceModule2 *sceKernelFindModuleByAddress(u32 addr);
  * @returns Pointer to the ::SceModule structure if found, otherwise NULL.
  */
 //SceModule * sceKernelFindModuleByUID(SceUID modid);
-SceModule2 *sceKernelFindModuleByUID(SceUID modid);
+SceModule *sceKernelFindModuleByUID(SceUID modid);
 
 
 /**

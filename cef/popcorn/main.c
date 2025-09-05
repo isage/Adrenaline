@@ -404,7 +404,7 @@ static int initGlobals() {
 }
 
 static void patchScePopsMgr(void) {
-	SceModule2 *mod = sceKernelFindModuleByName("scePops_Manager");
+	SceModule *mod = sceKernelFindModuleByName("scePops_Manager");
 	u32 text_addr = mod->text_addr;
 
 	// Use different mode for SceKermitPocs
@@ -443,7 +443,7 @@ static void patchScePopsMgr(void) {
 	sctrlFlushCache();
 }
 
-int OnModuleStart(SceModule2 *mod) {
+int OnModuleStart(SceModule *mod) {
 	if (strcmp(mod->modname, "pops") == 0) {
 		// Use different pops register location
 		for (u32 i = 0; i < mod->text_size; i += 4) {

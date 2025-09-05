@@ -170,7 +170,7 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 }
 
 int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option) {
-	SceModule2 *mod = sceKernelFindModuleByUID(modid);
+	SceModule *mod = sceKernelFindModuleByUID(modid);
 	SceUID fpl = -1;
 	char *plug_buf = NULL;
 	int res;

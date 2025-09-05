@@ -834,7 +834,7 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size) {
 	sctrlFlushCache();
 }
 
-int OnModuleStart(SceModule2 *mod) {
+int OnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
 	u32 text_addr = mod->text_addr;
 	u32 text_size = mod->text_size;

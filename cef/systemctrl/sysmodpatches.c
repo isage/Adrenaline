@@ -233,7 +233,7 @@ int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 
-void PatchLoadExec(SceModule2* mod) {
+void PatchLoadExec(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 	u32 text_size = mod->text_size;
 
@@ -405,7 +405,7 @@ int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, Sc
 	return res;
 }
 
-void PatchImposeDriver(SceModule2* mod) {
+void PatchImposeDriver(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 
 	// Hide volume bar
@@ -423,7 +423,7 @@ void PatchImposeDriver(SceModule2* mod) {
 	sctrlFlushCache();
 }
 
-void PatchMediaSync(SceModule2* mod) {
+void PatchMediaSync(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 
 	// Dummy function that checks flash0 files
@@ -575,7 +575,7 @@ void CheckControllerInput() {
 	}
 }
 
-void PatchController(SceModule2* mod) {
+void PatchController(SceModule* mod) {
 	_sceCtrlPeekBufferPositive = (void*)sctrlHENFindFunctionInMod(mod, "sceCtrl_driver", 0x3A622550);
 	_sceCtrlPeekBufferNegative = (void*)sctrlHENFindFunctionInMod(mod, "sceCtrl_driver", 0xC152080A);
 	_sceCtrlReadBufferPositive = (void*)sctrlHENFindFunctionInMod(mod, "sceCtrl_driver", 0x1F803938);

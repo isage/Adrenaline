@@ -226,7 +226,7 @@ int setupEbootVersionKeyPatched(u8 *vkey, u8 *cid, u32 type, u8 *act) {
 	return ret;
 }
 
-SceModule2* g_np9660_mod = NULL;
+SceModule* g_np9660_mod = NULL;
 void patch_drm() {
 	u32 addr, data;
 
@@ -242,7 +242,7 @@ void patch_drm() {
 		}
 	}
 
-	SceModule2 *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
+	SceModule *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
 
 	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
 		if (_lw(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
@@ -264,7 +264,7 @@ int initEbootPatched(const char *eboot, u32 a1) {
 	return _initEboot(eboot, a1);
 }
 
-void PatchNp9660Driver(SceModule2* mod) {
+void PatchNp9660Driver(SceModule* mod) {
 	// Do not patch if configured to not patch it
 	if (config.no_nodrm_engine) {
 		return;
@@ -300,7 +300,7 @@ void PatchNp9660Driver(SceModule2* mod) {
 	sctrlFlushCache();
 }
 
-void PatchNpDrmDriver(SceModule2* mod) {
+void PatchNpDrmDriver(SceModule* mod) {
 	// Do not patch if configured to not patch it
 	if (config.no_nodrm_engine) {
 		return;
@@ -308,7 +308,7 @@ void PatchNpDrmDriver(SceModule2* mod) {
 
 	u32 text_addr = mod->text_addr;
 	if (sceKernelBootFrom() == SCE_BOOT_DISC) {
-		SceModule2 *mod = sceKernelFindModuleByName("sceIOFileManager");
+		SceModule *mod = sceKernelFindModuleByName("sceIOFileManager");
 
 		for (int i = 0; i < mod->text_size; i += 4) {
 			u32 addr = mod->text_addr + i;
@@ -353,7 +353,7 @@ void *vshCheckBootable(void *dst, const void *src, int size) {
 	return memcpy(dst, src, size);
 }
 
-void PatchVshForDrm(SceModule2 *mod) {
+void PatchVshForDrm(SceModule *mod) {
 	// Do not patch if configured to not patch it
 	if (config.no_nodrm_engine) {
 		return;
@@ -381,7 +381,7 @@ void PatchDrmOnVsh() {
 	}
 
 	u32 addr;
-	SceModule2 *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
+	SceModule *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
 
 	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
 		if (VREAD32(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
@@ -405,7 +405,7 @@ void PatchDrmOnVsh() {
 	sctrlFlushCache();
 }
 
-void PatchSysconfForDrm(SceModule2 *mod) {
+void PatchSysconfForDrm(SceModule *mod) {
 	// Do not patch if configured to not patch it
 	if (config.no_nodrm_engine) {
 		return;
@@ -452,7 +452,7 @@ SceUID sceIoOpenAsyncDrmPatched(const char *path, int flags, SceMode mode) {
 	return sceIoOpenAsync(path, flags, mode);
 }
 
-void PatchDrmGameModule(SceModule2* mod) {
+void PatchDrmGameModule(SceModule* mod) {
 	// Do not patch if configured to not patch it
 	if (config.no_nodrm_engine) {
 		return;

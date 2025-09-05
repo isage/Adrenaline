@@ -161,7 +161,7 @@ int initEmulator(void) {
 int sceKernelStartThreadPatched(SceUID thid, SceSize arglen, void * argp) {
 	// SceNpUmdMount Thread
 	if(g_SceNpUmdMount_thid == thid) {
-		SceModule2 * pMod = sceKernelFindModuleByName("sceNp9660_driver");
+		SceModule * pMod = sceKernelFindModuleByName("sceNp9660_driver");
 		g_sceNp9660_driver_text_addr = pMod->text_addr;
 
 		// Make InitForKernel Call return 0x80000000 always
@@ -230,7 +230,7 @@ int module_start(SceSize args, void* argp) {
 		return 1;
 	}
 
-	SceModule2 * pMod = (SceModule2 *)sceKernelFindModuleByName("sceThreadManager");
+	SceModule * pMod = (SceModule *)sceKernelFindModuleByName("sceThreadManager");
 
 	if(pMod != NULL) {
 		u32 ref;

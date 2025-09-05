@@ -42,7 +42,7 @@
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
-int (* PrologueModule)(void *modmgr_param, SceModule2 *mod);
+int (* PrologueModule)(void *modmgr_param, SceModule *mod);
 
 STMOD_HANDLER module_handler;
 STMOD_HANDLER game_previous = NULL;
@@ -79,7 +79,7 @@ void sctrlFlushCache() {
 	sceKernelDcacheWritebackInvalidateAll();
 }
 
-int PrologueModulePatched(void *modmgr_param, SceModule2 *mod) {
+int PrologueModulePatched(void *modmgr_param, SceModule *mod) {
 	int res = PrologueModule(modmgr_param, mod);
 
 	if (res >= 0 && module_handler)
@@ -113,7 +113,7 @@ int memcmp_patched(const void *b1, const void *b2, size_t len) {
 }
 
 static void PatchMemlmd() {
-	SceModule2 *mod = sceKernelFindModuleByName("sceMemlmd");
+	SceModule *mod = sceKernelFindModuleByName("sceMemlmd");
 	u32 text_addr = mod->text_addr;
 
 	// Allow 6.61 kernel modules
@@ -121,7 +121,7 @@ static void PatchMemlmd() {
 }
 
 static void PatchInterruptMgr() {
-	SceModule2 *mod = sceKernelFindModuleByName("sceInterruptManager");
+	SceModule *mod = sceKernelFindModuleByName("sceInterruptManager");
 	u32 text_addr = mod->text_addr;
 
 	// Allow execution of syscalls in kernel mode
@@ -130,7 +130,7 @@ static void PatchInterruptMgr() {
 }
 
 static void PatchModuleMgr() {
-	SceModule2 *mod = sceKernelFindModuleByName("sceModuleManager");
+	SceModule *mod = sceKernelFindModuleByName("sceModuleManager");
 	u32 text_addr = mod->text_addr;
 
 	for (int i = 0; i < mod->text_size; i += 4) {
@@ -156,7 +156,7 @@ static void PatchModuleMgr() {
 
 
 static void PatchLoadCore() {
-	SceModule2 *mod = sceKernelFindModuleByName("sceLoaderCore");
+	SceModule *mod = sceKernelFindModuleByName("sceLoaderCore");
 	u32 text_addr = mod->text_addr;
 
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelCheckExecFile), sceKernelCheckExecFilePatched, _sceKernelCheckExecFile);
@@ -343,7 +343,7 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 	return res;
 }
 
-static int wweModuleOnStart(SceModule2 * mod) {
+static int wweModuleOnStart(SceModule * mod) {
 	// Boot Complete Action not done yet
 	if (strcmp(mod->modname, "mainPSP") == 0) {
 		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222); // scePowerGetPllClockFrequencyInt
@@ -388,14 +388,14 @@ static void PatchGameByGameId() {
 	}
 }
 
-static void PatchGamesByMod(SceModule2* mod) {
+static void PatchGamesByMod(SceModule* mod) {
 	char *modname = mod->modname;
 
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
 
 		if (rebootex_config.bootfileindex == BOOT_INFERNO) {
-			SceModule2* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+			SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 
 			if (config.umd_seek == 0 && config.umd_speed == 0) {
 				// enable UMD reading speed
@@ -450,7 +450,7 @@ static void OnSystemStatusIdle() {
 	PatchVolatileMemBug();
 
 	// Inferno cache config
-	SceModule2* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+	SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 
 	// Inferno driver is loaded
 	if (inferno_mod != NULL) {
@@ -548,7 +548,7 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
-static int OnModuleStart(SceModule2 *mod) {
+static int OnModuleStart(SceModule *mod) {
 	static int ready_gamepatch_mod = 0;
 
 	PatchGameInfoGetter(mod);

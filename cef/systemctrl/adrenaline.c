@@ -272,7 +272,7 @@ int sceKermitSyncDisplayPatched() {
 	return sceKermitSyncDisplay();
 }
 
-void PatchSasCore(SceModule2* mod) {
+void PatchSasCore(SceModule* mod) {
 	sceSasCoreInit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xB0F9F98F);
 	sceSasCoreExit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xE143A1EA);
 
@@ -281,7 +281,7 @@ void PatchSasCore(SceModule2* mod) {
 	sctrlFlushCache();
 }
 
-void PatchLowIODriver2(SceModule2* mod) {
+void PatchLowIODriver2(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 
 	HIJACK_FUNCTION(text_addr + 0x880, SetFlag1Patched, SetFlag1);
@@ -291,7 +291,7 @@ void PatchLowIODriver2(SceModule2* mod) {
 	sctrlFlushCache();
 }
 
-void PatchPowerService2(SceModule2* mod) {
+void PatchPowerService2(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 
 	// Patch to inject binary and to call uiResumePoint

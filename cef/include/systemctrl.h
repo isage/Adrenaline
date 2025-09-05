@@ -59,7 +59,7 @@ enum PspModels {
     PSP_11000 = 10, // 11g
 };
 
-typedef int (* STMOD_HANDLER)(SceModule2 *);
+typedef int (* STMOD_HANDLER)(SceModule *);
 
 /**
  * Restart the vsh.
@@ -331,7 +331,7 @@ PspIoDrv *sctrlHENFindDriver(char *drvname);
  *
  * @returns The reference to the stub table ot NULL if not found.
  */
-SceLibraryStubTable* sctrlHENFindImportLib(SceModule2* mod, const char* library);
+SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library);
 #define sctrlFindImportLib sctrlHENFindImportLib
 
 /**
@@ -348,9 +348,9 @@ u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
 #define FindProc sctrlHENFindFunction
 
 /**
- * Finds a function in a ::SceModule2.
+ * Finds a function in a ::SceModule.
  *
- * Good to optimize when you already have a ::SceModule2 module and wants to
+ * Good to optimize when you already have a ::SceModule module and wants to
  * find a function in that module.
  *
  * @param mod - The module where to search the function
@@ -360,13 +360,13 @@ u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
  * @returns - The function address or 0 if not found
  *
 */
-u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid);
+u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *szLib, u32 nid);
 #define FindProcInMod sctrlHENFindFunctionInMod
 
 /**
- * Finds a import stub in a ::SceModule2.
+ * Finds a import stub in a ::SceModule.
  *
- * Good to optimize when you already have a ::SceModule2 module and wants to
+ * Good to optimize when you already have a ::SceModule module and wants to
  * find a stub in that module.
  *
  * @param mod - The module where to search the import
@@ -376,7 +376,7 @@ u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid);
  * @returns - The function address or 0 if not found
  *
 */
-u32 sctrlHENFindImportInMod(SceModule2 * mod, const char *szLib, u32 nid);
+u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid);
 
 /**
  * Replace import function stub with a function or dummy value.
@@ -406,7 +406,7 @@ u32 sctrlHENFindImportInMod(SceModule2 * mod, const char *szLib, u32 nid);
  * -4 if failed to find syscall table
  * -5 if failed to find syscall in the syscall table
 */
-int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func, int dummy);
+int sctrlHENHookImportByNID(SceModule * mod, char *library, u32 nid, void *func, int dummy);
 
 /**
  * Replace import function stub with a function or dummy value.
@@ -434,7 +434,7 @@ int sctrlHENHookImportByNID(SceModule2 * mod, char *library, u32 nid, void *func
  *
  * @note Compat with ARK-4
  */
-int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func);
+int sctrlHookImportByNID(SceModule * pMod, char * library, u32 nid, void * func);
 
 /**
  * Replace function with a function or dummy value.
@@ -464,7 +464,7 @@ int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func
  * -4 if failed to find syscall table
  * -5 if failed to find syscall in the syscall table
 */
-int sctrlHENHookFunctionByNID(SceModule2 * pMod, char * library, u32 nid, void *func, int dummy);
+int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *func, int dummy);
 
 /**
  * Gets the HEN version
@@ -564,14 +564,14 @@ void sctrlHENSetSpeed(int cpu, int bus);
  * @example
  * STMOD_HANDLER previous = NULL;
  *
- * int OnModuleStart(SceModule2 *mod);
+ * int OnModuleStart(SceModule *mod);
  *
  * void somepointofmycode()
  * {
  *		previous = sctrlHENSetStartModuleHandler(OnModuleStart);
  * }
  *
- * int OnModuleStart(SceModule2 *mod)
+ * int OnModuleStart(SceModule *mod)
  * {
  *		if (strcmp(mod->modname, "vsh_module") == 0)
  *		{

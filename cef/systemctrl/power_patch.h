@@ -19,6 +19,6 @@
 #ifndef __POWER_PATCH_H__
 #define __POWER_PATCH_H__
 
-void PatchPowerService(SceModule2* mod);
+void PatchPowerService(SceModule* mod);
 
 #endif

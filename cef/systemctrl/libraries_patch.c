@@ -81,7 +81,7 @@ u32 ResolveOldNIDs(const char *libname, u32 nid) {
 }
 
 u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
-	SceModule2 *mod = sceKernelFindModuleByName(szMod);
+	SceModule *mod = sceKernelFindModuleByName(szMod);
 	if (!mod) {
 		mod = sceKernelFindModuleByAddress((SceUID)szMod);
 		if (!mod)
@@ -116,7 +116,7 @@ u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
 }
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid) {
-	SceModule2 *mod = sceKernelFindModuleByName(szMod);
+	SceModule *mod = sceKernelFindModuleByName(szMod);
 	if (!mod) {
 		mod = sceKernelFindModuleByAddress((SceUID)szMod);
 		if (!mod)
@@ -204,7 +204,7 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 	return res;
 }
 
-SceLibraryStubTable* sctrlHENFindImportLib(SceModule2* mod, const char* library) {
+SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library) {
 	if (mod == NULL || library == NULL) {
 		return NULL;
 	}
@@ -223,7 +223,7 @@ SceLibraryStubTable* sctrlHENFindImportLib(SceModule2* mod, const char* library)
 	return NULL;
 }
 
-u32 sctrlHENFindImportInMod(SceModule2 * mod, const char *szLib, u32 nid) {
+u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid) {
 	// Invalid Arguments
 	if (mod == NULL || szLib == NULL) {
 		return 0;
@@ -252,7 +252,7 @@ u32 sctrlHENFindImportInMod(SceModule2 * mod, const char *szLib, u32 nid) {
 	return 0;
 }
 
-u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid) {
+u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *szLib, u32 nid) {
 	// Invalid Arguments
 	if(mod == NULL || szLib == NULL) {
 		return 0;
@@ -288,7 +288,7 @@ u32 sctrlHENFindFunctionInMod(SceModule2 * mod, const char *szLib, u32 nid) {
 }
 
 // Replace a function usage
-int sctrlHENHookFunctionByNID(SceModule2 * pMod, char * library, u32 nid, void *func, int dummy) {
+int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *func, int dummy) {
 	// Invalid Arguments
 	if(pMod == NULL || library == NULL) {
 		return -1;
@@ -391,7 +391,7 @@ int sctrlHENHookFunctionByNID(SceModule2 * pMod, char * library, u32 nid, void *
 }
 
 // Replace Import Function Stub
-int sctrlHENHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void *func, int dummy) {
+int sctrlHENHookImportByNID(SceModule * pMod, char * library, u32 nid, void *func, int dummy) {
 	// Invalid Arguments
 	if(pMod == NULL || library == NULL) {
 		return -1;
@@ -504,7 +504,7 @@ int sctrlHENIsSystemBooted() {
 // COMPAT
 ////////////////////////////////////////////////////////////////////////////////
 
-int sctrlHookImportByNID(SceModule2 * pMod, char * library, u32 nid, void * func) {
+int sctrlHookImportByNID(SceModule * pMod, char * library, u32 nid, void * func) {
 	return sctrlHENHookImportByNID(pMod, library, nid, func, 0);
 }
 
@@ -513,7 +513,7 @@ int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
 	int ret = 0;
 
 	u32 k1 = pspSdkSetK1(0);
-	SceModule2* mod = sceKernelFindModuleByName(modname);
+	SceModule* mod = sceKernelFindModuleByName(modname);
 
 	if(mod != NULL) {
 		MAKE_INSTRUCTION(mod->text_addr + offset, inst);
@@ -532,7 +532,7 @@ u32 sctrlModuleTextAddr(char *modname) {
 	u32 text_addr = 0;
 	u32 k1 = pspSdkSetK1(0);
 
-	SceModule2* mod = sceKernelFindModuleByName(modname);
+	SceModule* mod = sceKernelFindModuleByName(modname);
 
 	if (mod != NULL) {
 		text_addr = mod->text_addr;

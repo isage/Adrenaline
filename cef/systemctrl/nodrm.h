@@ -21,11 +21,11 @@
 
 #include <psploadcore.h>
 
-void PatchNpDrmDriver(SceModule2* mod);
-void PatchNp9660Driver(SceModule2* mod);
-void PatchVshForDrm(SceModule2 *mod);
+void PatchNpDrmDriver(SceModule* mod);
+void PatchNp9660Driver(SceModule* mod);
+void PatchVshForDrm(SceModule *mod);
 void PatchDrmOnVsh();
-void PatchSysconfForDrm(SceModule2 *mod);
-void PatchDrmGameModule(SceModule2* mod);
+void PatchSysconfForDrm(SceModule *mod);
+void PatchDrmGameModule(SceModule* mod);
 
 #endif

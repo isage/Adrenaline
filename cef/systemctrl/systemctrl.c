@@ -34,7 +34,7 @@ int sctrlKernelSetUserLevel(int level) {
 	int k1 = pspSdkSetK1(0);
 	int res = sceKernelGetUserLevel();
 
-	SceModule2 *mod = sceKernelFindModuleByName("sceThreadManager");
+	SceModule *mod = sceKernelFindModuleByName("sceThreadManager");
 	u32 text_addr = mod->text_addr;
 
 	u32 high = (((u32)VREAD16(text_addr + 0x358)) << 16);
@@ -155,7 +155,7 @@ int sctrlSEGetVersion() {
 PspIoDrv *sctrlHENFindDriver(char *drvname) {
 	int k1 = pspSdkSetK1(0);
 
-	SceModule2 *mod = sceKernelFindModuleByName("sceIOFileManager");
+	SceModule *mod = sceKernelFindModuleByName("sceIOFileManager");
 	u32 text_addr = mod->text_addr;
 
 	u32 *(* GetDevice)(char *) = NULL;
@@ -227,7 +227,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 	int k1 = pspSdkSetK1(0);
 
 	if (!_sceLoadExecVSHWithApitype) {
-		SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
+		SceModule *mod = sceKernelFindModuleByName("sceLoadExec");
 		u32 text_addr = mod->text_addr;
 		_sceLoadExecVSHWithApitype = (void *)text_addr + 0x23D0;
 	}

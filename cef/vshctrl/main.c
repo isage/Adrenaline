@@ -817,7 +817,7 @@ void PatchVshMain(u32 text_addr) {
 
 	IoPatches();
 
-	SceModule2 *mod = sceKernelFindModuleByName("sceVshBridge_Driver");
+	SceModule *mod = sceKernelFindModuleByName("sceVshBridge_Driver");
 	sctrlHENHookImportByNID(mod, "sceCtrl_driver", 0xBE30CED0, sceCtrlReadBufferPositivePatched, 0);
 	sctrlHENPatchSyscall(K_EXTRACT_IMPORT(&sceCtrlReadBufferPositive), sceCtrlReadBufferPositivePatched);
 
@@ -974,7 +974,7 @@ void PatchUpdatePlugin(u32 text_addr) {
 	sctrlFlushCache();
 }
 
-int OnModuleStart(SceModule2 *mod) {
+int OnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
 	u32 text_addr = mod->text_addr;
 
@@ -998,7 +998,7 @@ int module_start(SceSize args, void *argp) {
 	logInit("ms0:/log_vshctrl.txt");
 	logmsg("VshCtrl started\n");
 
-	SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
+	SceModule *mod = sceKernelFindModuleByName("sceLoadExec");
 	u32 text_addr = mod->text_addr;
 
 	MAKE_CALL(text_addr + 0x1DC0, LoadExecVSHCommonPatched); //sceKernelLoadExecVSHMs2

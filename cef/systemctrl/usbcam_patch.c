@@ -230,7 +230,7 @@ int sceUsbCamWaitReadVideoFrameEnd_Patched() {
 	return res;
 }
 
-void PatchUSBCamDriver(SceModule2* mod) {
+void PatchUSBCamDriver(SceModule* mod) {
 	REDIRECT_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);
 	REDIRECT_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
 	REDIRECT_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);

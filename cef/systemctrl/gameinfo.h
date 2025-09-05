@@ -23,6 +23,6 @@
 void findAndSetGameId(void);
 int readGameIdFromDisc(void);
 
-void PatchGameInfoGetter(SceModule2* mod);
+void PatchGameInfoGetter(SceModule* mod);
 
 #endif

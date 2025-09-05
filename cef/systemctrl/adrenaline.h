@@ -23,9 +23,9 @@ int SendAdrenalineCmd(int cmd);
 
 void initAdrenalineInfo();
 
-void PatchSasCore(SceModule2* mod);
-void PatchLowIODriver2(SceModule2* mod);
-void PatchPowerService2(SceModule2* mod);
+void PatchSasCore(SceModule* mod);
+void PatchLowIODriver2(SceModule* mod);
+void PatchPowerService2(SceModule* mod);
 
 int initAdrenaline();
 

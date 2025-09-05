@@ -246,7 +246,7 @@ int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
 	g_ie_callback_arg = arg;
 	g_ie_callback = callback;
 
-	SceModule2* mod = (SceModule2*)sceKernelFindModuleByName("sceIsofs_driver");
+	SceModule* mod = (SceModule*)sceKernelFindModuleByName("sceIsofs_driver");
 	u32 text_addr = mod->text_addr;
 	u32 intr = ((0x2402 << 16) | ((0) & 0xFFFF));
 

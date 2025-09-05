@@ -33,10 +33,10 @@ void ApplyAndResetMemory();
 void UnprotectExtraMemory();
 void CheckControllerInput();
 
-void PatchLoadExec(SceModule2* mod);
+void PatchLoadExec(SceModule* mod);
 void PatchChkreg();
-void PatchImposeDriver(SceModule2* mod);
-void PatchMediaSync(SceModule2* mod);
-void PatchController(SceModule2* mod);
+void PatchImposeDriver(SceModule* mod);
+void PatchMediaSync(SceModule* mod);
+void PatchController(SceModule* mod);
 
 #endif

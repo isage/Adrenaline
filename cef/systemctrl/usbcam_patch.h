@@ -23,6 +23,6 @@
 #include <psptypes.h>
 #include <psploadcore.h>
 
-void PatchUSBCamDriver(SceModule2* mod);
+void PatchUSBCamDriver(SceModule* mod);
 
 #endif

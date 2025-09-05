@@ -108,7 +108,7 @@ int _msIoIoctl(u32 *args) {
 }
 
 int IoDevctlReinsertMs() {
-	SceModule2 *mod = sceKernelFindModuleByName("sceKermitMsfs_driver");
+	SceModule *mod = sceKernelFindModuleByName("sceKermitMsfs_driver");
 	if (!mod)
 		return -1;
 

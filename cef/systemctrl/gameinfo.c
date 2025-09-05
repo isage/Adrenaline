@@ -127,7 +127,7 @@ SceGameInfo* sceKernelGetGameInfoPatched() {
 	return gameinfo;
 }
 
-void PatchGameInfoGetter(SceModule2* mod) {
+void PatchGameInfoGetter(SceModule* mod) {
 	// Kernel module
 	if((mod->text_addr & 0x80000000) != 0) {
 		u32 func = sctrlHENFindFunctionInMod(mod, "SysMemForKernel", 0xEF29061C);
