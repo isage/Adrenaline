@@ -27,14 +27,14 @@ int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize
 int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
 
 __attribute__((noinline)) void AdjustExecInfo(void *buf, SceLoadCoreExecFileInfo *execInfo) {
-	SceModuleInfo *modInfo = (SceModuleInfo *)((u32)buf + execInfo->moduleInfoOffset);
+	SceModuleInfo *modInfo = (SceModuleInfo *)((u32)buf + execInfo->module_info_offset);
 
 	if ((u32)modInfo >= 0x88400000 && (u32)modInfo <= 0x88800000) {
 		return;
 	}
 
-	execInfo->modInfoAttribute = modInfo->modattribute;
-	execInfo->isKernelMod = (execInfo->modInfoAttribute & 0x1000) ? 1 : 0;
+	execInfo->mod_info_attribute = modInfo->modattribute;
+	execInfo->is_kernel_mod = (execInfo->mod_info_attribute & 0x1000) ? 1 : 0;
 }
 
 int sceKernelCheckExecFilePatched(void *buf, SceLoadCoreExecFileInfo *execInfo) {
@@ -44,11 +44,11 @@ int sceKernelCheckExecFilePatched(void *buf, SceLoadCoreExecFileInfo *execInfo) 
 
 	// Plain ELF
 	if (header->e_magic == ELF_MAGIC) {
-		execInfo->isDecrypted = 1;
+		execInfo->is_decrypted = 1;
 
 		// Static ELF
-		if (execInfo->elfType == -1 && execInfo->moduleInfoOffset == 0 && header->e_type == 2) {
-			execInfo->elfType = 3;
+		if (execInfo->elf_type == -1 && execInfo->module_info_offset == 0 && header->e_type == 2) {
+			execInfo->elf_type = 3;
 		}
 
 		AdjustExecInfo(buf, execInfo);
@@ -63,19 +63,19 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 
 	// Plain ELF
 	if (header->e_magic == ELF_MAGIC) {
-		if (execInfo->isDecrypted) {
+		if (execInfo->is_decrypted) {
 			// Static ELF
 			if (header->e_type == 2) {
-				execInfo->apiType = SCE_APITYPE_UMD;
+				execInfo->api_type = SCE_APITYPE_UMD;
 
-				// Find moduleInfoOffset
-				if (execInfo->moduleInfoOffset == 0) {
+				// Find module_info_offset
+				if (execInfo->module_info_offset == 0) {
 					Elf32_Shdr *section = (Elf32_Shdr *)((u32)header + header->e_shoff);
 					char *strtable = (char *)((u32)header + section[header->e_shstrndx].sh_offset);
 
 					for (int i = 0; i < header->e_shnum; i++) {
 						if (strcmp(strtable + section[i].sh_name, ".rodata.sceModuleInfo") == 0) {
-							execInfo->moduleInfoOffset = section[i].sh_offset;
+							execInfo->module_info_offset = section[i].sh_offset;
 							break;
 						}
 					}
@@ -91,8 +91,8 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 
 int PspUncompressPatched(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize) {
 	if (*(u16 *)((u32)buf + 0x150) == 0x8B1F) {
-		execInfo->isDecrypted = 1;
-		sceKernelGzipDecompress(execInfo->topAddr, execInfo->decSize, (void *)((u32)buf + 0x150), 0);
+		execInfo->is_decrypted = 1;
+		sceKernelGzipDecompress(execInfo->top_addr, execInfo->dec_size, (void *)((u32)buf + 0x150), 0);
 		return 0;
 	}
 
@@ -123,18 +123,18 @@ int PartitionCheckPatched(u32 *param, SceLoadCoreExecFileInfo *execInfo) {
 
 			// Allow psar's in decrypted pbp's
 			if (header.e_type != 2) {
-				execInfo->execSize = psar_offset - elf_offset;
+				execInfo->exec_size = psar_offset - elf_offset;
 			}
 		}
 
 		// ELF magic
 		if (header.e_magic == ELF_MAGIC) {
 			// Go to SceModuleInfo offset
-			sceIoLseek32(fd, elf_offset + execInfo->moduleInfoOffset, PSP_SEEK_SET);
+			sceIoLseek32(fd, elf_offset + execInfo->module_info_offset, PSP_SEEK_SET);
 
 			// Adjust execInfo
-			sceIoRead(fd, &execInfo->modInfoAttribute, sizeof(u16));
-			execInfo->isKernelMod = (execInfo->modInfoAttribute & 0x1000) ? 1 : 0;
+			sceIoRead(fd, &execInfo->mod_info_attribute, sizeof(u16));
+			execInfo->is_kernel_mod = (execInfo->mod_info_attribute & 0x1000) ? 1 : 0;
 		}
 	}
 

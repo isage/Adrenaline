@@ -70,18 +70,18 @@ typedef struct SceModule2 {
 	/** The attributes of a module. One or more of ::SceModuleAttribute and ::SceModulePrivilegeLevel. */
 	u16 attribute; // 4
 	/**
-     * The version of the module. Consists of a major and minor part. There can be several modules
-     * loaded with the same name and version.
-     */
+	 * The version of the module. Consists of a major and minor part. There can be several modules
+	 * loaded with the same name and version.
+	 */
 	u8 version[2]; // 6
 	/** The module's name. There can be several modules loaded with the same name. */
 	char modname[27]; // 8
 	/** String terminator (always '\0'). */
 	char terminal; // 0x23
 	/**
-     * The status of the module. Contains information whether the module has been started, stopped,
-     * is a user module, etc.
-     */
+	 * The status of the module. Contains information whether the module has been started, stopped,
+	 * is a user module, etc.
+	 */
 	u16 mod_state;	// 0x24
 	char padding[2]; // 0x26
 	/** A secondary ID for the module. */
@@ -105,34 +105,34 @@ typedef struct SceModule2 {
 	/** The size of all stub library entry tables of the module. */
 	SceSize stub_size; // 0x4C
 	/**
-     * A pointer to the (required) module's start entry function. This function is executed during
-     * the module's startup.
-     */
+	 * A pointer to the (required) module's start entry function. This function is executed during
+	 * the module's startup.
+	 */
 	SceKernelThreadEntry module_start; // 0x50
 	/**
-     * A pointer to the (required) module's stop entry function. This function is executed during
-     * the module's stopping phase.
-     */
+	 * A pointer to the (required) module's stop entry function. This function is executed during
+	 * the module's stopping phase.
+	 */
 	SceKernelThreadEntry module_stop; // 0x54
 	/**
-     * A pointer to a module's Bootstart entry function. This function is probably executed after
-     * a reboot.
-     */
+	 * A pointer to a module's Bootstart entry function. This function is probably executed after
+	 * a reboot.
+	 */
 	SceKernelThreadEntry module_bootstart; // 0x58
 	/**
-     * A pointer to a module's rebootBefore entry function. This function is probably executed
-     * before a reboot.
-     */
+	 * A pointer to a module's rebootBefore entry function. This function is probably executed
+	 * before a reboot.
+	 */
 	SceKernelRebootBeforeForKernel module_reboot_before; // 0x5C
 	/**
-     * A pointer to a module's rebootPhase entry function. This function is probably executed
-     * during a reboot.
-     */
+	 * A pointer to a module's rebootPhase entry function. This function is probably executed
+	 * during a reboot.
+	 */
 	SceKernelRebootPhaseForKernel moduleRebootPhase; // 0x60
 	/**
-     * The entry address of the module. It is the offset from the start of the TEXT segment to the
-     * program's entry point.
-     */
+	 * The entry address of the module. It is the offset from the start of the TEXT segment to the
+	 * program's entry point.
+	 */
 	u32 entry_addr; // 0x64
 	/** Contains the offset from the start of the TEXT segment of the program's GP register value. */
 	u32 gp_value; // 0x68
@@ -153,41 +153,41 @@ typedef struct SceModule2 {
 	/** An array containing the size of each segment. */
 	SceSize segment_size[4]; // 0x90
 	/** An array containing the alignment information of each segment. */
-    u32 segment_align[4]; // 0xA0
-    /** The priority of the module start thread. */
+	u32 segment_align[4]; // 0xA0
+	/** The priority of the module start thread. */
 	s32 module_start_thread_priority; // 0xB0
-    /** The stack size of the module start thread. */
+	/** The stack size of the module start thread. */
 	SceSize module_start_thread_stacksize; // 0xB4
-    /** The attributes of the module start thread. */
+	/** The attributes of the module start thread. */
 	SceUInt module_start_thread_attr; // 0xB8
-    /** The priority of the module stop thread. */
+	/** The priority of the module stop thread. */
 	s32 module_stop_thread_priority; // 0xBC
-    /** The stack size of the module stop thread. */
+	/** The stack size of the module stop thread. */
 	SceSize module_stop_thread_stacksize; // 0xC0
-    /** The attributes of the module stop thread. */
+	/** The attributes of the module stop thread. */
 	SceUInt module_stop_thread_attr; // 0xC4
-    /** The priority of the module reboot before thread. */
+	/** The priority of the module reboot before thread. */
 	s32 module_reboot_before_thread_priority; // 0xC8
-    /** The stack size of the module reboot before thread. */
+	/** The stack size of the module reboot before thread. */
 	SceSize module_reboot_before_thread_stacksize; // 0xCC
-    /** The attributes of the module reboot before thread. */
+	/** The attributes of the module reboot before thread. */
 	SceUInt module_reboot_before_thread_attr; // 0xD0
-    /** The value of the coprocessor 0's count register when the module is created. */
+	/** The value of the coprocessor 0's count register when the module is created. */
 	u32 count_reg_val; // 0xD4
-    /** The segment checksum of the module's segments. */
-    u32 segment_checksum; // 0xD8
-    /** TEXT segment checksum of the module. */
-    u32 text_segment_checksum; // 0xDC
-    /**
-     * Whether to compute the text segment checksum before starting the module (see prologue).
-     * If non-zero, the text segment checksum will be computed after the module's resident libraries
-     * have been registered, and its stub libraries have been linked.
-     */
-    u32 compute_text_segment_checksum; // 0xE0
+	/** The segment checksum of the module's segments. */
+	u32 segment_checksum; // 0xD8
+	/** TEXT segment checksum of the module. */
+	u32 text_segment_checksum; // 0xDC
+	/**
+	 * Whether to compute the text segment checksum before starting the module (see prologue).
+	 * If non-zero, the text segment checksum will be computed after the module's resident libraries
+	 * have been registered, and its stub libraries have been linked.
+	 */
+	u32 compute_text_segment_checksum; // 0xE0
 } SceModule2;
 
 /** Defines a library and its exported functions and variables.  Use the len
-    member to determine the real size of the table (size = len * 4). */
+	member to determine the real size of the table (size = len * 4). */
 typedef struct SceLibraryEntryTable {
 	/**The library's name. */
 	const char *		libname;
@@ -202,12 +202,12 @@ typedef struct SceLibraryEntryTable {
 	/** The number of functions exported by the library. */
 	unsigned short		stubcount;
 	/** Pointer to the entry table; an array of NIDs followed by
-	    pointers to functions and variables. */
+		pointers to functions and variables. */
 	void * entrytable;
 } SceLibraryEntryTable;
 
 /** Specifies a library and a set of imports from that library.  Use the len
-    member to determine the real size of the table (size = len * 4). */
+	member to determine the real size of the table (size = len * 4). */
 typedef struct SceLibraryStubTable {
 	/* The name of the library we're importing from. */
 	const char *		libname;
@@ -230,114 +230,114 @@ typedef struct SceLibraryStubTable {
 } SceLibraryStubTable;
 
 typedef struct SceLoadCoreExecFileInfo {
-    /** Unknown. */
-    u32 unk0;
-    /** The mode attribute of the executable file. One of ::SceExecFileModeAttr. */
-    u32 modeAttribute; //4
-    /** The API type. */
-    u32 apiType; //8
-    /** Unknown. */
-    u32 unk12;
-    /** The size of the executable, including the ~PSP header. */
-    SceSize execSize; //16
-    /** The maximum size needed for the decompression. */
-    SceSize maxAllocSize; //20
-    /** The memory ID of the decompression buffer. */
-    SceUID decompressionMemId; //24
-    /** Pointer to the compressed module data. */
-    void *fileBase; //28
-    /** Indicates the ELF type of the executable. One of ::SceExecFileElfType. */
-    u32 elfType; //32
-    /** The start address of the TEXT segment of the executable in memory. */
-    void *topAddr; //36
-    /**
-     * The entry address of the module. It is the offset from the start of the TEXT segment to the
-     * program's entry point.
-     */
-    u32 entryAddr; //40
-    /** Unknown. */
-    u32 unk44;
-    /**
-     * The size of the largest module segment. Should normally be "textSize", but technically can
-     * be any other segment.
-     */
-    SceSize largestSegSize; //48
-    /** The size of the TEXT segment. */
-    SceSize textSize; //52
-    /** The size of the DATA segment. */
-    SceSize dataSize; //56
-    /** The size of the BSS segment. */
-    SceSize bssSize; //60
-    /** The memory partition of the executable. */
-    u32 partitionId; //64
-    /**
-     * Indicates whether the executable is a kernel module or not. Set to 1 for kernel module,
-     * 0 for user module.
-     */
-    u32 isKernelMod; //68
-    /**
-     * Indicates whether the executable is decrypted or not. Set to 1 if it is successfully decrypted,
-     * 0 for encrypted.
-     */
-    u32 isDecrypted; //72
-    /** The offset from the start address of the TEXT segment to the SceModuleInfo section. */
-    u32 moduleInfoOffset; //76
-    /** The pointer to the module's SceModuleInfo section. */
-    SceModuleInfo *moduleInfo; //80
-    /** Indicates whether the module is compressed or not. Set to 1 if it is compressed, otherwise 0.*/
-    u32 isCompressed; //84
-    /** The module's attributes. One or more of ::SceModuleAttribute and ::SceModulePrivilegeLevel. */
-    u16 modInfoAttribute; //88
-    /** The attributes of the executable file. One of ::SceExecFileAttr. */
-    u16 execAttribute; //90
-    /** The size of the decompressed module, including its headers. */
-    SceSize decSize; //92
-    /** Indicates whether the module is decompressed or not. Set to 1 for decompressed, otherwise 0. */
-    u32 isDecompressed; //96
-    /**
-     * Indicates whether the module was signChecked or not. Set to 1 for signChecked, otherwise 0.
-     * A signed module has a "mangled" executable header, in other words, the "~PSP" signature can't
-     * be seen.
-     */
-    u32 isSignChecked; //100
-    /** Unknown. */
-    u32 unk104;
-    /** The size of the GZIP compression overlap. */
-    SceSize overlapSize; //108
-    /** Pointer to the first resident library entry table of the module. */
-    void *exportsInfo; //112
-    /** The size of all resident library entry tables of the module. */
-    SceSize exportsSize; //116
-    /** Pointer to the first stub library entry table of the module. */
-    void *importsInfo; //120
-    /** The size of all stub library entry tables of the module. */
-    SceSize importsSize; //124
-    /** Pointer to the string table section. */
-    void *strtabOffset; //128
-    /** The number of segments in the executable. */
-    u8 numSegments; //132
-    /** Reserved. */
-    u8 padding[3]; //133
-    /** An array containing the start address of each segment. */
-    u32 segmentAddr[SCE_KERNEL_MAX_MODULE_SEGMENT]; //136
-    /** An array containing the size of each segment. */
-    u32 segmentSize[SCE_KERNEL_MAX_MODULE_SEGMENT]; //152
-    /** The ID of the ELF memory block containing the TEXT, DATA and BSS segment. */
-    SceUID memBlockId; //168
-    /** An array containing the alignment information of each segment. */
-    u32 segmentAlign[SCE_KERNEL_MAX_MODULE_SEGMENT]; //172
-    /** The largest value of the segmentAlign array. */
-    u32 maxSegAlign; //188
+	/** Unknown. */
+	u32 unk0;
+	/** The mode attribute of the executable file. One of ::SceExecFileModeAttr. */
+	u32 mode_attr; //4
+	/** The API type. */
+	u32 api_type; //8
+	/** Unknown. */
+	u32 unk12;
+	/** The size of the executable, including the ~PSP header. */
+	SceSize exec_size; //16
+	/** The maximum size needed for the decompression. */
+	SceSize max_alloc_size; //20
+	/** The memory ID of the decompression buffer. */
+	SceUID decompression_mem_id; //24
+	/** Pointer to the compressed module data. */
+	void *file_base; //28
+	/** Indicates the ELF type of the executable. One of ::SceExecFileElfType. */
+	u32 elf_type; //32
+	/** The start address of the TEXT segment of the executable in memory. */
+	void *top_addr; //36
+	/**
+	 * The entry address of the module. It is the offset from the start of the TEXT segment to the
+	 * program's entry point.
+	 */
+	u32 entry_addr; //40
+	/** Unknown. */
+	u32 unk44;
+	/**
+	 * The size of the largest module segment. Should normally be "textSize", but technically can
+	 * be any other segment.
+	 */
+	SceSize largest_seg_size; //48
+	/** The size of the TEXT segment. */
+	SceSize text_size; //52
+	/** The size of the DATA segment. */
+	SceSize data_size; //56
+	/** The size of the BSS segment. */
+	SceSize bss_size; //60
+	/** The memory partition of the executable. */
+	u32 partition_id; //64
+	/**
+	 * Indicates whether the executable is a kernel module or not. Set to 1 for kernel module,
+	 * 0 for user module.
+	 */
+	u32 is_kernel_mod; //68
+	/**
+	 * Indicates whether the executable is decrypted or not. Set to 1 if it is successfully decrypted,
+	 * 0 for encrypted.
+	 */
+	u32 is_decrypted; //72
+	/** The offset from the start address of the TEXT segment to the SceModuleInfo section. */
+	u32 module_info_offset; //76
+	/** The pointer to the module's SceModuleInfo section. */
+	SceModuleInfo *module_info; //80
+	/** Indicates whether the module is compressed or not. Set to 1 if it is compressed, otherwise 0.*/
+	u32 is_compressed; //84
+	/** The module's attributes. One or more of ::SceModuleAttribute and ::SceModulePrivilegeLevel. */
+	u16 mod_info_attribute; //88
+	/** The attributes of the executable file. One of ::SceExecFileAttr. */
+	u16 exec_attribute; //90
+	/** The size of the decompressed module, including its headers. */
+	SceSize dec_size; //92
+	/** Indicates whether the module is decompressed or not. Set to 1 for decompressed, otherwise 0. */
+	u32 is_decompressed; //96
+	/**
+	 * Indicates whether the module was signChecked or not. Set to 1 for signChecked, otherwise 0.
+	 * A signed module has a "mangled" executable header, in other words, the "~PSP" signature can't
+	 * be seen.
+	 */
+	u32 is_sign_checked; //100
+	/** Unknown. */
+	u32 unk104;
+	/** The size of the GZIP compression overlap. */
+	SceSize overlap_size; //108
+	/** Pointer to the first resident library entry table of the module. */
+	void *exports_info; //112
+	/** The size of all resident library entry tables of the module. */
+	SceSize exports_size; //116
+	/** Pointer to the first stub library entry table of the module. */
+	void *imports_info; //120
+	/** The size of all stub library entry tables of the module. */
+	SceSize imports_size; //124
+	/** Pointer to the string table section. */
+	void *strtab_offset; //128
+	/** The number of segments in the executable. */
+	u8 num_segments; //132
+	/** Reserved. */
+	u8 padding[3]; //133
+	/** An array containing the start address of each segment. */
+	u32 segment_addr[SCE_KERNEL_MAX_MODULE_SEGMENT]; //136
+	/** An array containing the size of each segment. */
+	u32 segment_size[SCE_KERNEL_MAX_MODULE_SEGMENT]; //152
+	/** The ID of the ELF memory block containing the TEXT, DATA and BSS segment. */
+	SceUID mem_block_id; //168
+	/** An array containing the alignment information of each segment. */
+	u32 segment_align[SCE_KERNEL_MAX_MODULE_SEGMENT]; //172
+	/** The largest value of the segment_align array. */
+	u32 max_seg_align; //188
 } SceLoadCoreExecFileInfo;
 
 /**
  * This structure represents a boot callback belonging to a module.
  */
 typedef struct SceBootCallback {
-    /** The boot callback function. */
-    void *bootCBFunc;
-    /** Global pointer value of the module. */
-    u32 gp;
+	/** The boot callback function. */
+	void *boot_callback_func;
+	/** Global pointer value of the module. */
+	u32 gp;
 } SceBootCallback;
 
 /**
