@@ -2,7 +2,7 @@ TARGET = vshctrl
 OBJS = main.o registry.o virtualsfo.o virtualpbpmgr.o isofs_driver/isofs_driver.o isofs_driver/umd9660_driver.o exports.o ../bits/iso_common.o
 
 INCDIR = ../include
-CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__
+CFLAGS = -Os -G0 -Wall -Wno-array-bounds -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661

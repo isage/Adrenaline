@@ -485,14 +485,14 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 
 	int index = GetIsoIndex(file);
 	if (index >= 0) {
-		if (strcmp(strrchr(file,'/')+1, "DOCUMENT.DAT") == 0)
-		{
-			sprintf(file, "%s", virtualpbp_getfilename(index));
-			((char*)file)[strlen(file)-3] = 'D';
-			((char*)file)[strlen(file)-2] = 'A';
-			((char*)file)[strlen(file)-1] = 'T';
+		if (strcmp(strrchr(file,'/')+1, "DOCUMENT.DAT") == 0) {
+			char path[97];
+			sprintf(path, "%s", virtualpbp_getfilename(index));
+			((char*)path)[strlen(path)-3] = 'D';
+			((char*)path)[strlen(path)-2] = 'A';
+			((char*)path)[strlen(path)-1] = 'T';
 			pspSdkSetK1(k1);
-			return sceIoOpen(file, flags, mode);
+			return sceIoOpen(path, flags, mode);
 		}
 
 		int res = virtualpbp_open(index);
@@ -514,8 +514,9 @@ int sceIoClosePatched(SceUID fd) {
 
 	pspSdkSetK1(k1);
 
-	if (res < 0)
+	if (res < 0) {
 		return sceIoClose(fd);
+	}
 
 	return res;
 }
@@ -530,8 +531,7 @@ int sceIoReadPatched(SceUID fd, void *data, SceSize size) {
 
 	pspSdkSetK1(k1);
 
-	if (res < 0)
-	{
+	if (res < 0) {
 		return sceIoRead(fd, data, size);
 	}
 
@@ -548,8 +548,9 @@ SceOff sceIoLseekPatched(SceUID fd, SceOff offset, int whence) {
 
 	pspSdkSetK1(k1);
 
-	if (res < 0)
+	if (res < 0) {
 		return sceIoLseek(fd, offset, whence);
+	}
 
 	return res;
 }
@@ -564,8 +565,9 @@ int sceIoLseek32Patched(SceUID fd, int offset, int whence) {
 
 	pspSdkSetK1(k1);
 
-	if (res < 0)
+	if (res < 0) {
 		return sceIoLseek32(fd, offset, whence);
+	}
 
 	return res;
 }
@@ -574,18 +576,17 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 	int k1 = pspSdkSetK1(0);
 	int index = GetIsoIndex(file);
 	if (index >= 0) {
-		if (strcmp(strrchr(file,'/')+1, "DOCUMENT.DAT") == 0)
-		{
-			sprintf(file, "%s", virtualpbp_getfilename(index));
-			((char*)file)[strlen(file)-3] = 'D';
-			((char*)file)[strlen(file)-2] = 'A';
-			((char*)file)[strlen(file)-1] = 'T';
+		if (strcmp(strrchr(file,'/')+1, "DOCUMENT.DAT") == 0) {
+			char path[97];
+			sprintf(path, "%s", virtualpbp_getfilename(index));
+			((char*)path)[strlen(path)-3] = 'D';
+			((char*)path)[strlen(path)-2] = 'A';
+			((char*)path)[strlen(path)-1] = 'T';
 			pspSdkSetK1(k1);
-			return sceIoGetstat(file, stat);
+			return sceIoGetstat(path, stat);
 		}
 
-		if (strcmp(strrchr(file,'/')+1, "DOCINFO.EDAT") == 0)
-		{
+		if (strcmp(strrchr(file,'/')+1, "DOCINFO.EDAT") == 0) {
 			pspSdkSetK1(k1);
 			return SCE_ENOENT;
 		}
@@ -595,8 +596,9 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 	}
 
 	int game = 0;
-	if (strcmp(file, "ms0:/PSP/GAME") == 0)
+	if (strcmp(file, "ms0:/PSP/GAME") == 0) {
 		game = 1;
+	}
 
 	pspSdkSetK1(k1);
 

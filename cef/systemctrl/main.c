@@ -375,9 +375,9 @@ static void PatchGameByGameId() {
 		if (config.umd_seek == 0 && config.umd_speed == 0) {
 			void (*SetUmdDelay)(int, int) = NULL;
 			if (rebootex_config.bootfileindex == BOOT_INFERNO) {
-				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xB6522E93);
+				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xB6522E93);
 			} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
-				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-March33Driver", "inferno_driver", 0xFAEC97D6);
+				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "inferno_driver", 0xFAEC97D6);
 			}
 
 			if (SetUmdDelay != NULL) {
