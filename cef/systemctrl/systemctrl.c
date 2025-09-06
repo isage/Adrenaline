@@ -209,7 +209,7 @@ int runExecPatched(RunExecParams* args) {
 	u32 k1 = pspSdkSetK1(0);
 
 	if (!_runExec) {
-		SceModule2 *mod = sceKernelFindModuleByName("sceLoadExec");
+		SceModule *mod = sceKernelFindModuleByName("sceLoadExec");
 		_runExec = (void*) mod->text_addr + 0x2148;
 	}
 
