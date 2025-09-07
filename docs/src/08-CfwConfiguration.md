@@ -79,7 +79,7 @@ Controls whether to stops displaying PIC0 and/or PIC1 images on XMB, allowing qu
 
 - `Disabled`: Do not hide PIC0 and PIC1
 - `Both`: Hides both PIC0 and PIC1
-- `PIC0 Only`: Hides only the PIC0 ("Title image")
+- `PIC0 Only`: Hides only the PIC0 ("Title/Information image")
 - `PIC1 Only`: Hides only the PIC1 ("Background image")
 
 ### Hide MAC address
