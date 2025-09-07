@@ -73,7 +73,14 @@ When enabled, hides DLC from showing up as duplicate games when you have DLC ins
 
 ### Hide PIC0/PIC1 in game menu
 
-When enabled, stops displaying PIC0 and PIC1 images on XMB, allowing quicker response time to show the game list.
+Controls whether to stops displaying PIC0 and/or PIC1 images on XMB, allowing quicker response time to show the game list.
+
+#### Options:
+
+- `Disabled`: Do not hide PIC0 and PIC1
+- `Both`: Hides both PIC0 and PIC1
+- `PIC0 Only`: Hides only the PIC0 ("Title image")
+- `PIC1 Only`: Hides only the PIC1 ("Background image")
 
 ### Hide MAC address
 
