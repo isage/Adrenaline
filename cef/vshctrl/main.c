@@ -945,9 +945,14 @@ void PatchGamePlugin(u32 text_addr) {
 	// if check patch
 	MAKE_INSTRUCTION(text_addr + 0x20620, MOVE_V0_ZR);
 
-	if (config.hide_pic0pic1) {
-		MAKE_INSTRUCTION(text_addr + 0x1D858, 0x00601021);
-		MAKE_INSTRUCTION(text_addr + 0x1D864, 0x00601021);
+	if (config.hide_pic0pic1 != PICS_OPT_DISABLED) {
+		if (config.hide_pic0pic1 == PICS_OPT_BOTH || config.hide_pic0pic1 == PICS_OPT_PIC0_ONLY) {
+			MAKE_INSTRUCTION(text_addr + 0x1D858, 0x00601021);
+		}
+
+		if (config.hide_pic0pic1 == PICS_OPT_BOTH || config.hide_pic0pic1 == PICS_OPT_PIC1_ONLY) {
+			MAKE_INSTRUCTION(text_addr + 0x1D864, 0x00601021);
+		}
 	}
 
 	if (config.skip_game_boot_logo) {

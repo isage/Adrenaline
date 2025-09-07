@@ -285,7 +285,7 @@ Entry general_entries[] = {
 	{ "Skip Sony logo on gameboot", NULL, disenabled, sizeof(disenabled), &config.skip_game_boot_logo },
 	{ "Hide corrupt icons in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_corrupt },
 	{ "Hide DLCs in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_dlcs },
-	{ "Hide PIC0/PIC1 in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_pic0pic1 },
+	{ "Hide PIC0/PIC1 in game menu", NULL, hide_pics, sizeof(hide_pics), &config.hide_pic0pic1 },
 	{ "Hide MAC address", NULL, disenabled, sizeof(disenabled), &config.hide_mac_addr },
 	{ "Autorun /PSP/GAME/BOOT/EBOOT.PBP", NULL, disenabled, sizeof(disenabled), &config.startup_program },
 	{ "Fake VSH Region", NULL, regions, sizeof(regions), &config.fake_region },

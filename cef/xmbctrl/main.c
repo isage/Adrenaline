@@ -149,6 +149,8 @@ char *iso_cache_num_options[] = {"Auto", "1", "2", "4", "8", "16", "32", "64", "
 char *iso_cache_size_options[] = {"Auto", "1KB", "2KB", "4KB", "8KB", "16KB", "32KB", "64KB"};
 char *iso_umd_seek_read_options[] = {"Off", "1x", "2x", "3x", "4x"};
 
+char *hide_pics_options[] = {"Disabled", "Both", "PIC0 Only", "PIC1 Only"};
+
 static char *need_reboot_subtitle = "Requires restarting VSH to take effect";
 
 struct {
@@ -165,7 +167,7 @@ struct {
 	{2, boolean_options},           // Hide corrupt icons
 	{2, boolean_options},           // Hide MAC address
 	{2, boolean_options},           // Hide DLCs in game menu
-	{2, boolean_options},           // Hide PIC0/PIC1.PNG in game menu
+	{NELEMS(hide_pics_options), hide_pics_options}, // Hide PIC0/PIC1.PNG in game menu
 	{2, boolean_options},           // Autorun /PSP/GAME/BOOT/EBOOT.PBP
 	{NELEMS(region_options), region_options}, // Fake region
 	{3, use_extended_color_option}, // Use extended color

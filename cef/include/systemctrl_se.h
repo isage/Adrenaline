@@ -127,6 +127,13 @@ enum ExtendedColors {
 	EXTENDED_COLOR_03G,
 };
 
+enum HidePicsOpt {
+	PICS_OPT_DISABLED,
+	PICS_OPT_BOTH,
+	PICS_OPT_PIC0_ONLY,
+	PICS_OPT_PIC1_ONLY,
+};
+
 #define ADRENALINE_CFG_MAGIC_1 0x192EFC3C
 #define ADRENALINE_CFG_MAGIC_2 0x17BEB6AA
 typedef struct {
@@ -151,7 +158,7 @@ typedef struct {
 	u8 hide_mac_addr;
 	/** 0 - Disabled, 1 - Enabled */
 	u8 hide_dlcs;
-	/** 0 - Disabled, 1 - Enabled */
+	/** One of `HidePicsOpt` */
 	u8 hide_pic0pic1;
 	/** One of `ExtendedColors` */
 	u8 extended_colors;
