@@ -394,7 +394,7 @@ static int ProcessConfigFile(const char* parent, const char* path, void (*enable
 		int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
 		sceIoLseek(fd, 0, PSP_SEEK_SET);
 
-		SceUID memid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_Low, fsize+1, NULL);
+		SceUID memid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_Low, fsize+1, NULL);
 		u8* buf = sceKernelGetBlockHeadAddr(memid);
 		if (buf == NULL) {
 			sceIoClose(fd);

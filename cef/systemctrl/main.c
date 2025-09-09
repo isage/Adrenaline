@@ -622,16 +622,16 @@ static int OnModuleStart(SceModule *mod) {
 
 		if (sceKernelApplicationType() == SCE_APPTYPE_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
 			if (config.force_high_memory == HIGHMEM_OPT_STABLE) {
-				sctrlHENSetMemory(40, 12);
+				sctrlHENSetMemory(40, 9);
 			} else if (config.force_high_memory == HIGHMEM_OPT_MAX) {
 				sctrlHENSetMemory(52, 0);
 			}
 			ApplyMemory();
 		} else {
 			// If not force-high-memory. Make sure to make p11 as big as
-			// possible, but in a state that if a game request high-memory,
-			// re-setting and re-applying is possible.
-			sctrlHENSetMemory(24, 28);
+			// possible (stable), but in a state that if a game request
+			// high-memory, re-setting and re-applying is possible.
+			sctrlHENSetMemory(24, 16);
 			ApplyAndResetMemory();
 		}
 
