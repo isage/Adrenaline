@@ -172,4 +172,4 @@ clean:
 	make -C kermit_idstorage clean
 	make -C xmbctrl clean
 	make -C satelite clean
-	make -C newrecovery clean
+	make -C recovery clean
