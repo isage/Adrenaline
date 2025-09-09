@@ -14,17 +14,24 @@
 - Added support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver.
 - Update the Inferno Driver to Inferno 2
 - Introduce March33 Driver v2: An evolution of the March33 ISO driver
-- Improved the speed and efficiency of all ISO drivers
+- Improved the speed and efficiency of all UMDemu ISO drivers
 - Introduce CFW Settings on the XMB
 - Introduce Plugin Manager on the XMB
 - Patch to remove the "overclocked" message on ATV Pro
 - Improve stability of the `Force High Memory` option.
 - Fix issue with PBP collection games (e.g. Ys I&II, Sega Genesis Collection)
+- Fix BEATS custom tracks
+- "Fix" manual double launch on first install
+- Implement "Hold L while launching apps" to not load plugins
+- Add quick exit to VSH key combos
+  - PSP games/homebrew: `L+R+Down+Select` or `L+R+Down+Start`
+  - PS1 games: `L2+R2+Down+Select` or `L2+R2+Down+Start`
 
 
 - **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size
 - **DEV:** Expand CFW libraries API
 - **DEV:** Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK-4): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel`, and `SysclibForUser`
+- **DEV:** Add support for `MEMSIZE=2` (to request only stable extra RAM)
 - **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use even outside of Adrenaline (i.e. your project)
 
 - **Internal:** Some code reorganization
