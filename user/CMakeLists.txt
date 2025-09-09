@@ -92,6 +92,7 @@ add_executable(adrenaline_user
   utils.c
   math_utils.c
   lz4/lz4.c
+  lodepng/lodepng.c
 )
 
 add_dependencies(adrenaline_user libvita2dfbo)

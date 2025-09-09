@@ -60,6 +60,8 @@
 #include "includes/scale2x_f.h"
 #include "includes/vflux_f.h"
 #include "includes/vflux_v.h"
+#include "includes/texture_v.h"
+#include "includes/texture_f.h"
 
 static const SceGxmProgram *const gxm_program_vflux_v = (SceGxmProgram*)&vflux_v;
 static const SceGxmProgram *const gxm_program_vflux_f = (SceGxmProgram*)&vflux_f;
@@ -68,6 +70,7 @@ extern SceGxmContext *_vita2d_context;
 int sceCommonDialogIsRunning();
 
 vita2d_pgf *font;
+vita2d_texture* overlay_texture = NULL;
 
 int language = 0, enter_button = 0, date_format = 0, time_format = 0;
 
@@ -413,6 +416,7 @@ int AdrenalineDraw(SceSize args, void *argp) {
   vita2d_shader *lcd3x_shader = vita2d_create_shader((SceGxmProgram *)lcd3x_v, (SceGxmProgram *)lcd3x_f);
   vita2d_shader *sharp_simple_shader = vita2d_create_shader((SceGxmProgram *)sharp_bilinear_simple_v, (SceGxmProgram *)sharp_bilinear_simple_f);
   vita2d_shader *scale2x_shader = vita2d_create_shader((SceGxmProgram *)scale2x_v, (SceGxmProgram *)scale2x_f);
+  vita2d_shader *overlay_shader = vita2d_create_shader((SceGxmProgram *)texture_v, (SceGxmProgram *)texture_f);
 
   // f.lux shader
   vita2d_shader *flux_shader = vita2d_create_shader_untextured((SceGxmProgram *)gxm_program_vflux_v, (SceGxmProgram *)gxm_program_vflux_f);
@@ -604,7 +608,19 @@ int AdrenalineDraw(SceSize args, void *argp) {
       float scale_y = 1.0f;
       getPopsScreenScale(&scale_x, &scale_y);
       vita2d_draw_texture_scale_rotate_hotspot(pops_tex, 480.0f, 272.0f, scale_x, scale_y, 0.0, 480.0, 272.0);
+      if (overlay_texture)
+      {
+
+        vita2d_texture_set_program(overlay_shader->vertexProgram, overlay_shader->fragmentProgram);
+        vita2d_texture_set_wvp(overlay_shader->wvpParam);
+        vita2d_texture_set_vertexInput(&overlay_shader->vertexInput);
+        vita2d_texture_set_fragmentInput(&overlay_shader->fragmentInput);
+
+        vita2d_texture_set_filters(overlay_texture, SCE_GXM_TEXTURE_FILTER_LINEAR, SCE_GXM_TEXTURE_FILTER_LINEAR);
+        vita2d_draw_texture_scale_rotate_hotspot(overlay_texture, 480.0f, 272.0f, scale_x, scale_y, 0.0, 480.0, 272.0);
+      }
     }
+
 
     // Draw Menu
     if (menu_open)

@@ -511,6 +511,7 @@ static void OnSystemStatusIdle() {
 	} else {
 		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
 	}
+	SendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED);
 }
 
 int (* sceMeAudio_driver_C300D466)(int codec, int unk, void *info);

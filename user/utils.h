@@ -19,6 +19,9 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+#include <stdint.h>
+#include <psp2common/types.h>
+
 #define ANALOG_CENTER 128
 #define ANALOG_THRESHOLD 64
 #define ANALOG_SENSITIVITY 16
@@ -73,5 +76,10 @@ char *getPspemuMemoryStickLocation();
 uint32_t encode_movw(uint8_t rd, uint16_t imm16);
 uint32_t encode_movt(uint8_t rd, uint16_t imm16);
 uint32_t encode_bl(uint32_t patch_offset, uint32_t target_offset);
+
+void mspace_init(void);
+void* adr_malloc(size_t size);
+void* adr_realloc(void* ptr, size_t size);
+void adr_free(void* ptr);
 
 #endif

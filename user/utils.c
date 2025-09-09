@@ -344,3 +344,34 @@ uint32_t encode_bl(uint32_t patch_offset, uint32_t target_offset) {
   value |= 0xF000D000;  // BL
   return THUMB_SHUFFLE(value);
 }
+
+static void* mspace;
+void* mspace_create(void* base, size_t size);
+void* mspace_malloc(void* mspace, size_t size);
+void* mspace_realloc(void* mspace, void* ptr, size_t size);
+void mspace_free(void* mspace, void* ptr);
+
+void mspace_init()
+{
+
+  SceUID mblock = sceKernelAllocMemBlock("AdrHeap", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW, 0x800000, NULL);
+  void* base;
+  sceKernelGetMemBlockBase(mblock, &base);
+  mspace = mspace_create(base, 0x800000);
+}
+
+void* adr_malloc(size_t size)
+{
+    return mspace_malloc(mspace, size);
+}
+
+void* adr_realloc(void* ptr, size_t size)
+{
+    return mspace_realloc(mspace, ptr, size);
+}
+
+void adr_free(void* ptr)
+{
+   mspace_free(mspace, ptr);
+}
+
