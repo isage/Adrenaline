@@ -449,7 +449,24 @@ static void OnSystemStatusIdle() {
 	initAdrenalineInfo();
 	PatchVolatileMemBug();
 
-	// Inferno cache config
+	// March33 UMD seek/speed simulation
+	SceModule* march33_mod = sceKernelFindModuleByName("EPI-March33Driver");
+
+	if (march33_mod != NULL) {
+		// Handle March33's UMD seek and UMD speed setting
+		if (config.umd_seek > 0 || config.umd_speed > 0) {
+			config.iso_cache = CACHE_CONFIG_OFF;
+
+			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(march33_mod, "march33_driver", 0xFAEC97D6);
+
+			if (SetUmdDelay != NULL) {
+				SetUmdDelay(config.umd_seek, config.umd_speed);
+				logmsg3("[INFO]: March33 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", config.umd_seek, config.umd_speed);
+			}
+		}
+	}
+
+	// Inferno cache config and UMD seek/speed simulation
 	SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 
 	// Inferno driver is loaded
