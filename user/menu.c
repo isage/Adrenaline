@@ -234,6 +234,25 @@ void drawMenu() {
   char *title = "Adrenaline Menu";
   pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(0), WHITE, FONT_SIZE, title);
 
+	if (tab_sel == 0) {
+		// Running app info
+		SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
+
+		char info[143];
+		if (strcmp(adrenaline->title, "XMB\xE2\x84\xA2") == 0) {
+			snprintf(info, 128, "XMB", adrenaline->title);
+		} else {
+			int res = snprintf(info, 128, "%s", adrenaline->title);
+
+			if (adrenaline->titleid[0] != 0) {
+				snprintf(info+res, 13, " - %s", adrenaline->titleid);
+			}
+		}
+
+		vita2d_draw_rectangle(WINDOW_X, FONT_Y_LINE(1) + 9.0f, WINDOW_WIDTH, 28.0f, COLOR_ALPHA(0xFFFF1F7F, 0x7F));
+		pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, info)), FONT_Y_LINE(1) + 10.0f, WHITE, FONT_SIZE, info);
+	}
+
   // Draw tabs
   int i;
   for (i = 0; i < N_TABS; i++) {
@@ -250,7 +269,7 @@ void drawMenu() {
   MenuEntry *menu_entries = tab_entries[tab_sel].entries;
   if (menu_entries) {
     for (i = 0; i < tab_entries[tab_sel].n_entries; i++) {
-      float y = FONT_Y_LINE(2 + i);
+      float y = (tab_sel == 0) ? FONT_Y_LINE(3 + i) : FONT_Y_LINE(2 + i);
 
       uint32_t color = WHITE;
       if (menu_entries[i].type == MENU_ENTRY_TYPE_TEXT)
