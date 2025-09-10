@@ -41,3 +41,20 @@ With Adrenaline, you can implement these custom patches in a single external fil
 Adrenaline contains a patch to defeat `libcrypt` protection for known games without requiring rebuilding the `PBP` file.
 
 This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.
+
+## Overlay Image
+---
+
+With Adrenaline, you can include an extra overlay filter based on an image. You can set one image overlay per PS1 game.
+
+The image ideally should be `960x544` pixels, but if not, it should be stretched anyway. And the image must be stored as `???0:/pspemu/overlays/⟨PS1_GAME_ID⟩.png`.
+
+> [!WARNING]
+> This only take effect with [Graphics Filtering](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering) different than `Original`.
+
+> [!EXAMPLE]
+> **Note:** This is an not useful example; made just to show off clearly the overlay working.
+>
+> <p align="center">
+> <img src="./assets/06-overlay.png" width="50%" />
+> </p>

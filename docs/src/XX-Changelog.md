@@ -19,6 +19,9 @@
 - Introduce Plugin Manager on the XMB
 - Patch to remove the "overclocked" message on ATV Pro
 - Improve stability of the `Force High Memory` option.
+- Add Custom POPS Configuration injection for custom or converted PS1 game/apps
+- Patch libcrypt for custom or converted PS1 game/apps
+- Add image overlay filter for PS1 game/apps
 - Fix issue with PBP collection games (e.g. Ys I&II, Sega Genesis Collection)
 - Fix BEATS custom tracks
 - "Fix" manual double launch on first install
