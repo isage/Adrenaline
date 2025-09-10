@@ -324,14 +324,20 @@ void ctrlMenu() {
       if (tab_sel > 0) {
         menu_sel = 0;
         tab_sel--;
-      }
+      } else if (tab_sel == 0) {
+		menu_sel = 0;
+		tab_sel = N_TABS-1;
+	  }
     }
 
     if (pressed_pad[PAD_RTRIGGER]) {
       if (tab_sel < N_TABS-1) {
         menu_sel = 0;
         tab_sel++;
-      }
+	} else if (tab_sel == N_TABS-1) {
+		menu_sel = 0;
+		tab_sel = 0;
+	  }
     }
   }
 
