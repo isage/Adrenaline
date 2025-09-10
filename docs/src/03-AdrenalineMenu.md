@@ -19,7 +19,7 @@ Once opened, you can notice it has four tabs: `Main`, `States`, `Settings`, and 
 
 ## Main tab
 
-This tab has the most basic options.
+This tab has the launched application information (title and title ID) and the most basic options, detailed bellow.
 
 - `Enter Standby Mode`: Make the system enter standby mode
 - `Open Official Settings`: Opens the official PSVita/PSTV PSPemu game settings
