@@ -441,7 +441,7 @@
 <p>Introduce March33 Driver v2: An evolution of the March33 ISO driver</p>
 </li>
 <li>
-<p>Improved the speed and efficiency of all ISO drivers</p>
+<p>Improved the speed and efficiency of all UMDemu ISO drivers</p>
 </li>
 <li>
 <p>Introduce CFW Settings on the XMB</p>
@@ -456,7 +456,35 @@
 <p>Improve stability of the <code>Force High Memory</code> option.</p>
 </li>
 <li>
+<p>Add Custom POPS Configuration injection for custom or converted PS1 game/apps</p>
+</li>
+<li>
+<p>Patch libcrypt for custom or converted PS1 game/apps</p>
+</li>
+<li>
+<p>Add image overlay filter for PS1 game/apps</p>
+</li>
+<li>
 <p>Fix issue with PBP collection games (e.g. Ys I&amp;II, Sega Genesis Collection)</p>
+</li>
+<li>
+<p>Fix BEATS custom tracks</p>
+</li>
+<li>
+<p>"Fix" manual double launch on first install</p>
+</li>
+<li>
+<p>Implement "Hold L while launching apps" to not load plugins</p>
+</li>
+<li>
+<p>Implement "Hold R while launching ISO apps/games" to execute <code>BOOT.BIN</code> instead of <code>EBOOT.BIN</code></p>
+</li>
+<li>
+<p>Add quick exit to VSH key combos</p>
+<ul>
+<li>PSP games/homebrew: <code>L+R+Down+Select</code> or <code>L+R+Down+Start</code></li>
+<li>PS1 games: <code>L2+R2+Down+Select</code> or <code>L2+R2+Down+Start</code></li>
+</ul>
 </li>
 <li>
 <p><strong>DEV:</strong> Introduce the CFW library <code>SysclibForUser</code>: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size</p>
@@ -466,6 +494,9 @@
 </li>
 <li>
 <p><strong>DEV:</strong> Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK-4): <code>KUBridge</code>, <code>SystemCtrlForUser</code>, <code>SystemCtrlForKernel</code>, and <code>SysclibForUser</code></p>
+</li>
+<li>
+<p><strong>DEV:</strong> Add support for <code>MEMSIZE=2</code> (to request only stable extra RAM)</p>
 </li>
 <li>
 <p><strong>DEV:</strong> Introduce <code>Adrenaline Log</code>, a C header library that developers can use even outside of Adrenaline (i.e. your project)</p>
@@ -715,7 +746,7 @@ select 'Original' screen mode in Adrenaline settings. On a PS TV this will final
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="XX-Glossary.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="XX-FAQ.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -729,7 +760,7 @@ select 'Original' screen mode in Adrenaline settings. On a PS TV this will final
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="XX-Glossary.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="XX-FAQ.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
