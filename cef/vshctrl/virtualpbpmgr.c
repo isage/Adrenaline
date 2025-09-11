@@ -711,3 +711,14 @@ char *virtualpbp_getdiscid(int i)
 	sceKernelSignalSema(vpsema, 1);
 	return vpbps[i].discid;
 }
+
+void virtualpbp_fixisopath(int index, char* path) {
+	char *game_id = virtualpbp_getdiscid(index);
+
+	char* tmp = strrchr(path, '/');
+	char* filename = tmp+1;
+	*tmp = 0;
+
+	tmp = strrchr(path, '/');
+	sprintf(tmp+1, "%s/%s", game_id, filename);
+}

@@ -7,13 +7,13 @@
 typedef struct
 {
 	u32  header[10];
-	char isofile[256];	
+	char isofile[256];
 	char discid[10];
 	u8   pad[6];
 	char sfotitle[64];
 	int psfo_lba;
 	int psfo_size;
-	int i0png_lba; 
+	int i0png_lba;
 	int i0png_size;
 	int i1pmf_lba ;
 	int i1pmf_size;
@@ -83,6 +83,7 @@ int virtualpbp_dread(SceUID fd, SceIoDirent *dir);
 char *virtualpbp_getfilename(int i);
 int virtualpbp_get_isotype(int i);
 char *virtualpbp_getdiscid(int i);
+void virtualpbp_fixisopath(int index, char* path);
 
 #endif
 
