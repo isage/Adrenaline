@@ -57,5 +57,6 @@ Adrenaline is two software projects in one: Adrenaline Application (1) and Adren
 | Select            | Open VSH Menu                         | XMB/VSH                                      |
 | Hold L            | Plugins disabled                      | Reset/Power on/booting PSP/PS1 application   |
 | Hold R            | Start Adrenaline CFW on Recovery mode | On Adrenaline App bubble start               |
+| Hold R            | Execute BOOT.BIN in UMDemu ISO        | On PSP ISO and Compressed ISO apps and games |
 | PS button 2x      | Return to Vita live area              | Anytime                                      |
 

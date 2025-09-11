@@ -26,6 +26,7 @@
 - Fix BEATS custom tracks
 - "Fix" manual double launch on first install
 - Implement "Hold L while launching apps" to not load plugins
+- Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN`
 - Add quick exit to VSH key combos
   - PSP games/homebrew: `L+R+Down+Select` or `L+R+Down+Start`
   - PS1 games: `L2+R2+Down+Select` or `L2+R2+Down+Start`

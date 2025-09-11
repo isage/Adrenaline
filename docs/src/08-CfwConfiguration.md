@@ -175,6 +175,13 @@ Controls whether to force the unlock extra RAM space for the user-space RAM part
 
 This configuration makes the the system to execute `BOOT.BIN` file instead of `EBOOT.BIN` when launching ISO game/apps.
 
+In the case of the ISO game/apps not having a `BOOT.BIN` file, it will fallback to `EBOOT.BIN`.
+
+> [!WARNING]
+> Enabling this configuration will make many games that have invalid `BOOT.BIN` file to not run (black screen, exit with error, or even PSPemu crash).
+>
+> An better alternative is to launch know apps that need to execute `BOOT.BIN` to work (mostly ISO of demos, prototypes, and modded games) holding the `R` button. That will cause to execute `BOOT.BIN` without changing the configuration and **not** affecting all the ISO game/apps you have.
+
 ### Inferno ISO cache policy
 
 Configures what cache policy the `Inferno` UMDemu driver will use for its overall cache (also known as `Inferno Cache`).
