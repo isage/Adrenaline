@@ -96,12 +96,14 @@ int HideDlc(char *name) {
 
 int GetIsoIndex(const char *file) {
 	char *p = strstr(file, "/MMMMMISO");
-	if (!p)
+	if (!p) {
 		return -1;
+	}
 
 	char *q = strchr(p + 9, '/');
-	if (!q)
+	if (!q) {
 		return strtol(p + 9, NULL, 10);
+	}
 
 	char number[5];
 	memset(number, 0, 5);
@@ -121,10 +123,9 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		VshCtrlSetUmdFile(virtualpbp_getfilename(index));
 
 		u32 opn_type = virtualpbp_get_isotype(index);
-		u32 *info = (u32 *)sceKernelGetGameInfo();
-		if(opn_type)
-		{
-			info[216/4] = opn_type;
+		SceGameInfo *info = sceKernelGetGameInfo();
+		if (opn_type) {
+			info->opnssmp_ver = opn_type;
 		}
 
 		int uses_prometheus = 0;
@@ -143,20 +144,20 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		isofs_exit();
 
 
-        if(strstr( param->argp , "PBOOT.PBP") != NULL)
-        {
+        if(strstr( param->argp , "PBOOT.PBP") != NULL) {
             has_pboot = 1;
         }
 
-        if (!has_pboot)
-        {
+        if (!has_pboot) {
 			if (uses_prometheus) {
 				param->argp = EBOOT_OLD;
 			} else {
-				if (config.execute_boot_bin)
+				if (config.execute_boot_bin) {
 					param->argp = BOOT_BIN;
-				else
+
+				} else {
 					param->argp = EBOOT_BIN;
+				}
 			}
 		}
 
@@ -176,10 +177,11 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 			sctrlSESetBootConfFileIndex(BOOT_NP9660);
 		}
 
-		if (has_pboot)
+		if (has_pboot) {
 			apitype = SCE_APITYPE_UMD_EMU_MS2;
-		else
+		} else {
 			apitype = SCE_APITYPE_UMD_EMU_MS1;
+		}
 
 		param->args = strlen(param->argp) + 1; //Update length
 
@@ -253,19 +255,22 @@ int ReadCache() {
 	SceUID fd;
 	int i;
 
-	if (!cache)
+	if (!cache) {
 		cache = (VirtualPbp *)oe_malloc(MAX_FILES * sizeof(VirtualPbp));
+	}
 
 	memset(cache, 0, sizeof(VirtualPbp) * MAX_FILES);
 
 	for (i = 0; i < 0x10; i++) {
 		fd = sceIoOpen("ms0:/PSP/SYSTEM/isocache2.bin", PSP_O_RDONLY, 0);
-		if (fd >= 0)
+		if (fd >= 0) {
 			break;
+		}
 	}
 
-	if (i == 0x10)
+	if (i == 0x10) {
 		return -1;
+	}
 
 	sceIoRead(fd, cache, sizeof(VirtualPbp) * MAX_FILES);
 	sceIoClose(fd);
@@ -277,8 +282,9 @@ int SaveCache() {
 	SceUID fd;
 	int i;
 
-	if (!cache)
+	if (!cache) {
 		return -1;
+	}
 
 	for (i = 0; i < MAX_FILES; i++) {
 		if (cache[i].isofile[0] != 0) {
@@ -291,8 +297,9 @@ int SaveCache() {
 		}
 	}
 
-	if (!cachechanged)
+	if (!cachechanged) {
 		return 0;
+	}
 
 	cachechanged = 0;
 
@@ -301,12 +308,14 @@ int SaveCache() {
 
 	for (i = 0; i < 0x10; i++) {
 		fd = sceIoOpen("ms0:/PSP/SYSTEM/isocache2.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-		if (fd >= 0)
+		if (fd >= 0) {
 			break;
+		}
 	}
 
-	if (i == 0x10)
+	if (i == 0x10) {
 		return -1;
+	}
 
 	sceIoWrite(fd, cache, sizeof(VirtualPbp) * MAX_FILES);
 	sceIoClose(fd);
@@ -443,11 +452,13 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 	res = sceIoDread(fd, dir);
 
 	if (res > 0) {
-		if (config.hide_corrupt)
+		if (config.hide_corrupt) {
 			CorruptIconPatch(dir->d_name);
+		}
 
-		if (config.hide_dlcs)
+		if (config.hide_dlcs) {
 			HideDlc(dir->d_name);
+		}
 	}
 
 	pspSdkSetK1(k1);
@@ -476,13 +487,15 @@ int sceIoDclosePatched(SceUID fd) {
 		SaveCache();
 	}
 
+	res = sceIoDclose(fd);
 	pspSdkSetK1(k1);
-	return sceIoDclose(fd);
+	return res;
 }
 
 SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 	int k1 = pspSdkSetK1(0);
 
+	int res = SCE_ENOENT;
 	int index = GetIsoIndex(file);
 	if (index >= 0) {
 		if (strcmp(strrchr(file,'/')+1, "DOCUMENT.DAT") == 0) {
@@ -491,15 +504,16 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 			((char*)path)[strlen(path)-3] = 'D';
 			((char*)path)[strlen(path)-2] = 'A';
 			((char*)path)[strlen(path)-1] = 'T';
+			res = sceIoOpen(path, flags, mode);
 			pspSdkSetK1(k1);
-			return sceIoOpen(path, flags, mode);
+			return res;
 		}
 
-		if (strstr(file, "PARAM.PBP") != NULL || strstr(file, "PBOOT.PBP") != NULL) {
+		if (strcmp(strrchr(file,'/')+1, "PARAM.PBP") ==0 || strcmp(strrchr(file,'/')+1, "PBOOT.PBP") == 0) {
 			char path[255];
 			strcpy(path, file);
 			virtualpbp_fixisopath(index, path);
-			int res = sceIoOpen(path, flags, mode);
+			res = sceIoOpen(path, flags, mode);
 			pspSdkSetK1(k1);
 			return res;
 		}
@@ -509,8 +523,9 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 		return res;
 	}
 
+	res = sceIoOpen(file, flags, mode);
 	pspSdkSetK1(k1);
-	return sceIoOpen(file, flags, mode);
+	return res;
 }
 
 int sceIoClosePatched(SceUID fd) {
@@ -600,7 +615,7 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 			return SCE_ENOENT;
 		}
 
-		if (strstr(file, "PARAM.PBP") != NULL || strstr(file, "PBOOT.PBP") != NULL) {
+		if (strcmp(strrchr(file,'/')+1, "PARAM.PBP") == 0 || strcmp(strrchr(file,'/')+1, "PBOOT.PBP") == 0 ) {
 			char path[255];
 			strcpy(path, file);
 			virtualpbp_fixisopath(index, path);
@@ -653,29 +668,33 @@ int sceIoChstatPatched(const char *file, SceIoStat *stat, int bits) {
 int sceIoRemovePatched(const char *file) {
 	int k1 = pspSdkSetK1(0);
 
+	int res;
 	int index = GetIsoIndex(file);
 	if (index >= 0) {
-		int res = virtualpbp_remove(index);
+		res = virtualpbp_remove(index);
 		pspSdkSetK1(k1);
 		return res;
 	}
 
+	res = sceIoRemove(file);
 	pspSdkSetK1(k1);
-	return sceIoRemove(file);
+	return res;
 }
 
 int sceIoRmdirPatched(const char *path) {
 	int k1 = pspSdkSetK1(0);
 
+	int res;
 	int index = GetIsoIndex(path);
 	if (index >= 0) {
-		int res = virtualpbp_rmdir(index);
+		res = virtualpbp_rmdir(index);
 		pspSdkSetK1(k1);
 		return res;
 	}
 
+	res = sceIoRmdir(path);
 	pspSdkSetK1(k1);
-	return sceIoRmdir(path);
+	return res;
 }
 
 int sceIoMkdirPatched(const char *dir, SceMode mode) {
@@ -685,8 +704,9 @@ int sceIoMkdirPatched(const char *dir, SceMode mode) {
 		sceIoMkdir("ms0:/ISO", mode);
 	}
 
+	int res = sceIoMkdir(dir, mode);
 	pspSdkSetK1(k1);
-	return sceIoMkdir(dir, mode);
+	return res;
 }
 
 ///////////////////////////////////////////////////////

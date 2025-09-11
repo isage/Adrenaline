@@ -9,5 +9,4 @@ void sfo_set_string_param(char *key, char* value);
 int sfo_get_int_param(char *key);
 char* sfo_get_string_param(char *key);
 
-
 #endif
