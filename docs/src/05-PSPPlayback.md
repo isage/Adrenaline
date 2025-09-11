@@ -5,7 +5,7 @@ Adrenaline allows the user to execute PSP game images, making it possible to pla
 
 There are three formats of PSP game images: `PBP`, `ISO`, and `Compressed ISO`.
 
-The `PBP` image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Adrenaline always uses the original `Sony's NP9660` driver. Usually, `PBP` files live on `???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/` directory.
+The `PBP` image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Adrenaline always uses the original `Sony's NP9660` driver. Usually, `PBP` files live on `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/` directory.
 
 The `ISO` image format is a 1:1 copy of a Universal Media Disc (UMD), while `Compressed ISO` is an `ISO` image compressed in some way to reduce space usage. There are a few competing formats for `Compressed ISO`: `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`, each with different tradeoffs. Adrenaline supports all of those formats and allows you to choose between the three UMDemu drivers available. All of those image options should go in `??0:/pspemu/ISO/` directory.
 
@@ -58,7 +58,7 @@ Adrenaline offers a few other functionalities related to `ISO` and `Compressed I
 
 ### Support for game update and DLC
 
-Adrenaline supports launching ISO games with updates and DLC when installed in their usual place (`???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/PBOOT.PBP`). But, as a downside, having this file without `EBOOT.PBP` in the same folder causes the XMB/VSH to show duplicated items; to solve that, you can enable the [Hide DLCs in game menu](./08-CfwConfiguration.md#hide-dlcs-in-game-menu) CFW setting.
+Adrenaline supports launching ISO games with updates and DLC when installed in their usual place (`???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/PBOOT.PBP`). But, as a downside, having this file without `EBOOT.PBP` in the same folder causes the XMB/VSH to show duplicated items; to solve that, you can enable the [Hide DLCs in game menu](./08-CfwConfiguration.md#hide-dlcs-in-game-menu) CFW setting.
 
 ### Support for manuals
 

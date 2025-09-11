@@ -4,7 +4,7 @@
 Adrenaline allows the user to execute official PS1 games and custom PS1 games/applications on PlayStation Vita or PSTV.
 
 
-A custom PS1 game/app needs to be in the PSP `EBOOT.PBP` format and be stored on `???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/` directory. Once added, the game/app can be launched from the XMB without any further configuration.
+A custom PS1 game/app needs to be in the PSP `EBOOT.PBP` format and be stored on `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/` directory. Once added, the game/app can be launched from the XMB without any further configuration.
 
 > [!TIP]
 > The recommended tool to convert a custom PS1 game/app to a PSP format is [`pop-fe`](https://github.com/sahlberg/pop-fe) as it not only supports other platforms such as PS2 and PS3, but it also has improved compatibility with converted games thanks to the use of a database of custom configuration files for many games and game versions.
@@ -33,7 +33,12 @@ The patch to re-enable CDDA has been added to Adrenaline's `PopCorn` module (the
 
 The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.
 
-With Adrenaline, you can implement these custom patches in a single external file `CONFIG.BIN`, stored alongside the `EBOOT.PBP` of the custom PS1 game/app (i.e. `???0:/pspemu/PSP/GAME/⟨GAME_ID⟩/`), without the need to be injected into the `EBOOT.PBP` file; as the CFW will do that for you on-the-fly.
+With Adrenaline, you can implement these custom patches in a single external file `CONFIG.BIN`, stored alongside the `EBOOT.PBP` of the custom PS1 game/app (i.e. `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/`), without the need to be injected into the `EBOOT.PBP` file; as the CFW will do that for you on-the-fly.
+
+> [!TIP]
+> Getting the `TITLE_ID` is simple: launch the app/game and opening the `Adrenaline Menu` in the `Main` tab.
+>
+> It is better explained how to get it in the [FAQ](./XX-FAQ.md#how-to-get-the-title-id-for-an-applicationgame).
 
 ## Anti-LibCrypt patch
 ---
@@ -47,10 +52,15 @@ This patch is applied automatically to games that are detected to need it and do
 
 With Adrenaline, you can include an extra overlay filter based on an image. You can set one image overlay per PS1 game.
 
-The image should be `960x544` pixels to work properly. And the image must be stored as `???0:/pspemu/overlays/⟨PS1_GAME_ID⟩.png`.
+The image should be `960x544` pixels to work properly. And the image must be stored as `???0:/pspemu/overlays/⟨TITLE_ID⟩.png`.
 
 > [!WARNING]
-> This only take effect with [Graphics Filtering](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering) different than `Original`.
+> This only take effect with [Graphics Filtering](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering) option different than `Original`.
+
+> [!TIP]
+> Getting the `TITLE_ID` is simple: launch the app/game and opening the `Adrenaline Menu` in the `Main` tab.
+>
+> It is better explained how to get it in the [FAQ](./XX-FAQ.md#how-to-get-the-title-id-for-an-applicationgame).
 
 > [!EXAMPLE]
 > **Note:** This is an not useful example; made just to show off clearly the overlay working.
