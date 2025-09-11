@@ -37,6 +37,7 @@ PSP_MODULE_INFO("VshControl", 0x1007, 1, 2);
 
 char categorypath[256];
 SceUID categorydfd = -1;
+int exec_boot_bin = 0;
 
 SceUID gamedfd = -1, isodfd = -1, overiso = 0;
 int vpbpinited = 0, isoindex = 0, cachechanged = 0;
@@ -112,6 +113,15 @@ int GetIsoIndex(const char *file) {
 	return strtol(number, NULL, 10);
 }
 
+void CheckControllerInput() {
+	SceCtrlData pad_data;
+	sceCtrlPeekBufferPositive(&pad_data, 1);
+	if ((pad_data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER) {
+		exec_boot_bin = 1;
+		logmsg2("[INFO]: Set to exec BOOT.BIN (if exist) by holding `R` at the ISO application start\n");
+	}
+}
+
 int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam *param, int unk2) {
 	int k1 = pspSdkSetK1(0);
 
@@ -120,6 +130,7 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 	int index = GetIsoIndex(file);
 	if (index >= 0) {
 		int has_pboot = 0;
+		CheckControllerInput();
 		VshCtrlSetUmdFile(virtualpbp_getfilename(index));
 
 		u32 opn_type = virtualpbp_get_isotype(index);
@@ -129,6 +140,7 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		}
 
 		int uses_prometheus = 0;
+		int has_bootbin = 0;
 
 		// Execute patched ISOs
 		if (isofs_init() < 0) {
@@ -139,6 +151,10 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		SceIoStat stat;
 		if (isofs_getstat("/PSP_GAME/SYSDIR/EBOOT.OLD", &stat) >= 0) {
 			uses_prometheus = 1;
+		}
+
+		if (isofs_getstat("/PSP_GAME/SYSDIR/BOOT.BIN", &stat) >= 0) {
+			has_bootbin = 1;
 		}
 
 		isofs_exit();
@@ -152,9 +168,9 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 			if (uses_prometheus) {
 				param->argp = EBOOT_OLD;
 			} else {
-				if (config.execute_boot_bin) {
+				SceIoStat stat;
+				if ((config.execute_boot_bin || exec_boot_bin) && has_bootbin) {
 					param->argp = BOOT_BIN;
-
 				} else {
 					param->argp = EBOOT_BIN;
 				}
