@@ -78,19 +78,22 @@ int getSfoTitle(char *title, int n) {
 	int bootfrom = sceKernelBootFrom();
 	if (bootfrom == SCE_BOOT_DISC) {
         fd = sceIoOpen("disc0:/PSP_GAME/PARAM.SFO", PSP_O_RDONLY, 0);
-		if (fd < 0)
+		if (fd < 0) {
 			return fd;
+		}
 
 		size = sceIoLseek(fd, 0, PSP_SEEK_END);
 		sceIoLseek(fd, 0, PSP_SEEK_SET);
 	} else if (bootfrom == SCE_BOOT_MS) {
 		char *filename = sceKernelInitFileName();
-		if (!filename)
+		if (!filename) {
 			return -1;
+		}
 
 		fd = sceIoOpen(filename, PSP_O_RDONLY, 0);
-		if (fd < 0)
+		if (fd < 0) {
 			return fd;
+		}
 
 		PBPHeader pbp_header;
 		sceIoRead(fd, &pbp_header, sizeof(PBPHeader));
@@ -135,9 +138,7 @@ void initAdrenalineInfo() {
 	memset(adrenaline, 0, sizeof(SceAdrenaline));
 
 	int keyconfig = sceKernelApplicationType();
-	if (keyconfig == SCE_APPTYPE_GAME) {
-		getSfoTitle(adrenaline->title, 128);
-	} else if (keyconfig == SCE_APPTYPE_POPS) {
+	if (keyconfig == SCE_APPTYPE_GAME || keyconfig == SCE_APPTYPE_POPS) {
 		getSfoTitle(adrenaline->title, 128);
 	} else if (keyconfig == SCE_APPTYPE_VSH) {
 		strcpy(adrenaline->title, "XMB\xE2\x84\xA2");
@@ -146,12 +147,14 @@ void initAdrenalineInfo() {
 	}
 
 	SceGameInfo *game_info = sceKernelGetGameInfo();
-	if (game_info)
+	if (game_info) {
 		strcpy(adrenaline->titleid, game_info->game_id);
+	}
 
 	char *filename = sceKernelInitFileName();
-	if (filename)
+	if (filename) {
 		strcpy(adrenaline->filename, filename);
+	}
 
 	adrenaline->pops_mode = sceKernelApplicationType() == SCE_APPTYPE_POPS;
 }
@@ -216,8 +219,9 @@ int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 
 			if (adrenaline->pops_mode) {
 				int (* sceKermitPeripheralInitPops)() = (void *)FindProc("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
-				if (sceKermitPeripheralInitPops)
+				if (sceKermitPeripheralInitPops) {
 					sceKermitPeripheralInitPops();
+				}
 			}
 		}
 	}
@@ -319,13 +323,15 @@ int initAdrenaline() {
 
 	// Create adrenaline semaphore
 	adrenaline_semaid = sceKernelCreateSema("", 0, 0, 1, NULL);
-	if (adrenaline_semaid < 0)
+	if (adrenaline_semaid < 0) {
 		return adrenaline_semaid;
+	}
 
 	// Create and start adrenaline thread
 	SceUID thid = sceKernelCreateThread("adrenaline_thread", adrenaline_thread, 0x10, 0x4000, 0, NULL);
-	if (thid < 0)
+	if (thid < 0) {
 		return thid;
+	}
 
 	sceKernelStartThread(thid, 0, NULL);
 

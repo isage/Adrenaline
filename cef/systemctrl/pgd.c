@@ -127,8 +127,9 @@ int get_edat_key(u8 *vkey, u8 *pgd_buf) {
 	if (pgd_flag & 1)
 		fkey = dnas_key1AA0;
 
-	if (fkey == NULL)
+	if (fkey == NULL) {
 		return -1;
+	}
 
 	// MAC_0x80 check
 	sceDrmBBMacInit((u8 *)&mkey, pgd->mac_type);
