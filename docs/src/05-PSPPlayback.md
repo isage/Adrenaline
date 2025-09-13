@@ -50,6 +50,8 @@ This driver is made available mostly for compatibility reasons, as historically 
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`.
 - **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.
+- **Configurable seek and read speed delays**: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+    - By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.
 
 ## Other ISO features
 ---

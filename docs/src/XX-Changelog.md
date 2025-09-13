@@ -17,19 +17,25 @@
 - Improved the speed and efficiency of all UMDemu ISO drivers
 - Introduce CFW Settings on the XMB
 - Introduce Plugin Manager on the XMB
-- Patch to remove the "overclocked" message on ATV Pro
 - Improve stability of the `Force High Memory` option.
 - Add Custom POPS Configuration injection for custom or converted PS1 game/apps
 - Patch libcrypt for custom or converted PS1 game/apps
 - Add image overlay filter for PS1 game/apps
-- Fix issue with PBP collection games (e.g. Ys I&II, Sega Genesis Collection)
-- Fix BEATS custom tracks
 - "Fix" manual double launch on first install
 - Implement "Hold L while launching apps" to not load plugins
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN`
 - Add quick exit to VSH key combos
   - PSP games/homebrew: `L+R+Down+Select` or `L+R+Down+Start`
   - PS1 games: `L2+R2+Down+Select` or `L2+R2+Down+Start`
+- **Game Compatibility:**
+	- Fix PBP collection games (e.g. `Ys I&II`, `Sega Genesis Collection`) crashing after game selection
+	- Fix `BEATS` custom tracks
+	- Fix the infinite loading screen on `Jackass: The Game`
+	- Fix `TwinBee Portable` crashing when not using English or Japanese language
+	- Fix `Smakdown vs RAW 2011` by bypassing anti-CFW check
+	- Fix `Aces of War` by bypassing anti-CFW check
+	- Improve the `DJ Max` anti-CFW bypass
+	- Patch to remove the "overclocked" message on `ATV Pro`
 
 
 - **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size
