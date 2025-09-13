@@ -52,6 +52,13 @@ AdrenalineConfig config;
 
 int idle = 0;
 
+static u32 MakeSyscallStub(void *function) {
+	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
+	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
+	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
+	return stub;
+}
+
 int ReadFile(char *file, void *buf, int size) {
 	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
 	if (fd < 0)
@@ -388,6 +395,27 @@ static void PatchGameByGameId() {
 	}
 }
 
+static int moduleLoaderJackass(char* name, int value) {
+	char path[256];
+
+	SceKernelLMOption option;
+	memset(&option, 0, sizeof(option));
+	option.size = sizeof(option);
+	option.mpidtext = 2;
+	option.mpiddata = 2;
+	option.position = 0;
+	option.access = 1;
+
+	int res = sceKernelLoadModule(path, 0, &option);
+	if (res >= 0)
+	{
+		int status;
+		res = sceKernelStartModule(res,0,0,&status,0);
+	}
+	return res;
+}
+
+
 static void PatchGamesByMod(SceModule* mod) {
 	char *modname = mod->modname;
 
@@ -437,6 +465,8 @@ static void PatchGamesByMod(SceModule* mod) {
 	} else if (strcmp(modname, "KHBBS_patch") == 0) {
 		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
 
+	} else if (strcmp(modname, "Jackass") == 0) {
+		REDIRECT_FUNCTION(mod->text_addr + 0x35A204, MakeSyscallStub(moduleLoaderJackass));
 	}
 
 	sctrlFlushCache();
