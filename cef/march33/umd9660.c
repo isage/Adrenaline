@@ -18,10 +18,10 @@ int discsize=0x7FFFFFFF;
 UmdFD descriptors[MAX_DESCRIPTORS];
 u8 *umdpvd = NULL;
 
-u8 umd_seek = 0;
-u8 umd_speed = 0;
-u32 cur_offset = 0;
-u32 last_read_offset = 0;
+static u8 umd_seek = 0;
+static u8 umd_speed = 0;
+static u32 cur_offset = 0;
+static u32 last_read_offset = 0;
 
 #define N_GAME_GROUP1	4
 #define N_GAME_GROUP2	1
@@ -60,8 +60,11 @@ static int ReadUmdFile(int offset, void *buf, int outsize) {
 		// simulate seek time
 		u32 diff = 0;
 		last_read_offset = offset+outsize;
-		if (cur_offset>last_read_offset) diff = cur_offset-last_read_offset;
-		else diff = last_read_offset-cur_offset;
+		if (cur_offset > last_read_offset) {
+			diff = cur_offset-last_read_offset;
+		} else {
+			diff = last_read_offset-cur_offset;
+		}
 		cur_offset = last_read_offset;
 		u32 seek_time = (diff*umd_seek)/1024;
 		sceKernelDelayThread(seek_time);
