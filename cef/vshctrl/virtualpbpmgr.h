@@ -1,5 +1,24 @@
-#ifndef __VIRTUALPBPMGR_H__
+/*
+	Adrenaline
+	Copyright (C) 2016-2018, TheFloW
+	Copyright (C) 2024-2025, isage
+	Copyright (C) 2025, GrayJack
 
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef __VIRTUALPBPMGR_H__
 #define __VIRTUALPBPMGR_H__
 
 #include "isofs_driver/isofs_driver.h"
@@ -28,8 +47,7 @@ typedef struct
 	ScePspDateTime mtime;
 } VirtualPbp;
 */
-typedef struct
-{
+typedef struct {
 	u32  header[10];//0
 	char isofile[ 112-16 ];//40
 	char discid[12];//152
@@ -54,8 +72,7 @@ typedef struct
 	ScePspDateTime mtime;//288
 } VirtualPbp;
 
-typedef struct
-{
+typedef struct {
 	int dread;
 	int deleted;
 	int psdirdeleted;

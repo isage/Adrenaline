@@ -18,15 +18,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __VIRTUALSFO__
-#define __VIRTUALSFO__
+#ifndef _PATCH_VSH_H
+#define _PATCH_VSH_H
 
-void virtual_sfo_init();
-int virtual_sfo_size();
-unsigned char* virtual_sfo_get();
-void sfo_set_int_param(char *key, int value);
-void sfo_set_string_param(char *key, char* value);
-int sfo_get_int_param(char *key);
-char* sfo_get_string_param(char *key);
+#include <psploadcore.h>
+
+void PatchVshMain(SceModule *mod);
+void PatchSysconfPlugin(SceModule *mod);
+void PatchGamePlugin(SceModule *mod);
+void PatchUpdatePlugin(SceModule *mod);
+void PatchLoadExec();
 
 #endif
