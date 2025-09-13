@@ -59,6 +59,12 @@ int (* readDiscSectorNP9660)(unsigned int sector, unsigned char * buffer, unsign
 // NP9660 Sector Flush
 void (* readSectorFlushNP9660)(void) = NULL;
 
+// Values for physical UMD seek/read speed simulation
+static u8 umd_seek = 0;
+static u8 umd_speed = 0;
+static u32 cur_offset = 0;
+static u32 last_read_offset = 0;
+
 // Set Global Pointer
 int sceKernelSetQTGP3(void *data);
 
@@ -76,6 +82,11 @@ u32 findRefInGlobals(char* libname, u32 addr, u32 ptr) {
 	return addr;
 }
 
+
+void isoSetUmdDelay(int seek, int speed) {
+	umd_seek = seek;
+	umd_speed = speed;
+}
 
 // Open ISO File
 int open_iso(void) {
@@ -102,6 +113,25 @@ int readDiscSectorNP9660Patched(unsigned int sector, unsigned char * buffer, uns
 	args.size = size;
 
 	int res = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &args);
+
+
+	if (umd_seek){
+		// simulate seek time
+		u32 diff = 0;
+		last_read_offset = sector+size;
+		if (cur_offset > last_read_offset) {
+			diff = cur_offset-last_read_offset;
+		} else {
+			diff = last_read_offset-cur_offset;
+		}
+		cur_offset = last_read_offset;
+		u32 seek_time = (diff*umd_seek)/1024;
+		sceKernelDelayThread(seek_time);
+	}
+	if (umd_speed){
+		// simulate read time
+		sceKernelDelayThread(size*umd_speed);
+	}
 
 	// Flush & Update NP9660 Sector Information
 	readSectorFlushNP9660();
@@ -165,22 +195,22 @@ int sceKernelStartThreadPatched(SceUID thid, SceSize arglen, void * argp) {
 		g_sceNp9660_driver_text_addr = pMod->text_addr;
 
 		// Make InitForKernel Call return 0x80000000 always
-		MAKE_INSTRUCTION(g_sceNp9660_driver_text_addr + 0x3C5C, 0x3C028000); // jal InitForKernel_23458221 to lui $v0, 0x00008000
+		MAKE_INSTRUCTION(g_sceNp9660_driver_text_addr + NP9660_JAL_INITFORKERNEL, 0x3C028000); // jal InitForKernel_23458221 to lui $v0, 0x00008000
 
 		// Hook Function #1
-		MAKE_CALL(g_sceNp9660_driver_text_addr + 0x3C78, initEmulator);
+		MAKE_CALL(g_sceNp9660_driver_text_addr + NP9660_JAL_FUNC_01, initEmulator);
 
 		// Hook Function #2
-		MAKE_CALL(g_sceNp9660_driver_text_addr + 0x4414, readDiscSectorNP9660Patched); // jal sub_3948 to jal sub_00000054
-		MAKE_CALL(g_sceNp9660_driver_text_addr + 0x596C, readDiscSectorNP9660Patched); // jal sub_3948 to jal sub_00000054
+		MAKE_CALL(g_sceNp9660_driver_text_addr + NP9660_JAL_FUNC_02, readDiscSectorNP9660Patched); // jal sub_3948 to jal sub_00000054
+		MAKE_CALL(g_sceNp9660_driver_text_addr + NP9660_JAL_FUNC_03, readDiscSectorNP9660Patched); // jal sub_3948 to jal sub_00000054
 
 		// Hook sceIoClose Stub
-		MAKE_JUMP(g_sceNp9660_driver_text_addr + 0x7D68, sceIoClosePatched); // hook sceIoClose import
+		MAKE_JUMP(g_sceNp9660_driver_text_addr + NP9660_IOCLOSE, sceIoClosePatched); // hook sceIoClose import
 
 		// Backup Function Pointer
-		initNP9660 = (void *)(pMod->text_addr + 0x36A8);
-		readDiscSectorNP9660 = (void *)(pMod->text_addr + 0x4FEC);
-		readSectorFlushNP9660 = (void *)(pMod->text_addr + 0x505C);
+		initNP9660 = (void *)(pMod->text_addr + NP9660_FNPTR_INIT);
+		readDiscSectorNP9660 = (void *)(pMod->text_addr + NP9660_FNPTR_READDISCSECTOR);
+		readSectorFlushNP9660 = (void *)(pMod->text_addr + NP9660_FNPTR_SECTORFLUSH);
 
 		sctrlFlushCache();
 	}

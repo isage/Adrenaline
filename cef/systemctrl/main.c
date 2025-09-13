@@ -384,7 +384,9 @@ static void PatchGameByGameId() {
 			if (rebootex_config.bootfileindex == BOOT_INFERNO) {
 				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xB6522E93);
 			} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
-				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "inferno_driver", 0xFAEC97D6);
+				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xFAEC97D6);
+			} else if (rebootex_config.bootfileindex == BOOT_NP9660) {
+				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
 			}
 
 			if (SetUmdDelay != NULL) {
@@ -448,6 +450,14 @@ static void PatchGamesByMod(SceModule* mod) {
 					SetUmdDelay(2, 2);
 				}
 			}
+		} else if (rebootex_config.bootfileindex == BOOT_NP9660) {
+			if (config.umd_seek == 0 && config.umd_speed == 0) {
+				// enable UMD reading speed
+				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
+				if (SetUmdDelay != NULL) {
+					SetUmdDelay(2, 2);
+				}
+			}
 		}
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
@@ -492,6 +502,23 @@ static void OnSystemStatusIdle() {
 			if (SetUmdDelay != NULL) {
 				SetUmdDelay(config.umd_seek, config.umd_speed);
 				logmsg3("[INFO]: March33 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", config.umd_seek, config.umd_speed);
+			}
+		}
+	}
+
+	// NP9660 UMD seek/speed simulation
+	SceModule* galaxy_mod = sceKernelFindModuleByName("EPI-GalaxyController");
+
+	if (galaxy_mod != NULL) {
+		// Handle March33's UMD seek and UMD speed setting
+		if (config.umd_seek > 0 || config.umd_speed > 0) {
+			config.iso_cache = CACHE_CONFIG_OFF;
+
+			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(galaxy_mod, "galaxy_driver", 0xFAEC97D6);
+
+			if (SetUmdDelay != NULL) {
+				SetUmdDelay(config.umd_seek, config.umd_speed);
+				logmsg3("[INFO]: NP9660 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", config.umd_seek, config.umd_speed);
 			}
 		}
 	}

@@ -9,6 +9,10 @@ PSP_EXPORT_END
 PSP_EXPORT_START(galaxy_driver, 0x0011, 0x0001)
 # galaxy_driver_FF8838D4
 PSP_EXPORT_FUNC(isoGetGameId)
+# galaxy_driver_FAEC97D6
+PSP_EXPORT_FUNC(isoSetUmdDelay)
+# Compat with inferno 2
+PSP_EXPORT_FUNC_NID(isoSetUmdDelay, 0xB6522E93)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS
