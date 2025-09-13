@@ -539,8 +539,8 @@ SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
 		return res;
 	}
 
-	res = sceIoOpen(file, flags, mode);
 	pspSdkSetK1(k1);
+	res = sceIoOpen(file, flags, mode);
 	return res;
 }
 
