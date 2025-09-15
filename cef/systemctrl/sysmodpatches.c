@@ -17,6 +17,10 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * Module patches for system modules
+ */
+
 #include <common.h>
 #include <adrenaline_log.h>
 
@@ -30,20 +34,20 @@
 #define EXIT_TO_VSH_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_SELECT | PSP_CTRL_DOWN)
 #define EXIT_TO_VSH2_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
-int (* _sceChkregGetPsCode)(u8 *pscode);
+STMOD_HANDLER module_handler = NULL;
 
-int (* RunReboot)(u32 *params);
-int (* DecodeKL4E)(void *dest, u32 size_dest, void *src, u32 size_src);
 
-int (* SetIdleCallback)(int flags);
+int (* RunReboot)(u32 *params) = NULL;
+int (* DecodeKL4E)(void *dest, u32 size_dest, void *src, u32 size_src) = NULL;
+int (* SetIdleCallback)(int flags) = NULL;
 
-int (* scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq);
-
-int (* sceSystemFileGetIndex)(void *sfo, void *a1, void *a2);
-
-u32 FindPowerFunction(u32 nid) {
-	return FindProc("scePower_Service", "scePower", nid);
-}
+int (* _sceChkregGetPsCode)(u8 *pscode) = NULL;
+int (* _sceSystemFileGetIndex)(void *sfo, void *a1, void *a2) = NULL;
+int (*_sceCtrlPeekBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
+int (*_sceCtrlPeekBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
+int (*_sceCtrlReadBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
+int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
+int (* _scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq) = NULL;
 
 typedef struct PartitionData {
 	u32 unk[5];
@@ -57,6 +61,14 @@ typedef struct SysMemPartition {
 	u32 attributes;
 	PartitionData *data;
 } SysMemPartition;
+
+////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////
+
+static u32 FindPowerFunction(u32 nid) {
+	return FindProc("scePower_Service", "scePower", nid);
+}
 
 static int protect_pspemu_mem() {
 	u32 ram2 = rebootex_config.ram2;
@@ -125,6 +137,111 @@ void UnprotectExtraMemory() {
 	}
 }
 
+static int exit_callback(int arg1, int arg2, void *common) {
+	sceKernelSuspendAllUserThreads();
+	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
+	adrenaline->pops_mode = 0;
+	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+
+	static u32 vshmain_args[0x100];
+	memset(vshmain_args, 0, sizeof(vshmain_args));
+
+	vshmain_args[0] = sizeof(vshmain_args);
+	vshmain_args[1] = 0x20;
+	vshmain_args[16] = 1;
+
+	SceKernelLoadExecVSHParam param;
+
+	memset(&param, 0, sizeof(param));
+	param.size = sizeof(param);
+	param.argp = NULL;
+	param.args = 0;
+	param.vshmain_args = vshmain_args;
+	param.vshmain_args_size = sizeof(vshmain_args);
+	param.key = "vsh";
+
+	sctrlKernelExitVSH(&param);
+
+	return 0;
+}
+
+static int CallbackThread(SceSize args, void *argp) {
+	SceUID cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
+	if (cbid < 0) {
+		return cbid;
+	}
+
+	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
+	sceKernelRegisterExitCallback(cbid);
+
+	sceKernelSleepThreadCB();
+
+	return 0;
+}
+
+static SceUID SetupCallbacks() {
+	SceUID thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
+	if (thid >= 0) {
+		sceKernelStartThread(thid, 0, 0);
+	}
+	return thid;
+}
+
+static int exitToVsh(SceSize args, void *argp) {
+    int k1 = pspSdkSetK1(0);
+
+    // Refuse operation in Save dialog
+    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) {
+		return 0;
+	}
+
+    // Refuse operation in Dialog
+    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) {
+		return 0;
+	}
+
+    int (*_sceDisplaySetHoldMode)(int) = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
+    if (_sceDisplaySetHoldMode) _sceDisplaySetHoldMode(0);
+
+    // reset some flags
+    SetUmdFile("");
+    sctrlSESetBootConfFileIndex(BOOT_NORMAL);
+
+    int res = sctrlKernelExitVSH(NULL);
+
+    pspSdkSetK1(k1);
+    return res;
+}
+
+static void startExitThread(){
+	int k1 = pspSdkSetK1(0);
+	int intc = pspSdkDisableInterrupts();
+	if (sctrlGetThreadUIDByName("ExitGamePollThread") >= 0){
+		pspSdkEnableInterrupts(intc);
+		return; // already exiting
+	}
+	int uid = sceKernelCreateThread("ExitGamePollThread", exitToVsh, 1, 4096, 0, NULL);
+	pspSdkEnableInterrupts(intc);
+	sceKernelStartThread(uid, 0, NULL);
+	sceKernelWaitThreadEnd(uid, NULL);
+	sceKernelDeleteThread(uid);
+	pspSdkSetK1(k1);
+}
+
+/** Checks controller input and modifies CFW context when certain buttons are hold at the start of an application */
+void CheckControllerInput() {
+	SceCtrlData pad_data;
+	_sceCtrlPeekBufferPositive(&pad_data, 1);
+	if ((pad_data.Buttons & PSP_CTRL_LTRIGGER) == PSP_CTRL_LTRIGGER) {
+		disable_plugins = 1;
+		logmsg2("[INFO]: Plugins disabled by holding `L` at the application start\n");
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// CFW API (That depends on this file globals/statics)
+////////////////////////////////////////////////////////////////////////////////
+
 int sctrlHENSetMemory(u32 p2, u32 p11) {
 	if ((p2 == 0) || ((p2 + p11) > 52)) {
 		return SCE_ERR_INMODE;
@@ -184,6 +301,32 @@ int sctrlHENApplyMemory(u32 p2) {
 	return res;
 }
 
+void SetSpeed(int cpu, int bus) {
+	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
+		_scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x737486F2);
+		_scePowerSetClockFrequency_k(cpu, cpu, bus);
+
+		if (sceKernelApplicationType() != SCE_APPTYPE_VSH) {
+			MAKE_DUMMY_FUNCTION((u32)_scePowerSetClockFrequency_k, 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
+			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
+			sctrlFlushCache();
+		}
+	}
+}
+
+void sctrlHENSetSpeed(int cpu, int bus) {
+	int k1 = pspSdkSetK1(0);
+	SetSpeed(cpu, bus);
+	pspSdkSetK1(k1);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// PATCHED IMPLEMENTATIONS
+////////////////////////////////////////////////////////////////////////////////
+
 int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 	int largememory = 0;
 
@@ -213,7 +356,7 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 		ApplyAndResetMemory();
 	}
 
-	return sceSystemFileGetIndex(sfo, a1, a2);
+	return _sceSystemFileGetIndex(sfo, a1, a2);
 }
 
 int RunRebootPatched(u32 *params) {
@@ -232,6 +375,145 @@ int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
 	memcpy((void *)0x88FB0000, &rebootex_config, sizeof(RebootexConfig));
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
+
+int sceUmdRegisterUMDCallBackPatched(int cbid) {
+	int k1 = pspSdkSetK1(0);
+	int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
+	pspSdkSetK1(k1);
+	return res;
+}
+
+int sceChkregGetPsCodePatched(u8 *pscode) {
+	int res = _sceChkregGetPsCode(pscode);
+
+	pscode[0] = 0x01;
+	pscode[1] = 0x00;
+
+	if (config.fake_region) {
+		pscode[2] = config.fake_region < 12 ? config.fake_region + 2 : config.fake_region - 11;
+		if (pscode[2] == 2) {
+			pscode[2] = 3;
+		}
+	}
+
+	pscode[3] = 0x00;
+	pscode[4] = 0x01;
+	pscode[5] = 0x00;
+	pscode[6] = 0x01;
+	pscode[7] = 0x00;
+
+	return res;
+}
+
+int SetIdleCallbackPatched(int flags) {
+	// Only allow idle callback for music player sleep-timer
+	if (flags & 8) {
+		return SetIdleCallback(flags);
+	}
+
+	return 0;
+}
+
+int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, SceUInt *timeout) {
+	int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
+
+	if (*outBits & 0x1) {
+		SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS);
+	} else if (*outBits & 0x2) {
+		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+	}
+
+	return res;
+}
+
+int memcmp_patched(const void *b1, const void *b2, size_t len) {
+	u32 tag = 0x4C9494F0;
+	if (memcmp(&tag, b2, len) == 0) {
+		static u8 kernel661_keys[0x10] = { 0x76, 0xF2, 0x6C, 0x0A, 0xCA, 0x3A, 0xBA, 0x4E, 0xAC, 0x76, 0xD2, 0x40, 0xF5, 0xC3, 0xBF, 0xF9 };
+		memcpy((void *)0xBFC00220, kernel661_keys, sizeof(kernel661_keys));
+		return 0;
+	}
+
+	return memcmp(b1, b2, len);
+}
+
+int sceResmgrDecryptIndexPatched(void *buf, int size, int *retSize) {
+	int k1 = pspSdkSetK1(0);
+	*retSize = ReadFile("flash0:/vsh/etc/version.txt", buf, size);
+	pspSdkSetK1(k1);
+	return 0;
+}
+
+int sceCtrlPeekBufferPositivePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlPeekBufferPositive == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlPeekBufferPositive(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == EXIT_TO_VSH2_MASK) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+int sceCtrlPeekBufferNegativePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlPeekBufferNegative == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlPeekBufferNegative(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0 || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == 0) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlReadBufferPositive == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlReadBufferPositive(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == EXIT_TO_VSH2_MASK) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
+	if (_sceCtrlReadBufferNegative == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	count = _sceCtrlReadBufferNegative(pad_data, count);
+
+	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0 || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == 0) {
+		startExitThread();
+	}
+
+	return count;
+}
+
+int (* _sceMeAudio_driver_C300D466)(int codec, int unk, void *info);
+int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
+	int res = _sceMeAudio_driver_C300D466(codec, unk, info);
+
+	if (res < 0 && codec == 0x1002 && unk == 2) {
+		return 0;
+	}
+
+	return res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// MODULE PATCHERS
+////////////////////////////////////////////////////////////////////////////////
 
 void PatchLoadExec(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
@@ -306,103 +588,10 @@ void PatchLoadExec(SceModule* mod) {
 	sctrlFlushCache();
 }
 
-int sceChkregGetPsCodePatched(u8 *pscode) {
-	int res = _sceChkregGetPsCode(pscode);
-
-	pscode[0] = 0x01;
-	pscode[1] = 0x00;
-
-	if (config.fake_region) {
-		pscode[2] = config.fake_region < 12 ? config.fake_region + 2 : config.fake_region - 11;
-		if (pscode[2] == 2) {
-			pscode[2] = 3;
-		}
-	}
-
-	pscode[3] = 0x00;
-	pscode[4] = 0x01;
-	pscode[5] = 0x00;
-	pscode[6] = 0x01;
-	pscode[7] = 0x00;
-
-	return res;
-}
-
 void PatchChkreg() {
 	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&sceChkregCheckRegion), 1);
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceChkregGetPsCode), sceChkregGetPsCodePatched, _sceChkregGetPsCode);
 	sctrlFlushCache();
-}
-
-int SetIdleCallbackPatched(int flags) {
-	// Only allow idle callback for music player sleep-timer
-	if (flags & 8) {
-		return SetIdleCallback(flags);
-	}
-
-	return 0;
-}
-
-int exit_callback(int arg1, int arg2, void *common) {
-	sceKernelSuspendAllUserThreads();
-	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
-	adrenaline->pops_mode = 0;
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
-
-	static u32 vshmain_args[0x100];
-	memset(vshmain_args, 0, sizeof(vshmain_args));
-
-	vshmain_args[0] = sizeof(vshmain_args);
-	vshmain_args[1] = 0x20;
-	vshmain_args[16] = 1;
-
-	SceKernelLoadExecVSHParam param;
-
-	memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.argp = NULL;
-	param.args = 0;
-	param.vshmain_args = vshmain_args;
-	param.vshmain_args_size = sizeof(vshmain_args);
-	param.key = "vsh";
-
-	sctrlKernelExitVSH(&param);
-
-	return 0;
-}
-
-int CallbackThread(SceSize args, void *argp) {
-	SceUID cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
-	if (cbid < 0) {
-		return cbid;
-	}
-
-	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
-	sceKernelRegisterExitCallback(cbid);
-
-	sceKernelSleepThreadCB();
-
-	return 0;
-}
-
-SceUID SetupCallbacks() {
-	SceUID thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
-	if (thid >= 0) {
-		sceKernelStartThread(thid, 0, 0);
-	}
-	return thid;
-}
-
-int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, SceUInt *timeout) {
-	int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
-
-	if (*outBits & 0x1) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS);
-	} else if (*outBits & 0x2) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
-	}
-
-	return res;
 }
 
 void PatchImposeDriver(SceModule* mod) {
@@ -437,142 +626,9 @@ void PatchMediaSync(SceModule* mod) {
 	VWRITE16(text_addr + 0x3C6, 0x5000);
 	VWRITE16(text_addr + 0xDCA, 0x1000);
 
-	K_HIJACK_CALL(text_addr + 0x97C, sceSystemFileGetIndexPatched, sceSystemFileGetIndex);
+	K_HIJACK_CALL(text_addr + 0x97C, sceSystemFileGetIndexPatched, _sceSystemFileGetIndex);
 
 	sctrlFlushCache();
-}
-
-void SetSpeed(int cpu, int bus) {
-	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
-		scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x737486F2);
-		scePowerSetClockFrequency_k(cpu, cpu, bus);
-
-		if (sceKernelApplicationType() != SCE_APPTYPE_VSH) {
-			MAKE_DUMMY_FUNCTION((u32)scePowerSetClockFrequency_k, 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x843FBF43), 0);
-			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xEBD177D6), 0);
-			sctrlFlushCache();
-		}
-	}
-}
-
-void sctrlHENSetSpeed(int cpu, int bus) {
-	int k1 = pspSdkSetK1(0);
-	SetSpeed(cpu, bus);
-	pspSdkSetK1(k1);
-}
-
-static int exitToVsh(SceSize args, void *argp) {
-    int k1 = pspSdkSetK1(0);
-
-    // Refuse operation in Save dialog
-    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) {
-		return 0;
-	}
-
-    // Refuse operation in Dialog
-    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) {
-		return 0;
-	}
-
-    int (*_sceDisplaySetHoldMode)(int) = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
-    if (_sceDisplaySetHoldMode) _sceDisplaySetHoldMode(0);
-
-    // reset some flags
-    SetUmdFile("");
-    sctrlSESetBootConfFileIndex(BOOT_NORMAL);
-
-    int res = sctrlKernelExitVSH(NULL);
-
-    pspSdkSetK1(k1);
-    return res;
-}
-
-static void startExitThread(){
-	int k1 = pspSdkSetK1(0);
-	int intc = pspSdkDisableInterrupts();
-	if (sctrlGetThreadUIDByName("ExitGamePollThread") >= 0){
-		pspSdkEnableInterrupts(intc);
-		return; // already exiting
-	}
-	int uid = sceKernelCreateThread("ExitGamePollThread", exitToVsh, 1, 4096, 0, NULL);
-	pspSdkEnableInterrupts(intc);
-	sceKernelStartThread(uid, 0, NULL);
-	sceKernelWaitThreadEnd(uid, NULL);
-	sceKernelDeleteThread(uid);
-	pspSdkSetK1(k1);
-}
-
-int (*_sceCtrlPeekBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
-int sceCtrlPeekBufferPositivePatched(SceCtrlData *pad_data, int count) {
-	if (_sceCtrlPeekBufferPositive == NULL) {
-		return SCE_KERR_ILLEGAL_ADDR;
-	}
-
-	count = _sceCtrlPeekBufferPositive(pad_data, count);
-
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == EXIT_TO_VSH2_MASK) {
-		startExitThread();
-	}
-
-	return count;
-}
-
-int (*_sceCtrlPeekBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
-int sceCtrlPeekBufferNegativePatched(SceCtrlData *pad_data, int count) {
-	if (_sceCtrlPeekBufferNegative == NULL) {
-		return SCE_KERR_ILLEGAL_ADDR;
-	}
-
-	count = _sceCtrlPeekBufferNegative(pad_data, count);
-
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0 || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == 0) {
-		startExitThread();
-	}
-
-	return count;
-}
-
-int (*_sceCtrlReadBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
-int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
-	if (_sceCtrlReadBufferPositive == NULL) {
-		return SCE_KERR_ILLEGAL_ADDR;
-	}
-
-	count = _sceCtrlReadBufferPositive(pad_data, count);
-
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == EXIT_TO_VSH_MASK || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == EXIT_TO_VSH2_MASK) {
-		startExitThread();
-	}
-
-	return count;
-}
-
-int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
-int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
-	if (_sceCtrlReadBufferNegative == NULL) {
-		return SCE_KERR_ILLEGAL_ADDR;
-	}
-
-	count = _sceCtrlReadBufferNegative(pad_data, count);
-
-	if ((pad_data->Buttons & EXIT_TO_VSH_MASK) == 0 || (pad_data->Buttons & EXIT_TO_VSH2_MASK) == 0) {
-		startExitThread();
-	}
-
-	return count;
-}
-
-/** Checks controller input and modifies CFW context when certain buttons are hold at the start of an application */
-void CheckControllerInput() {
-	SceCtrlData pad_data;
-	_sceCtrlPeekBufferPositive(&pad_data, 1);
-	if ((pad_data.Buttons & PSP_CTRL_LTRIGGER) == PSP_CTRL_LTRIGGER) {
-		disable_plugins = 1;
-		logmsg3("[INFO]: Plugins disabled by holding `L` at the application start\n");
-	}
 }
 
 void PatchController(SceModule* mod) {
@@ -586,5 +642,50 @@ void PatchController(SceModule* mod) {
 	HIJACK_FUNCTION(_sceCtrlReadBufferPositive, sceCtrlReadBufferPositivePatched, _sceCtrlReadBufferPositive);
 	HIJACK_FUNCTION(_sceCtrlReadBufferNegative, sceCtrlReadBufferNegativePatched, _sceCtrlReadBufferNegative);
 
+	sctrlFlushCache();
+}
+
+void PatchMemlmd() {
+	SceModule *mod = sceKernelFindModuleByName("sceMemlmd");
+	u32 text_addr = mod->text_addr;
+
+	// Allow 6.61 kernel modules
+	MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
+}
+
+void PatchInterruptMgr() {
+	SceModule *mod = sceKernelFindModuleByName("sceInterruptManager");
+	u32 text_addr = mod->text_addr;
+
+	// Allow execution of syscalls in kernel mode
+	MAKE_INSTRUCTION(text_addr + 0xE98, 0x408F7000);
+	MAKE_NOP(text_addr + 0xE9C);
+}
+
+void PatchSysmem() {
+	u32 nids[] = { 0x7591C7DB, 0x342061E5, 0x315AD3A0, 0xEBD5C3E6, 0x057E7380, 0x91DE343C, 0x7893F79A, 0x35669D4C, 0x1B4217BC, 0x358CA1BB };
+
+	for (int i = 0; i < sizeof(nids) / sizeof(u32); i++) {
+		u32 addr = FindFirstBEQ(FindProc("sceSystemMemoryManager", "SysMemUserForUser", nids[i]));
+		if (addr) {
+			VWRITE16(addr + 2, 0x1000);
+		}
+	}
+}
+
+void PatchUmdDriver(SceModule* mod) {
+	u32 text_addr = mod->text_addr;
+
+	REDIRECT_FUNCTION(text_addr + 0xC80, sceUmdRegisterUMDCallBackPatched);
+	sctrlFlushCache();
+}
+
+void PatchMeCodecWrapper(SceModule* mod) {
+	HIJACK_FUNCTION(FindProcInMod(mod, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, _sceMeAudio_driver_C300D466);
+	sctrlFlushCache();
+}
+
+void PatchMesgLed(SceModule* mod) {
+	REDIRECT_FUNCTION(FindProcInMod(mod, "sceResmgr_driver", 0x9DC14891), sceResmgrDecryptIndexPatched);
 	sctrlFlushCache();
 }

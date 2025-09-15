@@ -19,7 +19,6 @@
 #include <common.h>
 
 #include "main.h"
-#include "io_patch.h"
 
 PspIoDrv *ms_drv;
 PspIoDrv *flashfat_drv;

@@ -17,16 +17,24 @@
 */
 
 #include <common.h>
+#include <pspelf.h>
 
 #include "main.h"
-#include "executable_patch.h"
+#include "init_patch.h"
+#include "libraries_patch.h"
 
 int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize);
 int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
+int (* PrologueModule)(void *modmgr_param, SceModule *mod) = NULL;
 
-__attribute__((noinline)) void AdjustExecInfo(void *buf, SceLoadCoreExecFileInfo *execInfo) {
+////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////
+
+__attribute__((noinline))
+static void AdjustExecInfo(void *buf, SceLoadCoreExecFileInfo *execInfo) {
 	SceModuleInfo *modInfo = (SceModuleInfo *)((u32)buf + execInfo->module_info_offset);
 
 	if ((u32)modInfo >= 0x88400000 && (u32)modInfo <= 0x88800000) {
@@ -36,6 +44,10 @@ __attribute__((noinline)) void AdjustExecInfo(void *buf, SceLoadCoreExecFileInfo
 	execInfo->mod_info_attribute = modInfo->modattribute;
 	execInfo->is_kernel_mod = (execInfo->mod_info_attribute & 0x1000) ? 1 : 0;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// PATCHED IMPLEMENTATIONS
+////////////////////////////////////////////////////////////////////////////////
 
 int sceKernelCheckExecFilePatched(void *buf, SceLoadCoreExecFileInfo *execInfo) {
 	Elf32_Ehdr *header = (Elf32_Ehdr *)buf;
@@ -57,8 +69,7 @@ int sceKernelCheckExecFilePatched(void *buf, SceLoadCoreExecFileInfo *execInfo) 
 	return res;
 }
 
-int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *execInfo)
-{
+int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *execInfo) {
 	Elf32_Ehdr *header = (Elf32_Ehdr *)buf;
 
 	// Plain ELF
@@ -140,4 +151,137 @@ int PartitionCheckPatched(u32 *param, SceLoadCoreExecFileInfo *execInfo) {
 
 	sceIoLseek32(fd, pos, PSP_SEEK_SET);
 	return PartitionCheck(param, execInfo);
+}
+
+int PrologueModulePatched(void *modmgr_param, SceModule *mod) {
+	int res = PrologueModule(modmgr_param, mod);
+
+	if (res >= 0 && module_handler)
+		module_handler(mod);
+
+	return res;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// MODULE PATCHERS
+////////////////////////////////////////////////////////////////////////////////
+
+void PatchLoadCore() {
+	SceModule *mod = sceKernelFindModuleByName("sceLoaderCore");
+	u32 text_addr = mod->text_addr;
+
+	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelCheckExecFile), sceKernelCheckExecFilePatched, _sceKernelCheckExecFile);
+	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceKernelProbeExecutableObject), sceKernelProbeExecutableObjectPatched, _sceKernelProbeExecutableObject);
+
+	for (int i = 0; i < mod->text_size; i += 4) {
+		u32 addr = text_addr + i;
+		u32 data = VREAD32(addr);
+
+		// Allow custom modules
+		if (data == 0x1440FF55) {
+			PspUncompress = (void *)K_EXTRACT_CALL(addr - 8);
+			MAKE_CALL(addr - 8, PspUncompressPatched);
+			continue;
+		}
+
+		// Patch relocation check in switch statement (7 -> 0)
+		if (data == 0x00A22021) {
+			u32 high = (((u32)VREAD16(addr - 0xC)) << 16);
+			u32 low = ((u32)VREAD16(addr - 0x4));
+
+			if (low & 0x8000) high -= 0x10000;
+
+			u32 *RelocationTable = (u32 *)(high | low);
+
+			RelocationTable[7] = RelocationTable[0];
+
+			continue;
+		}
+
+		// Allow kernel modules to have syscall imports
+		if (data == 0x30894000) {
+			VWRITE32(addr, 0x3C090000);
+			continue;
+		}
+
+		// Allow lower devkit version
+		if (data == 0x14A0FFCB) {
+			VWRITE16(addr + 2, 0x1000);
+			continue;
+		}
+
+		// Allow higher devkit version
+		if (data == 0x14C0FFDF) {
+			MAKE_NOP(addr);
+			continue;
+		}
+
+		// Patch to resolve NIDs
+		if (data == 0x8D450000) {
+			MAKE_INSTRUCTION(addr + 4, 0x02203021); // move $a2, $s1
+			search_nid_in_entrytable = (void *)K_EXTRACT_CALL(addr + 8);
+			MAKE_CALL(addr + 8, search_nid_in_entrytable_patched);
+			MAKE_INSTRUCTION(addr + 0xC, 0x02403821); // move $a3, $s2
+			continue;
+		}
+
+		if (data == 0xADA00004) {
+			// Patch to resolve NIDs
+			MAKE_NOP(addr);
+			MAKE_NOP(addr + 8);
+
+			// Patch to undo prometheus patches
+			HIJACK_FUNCTION(addr + 0xC, aLinkLibEntriesPatched, aLinkLibEntries);
+
+			continue;
+		}
+
+		// Patch call to init module_bootstart
+		if (data == 0x02E0F809) {
+			MAKE_CALL(addr, PatchInit);
+			MAKE_INSTRUCTION(addr + 4, 0x02E02021); // move $a0, $s7
+			continue;
+		}
+
+		// Restore original call
+		if (data == 0xAE2D0048) {
+			MAKE_CALL(addr + 8, FindProc("sceMemlmd", "memlmd", 0xEF73E85B));
+			continue;
+		}
+
+		if (data == 0x40068000 && VREAD32(addr + 4) == 0x7CC51180) {
+			LoadCoreForKernel_nids[0].function = (void *)addr;
+			continue;
+		}
+
+		if (data == 0x40068000 && VREAD32(addr + 4) == 0x7CC51240) {
+			LoadCoreForKernel_nids[1].function = (void *)addr;
+			continue;
+		}
+	}
+}
+
+void PatchModuleMgr() {
+	SceModule *mod = sceKernelFindModuleByName("sceModuleManager");
+	u32 text_addr = mod->text_addr;
+
+	for (int i = 0; i < mod->text_size; i += 4) {
+		u32 addr = text_addr + i;
+		u32 data = VREAD32(addr);
+
+		if (data == 0xA4A60024) {
+			// Patch to allow a full coverage of loaded modules
+			PrologueModule = (void *)K_EXTRACT_CALL(addr - 4);
+			MAKE_CALL(addr - 4, PrologueModulePatched);
+			continue;
+		}
+
+		if (data == 0x27BDFFE0 && VREAD32(addr + 4) == 0xAFB10014) {
+			HIJACK_FUNCTION(addr, PartitionCheckPatched, PartitionCheck);
+			continue;
+		}
+	}
+
+	// Dummy patch for LEDA
+	MAKE_JUMP(sctrlHENFindImport(mod->modname, "ThreadManForKernel", 0x446D8DE6), sceKernelCreateThread);
 }

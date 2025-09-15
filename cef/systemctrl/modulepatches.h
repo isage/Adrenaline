@@ -16,8 +16,10 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __SYSMODPATCHES_H__
-#define __SYSMODPATCHES_H__
+#ifndef __MODULE_PATCHES_H__
+#define __MODULE_PATCHES_H__
+
+#include <psploadcore.h>
 
 /**
  * Apply the partition 2 and 11 memory configured by ::sctrlHENSetMemory.
@@ -33,10 +35,37 @@ void ApplyAndResetMemory();
 void UnprotectExtraMemory();
 void CheckControllerInput();
 
-void PatchLoadExec(SceModule* mod);
+////////////////////////////////////////////////////////////////////////////////
+// System Module Patchers
+////////////////////////////////////////////////////////////////////////////////
+
 void PatchChkreg();
-void PatchImposeDriver(SceModule* mod);
+void PatchMemlmd();
+void PatchSysmem();
+void PatchUtility();
+void PatchLoadCore();
+void PatchModuleMgr();
+void PatchIoFileMgr();
+void PatchInterruptMgr();
+void PatchMesgLed(SceModule* mod);
+void PatchLoadExec(SceModule* mod);
 void PatchMediaSync(SceModule* mod);
+void PatchUmdDriver(SceModule* mod);
 void PatchController(SceModule* mod);
+void PatchImposeDriver(SceModule* mod);
+void PatchUSBCamDriver(SceModule* mod);
+void PatchPowerService(SceModule* mod);
+void PatchMeCodecWrapper(SceModule* mod);
+
+////////////////////////////////////////////////////////////////////////////////
+// Other Module Patchers
+////////////////////////////////////////////////////////////////////////////////
+
+void PatchVolatileMemBug();
+void PatchGameByGameId();
+void PatchGamesByMod(SceModule* mod);
+
+void PatchVlfLib(SceModule* mod);
+void PatchCwCheatPlugin(SceModule* mod);
 
 #endif

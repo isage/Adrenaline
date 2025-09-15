@@ -21,10 +21,11 @@
 
 #include <common.h>
 
-#include "executable_patch.h"
+#include "utils.h"
 
 extern RebootexConfig rebootex_config;
 extern AdrenalineConfig config;
+extern STMOD_HANDLER module_handler;
 
 u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid);
 
@@ -40,19 +41,6 @@ int LoadExecForKernel_AA2029EC();
 int sceChkregCheckRegion();
 int sceChkregGetPsCode(u8 *pscode);
 
-int ReadFile(char *file, void *buf, int size);
-int WriteFile(char *file, void *buf, int size);
-
 u32 sctrlHENFakeDevkitVersion();
-
-u32 _findJAL(u32 addr, int reversed, int skip);
-#define findFirstJAL(addr) _findJAL(addr, 0, 0)
-#define findFirstJALReverse(addr) _findJAL(addr, 1, 0)
-#define findJAL(addr, pos) _findJAL(addr, 0, pos)
-#define findJALReverse(addr, pos) _findJAL(addr, 1, pos)
-#define findFirstJALForFunction(modname, libname, uid) findFirstJAL(FindFunction(modname, libname, uid))
-#define findJALForFunction(modname, libname, uid, pos) findJAL(FindFunction(modname, libname, uid), pos)
-#define findFirstJALReverseForFunction(modname, libname, uid) findFirstJALReverse(FindFunction(modname, libname, uid))
-#define findJALReverseForFunction(modname, libname, uid, pos) findJALReverse(FindFunction(modname, libname, uid), pos)
 
 #endif

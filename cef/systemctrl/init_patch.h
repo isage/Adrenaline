@@ -19,16 +19,7 @@
 #ifndef __INIT_PATCH_H__
 #define __INIT_PATCH_H__
 
-typedef struct {
-    char *name;
-    void *buf;
-    int size;
-    int unk_12;
-    int attr;
-    int unk_20;
-    int argSize;
-    int argPartId;
-} SceLoadCoreBootModuleInfo;
+
 
 int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp);
 

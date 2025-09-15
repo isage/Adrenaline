@@ -1,8 +1,6 @@
 #include <common.h>
 #include <pspusbcam.h>
 
-#include "usbcam_patch.h"
-
 void sceUsb_driver_ED8C8695();
 void sceUsb_driver_63E55EBE();
 

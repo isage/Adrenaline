@@ -29,6 +29,10 @@
 int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
 int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
 
+void sctrlFlushCache() {
+	sceKernelIcacheInvalidateAll();
+	sceKernelDcacheWritebackInvalidateAll();
+}
 
 int sctrlKernelSetUserLevel(int level) {
 	int k1 = pspSdkSetK1(0);
@@ -184,6 +188,12 @@ PspIoDrv *sctrlHENFindDriver(char *drvname) {
 	pspSdkSetK1(k1);
 
 	return (PspIoDrv *)u[1];
+}
+
+STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler) {
+	STMOD_HANDLER prev = module_handler;
+	module_handler = (STMOD_HANDLER)((u32)handler | 0x80000000);
+	return prev;
 }
 
 int (*_sceKernelExitVSH)(void*) = (void*)sceKernelExitVSHVSH;

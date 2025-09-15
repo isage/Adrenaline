@@ -18,10 +18,10 @@
 
 #include <common.h>
 #include <pspmodulemgr.h>
+#include <psploadcore.h>
 #include <adrenaline_log.h>
 
 #include "main.h"
-#include "init_patch.h"
 #include "plugin.h"
 
 // init.prx Custom sceKernelStartModule Handler
@@ -35,6 +35,26 @@ int leda_apitype;
 
 int plugindone = 0;
 
+////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////
+
+static void loadXmbControl(){
+	int apitype = sceKernelInitApitype();
+	if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
+		// load XMB Control Module
+		int modid = sceKernelLoadModule("ms0:/__ADRENALINE__/flash0/vsh/module/xmbctrl.prx", 0, NULL);
+		if (modid < 0) {
+		  	modid = sceKernelLoadModule("flash0:/vsh/module/xmbctrl.prx", 0, NULL);
+		}
+		sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// PATCHED IMPLEMENTATIONS
+////////////////////////////////////////////////////////////////////////////////
+
 SceUID sceKernelLoadModuleMs2Leda(const char *path, int flags, SceKernelLMOption *option) {
 	return sceKernelLoadModuleMs2(leda_apitype, path, flags, option);
 }
@@ -42,91 +62,6 @@ SceUID sceKernelLoadModuleMs2Leda(const char *path, int flags, SceKernelLMOption
 SceUID sceKernelLoadModuleMs2Init(int apitype, const char *path, int flags, SceKernelLMOption *option) {
 	leda_apitype = apitype;
 	return sceKernelLoadModuleMs2Handler(path, flags, option);
-}
-
-int sctrlHENRegisterHomebrewLoader(int (* handler)(const char *path, int flags, SceKernelLMOption *option)) {
-	sceKernelLoadModuleMs2Handler = handler;
-	u32 text_addr = ((u32)handler) - 0xCE8;
-
-	// Remove version check
-	MAKE_NOP(text_addr + 0xC58);
-
-	// Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
-	MAKE_NOP(text_addr + 0x1140);
-
-	// Fix sceKernelLoadModuleMs2 call
-	MAKE_JUMP(text_addr + 0x2E28, sceKernelLoadModuleMs2Leda);
-	MAKE_JUMP(init_addr + 0x1C84, sceKernelLoadModuleMs2Init);
-
-	sctrlFlushCache();
-
-	return 0;
-}
-
-void trim(char *str) {
-	for (int i = strlen(str) - 1; i >= 0; i--) {
-		if (str[i] == 0x20 || str[i] == '\t') {
-			str[i] = 0;
-		} else {
-			break;
-		}
-	}
-}
-
-int GetPlugin(char *buf, int size, char *str, int *activated) {
-	int n = 0, i = 0;
-	char *s = str;
-
-	while (1) {
-		if (i >= size) {
-			break;
-		}
-
-		char ch = buf[i];
-
-		if (ch < 0x20 && ch != '\t') {
-			if (n != 0) {
-				i++;
-				break;
-			}
-		} else {
-			*str++ = ch;
-			n++;
-		}
-
-		i++;
-	}
-
-	trim(s);
-
-	*activated = 0;
-
-	if (i > 0) {
-		char *p = strpbrk(s, " \t");
-		if (p) {
-			char *q = p + 1;
-
-			while (*q < 0) {
-				q++;
-			}
-
-			if (strcmp(q, "1") == 0) {
-				*activated = 1;
-			}
-
-			*p = 0;
-		}
-	}
-
-	return i;
-}
-
-int LoadStartModule(char *file) {
-	SceUID mod = sceKernelLoadModule(file, 0, NULL);
-	if (mod < 0)
-		return mod;
-
-	return sceKernelStartModule(mod, strlen(file) + 1, file, NULL, NULL);
 }
 
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
@@ -144,18 +79,6 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		return mod;
 
 	return sceKernelLoadModuleBufferBootInitBtcnf(info->size, buf, flags, option);
-}
-
-static void loadXmbControl(){
-	int apitype = sceKernelInitApitype();
-	if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
-		// load XMB Control Module
-		int modid = sceKernelLoadModule("ms0:/__ADRENALINE__/flash0/vsh/module/xmbctrl.prx", 0, NULL);
-		if (modid < 0) {
-		  	modid = sceKernelLoadModule("flash0:/vsh/module/xmbctrl.prx", 0, NULL);
-		}
-		sceKernelStartModule(modid, 0, NULL, NULL, NULL);
-	}
 }
 
 SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
@@ -257,6 +180,10 @@ START_MODULE:
 	return res;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// MODULE PATCHERS
+////////////////////////////////////////////////////////////////////////////////
+
 int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 	init_addr = ((u32)module_bootstart) - 0x1A54;
 
@@ -276,4 +203,27 @@ int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 	sctrlFlushCache();
 
 	return module_bootstart(4, argp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// CFW API (That depends on this file globals/statics)
+////////////////////////////////////////////////////////////////////////////////
+
+int sctrlHENRegisterHomebrewLoader(int (* handler)(const char *path, int flags, SceKernelLMOption *option)) {
+	sceKernelLoadModuleMs2Handler = handler;
+	u32 text_addr = ((u32)handler) - 0xCE8;
+
+	// Remove version check
+	MAKE_NOP(text_addr + 0xC58);
+
+	// Remove patch of sceKernelGetUserLevel on sceLFatFs_Driver
+	MAKE_NOP(text_addr + 0x1140);
+
+	// Fix sceKernelLoadModuleMs2 call
+	MAKE_JUMP(text_addr + 0x2E28, sceKernelLoadModuleMs2Leda);
+	MAKE_JUMP(init_addr + 0x1C84, sceKernelLoadModuleMs2Init);
+
+	sctrlFlushCache();
+
+	return 0;
 }

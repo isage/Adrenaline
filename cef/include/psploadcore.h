@@ -158,6 +158,17 @@ typedef struct SceModule {
 	u32 compute_text_segment_checksum; // 0xE0
 } SceModule;
 
+typedef struct {
+	char *name;
+	void *buf;
+	int size;
+	int unk_12;
+	int attr;
+	int unk_20;
+	int argSize;
+	int argPartId;
+} SceLoadCoreBootModuleInfo;
+
 /** Defines a library and its exported functions and variables.  Use the len
 	member to determine the real size of the table (size = len * 4). */
 typedef struct SceLibraryEntryTable {
