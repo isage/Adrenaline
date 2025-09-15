@@ -476,7 +476,17 @@ static void PatchGamesByMod(SceModule* mod) {
 		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
 
 	} else if (strcmp(modname, "Jackass") == 0) {
-		REDIRECT_FUNCTION(mod->text_addr + 0x35A204, MakeSyscallStub(moduleLoaderJackass));
+		char* game_id = rebootex_config.game_id;
+		if (strcasecmp("ULES00897", game_id) == 0)
+		{
+			logmsg4("%s: [DEBUG]: Patching Jackass PAL\n", __func__);
+			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, MakeSyscallStub(moduleLoaderJackass));
+		}
+		else if (strcasecmp("ULUS10303", game_id) == 0)
+		{
+			logmsg4("%s: [DEBUG]: Patching Jackass NTSC\n", __func__);
+			REDIRECT_FUNCTION(mod->text_addr + 0x357B54, MakeSyscallStub(moduleLoaderJackass));
+		}
 	}
 
 	sctrlFlushCache();
