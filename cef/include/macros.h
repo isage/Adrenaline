@@ -142,6 +142,13 @@
 	_sw(SYSCALL(n), _func_ + 4); \
 }
 
+// Insert a syscall call of syscall exported function `f` at the address `a`
+#define REDIRECT_SYSCALL(a, f) \
+{ \
+    _sw(JR_RA, a); \
+    _sw(SYSCALL(sceKernelQuerySystemCall(f)), a + 4); \
+}
+
 // Insert a direct jump to `f` at the address `a`, followed by a NOP.
 #define REDIRECT_FUNCTION(a, f) \
 { \

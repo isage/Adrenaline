@@ -439,45 +439,18 @@ int sctrlHENHookImportByNID(SceModule * pMod, char * library, u32 nid, void *fun
 	} else { // Normal Hook
 		// Syscall Hook
 		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
-			if (dummy) {
-				void *ptr = NULL;
-				asm("cfc0 %0, $12\n" : "=r"(ptr));
+			// Query Syscall Number
+			int syscall = sceKernelQuerySystemCall(func);
 
-				// Syscall table not found.
-				if (NULL == ptr) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall table not found\n", __func__, pMod->modname, library, nid);
-					return -4;
-				}
-
-				u32 *syscall_table = (u32 *)(ptr + 0x10);
-				int found = 0;
-				for (int i = 0; i < 0x1000; i++) {
-					if ((syscall_table[i] & 0x0FFFFFFF) == (stub & 0x0FFFFFFF)) {
-						syscall_table[i] = func_int;
-						found = 1;
-					}
-				}
-
-				// Syscall not found in the table
-				if (!found) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found in syscall table\n", __func__, pMod->modname, library, nid);
-					return -5;
-				}
-				logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a syscall substitution\n", __func__, pMod->modname, library, nid);
-			} else {
-				// Query Syscall Number
-				int syscall = sceKernelQuerySystemCall(func);
-
-				// Not properly exported in exports.exp
-				if(syscall < 0) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, pMod->modname, library, nid);
-					return -3;
-				}
-
-				// Create Syscall Hook
-				MAKE_SYSCALL_FUNCTION(stub, syscall);
-				logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a syscall hook\n", __func__, pMod->modname, library, nid);
+			// Not properly exported in exports.exp
+			if(syscall < 0) {
+				logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, pMod->modname, library, nid);
+				return -3;
 			}
+
+			// Create Syscall Hook
+			MAKE_SYSCALL_FUNCTION(stub, syscall);
+			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a syscall hook\n", __func__, pMod->modname, library, nid);
 		} else {
 			// Create Direct Jump Hook
 			REDIRECT_FUNCTION(stub, func);
@@ -548,4 +521,11 @@ u32 sctrlKernelResolveNid(const char *libname, u32 nid) {
 
 int sctrlKernelSetNidResolver(char* libname, u32 enabled) {
 	return SCE_ENOSYS;
+}
+
+u32 sctrlHENMakeSyscallStub(void *function) {
+	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
+	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
+	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
+	return stub;
 }

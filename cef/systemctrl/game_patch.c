@@ -164,11 +164,11 @@ void PatchGamesByMod(SceModule* mod) {
 		char* game_id = rebootex_config.game_id;
 		if (strcasecmp("ULES00897", game_id) == 0) { // PAL
 			logmsg4("%s: [DEBUG]: Patching Jackass PAL\n", __func__);
-			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, MakeSyscallStub(moduleLoaderJackass));
+			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, sctrlHENMakeSyscallStub(moduleLoaderJackass));
 
 		} else if (strcasecmp("ULUS10303", game_id) == 0) { // NTSC
 			logmsg4("%s: [DEBUG]: Patching Jackass NTSC\n", __func__);
-			REDIRECT_FUNCTION(mod->text_addr + 0x357B54, MakeSyscallStub(moduleLoaderJackass));
+			REDIRECT_FUNCTION(mod->text_addr + 0x357B54, sctrlHENMakeSyscallStub(moduleLoaderJackass));
 		}
 
 	} else if (strcmp(modname, "projectg_psp") == 0) {

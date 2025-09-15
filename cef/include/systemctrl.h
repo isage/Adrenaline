@@ -379,24 +379,18 @@ u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *szLib, u32 nid);
 u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid);
 
 /**
- * Replace import function stub with a function or dummy value.
+ * Replace import function stub in a module with a function or dummy value.
  *
- * This function autodetects whether Syscalls are used or not, and if used, it
- * behaves differently depending on the value of `replace_syscall`. If true, the
- * function replaces syscall address to the address to the `func` in the syscall
- * table. I false, the function creates a new syscall and redirects the stub to
- * the `func` syscall; in this case, manually exporting in exports.exp is still
- * required for Syscalls to work.
+ * This function autodetects whether Syscalls are used or not. If a syscall is
+ * used, the function creates a new syscall and redirects the stub to the `func`
+ * syscall; manually exporting in exports.exp is still required for Syscalls to
+ * work.
  *
  * @param mod - The module where to search the function
  * @param library - The library name
  * @param nid - The nid of the function
  * @param func - The function to replace the stub. If NULL, use dummy value
- * @param dummy/replace_syscall - If `func` is NULL, it is the dummy value to replace the stub.
- * 	If `func` is not NULL, it is interpreted as a boolean on how to handle in
- * the case of a syscall hook; `0` means new-syscall and redirect the stub, `>0`
- * means replace the syscall in the syscall table (that means that all all usages
- * of the replaced syscall will call `func`).
+ * @param dummy - If `func` is NULL, it is the dummy value to replace the stub.
  *
  * @returns
  * - 0 if successful,
@@ -404,12 +398,11 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid);
  * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
  * -3 if failed to find import by NID after successful resolve to older firmware version
  * -4 if failed to find syscall table
- * -5 if failed to find syscall in the syscall table
 */
 int sctrlHENHookImportByNID(SceModule * mod, char *library, u32 nid, void *func, int dummy);
 
 /**
- * Replace import function stub with a function or dummy value.
+ * Replace import function stub in a module with a function or dummy value.
  *
  * This function autodetects whether Syscalls are used or not, and if used, it
  * behaves differently depending on the value of `replace_syscall`. If true, the
@@ -437,7 +430,7 @@ int sctrlHENHookImportByNID(SceModule * mod, char *library, u32 nid, void *func,
 int sctrlHookImportByNID(SceModule * pMod, char * library, u32 nid, void * func);
 
 /**
- * Replace function with a function or dummy value.
+ * Replace exported function in a module with a function or dummy value.
  *
  * This function autodetects whether Syscalls are used or not, and if used, it
  * behaves differently depending on the value of `replace_syscall`. If true, the
@@ -747,12 +740,40 @@ u32 sctrlHENFakeDevkitVersion();
 */
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags);
 
-/** Changes a syscall to another function
+/**
+ * Changes a syscall to another function.
+ *
+ * This is achieved by modifying the syscall table to point to `newaddr` when
+ * calling the original syscall. This means that every system call to the
+ * original function (in any module) will execute the new function instead.
  *
  * @param addr - the address of the original function
  * @param newaddr - the address of the new function
+ *
 */
 void sctrlHENPatchSyscall(u32 addr, void *newaddr);
+
+/**
+ * Creates a syscall stub for the given `function` in user-memory.
+ *
+ * Creating a syscall stub this way allows a kernel program to inject syscall
+ * calls in a user module without overwriting a existing syscall stub in the
+ * module being modified.
+ *
+ * @note This also have the side-effect of not requiring the `function` to be
+ * exported as syscall by the kernel program to work as syscall. But it is
+ * extremely recommended to export anyway to facilitate using the `function`
+ * with other CFW APIs (e.g. `sctrlHENPatchSyscall`, `sctrlHENHookImportByNID`).
+ *
+ * @param function The function pointer to the function to create the syscall stub
+ *
+ * @returns The syscall stub of the given function.
+ *
+ * @attention Every call to this function allocates 8 bytes of memory in the
+ * user RAM, which is also the available memory for the running application. So,
+ * avoid excessive use of this function.
+ */
+u32 sctrlHENMakeSyscallStub(void *function);
 
 typedef int (* HEN_REG_HOMEBREW_LOADER_HANDLER)(const char *path, int flags, SceKernelLMOption *option);
 int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
