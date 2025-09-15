@@ -487,6 +487,32 @@ static void PatchGamesByMod(SceModule* mod) {
 			logmsg4("%s: [DEBUG]: Patching Jackass NTSC\n", __func__);
 			REDIRECT_FUNCTION(mod->text_addr + 0x357B54, MakeSyscallStub(moduleLoaderJackass));
 		}
+
+	} else if (strcmp(modname, "projectg_psp") == 0) {
+		// Fix black screen on Pangya Golf Fantasy
+		char* game_id = rebootex_config.game_id;
+		u32 addrs[4] = {0};
+		if (strcasecmp("ULUS10438", game_id) == 0) { // USA
+			addrs[0] = mod->text_addr + 0x35fd88;
+			addrs[1] = addrs[0] + 8;
+			addrs[2] = addrs[0] + 16;
+
+		} else if (strcasecmp("ULJM05440", game_id) == 0) { // JAPAN
+			addrs[0] = mod->text_addr + 0x366498;
+			addrs[1] = addrs[0] + 8;
+			addrs[2] = addrs[0] + 16;
+
+		} else if (strcasecmp("ULKS46164", game_id) == 0) { // KOREA
+			addrs[0] = mod->text_addr + 0x363c50;
+			addrs[1] = addrs[0] + 8;
+		}
+
+		for (int i = 0; i < 4; i++) {
+			u32 addr = addrs[i];
+			if (addr != 0) {
+				VWRITE32(addr, 0x00000000);
+			}
+		}
 	}
 
 	sctrlFlushCache();
