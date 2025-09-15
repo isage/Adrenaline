@@ -9,7 +9,7 @@
     - Finer control over when to enable/disable plugins
     - Support for plugins in specific games
     - Support for plugin only on homebrew apps
-	- Migration instructions below
+	- **Migration instructions below**
 - Added `Scale2x` graphical filter options
 - Added support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver.
 - Update the Inferno Driver to Inferno 2
@@ -34,7 +34,8 @@
 	- Fix `TwinBee Portable` crashing when not using English or Japanese language
 	- Fix `Smakdown vs RAW 2011` by bypassing anti-CFW check
 	- Fix `Aces of War` by bypassing anti-CFW check
-	- Improve the `DJ Max` anti-CFW bypass
+	- Fix `Pangya Fantasy Golf` by bypassing anti-CFW check
+	- Fix freeze on `Bust-A-Move` by bypassing anti-CFW check
 	- Patch to remove the "overclocked" message on `ATV Pro`
 
 
