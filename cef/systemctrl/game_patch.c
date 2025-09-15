@@ -26,12 +26,48 @@ extern AdrenalineConfig config;
 
 STMOD_HANDLER game_previous = NULL;
 
+////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////
+
 static u32 MakeSyscallStub(void *function) {
 	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
 	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
 	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
 	return stub;
 }
+
+static void SetUmdEmuSpeed(u8 seek, u8 read) {
+	void (*SetUmdDelay)(int, int) = NULL;
+	int (*CacheInit)(int, int, int) = NULL;
+
+	// Config in `Auto` mode
+	if (config.umd_seek == 0 && config.umd_speed == 0) {
+		if (rebootex_config.bootfileindex == BOOT_INFERNO) {
+			SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+
+			SetUmdDelay = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
+			CacheInit = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+		} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
+			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xFAEC97D6);
+		} else if (rebootex_config.bootfileindex == BOOT_NP9660) {
+			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
+		}
+
+		if (SetUmdDelay != NULL) {
+			SetUmdDelay(seek, read);
+		}
+
+		if (CacheInit != NULL && config.iso_cache != CACHE_CONFIG_OFF) {
+			// Disable Inferno cache
+			CacheInit(0, 0, 0);
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// PATCHED IMPLEMENTATIONS
+////////////////////////////////////////////////////////////////////////////////
 
 static int (*utilityGetParam)(int, int*) = NULL;
 static int utilityGetParamPatched_ULJM05221(int param, int* value) {
@@ -40,53 +76,6 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 		*value = 0;
 	}
 	return res;
-}
-
-static int wweModuleOnStart(SceModule * mod) {
-	// Boot Complete Action not done yet
-	if (strcmp(mod->modname, "mainPSP") == 0) {
-		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222); // scePowerGetPllClockFrequencyInt
-		sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);   // scePowerSetCpuClockFrequency
-		sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222); // scePowerGetCpuClockFrequencyInt
-		sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111); // scePowerGetBusClockFrequencyInt
-	}
-
-	// Call Previous Module Start Handler
-	if(game_previous) game_previous(mod);
-
-	return 0;
-}
-
-void PatchGameByGameId() {
-	char* game_id = rebootex_config.game_id;
-
-	// Fix TwinBee Portable when not using English or Japanese language
-	if (strcasecmp("ULJM05221", game_id) == 0) {
-		utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
-		sctrlHENPatchSyscall((u32)utilityGetParam, utilityGetParamPatched_ULJM05221);
-
-	} else if (strcasecmp("ULES01472", game_id) == 0 || strcasecmp("ULUS10543", game_id) == 0) {
-		// Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
-		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
-
-	} else if (strcasecmp("ULES00590", game_id) == 0 || strcasecmp("ULJM05075", game_id) == 0) {
-		// Patch Aces of War anti-CFW check (UMD speed)
-		if (config.umd_seek == 0 && config.umd_speed == 0) {
-			void (*SetUmdDelay)(int, int) = NULL;
-			if (rebootex_config.bootfileindex == BOOT_INFERNO) {
-				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xB6522E93);
-			} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
-				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xFAEC97D6);
-			} else if (rebootex_config.bootfileindex == BOOT_NP9660) {
-				SetUmdDelay = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
-			}
-
-			if (SetUmdDelay != NULL) {
-				SetUmdDelay(1, 1);
-			}
-		}
-
-	}
 }
 
 static int moduleLoaderJackass(char* name, int value) {
@@ -108,59 +97,62 @@ static int moduleLoaderJackass(char* name, int value) {
 	return res;
 }
 
+static int wweModuleOnStart(SceModule * mod) {
+	// Boot Complete Action not done yet
+	if (strcmp(mod->modname, "mainPSP") == 0) {
+		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222); // scePowerGetPllClockFrequencyInt
+		sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);   // scePowerSetCpuClockFrequency
+		sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222); // scePowerGetCpuClockFrequencyInt
+		sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111); // scePowerGetBusClockFrequencyInt
+	}
+
+	// Call Previous Module Start Handler
+	if(game_previous) game_previous(mod);
+
+	return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// MODULE PATCHERS
+////////////////////////////////////////////////////////////////////////////////
+
+void PatchGameByGameId() {
+	char* game_id = rebootex_config.game_id;
+
+	// Fix TwinBee Portable when not using English or Japanese language
+	if (strcasecmp("ULJM05221", game_id) == 0) {
+		utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
+		sctrlHENPatchSyscall((u32)utilityGetParam, utilityGetParamPatched_ULJM05221);
+
+	} else if (strcasecmp("ULES01472", game_id) == 0 || strcasecmp("ULUS10543", game_id) == 0) {
+		// Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
+		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
+
+	} else if (strcasecmp("ULES00590", game_id) == 0 || strcasecmp("ULJM05075", game_id) == 0) {
+		// Patch Aces of War anti-CFW check (UMD speed)
+		SetUmdEmuSpeed(1, 1);
+	}
+}
+
 void PatchGamesByMod(SceModule* mod) {
 	char *modname = mod->modname;
 
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
+		// Fix Anti-CFW checks on `DJ Max` games
+		// Another option is to simulate physical UMD seek and read times with a
+		// factor of 2x, but this makes the game as slow as reading from an UMD.
+		// This patch allow to bypass the check without slowing things down.
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
 
-		if (rebootex_config.bootfileindex == BOOT_INFERNO) {
-			SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
-
-			if (config.umd_seek == 0 && config.umd_speed == 0) {
-				// enable UMD reading speed
-				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
-				if (SetUmdDelay != NULL) {
-					SetUmdDelay(2, 2);
-				}
-			}
-
-			if (config.iso_cache != CACHE_CONFIG_OFF) {
-				// Disable Inferno cache
-				int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
-				if (CacheInit != NULL) {
-					CacheInit(0, 0, 0);
-				}
-			}
-
-		} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
-			if (config.umd_seek == 0 && config.umd_speed == 0) {
-				// enable UMD reading speed
-				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-March33Driver", "inferno_driver", 0xFAEC97D6);
-				if (SetUmdDelay != NULL) {
-					SetUmdDelay(2, 2);
-				}
-			}
-
-		} else if (rebootex_config.bootfileindex == BOOT_NP9660) {
-			if (config.umd_seek == 0 && config.umd_speed == 0) {
-				// enable UMD reading speed
-				void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
-				if (SetUmdDelay != NULL) {
-					SetUmdDelay(2, 2);
-				}
-			}
-		}
-
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
-		// Remove "overclock" message in ATV PRO
+		// Remove "overclock" message in `ATV PRO`
 		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
 		sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);
 		sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222);
 		sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111);
 
 	} else if (strcmp(modname, "tekken") == 0) {
-		// Fix back screen on Tekken 6
+		// Fix back screen on `Tekken 6`
 		// scePowerGetPllClockFrequencyInt
 		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222);
 
@@ -168,6 +160,7 @@ void PatchGamesByMod(SceModule* mod) {
 		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
 
 	} else if (strcmp(modname, "Jackass") == 0) {
+		// Fix infinite loading screen on `Jackass: The Game`
 		char* game_id = rebootex_config.game_id;
 		if (strcasecmp("ULES00897", game_id) == 0) { // PAL
 			logmsg4("%s: [DEBUG]: Patching Jackass PAL\n", __func__);
@@ -179,7 +172,7 @@ void PatchGamesByMod(SceModule* mod) {
 		}
 
 	} else if (strcmp(modname, "projectg_psp") == 0) {
-		// Fix black screen on Pangya Golf Fantasy
+		// Fix black screen on `Pangya Golf Fantasy`
 		char* game_id = rebootex_config.game_id;
 		u32 addrs[4] = {0};
 		if (strcasecmp("ULUS10438", game_id) == 0) { // USA
@@ -203,6 +196,10 @@ void PatchGamesByMod(SceModule* mod) {
 				VWRITE32(addr, 0x00000000);
 			}
 		}
+
+	} else if (strcmp(modname, "BAMG") == 0) {
+		// Fix freeze on `Bust-A-Move Deluxe`
+		SetUmdEmuSpeed(2, 2);
 	}
 
 	sctrlFlushCache();

@@ -165,6 +165,7 @@ static int OnModuleStart(SceModule *mod) {
 
 	// Game/App module patches
 	if (ready_gamepatch_mod) {
+		logmsg3("[INFO]: Title Module Name: %s\n", modname);
 		PatchGamesByMod(mod);
 		PatchDrmGameModule(mod);
 		ready_gamepatch_mod = 0;
@@ -266,7 +267,7 @@ static int OnModuleStart(SceModule *mod) {
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
 		findAndSetGameId();
-		logmsg3("[INFO]: Game ID: %s\n", rebootex_config.game_id);
+		logmsg3("[INFO]: Title ID: %s\n", rebootex_config.game_id);
 		CheckControllerInput();
 
 	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
