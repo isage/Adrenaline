@@ -30,13 +30,6 @@ STMOD_HANDLER game_previous = NULL;
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
 
-static u32 MakeSyscallStub(void *function) {
-	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
-	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
-	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
-	return stub;
-}
-
 static void SetUmdEmuSpeed(u8 seek, u8 read) {
 	void (*SetUmdDelay)(int, int) = NULL;
 	int (*CacheInit)(int, int, int) = NULL;

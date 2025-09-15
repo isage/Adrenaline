@@ -37,13 +37,6 @@ extern AdrenalineConfig config;
 
 static int exec_boot_bin = 0;
 
-static u32 MakeSyscallStub(void *function) {
-	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
-	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
-	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
-	return stub;
-}
-
 // Credits: ARK-4
 static inline void ascii2utf16(char *dest, const char *src) {
     while(*src != '\0') {
@@ -342,15 +335,15 @@ void PatchSysconfPlugin(SceModule* mod) {
 	MAKE_DUMMY_FUNCTION(text_addr + 0xD2C4, 0);
 
 	// Redirect USB functions
-	REDIRECT_FUNCTION(text_addr + 0xAE9C, MakeSyscallStub(InitUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xAFF4, MakeSyscallStub(ShutdownUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xB4A0, MakeSyscallStub(GetUsbStatusPatched));
+	REDIRECT_FUNCTION(text_addr + 0xAE9C, sctrlHENMakeSyscallStub(InitUsbPatched));
+	REDIRECT_FUNCTION(text_addr + 0xAFF4, sctrlHENMakeSyscallStub(ShutdownUsbPatched));
+	REDIRECT_FUNCTION(text_addr + 0xB4A0, sctrlHENMakeSyscallStub(GetUsbStatusPatched));
 
 	// Ignore wait thread end failure
 	MAKE_NOP(text_addr + 0xB264);
 
 	// Do not set nickname to PXXX on initial setup/reset
-	REDIRECT_FUNCTION(text_addr + 0x1520, MakeSyscallStub(SetDefaultNicknamePatched));
+	REDIRECT_FUNCTION(text_addr + 0x1520, sctrlHENMakeSyscallStub(SetDefaultNicknamePatched));
 
 	sctrlFlushCache();
 }
@@ -391,7 +384,7 @@ void PatchGamePlugin(SceModule* mod) {
 void PatchUpdatePlugin(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 
-	MAKE_CALL(text_addr + 0x82A8, MakeSyscallStub(sceUpdateDownloadSetVersionPatched));
+	MAKE_CALL(text_addr + 0x82A8, sctrlHENMakeSyscallStub(sceUpdateDownloadSetVersionPatched));
 	sctrlFlushCache();
 }
 
