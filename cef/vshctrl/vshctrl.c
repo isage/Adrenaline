@@ -19,6 +19,9 @@
 */
 
 #include <common.h>
+#include <vshctrl.h>
+
+#include "isofs_driver/isofs_driver.h"
 
 #include <externs.h>
 
@@ -126,4 +129,41 @@ int vctrlSetRegistryValue(const char *dir, const char *name, u32 val) {
 
 	pspSdkSetK1(k1);
 	return ret;
+}
+
+int vshDetectDiscType(const char *path) {
+	u32 k1 = pspSdkSetK1(0);
+
+	int res = SCE_EINVAL;
+
+	VshCtrlSetUmdFile(path);
+
+	if (isofs_init() < 0) {
+		isofs_exit();
+		pspSdkSetK1(k1);
+		return res;
+	}
+
+	res = 0;
+
+	SceIoStat stat;
+	if (isofs_getstat("/PSP_GAME/SYSDIR/EBOOT.BIN", &stat) >= 0) {
+		res |= PSP_UMD_TYPE_GAME;
+	}
+
+	if (isofs_getstat("/UMD_VIDEO/PLAYLIST.UMD", &stat) >= 0) {
+		res |= PSP_UMD_TYPE_VIDEO;
+	}
+
+	if (isofs_getstat("/UMD_AUDIO/PLAYLIST.UMD", &stat) >= 0) {
+		res |= PSP_UMD_TYPE_AUDIO;
+	}
+
+	if (res == 0) {
+		res = SCE_ENOMEDIUM;
+	}
+
+	isofs_exit();
+	pspSdkSetK1(k1);
+	return res;
 }
