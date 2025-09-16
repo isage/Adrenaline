@@ -184,7 +184,7 @@ void Installer() {
 	}
 
 	VGraphGoto(2, 5);
-	VGraphPrintf("Loading 661.PBP...  ");
+	VGraphPrintf("Loading 661.PBP... ");
 
 	// Open file
 	SceUID fd = sceIoOpen("ms0:/__ADRENALINE__/661.PBP", PSP_O_RDONLY, 0);
@@ -251,7 +251,7 @@ void Installer() {
 	removePath("ms0:/__ADRENALINE__/flash1");
 
 	VGraphGoto(2, 6);
-	VGraphPrintf("Creating directories...");
+	VGraphPrintf("Creating directories... ");
 
 	// Create directories
 	sceIoMkdir("ms0:/__ADRENALINE__/flash0", 0777);
@@ -383,11 +383,11 @@ void Installer() {
 		error = 0;
 	}
 
-	VGraphGoto(10, 15);
+	VGraphGoto(8, 15);
 	VGraphSetTextColor(0x2, 0x0);
 	VGraphPrintf("The firmware has been installed successfully.");
 
-	VGraphGoto(15, 16);
+	VGraphGoto(16, 16);
 	VGraphSetTextColor(0xF, 0x0);
 	VGraphPrintf("Press X to boot the PSP XMB.");
 
