@@ -80,15 +80,15 @@ u32 ResolveOldNIDs(const char *libname, u32 nid) {
 	return 0;
 }
 
-u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
-	SceModule *mod = sceKernelFindModuleByName(szMod);
+u32 sctrlHENFindFunction(const char *mod_name, const char *library, u32 nid) {
+	SceModule *mod = sceKernelFindModuleByName(mod_name);
 	if (!mod) {
-		mod = sceKernelFindModuleByAddress((SceUID)szMod);
+		mod = sceKernelFindModuleByAddress((SceUID)mod_name);
 		if (!mod)
 			return 0;
 	}
 
-	u32 new_nid = ResolveOldNIDs(szLib, nid);
+	u32 new_nid = ResolveOldNIDs(library, nid);
 	if (new_nid != 0) {
 		nid = new_nid;
 	}
@@ -97,7 +97,7 @@ u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
 	while (i < mod->ent_size) {
 		SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
 
-        if (!szLib || (entry->libname && strcmp(entry->libname, szLib) == 0)) {
+        if (!library || (entry->libname && strcmp(entry->libname, library) == 0)) {
 			u32 *table = entry->entrytable;
 			int total = entry->stubcount + entry->vstubcount;
 
@@ -115,15 +115,15 @@ u32 sctrlHENFindFunction(const char *szMod, const char *szLib, u32 nid) {
 	return 0;
 }
 
-u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid) {
-	SceModule *mod = sceKernelFindModuleByName(szMod);
+u32 sctrlHENFindImport(const char *mod_name, const char *library, u32 nid) {
+	SceModule *mod = sceKernelFindModuleByName(mod_name);
 	if (!mod) {
-		mod = sceKernelFindModuleByAddress((SceUID)szMod);
+		mod = sceKernelFindModuleByAddress((SceUID)mod_name);
 		if (!mod)
 			return 0;
 	}
 /*
-	u32 new_nid = ResolveOldNIDs(szLib, nid);
+	u32 new_nid = ResolveOldNIDs(library, nid);
 	if (new_nid)
 		nid = new_nid;
 */
@@ -131,13 +131,13 @@ u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid) {
 	while (i < mod->stub_size) {
 		SceLibraryStubTable *stub = (SceLibraryStubTable *)(mod->stub_top + i);
 
-		if (stub->libname && strcmp(stub->libname, szLib) == 0) {
+		if (stub->libname && strcmp(stub->libname, library) == 0) {
 			u32 *table = (u32 *)stub->nidtable;
 
 			int j;
 			for (j = 0; j < stub->stubcount; j++) {
 				if (table[j] == nid) {
-					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, szLib, nid);
+					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
 					return ((u32)stub->stubtable + (j * 8));
 				}
 			}
@@ -146,7 +146,7 @@ u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid) {
 		i += (stub->len * 4);
 	}
 
-	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, szLib, nid);
+	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
@@ -223,9 +223,9 @@ SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library) 
 	return NULL;
 }
 
-u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid) {
+u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
 	// Invalid Arguments
-	if (mod == NULL || szLib == NULL) {
+	if (mod == NULL || library == NULL) {
 		return 0;
 	}
 
@@ -233,13 +233,13 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid) {
 	while (i < mod->stub_size) {
 		SceLibraryStubTable *stub = (SceLibraryStubTable *)(mod->stub_top + i);
 
-		if (stub->libname && strcmp(stub->libname, szLib) == 0) {
+		if (stub->libname && strcmp(stub->libname, library) == 0) {
 			u32 *table = (u32 *)stub->nidtable;
 
 			int j;
 			for (j = 0; j < stub->stubcount; j++) {
 				if (table[j] == nid) {
-					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, szLib, nid);
+					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
 					return ((u32)stub->stubtable + (j * 8));
 				}
 			}
@@ -248,17 +248,17 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid) {
 		i += (stub->len * 4);
 	}
 
-	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, szLib, nid);
+	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
-u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *szLib, u32 nid) {
+u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid) {
 	// Invalid Arguments
-	if(mod == NULL || szLib == NULL) {
+	if(mod == NULL || library == NULL) {
 		return 0;
 	}
 
-	u32 new_nid = ResolveOldNIDs(szLib, nid);
+	u32 new_nid = ResolveOldNIDs(library, nid);
 	if (new_nid != 0) {
 		nid = new_nid;
 	}
@@ -267,14 +267,14 @@ u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *szLib, u32 nid) {
 	while (i < mod->ent_size) {
 		SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
 
-        if (!szLib || (entry->libname && strcmp(entry->libname, szLib) == 0)) {
+        if (!library || (entry->libname && strcmp(entry->libname, library) == 0)) {
 			u32 *table = entry->entrytable;
 			int total = entry->stubcount + entry->vstubcount;
 
 			int j;
 			for (j = 0; j < total; j++) {
 				if (table[j] == nid) {
-					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, szLib, nid);
+					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
 					return table[j + total];
 				}
 			}
@@ -283,41 +283,41 @@ u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *szLib, u32 nid) {
 		i += (entry->len * 4);
 	}
 
-	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, szLib, nid);
+	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
 // Replace a function usage
-int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *func, int dummy) {
+int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, void *func, int dummy) {
 	// Invalid Arguments
-	if(pMod == NULL || library == NULL) {
+	if(mod == NULL || library == NULL) {
 		return -1;
 	}
 
-	u32 stub = sctrlHENFindFunctionInMod(pMod, library, nid);
+	u32 stub = sctrlHENFindFunctionInMod(mod, library, nid);
 
 	if (stub == 0) {
-		logmsg2("%s: [WARN]: %s — %s — 0x%08lX: Failed to find function\n", __func__, pMod->modname, library, nid);
+		logmsg2("%s: [WARN]: %s — %s — 0x%08lX: Failed to find function\n", __func__, mod->modname, library, nid);
 		u32 new_nid = ResolveOldNIDs(library, nid);
 
 		// resolver fail
 		if (new_nid == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, pMod->modname, library, nid);
+			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, mod->modname, library, nid);
 			return -2;
 		} else {
-			logmsg4("%s: [DEBUG]:  %s — %s — 0x%08lX: NID resolved: 0x%08X->0x%08X\n", __func__, pMod->modname, library, nid, nid, new_nid);
+			logmsg4("%s: [DEBUG]:  %s — %s — 0x%08lX: NID resolved: 0x%08X->0x%08X\n", __func__, mod->modname, library, nid, nid, new_nid);
 		}
 
-		stub = sctrlHENFindFunctionInMod(pMod, library, nid);
+		stub = sctrlHENFindFunctionInMod(mod, library, nid);
 
 		if (stub == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to find function with resolved nid\n", __func__, pMod->modname, library, nid);
+			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to find function with resolved nid\n", __func__, mod->modname, library, nid);
 			return -3;
 		} else {
-			logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Function found\n", __func__, pMod->modname, library, nid);
+			logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Function found\n", __func__, mod->modname, library, nid);
 		}
 	} else {
-		logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Function found\n", __func__, pMod->modname, library, nid);
+		logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Function found\n", __func__, mod->modname, library, nid);
 	}
 
 	// Function as 32-Bit Unsigned Integer
@@ -327,11 +327,11 @@ int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *f
 	if (func == NULL) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, dummy);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, pMod->modname, library, nid, dummy);
+		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, dummy);
 	} else if (func_int <= 0xFFFF) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, func_int);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, pMod->modname, library, nid, func_int);
+		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, func_int);
 	} else { // Normal Hook
 		// Syscall Hook
 		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
@@ -341,7 +341,7 @@ int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *f
 
 				// Syscall table not found.
 				if (NULL == ptr) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall table not found\n", __func__, pMod->modname, library, nid);
+					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall table not found\n", __func__, mod->modname, library, nid);
 					return -4;
 				}
 
@@ -356,29 +356,29 @@ int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *f
 
 				// Syscall not found in the table
 				if (!found) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found in syscall table\n", __func__, pMod->modname, library, nid);
+					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found in syscall table\n", __func__, mod->modname, library, nid);
 					return -5;
 				}
 
-				logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: Made a syscall substitution\n", __func__, pMod->modname, library, nid);
+				logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: Made a syscall substitution\n", __func__, mod->modname, library, nid);
 			} else {
 				// Query Syscall Number
 				int syscall = sceKernelQuerySystemCall(func);
 
 				// Not properly exported in exports.exp
 				if(syscall < 0) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, pMod->modname, library, nid);
+					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, mod->modname, library, nid);
 					return -3;
 				}
 
 				// Create Syscall Hook
 				MAKE_SYSCALL_FUNCTION(stub, syscall);
-				logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: Made a syscall hook\n", __func__, pMod->modname, library, nid);
+				logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: Made a syscall hook\n", __func__, mod->modname, library, nid);
 			}
 		} else {
 			// Create Direct Jump Hook
 			REDIRECT_FUNCTION(stub, func);
-			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, pMod->modname, library, nid);
+			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, mod->modname, library, nid);
 		}
 	}
 
@@ -386,42 +386,42 @@ int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *f
 	sceKernelDcacheWritebackInvalidateRange((void *)stub, 8);
 	sceKernelIcacheInvalidateRange((void *)stub, 8);
 
-	logmsg("%s: %s — %s — 0x%08lX: Hook done\n", __func__, pMod->modname, library, nid);
+	logmsg("%s: %s — %s — 0x%08lX: Hook done\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
 // Replace Import Function Stub
-int sctrlHENHookImportByNID(SceModule * pMod, char * library, u32 nid, void *func, int dummy) {
+int sctrlHENHookImportByNID(SceModule * mod, const char * library, u32 nid, void *func, int dummy) {
 	// Invalid Arguments
-	if(pMod == NULL || library == NULL) {
+	if(mod == NULL || library == NULL) {
 		return -1;
 	}
 
-	u32 stub = sctrlHENFindImportInMod(pMod, library, nid);
+	u32 stub = sctrlHENFindImportInMod(mod, library, nid);
 
 	if (stub == 0) {
-		logmsg2("%s: [WARN]: %s — %s — 0x%08lX: Failed to find import\n", __func__, pMod->modname, library, nid);
+		logmsg2("%s: [WARN]: %s — %s — 0x%08lX: Failed to find import\n", __func__, mod->modname, library, nid);
 
 		u32 new_nid = ResolveOldNIDs(library, nid);
 
 		// resolver fail
 		if (new_nid == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, pMod->modname, library, nid);
+			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, mod->modname, library, nid);
 			return -2;
 		} else {
-			logmsg4("%s: [DEBUG]:  %s — %s — 0x%08X: NID resolved: 0x%08lX -> 0x%08lX\n", __func__, pMod->modname, library, nid, nid, new_nid);
+			logmsg4("%s: [DEBUG]:  %s — %s — 0x%08X: NID resolved: 0x%08lX -> 0x%08lX\n", __func__, mod->modname, library, nid, nid, new_nid);
 		}
-		stub = sctrlHENFindImportInMod(pMod, library, new_nid);
+		stub = sctrlHENFindImportInMod(mod, library, new_nid);
 
 		// Stub not found again...
 		if (stub == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to find import with resolved nid\n", __func__, pMod->modname, library, nid);
+			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to find import with resolved nid\n", __func__, mod->modname, library, nid);
 			return -3;
 		} else {
-			logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Import found\n", __func__, pMod->modname, library, nid);
+			logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
 		}
 	} else {
-		logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Import found\n", __func__, pMod->modname, library, nid);
+		logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
 	}
 
 	// Function as 32-Bit Unsigned Integer
@@ -431,11 +431,11 @@ int sctrlHENHookImportByNID(SceModule * pMod, char * library, u32 nid, void *fun
 	if (func == NULL) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, dummy);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, pMod->modname, library, nid, dummy);
+		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, dummy);
 	} else if (func_int <= 0xFFFF) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, func_int);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, pMod->modname, library, nid, func_int);
+		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, func_int);
 	} else { // Normal Hook
 		// Syscall Hook
 		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
@@ -444,17 +444,17 @@ int sctrlHENHookImportByNID(SceModule * pMod, char * library, u32 nid, void *fun
 
 			// Not properly exported in exports.exp
 			if(syscall < 0) {
-				logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, pMod->modname, library, nid);
+				logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, mod->modname, library, nid);
 				return -3;
 			}
 
 			// Create Syscall Hook
 			MAKE_SYSCALL_FUNCTION(stub, syscall);
-			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a syscall hook\n", __func__, pMod->modname, library, nid);
+			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a syscall hook\n", __func__, mod->modname, library, nid);
 		} else {
 			// Create Direct Jump Hook
 			REDIRECT_FUNCTION(stub, func);
-			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, pMod->modname, library, nid);
+			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, mod->modname, library, nid);
 		}
 	}
 
@@ -462,7 +462,7 @@ int sctrlHENHookImportByNID(SceModule * pMod, char * library, u32 nid, void *fun
 	sceKernelDcacheWritebackInvalidateRange((void *)stub, 8);
 	sceKernelIcacheInvalidateRange((void *)stub, 8);
 
-	logmsg("%s: %s — %s — 0x%08lX: Hook done\n", __func__, pMod->modname, library, nid);
+	logmsg("%s: %s — %s — 0x%08lX: Hook done\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
@@ -477,8 +477,8 @@ int sctrlHENIsSystemBooted() {
 // COMPAT
 ////////////////////////////////////////////////////////////////////////////////
 
-int sctrlHookImportByNID(SceModule * pMod, char * library, u32 nid, void * func) {
-	return sctrlHENHookImportByNID(pMod, library, nid, func, 0);
+int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void * func) {
+	return sctrlHENHookImportByNID(mod, library, nid, func, 0);
 }
 
 
@@ -528,4 +528,31 @@ u32 sctrlHENMakeSyscallStub(void *function) {
 	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
 	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
 	return stub;
+}
+
+u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid) {
+	SceUID mod_list[128] = {0};
+	u32 mod_count = 0;
+	int res = sceKernelGetModuleIdListForKernel(mod_list, 128, &mod_count, 0);
+
+	if (res != 0) {
+		return 0;
+	}
+
+	if (mod_count > 128) {
+		logmsg("[DEBUG]: %s: System has more than 128 modules, result will be incomplete\n", __func__);
+	}
+
+	for (int i = 0; i < MIN(mod_count, 128); i++) {
+		SceUID mod_id = mod_list[i];
+		SceModule* mod = sceKernelFindModuleByUID(mod_id);
+		u32 fn = sctrlHENFindFunction(mod, libname, nid);
+
+		if (fn != 0) {
+			return fn;
+		}
+	}
+
+	// Not Found
+	return 0;
 }

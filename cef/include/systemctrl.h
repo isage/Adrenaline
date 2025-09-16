@@ -335,48 +335,58 @@ SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library);
 #define sctrlFindImportLib sctrlHENFindImportLib
 
 /**
- * Finds a function.
+ * Finds an exported function.
  *
- * @param szMod - The module where to search the function
- * @param szLib - The library name
+ * @param mod_name - The module where to search the function
+ * @param library - The library name
  * @param nid - The nid of the function
  *
  * @returns - The function address or 0 if not found
  *
 */
-u32 sctrlHENFindFunction(const char* szMod, const char* szLib, u32 nid);
+u32 sctrlHENFindFunction(const char* mod_name, const char* library, u32 nid);
 #define FindProc sctrlHENFindFunction
 
 /**
- * Finds a function in a ::SceModule.
+ * Finds an exported function in a ::SceModule.
  *
  * Good to optimize when you already have a ::SceModule module and wants to
  * find a function in that module.
  *
  * @param mod - The module where to search the function
- * @param szLib - The library name
+ * @param library - The library name
  * @param nid - The nid of the function
  *
  * @returns - The function address or 0 if not found
  *
 */
-u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *szLib, u32 nid);
+u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid);
 #define FindProcInMod sctrlHENFindFunctionInMod
 
 /**
- * Finds a import stub in a ::SceModule.
+ * Finds an exported function in the system that matches the specified library name and NID.
+ *
+ * @param library - The library name
+ * @param nid - The nid of the function
+ *
+ * @returns - The function address or 0 if not found
+ */
+u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid);
+
+/**
+ * Finds a import function stub in a ::SceModule.
  *
  * Good to optimize when you already have a ::SceModule module and wants to
  * find a stub in that module.
  *
  * @param mod - The module where to search the import
- * @param szLib - The library name
+ * @param library - The library name
  * @param nid - The nid of the function
  *
  * @returns - The function address or 0 if not found
  *
 */
-u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid);
+u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid);
 
 /**
  * Replace import function stub in a module with a function or dummy value.
@@ -399,7 +409,7 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *szLib, u32 nid);
  * -3 if failed to find import by NID after successful resolve to older firmware version
  * -4 if failed to find syscall table
 */
-int sctrlHENHookImportByNID(SceModule * mod, char *library, u32 nid, void *func, int dummy);
+int sctrlHENHookImportByNID(SceModule * mod, const char *library, u32 nid, void *func, int dummy);
 
 /**
  * Replace import function stub in a module with a function or dummy value.
@@ -427,7 +437,7 @@ int sctrlHENHookImportByNID(SceModule * mod, char *library, u32 nid, void *func,
  *
  * @note Compat with ARK-4
  */
-int sctrlHookImportByNID(SceModule * pMod, char * library, u32 nid, void * func);
+int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void * func);
 
 /**
  * Replace exported function in a module with a function or dummy value.
@@ -457,7 +467,7 @@ int sctrlHookImportByNID(SceModule * pMod, char * library, u32 nid, void * func)
  * -4 if failed to find syscall table
  * -5 if failed to find syscall in the syscall table
 */
-int sctrlHENHookFunctionByNID(SceModule * pMod, char * library, u32 nid, void *func, int dummy);
+int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, void *func, int dummy);
 
 /**
  * Gets the HEN version

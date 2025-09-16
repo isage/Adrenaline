@@ -392,6 +392,18 @@ int sceKernelCheckExecFile(void *buf, SceLoadCoreExecFileInfo *execInfo);
  */
 int sceKernelProbeExecutableObject(void *buf, SceLoadCoreExecFileInfo *execInfo);
 
+/**
+ * Receive a list of UIDs of loaded modules.
+ *
+ * @param mod_id_list Pointer to a SceUID array which will receive the UIDs of the loaded modules.
+ * @param size Size of mod_id_list. Specifies the number of entries that can be stored into mod_id_list.
+ * @param mod_count A pointer which will receive the total number of loaded modules.
+ * @param user_mods_only Set to 1 to only receive UIDs from user mode modules. Set to 0 to receive UIDs from all loaded modules.
+ *
+ * @return 0 on success.
+ */
+int sceKernelGetModuleIdListForKernel(SceUID *mod_id_list, u32 size, u32 *mod_count, u32 user_mods_only);
+
 /*@}*/
 
 #ifdef __cplusplus
