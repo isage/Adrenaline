@@ -546,7 +546,7 @@ u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid) {
 	for (int i = 0; i < MIN(mod_count, 128); i++) {
 		SceUID mod_id = mod_list[i];
 		SceModule* mod = sceKernelFindModuleByUID(mod_id);
-		u32 fn = sctrlHENFindFunction(mod, libname, nid);
+		u32 fn = sctrlHENFindFunctionInMod(mod, libname, nid);
 
 		if (fn != 0) {
 			return fn;
