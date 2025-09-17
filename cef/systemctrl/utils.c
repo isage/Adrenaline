@@ -60,6 +60,7 @@ u32 FindFirstBEQ(u32 addr) {
 }
 
 // Taken from ARK-4
+// TODO: Rewrite using `_findJALaddr`
 u32 _findJAL(u32 addr, int reversed, int skip) {
 	if (addr != 0) {
 		int add = 4;
@@ -70,6 +71,26 @@ u32 _findJAL(u32 addr, int reversed, int skip) {
 			if ((VREAD32(addr) >= 0x0C000000) && (VREAD32(addr) < 0x10000000)){
 				if (skip == 0) {
 					return (((VREAD32(addr) & 0x03FFFFFF) << 2) | 0x80000000);
+				} else {
+					skip--;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
+u32 _findJALaddr(u32 addr, int reversed, int skip) {
+	if (addr != 0) {
+		int add = 4;
+		if (reversed) {
+			add = -4;
+		}
+		for(;;addr += add) {
+			if ((VREAD32(addr) >= 0x0C000000) && (VREAD32(addr) < 0x10000000)){
+				if (skip == 0) {
+					return addr;
 				} else {
 					skip--;
 				}

@@ -37,4 +37,15 @@ u32 _findJAL(u32 addr, int reversed, int skip);
 #define findFirstJALReverseForFunction(modname, libname, uid) findFirstJALReverse(FindFunction(modname, libname, uid))
 #define findJALReverseForFunction(modname, libname, uid, pos) findJALReverse(FindFunction(modname, libname, uid), pos)
 
+
+u32 _findJALaddr(u32 addr, int reversed, int skip);
+#define findFirstJALaddr(addr) _findJALaddr(addr, 0, 0)
+#define findFirstJALaddrReverse(addr) _findJALaddr(addr, 1, 0)
+#define findJALaddr(addr, pos) _findJALaddr(addr, 0, pos)
+#define findJALaddrReverse(addr, pos) _findJALaddr(addr, 1, pos)
+#define findFirstJALaddrForFunction(modname, libname, uid) findFirstJALaddr(FindFunction(modname, libname, uid))
+#define findJALaddrForFunction(modname, libname, uid, pos) findJALaddr(FindFunction(modname, libname, uid), pos)
+#define findFirstJALaddrReverseForFunction(modname, libname, uid) findFirstJALaddrReverse(FindFunction(modname, libname, uid))
+#define findJALaddrReverseForFunction(modname, libname, uid, pos) findJALaddrReverse(FindFunction(modname, libname, uid), pos)
+
 #endif

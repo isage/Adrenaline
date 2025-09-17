@@ -21,6 +21,8 @@
 #include <common.h>
 #include <adrenaline_log.h>
 
+#include "utils.h"
+
 extern RebootexConfig rebootex_config;
 extern AdrenalineConfig config;
 
@@ -69,6 +71,10 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 		*value = 0;
 	}
 	return res;
+}
+
+static int sceKernelGetUserLevelPatched() {
+	return 1;
 }
 
 static int moduleLoaderJackass(char* name, int value) {
@@ -193,6 +199,26 @@ void PatchGamesByMod(SceModule* mod) {
 	} else if (strcmp(modname, "BAMG") == 0) {
 		// Fix freeze on `Bust-A-Move Deluxe`
 		SetUmdEmuSpeed(2, 2);
+
+	} else if (strcmp(modname, "mlwp") == 0) {
+		// Fix error exit on SenseMe
+
+		// Make `sceKernelGetUserLevel` on `sceKernelLoadModuleBufferUsbWlan`
+		// return `1` (correct behavior on SenseMe calling the LoadModule func).
+		//
+		// FIXME: We need this patch because, for some reason, `sceKernelGetUserLevel`
+		// always returns zero on Adrenaline and ARK. Ideally, this patch will
+		// be unnecessary once the reason of the weird `sceKernelGetUserLevel`
+		// behavior become solved.
+		u32 _sceKernelLoadModuleBufferUsbWlan = sctrlHENFindFunction("sceModuleManager", "ModuleMgrForUser", 0xF9275D98);
+
+		u32 addr0 = _findJALaddr(_sceKernelLoadModuleBufferUsbWlan, 0, 1);
+		u32 addr1 = _findJALaddr(_sceKernelLoadModuleBufferUsbWlan, 0, 2);
+
+		if (addr0 != 0 || addr1 != 0) {
+			MAKE_CALL(addr0, sceKernelGetUserLevelPatched);
+			MAKE_CALL(addr1, sceKernelGetUserLevelPatched);
+		}
 	}
 
 	sctrlFlushCache();
