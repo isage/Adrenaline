@@ -366,12 +366,13 @@ u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid);
 /**
  * Finds an exported function in the system that matches the specified library name and NID.
  *
- * @param library - The library name
- * @param nid - The nid of the function
+ * @param library The library name
+ * @param nid The nid of the function
+ * @param user_mods_only Set to 1 to only receive UIDs from user mode modules. Set to 0 to receive UIDs from kernel loaded modules.
  *
  * @returns - The function address or 0 if not found
  */
-u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid);
+u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_only);
 
 /**
  * Finds a import function stub in a ::SceModule.

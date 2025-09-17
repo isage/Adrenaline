@@ -530,17 +530,17 @@ u32 sctrlHENMakeSyscallStub(void *function) {
 	return stub;
 }
 
-u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid) {
+u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_only) {
 	SceUID mod_list[128] = {0};
 	u32 mod_count = 0;
-	int res = sceKernelGetModuleIdListForKernel(mod_list, 128, &mod_count, 0);
+	int res = sceKernelGetModuleIdListForKernel(mod_list, 128, &mod_count, user_mods_only);
 
 	if (res != 0) {
 		return 0;
 	}
 
 	if (mod_count > 128) {
-		logmsg("[DEBUG]: %s: System has more than 128 modules, result will be incomplete\n", __func__);
+		logmsg("[WARN]: %s: System has more than 128 modules, result will be incomplete\n", __func__);
 	}
 
 	for (int i = 0; i < MIN(mod_count, 128); i++) {
@@ -549,10 +549,12 @@ u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid) {
 		u32 fn = sctrlHENFindFunctionInMod(mod, libname, nid);
 
 		if (fn != 0) {
+			logmsg4("[DEBUG]: %s: Found %s — 0x%08lx on %s module\n", __func__, libname, nid, mod->modname);
 			return fn;
 		}
 	}
 
 	// Not Found
+	logmsg4("[DEBUG]: %s: %s — 0x%08lx not found\n", __func__, libname, nid);
 	return 0;
 }
