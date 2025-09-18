@@ -17,6 +17,7 @@
 */
 
 #include <common.h>
+#include <adrenaline_log.h>
 
 #include "main.h"
 #include "executable_patch.h"
@@ -27,6 +28,19 @@ int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize
 int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
 
 __attribute__((noinline)) void AdjustExecInfo(void *buf, SceLoadCoreExecFileInfo *execInfo) {
+	SceModuleInfo *modInfo = (SceModuleInfo *)((u32)buf + execInfo->module_info_offset);
+
+	if ((u32)modInfo >= 0x88400000 && (u32)modInfo <= 0x88800000) {
+		return;
+	}
+	// don't null attribute for proper encrypted apps (senseme, etc)
+	if (execInfo->mod_info_attribute == 0 && modInfo->modattribute != 0)
+		execInfo->mod_info_attribute = modInfo->modattribute;
+
+	execInfo->is_kernel_mod = (execInfo->mod_info_attribute & 0x1000) ? 1 : 0;
+}
+
+__attribute__((noinline)) void AdjustExecInfoProbe(void *buf, SceLoadCoreExecFileInfo *execInfo) {
 	SceModuleInfo *modInfo = (SceModuleInfo *)((u32)buf + execInfo->module_info_offset);
 
 	if ((u32)modInfo >= 0x88400000 && (u32)modInfo <= 0x88800000) {
@@ -61,6 +75,9 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 {
 	Elf32_Ehdr *header = (Elf32_Ehdr *)buf;
 
+	// save mod_info_attribute before we null it
+	u32 attr = execInfo->mod_info_attribute;
+
 	// Plain ELF
 	if (header->e_magic == ELF_MAGIC) {
 		if (execInfo->is_decrypted) {
@@ -82,11 +99,18 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 				}
 			}
 
-			AdjustExecInfo(buf, execInfo);
+			AdjustExecInfoProbe(buf, execInfo);
 		}
 	}
+	
+	// NOTE: probe won't pass mod_info_attribute with privelege level for unencrypted elf
+	int ret = _sceKernelProbeExecutableObject(buf, execInfo);
 
-	return _sceKernelProbeExecutableObject(buf, execInfo);
+	// homebrew: force user privelege level after probe
+	if (header->e_magic == ELF_MAGIC && attr == 0x457F && execInfo->mod_info_attribute == 0)
+		execInfo->mod_info_attribute = 0x200;
+
+	return ret;
 }
 
 int PspUncompressPatched(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize) {
