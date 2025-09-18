@@ -22,6 +22,7 @@
 - Patch libcrypt for custom or converted PS1 game/apps
 - Add image overlay filter for PS1 game/apps
 - "Fix" manual double launch on first install
+- "Fix" `SenseMe` launch error
 - Implement "Hold L while launching apps" to not load plugins
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN`
 - Add quick exit to VSH key combos
