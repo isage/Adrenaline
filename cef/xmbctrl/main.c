@@ -511,6 +511,18 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 						sce_paf_private_strncpy(file + len, buf, rl_len);
 						file[len+rl_len] = '\0';
 					}
+				} else {
+					char *p2 = sce_paf_private_strchr(file, '.');
+					if (p2) {
+						int len = (int)(p2 - (file));
+
+						char buf[64] = {0};
+						snprintf(buf, 63, " [%s]", plugin->runlevel);
+						int rl_len = sce_paf_private_strlen(buf);
+
+						sce_paf_private_strncpy(file + len, buf, rl_len);
+						file[len+rl_len] = '\0';
+					}
 				}
 
 				utf8_to_unicode((wchar_t *)user_buffer, file);
