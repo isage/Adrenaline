@@ -147,7 +147,7 @@ char *boolean_options[] = {"Off", "On"};
 char *iso_cache_options[] = {"LRU", "RR", "Off"};
 char *iso_cache_num_options[] = {"Auto", "1", "2", "4", "8", "16", "32", "64", "128"};
 char *iso_cache_size_options[] = {"Auto", "1KB", "2KB", "4KB", "8KB", "16KB", "32KB", "64KB"};
-char *iso_umd_seek_read_options[] = {"Off", "1x", "2x", "3x", "4x"};
+char *iso_umd_seek_read_options[] = {"Auto", "1x", "2x", "3x", "4x"};
 
 char *hide_pics_options[] = {"Disabled", "Both", "PIC0 Only", "PIC1 Only"};
 
