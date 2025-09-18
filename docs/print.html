@@ -3264,6 +3264,11 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
 <li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
+<li><strong>Configurable seek and read speed delays</strong>: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+<ul>
+<li>By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.</li>
+</ul>
+</li>
 </ul>
 <h2 id="other-iso-features"><a class="header" href="#other-iso-features">Other ISO features</a></h2>
 <hr />
@@ -4324,6 +4329,7 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <ul>
 <li><strong><code>Support for other compressed formats</code></strong>: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only <code>CSO</code> and <code>ZSO</code>, but also adds support for <code>DAX</code> as seen on ME's March33 update, as well as the rarely seen before <code>JSO</code> and <code>CSOv2</code> formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.</li>
 <li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks.</li>
+<li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
@@ -7351,7 +7357,7 @@ cmake --build build
 <li>Finer control over when to enable/disable plugins</li>
 <li>Support for plugins in specific games</li>
 <li>Support for plugin only on homebrew apps</li>
-<li>Migration instructions below</li>
+<li><strong>Migration instructions below</strong></li>
 </ul>
 </li>
 <li>
@@ -7376,9 +7382,6 @@ cmake --build build
 <p>Introduce Plugin Manager on the XMB</p>
 </li>
 <li>
-<p>Patch to remove the "overclocked" message on ATV Pro</p>
-</li>
-<li>
 <p>Improve stability of the <code>Force High Memory</code> option.</p>
 </li>
 <li>
@@ -7391,13 +7394,10 @@ cmake --build build
 <p>Add image overlay filter for PS1 game/apps</p>
 </li>
 <li>
-<p>Fix issue with PBP collection games (e.g. Ys I&amp;II, Sega Genesis Collection)</p>
-</li>
-<li>
-<p>Fix BEATS custom tracks</p>
-</li>
-<li>
 <p>"Fix" manual double launch on first install</p>
+</li>
+<li>
+<p>"Fix" <code>SenseMe</code> launch error</p>
 </li>
 <li>
 <p>Implement "Hold L while launching apps" to not load plugins</p>
@@ -7410,6 +7410,20 @@ cmake --build build
 <ul>
 <li>PSP games/homebrew: <code>L+R+Down+Select</code> or <code>L+R+Down+Start</code></li>
 <li>PS1 games: <code>L2+R2+Down+Select</code> or <code>L2+R2+Down+Start</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Game Compatibility:</strong></p>
+<ul>
+<li>Fix PBP collection games (e.g. <code>Ys I&amp;II</code>, <code>Sega Genesis Collection</code>) crashing after game selection</li>
+<li>Fix <code>BEATS</code> custom tracks</li>
+<li>Fix the infinite loading screen on <code>Jackass: The Game</code></li>
+<li>Fix <code>TwinBee Portable</code> crashing when not using English or Japanese language</li>
+<li>Fix <code>Smakdown vs RAW 2011</code> by bypassing anti-CFW check</li>
+<li>Fix <code>Aces of War</code> by bypassing anti-CFW check</li>
+<li>Fix <code>Pangya Fantasy Golf</code> by bypassing anti-CFW check</li>
+<li>Fix freeze on <code>Bust-A-Move</code> by bypassing anti-CFW check</li>
+<li>Patch to remove the "overclocked" message on <code>ATV Pro</code></li>
 </ul>
 </li>
 <li>
