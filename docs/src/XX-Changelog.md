@@ -22,7 +22,10 @@
 - Patch libcrypt for custom or converted PS1 game/apps
 - Add image overlay filter for PS1 game/apps
 - "Fix" manual double launch on first install
-- "Fix" `SenseMe` launch error
+- Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews
+  - Fix `SenseMe` launch error
+  - Fix potential issues related to privilege level to other official apps
+- Implement PSP native music player and `SenseMe` to continue to play music after system suspend
 - Implement "Hold L while launching apps" to not load plugins
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN`
 - Add quick exit to VSH key combos
@@ -44,6 +47,7 @@
 - **DEV:** Expand CFW libraries API
 - **DEV:** Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK-4): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel`, and `SysclibForUser`
 - **DEV:** Add support for `MEMSIZE=2` (to request only stable extra RAM)
+- **DEV:** Make PSPemu `sceKernelPowerTick` to behave as the VITA `sceKernelPowerTick`
 - **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use even outside of Adrenaline (i.e. your project)
 
 - **Internal:** Some code reorganization
