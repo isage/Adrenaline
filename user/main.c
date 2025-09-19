@@ -372,6 +372,15 @@ int AdrenalineCompat(SceSize args, void *argp) {
         }
       }
     } else if (request->cmd == ADRENALINE_VITA_CMD_APP_STARTED) {
+
+		// Lock power on SenseMe so music continues with screen turned off.
+		if (strncmp(adrenaline->titleid, "NPIA00013", 10) == 0) {
+			lockPower();
+		} else {
+			unlockPower();
+		}
+
+		// PSX Image overlay.
         static char overlay_file[256];
 
         if (overlay_texture) {
