@@ -25,6 +25,53 @@
 
 #include <psptypes.h>
 
+enum {
+	CPU_CLOCK_VSH,
+	CPU_CLOCK_GAME,
+	UMD_DRIVER,
+	SKIP_LOGO_COLDBOOT,
+	SKIP_LOGO_GAMEBOOT,
+	HIDE_CORRUPT_ICONS,
+	HIDE_MAC_ADDR,
+	HID_DLCS,
+	HIDE_PIC_0_1,
+	AUTORUN_BOOT,
+	VSH_REGION,
+	EXT_COLORS,
+	USE_SONY_OSK,
+	USE_NO_DRM,
+	XMBCNTRL,
+	FORCE_HIGHMEM,
+	EXEC_BOOT_BIN,
+	INFERNO_CACHE_POLICY,
+	INFERNO_CACHE_NUM,
+	INFERNO_CACHE_SIZE,
+	INFERNO_SIM_UMD_SEEK,
+	INFERNO_SIM_UMD_SPEED,
+	VSH_PLUGINS,
+	GAME_PLUGINS,
+	POPS_PLUGINS,
+};
+
+typedef struct {
+	u8 mode;
+	u8 negative;
+	char *item;
+	u8 need_reboot;
+	u8 advanced;
+	u8 *value;
+} GetItem;
+
+typedef struct {
+  u8 n;
+  char **c;
+} ItemOptions;
+
+extern GetItem GetItemes[];
+extern int num_items;
+extern ItemOptions item_opts[];
+extern int psp_model;
+
 #define sysconf_console_id 4
 #define sysconf_console_action 2
 #define sysconf_console_action_arg 2
@@ -35,44 +82,13 @@ enum {
 };
 
 typedef struct {
-	int magic;
-	u8 vsh_cpu_speed;
-	u8 game_cpu_speed;
-	u8 umd_driver;
-	u8 skip_sony_coldboot_logo;
-	u8 skip_sony_gameboot_logo;
-	u8 hide_corrupt_icons;
-	u8 hide_mac_addr;
-	u8 hide_dlcs;
-	u8 hide_pic01;
-	u8 extended_colors;
-	u8 use_sony_osk;
-	u8 use_nodrm;
-	u8 autorun_boot_eboot;
-	u8 force_highmem;
-	u8 exec_bootbin;
-	u8 vsh_region;
-	u8 vsh_plugins;
-	u8 game_plugins;
-	u8 pops_plugins;
-	u8 enable_xmbctrl;
-	u8 iso_cache;
-	u8 iso_cache_num;
-	u8 iso_cache_size;
-	u8 umd_seek;
-	u8 umd_speed;
-} CFWConfig;
-
-typedef struct
-{
 	char text[48];
 	int play_sound;
 	int action;
 	int action_arg;
 } SceContextItem;
 
-typedef struct
-{
+typedef struct {
 	int id;
 	int relocate;
 	int action;
@@ -89,8 +105,7 @@ typedef struct
 	char text[0x25];
 } SceVshItem;
 
-typedef struct
-{
+typedef struct {
 	void *unk;
 	int id;
 	char *regkey;
@@ -99,8 +114,7 @@ typedef struct
 	char *page;
 } SceSysconfItem;
 
-typedef struct
-{
+typedef struct {
 	u8 id;
 	u8 type;
 	u16 unk1;
@@ -141,5 +155,9 @@ int sceVshCommonGuiBottomDialog(void *a0, void *a1, void *a2, int (* cancel_hand
 
 void saveSettings(void);
 void loadSettings(void);
+
+void PatchVshMain(u32 text_addr, u32 text_size);
+void PatchAuthPlugin(u32 text_addr, u32 text_size);
+void PatchSysconfPlugin(u32 text_addr, u32 text_size);
 
 #endif

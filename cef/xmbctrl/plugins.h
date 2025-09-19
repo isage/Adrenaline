@@ -31,6 +31,8 @@ typedef struct{
 	int place;
 } Plugin;
 
+extern List plugins;
+
 void loadPlugins(void);
 
 void savePlugins(void);
