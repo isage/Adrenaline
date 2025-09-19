@@ -238,14 +238,18 @@ void drawMenu() {
 		// Running app info
 		SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
 
-		char info[143];
+		char info[143] = {0};
 		if (strcmp(adrenaline->title, "XMB\xE2\x84\xA2") == 0) {
 			snprintf(info, 128, "XMB", adrenaline->title);
 		} else {
-			int res = snprintf(info, 128, "%s", adrenaline->title);
+			int res = 0;
+
+			if (adrenaline->title[0] != 0) {
+				res = snprintf(info, 128, "%s - ", adrenaline->title);
+			}
 
 			if (adrenaline->titleid[0] != 0) {
-				snprintf(info+res, 13, " - %s", adrenaline->titleid);
+				snprintf(info+res, 13, "%s", adrenaline->titleid);
 			}
 		}
 
