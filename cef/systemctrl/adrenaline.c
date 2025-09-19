@@ -54,7 +54,7 @@ int (* sceSasCoreExit)();
 
 int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate);
 
-int SendAdrenalineCmd(int cmd) {
+int SendAdrenalineCmd(int cmd, u32 args) {
 	int k1 = pspSdkSetK1(0);
 
 	char buf[sizeof(SceKermitRequest) + 0x40];
@@ -63,7 +63,7 @@ int SendAdrenalineCmd(int cmd) {
 	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
 
 	u64 resp;
-	sceKermitSendRequest(request_uncached, KERMIT_MODE_EXTRA_2, cmd, 0, 0, &resp);
+	sceKermitSendRequest(request_uncached, KERMIT_MODE_EXTRA_2, cmd, args, 0, &resp);
 
 	pspSdkSetK1(k1);
 	return resp;

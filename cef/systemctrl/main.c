@@ -150,9 +150,9 @@ static void OnSystemStatusIdle() {
 		sceDisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 	} else {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 	}
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED);
+	SendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED, 0);
 }
 
 static int OnModuleStart(SceModule *mod) {

@@ -41,7 +41,7 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
 		if (strcmp(info.name, "popsmain") == 0) {
-			SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS);
+			SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
 		}
 	}
 
@@ -53,7 +53,7 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
 		if (strcmp(info.name, "popsmain") == 0) {
-			SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+			SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 		}
 	}
 

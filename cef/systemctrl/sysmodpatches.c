@@ -141,7 +141,7 @@ static int exit_callback(int arg1, int arg2, void *common) {
 	sceKernelSuspendAllUserThreads();
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 	adrenaline->pops_mode = 0;
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 
 	static u32 vshmain_args[0x100];
 	memset(vshmain_args, 0, sizeof(vshmain_args));
@@ -418,9 +418,9 @@ int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, Sc
 	int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
 
 	if (*outBits & 0x1) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS);
+		SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
 	} else if (*outBits & 0x2) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS);
+		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 	}
 
 	return res;
@@ -500,13 +500,32 @@ int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
 	return count;
 }
 
-int (* _sceMeAudio_driver_C300D466)(int codec, int unk, void *info);
+int (* _sceMeAudio_driver_C300D466)(int codec, int unk, void *info) = NULL;
 int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 	int res = _sceMeAudio_driver_C300D466(codec, unk, info);
 
 	if (res < 0 && codec == 0x1002 && unk == 2) {
 		return 0;
 	}
+
+	return res;
+}
+
+int (*_sceKernelPowerTick)(u32 tick_type) = NULL;
+int sceKernelPowerTickPatched(u32 tick_type) {
+	if (_sceKernelPowerTick == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_TICK, tick_type);
+
+	if (res < 0) {
+		return res;
+	}
+
+	u32 k1 = pspSdkSetK1(0);
+	res = _sceKernelPowerTick(tick_type);
+	pspSdkSetK1(k1);
 
 	return res;
 }
@@ -665,12 +684,16 @@ void PatchInterruptMgr() {
 void PatchSysmem() {
 	u32 nids[] = { 0x7591C7DB, 0x342061E5, 0x315AD3A0, 0xEBD5C3E6, 0x057E7380, 0x91DE343C, 0x7893F79A, 0x35669D4C, 0x1B4217BC, 0x358CA1BB };
 
+	SceModule *mod = sceKernelFindModuleByName("sceSystemMemoryManager");
 	for (int i = 0; i < sizeof(nids) / sizeof(u32); i++) {
-		u32 addr = FindFirstBEQ(FindProc("sceSystemMemoryManager", "SysMemUserForUser", nids[i]));
+		u32 addr = FindFirstBEQ(FindProcInMod(mod, "SysMemUserForUser", nids[i]));
 		if (addr) {
 			VWRITE16(addr + 2, 0x1000);
 		}
 	}
+
+	u32 power_tick_addr = FindProcInMod(mod, "sceSuspendForKernel", 0x090CCB3F);
+	HIJACK_FUNCTION(power_tick_addr, sceKernelPowerTickPatched, _sceKernelPowerTick);
 }
 
 void PatchUmdDriver(SceModule* mod) {

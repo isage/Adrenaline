@@ -40,7 +40,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
- 
+
 #include "lodepng/lodepng.h"
 
 #include "main.h"
@@ -362,8 +362,7 @@ int AdrenalineCompat(SceSize args, void *argp) {
       if ( res == 0 ) {
         char frameXmlStr[512] = {0};
         res = ReadFile("ux0:app/" ADRENALINE_TITLEID "/frame.xml", frameXmlStr, 512);
-        if (res > 0)
-        {
+        if (res > 0) {
             res = sceLiveAreaUpdateFrameSync(
                 "01.00",
                 frameXmlStr,
@@ -375,20 +374,17 @@ int AdrenalineCompat(SceSize args, void *argp) {
     } else if (request->cmd == ADRENALINE_VITA_CMD_APP_STARTED) {
         static char overlay_file[256];
 
-        if (overlay_texture)
-        {
+        if (overlay_texture) {
           vita2d_free_texture(overlay_texture);
           overlay_texture = NULL;
         }
         overlay_texture = NULL;
 
-        if (adrenaline->pops_mode)
-        {
+        if (adrenaline->pops_mode) {
           snprintf(overlay_file, sizeof(overlay_file), "%s/overlays/%s.png", getPspemuMemoryStickLocation(), adrenaline->titleid);
 
           SceUID fd = sceIoOpen(overlay_file, SCE_O_RDONLY, 0777);
-          if (fd >= 0 )
-          {
+          if (fd >= 0 ) {
             unsigned char* buffer = NULL;
             size_t size = 0;
             size = sceIoLseek(fd, 0, SCE_SEEK_END);
@@ -404,13 +400,11 @@ int AdrenalineCompat(SceSize args, void *argp) {
 
             adr_free(buffer);
 
-            if (image)
-            {
+            if (image) {
               vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_RW);
               vita2d_texture* tex = vita2d_create_empty_texture_format(w,h, SCE_GXM_TEXTURE_FORMAT_U8U8U8U8_RGBA);
 
-              if (tex)
-              {
+              if (tex) {
                 void* tex_data = vita2d_texture_get_datap(tex);
                 sceClibMemcpy(tex_data, image, w*h*4);
                 overlay_texture = tex;
@@ -421,7 +415,10 @@ int AdrenalineCompat(SceSize args, void *argp) {
           }
         }
         res = 0;
-    }
+
+    } else if (request->cmd == ADRENALINE_VITA_CMD_POWER_TICK) {
+		res = sceKernelPowerTick(*request->args);
+	}
 
     ScePspemuKermitSendResponse(KERMIT_MODE_EXTRA_2, request, (uint64_t)res);
   }

@@ -42,7 +42,7 @@ static int io_write(PspIoDrvFileArg *arg, const char *data, int len) {
 		if (len < 1023) {
 			memset(adrenaline->printbuf, 0, 1024);
 			strncpy(adrenaline->printbuf, data, len);
-			ret = SendAdrenalineCmd(ADRENALINE_VITA_CMD_PRINT);
+			ret = SendAdrenalineCmd(ADRENALINE_VITA_CMD_PRINT, 0);
 		}
 	}
 	(void) sceKernelSignalSema(g_out_sema, 1);
