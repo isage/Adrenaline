@@ -3,7 +3,7 @@
 
 #define SECTOR_SIZE	0x0800
 
-void VshCtrlSetUmdFile(char *file);
+void VshCtrlSetUmdFile(const char *file);
 
 int Umd9660ReadSectors2(int lba, int nsectors, void *buf);
 

@@ -34,7 +34,6 @@ u32 firsttick;
 
 int OnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
-	u32 text_addr = mod->text_addr;
 
 	if (strcmp(modname, "vsh_module") == 0) {
 		PatchVshMain(mod);

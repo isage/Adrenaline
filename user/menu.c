@@ -243,7 +243,7 @@ void drawMenu() {
 
 		char info[143] = {0};
 		if (strcmp(adrenaline->title, "XMB\xE2\x84\xA2") == 0) {
-			snprintf(info, 128, "XMB", adrenaline->title);
+			snprintf(info, 128, "XMB");
 		} else {
 			int res = 0;
 

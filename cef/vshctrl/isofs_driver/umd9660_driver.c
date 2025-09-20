@@ -5,7 +5,7 @@
 
 #include "umd9660_driver.h"
 
-void VshCtrlSetUmdFile(char *file) {
+void VshCtrlSetUmdFile(const char *file) {
 	SetUmdFile(file);
 	iso_close();
 	strncpy(g_iso_fn, file, sizeof(g_iso_fn)-1);

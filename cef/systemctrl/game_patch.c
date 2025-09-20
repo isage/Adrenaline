@@ -73,10 +73,6 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 	return res;
 }
 
-static int sceKernelGetUserLevelPatched() {
-	return 1;
-}
-
 static int moduleLoaderJackass(char* name, int value) {
 	char path[256] = {0};
 
