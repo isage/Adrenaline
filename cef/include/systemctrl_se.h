@@ -192,6 +192,8 @@ typedef struct {
 	u8 umd_seek;
 	/** Simulate UMD seek time. Zero - Off, `>0` - seek time factor, i.e. value that will be multiplied on amount of bytes to be read */
     u8 umd_speed;
+	/** Cache `ms0:`. 0 - Use cache, 1 - do not use cache. */
+    u8 no_ms_cache;
 } AdrenalineConfig;
 
 typedef AdrenalineConfig SEConfig;

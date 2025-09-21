@@ -33,6 +33,7 @@
 #include "gameinfo.h"
 #include "plugin.h"
 #include "utils.h"
+#include "storage_cache.h"
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
@@ -55,6 +56,10 @@ static void OnSystemStatusIdle() {
 
 	initAdrenalineInfo();
 	PatchVolatileMemBug();
+
+	if (config.no_ms_cache == 0) {
+		storageCacheInit("ms");
+	}
 
 	// March33 UMD seek/speed simulation
 	SceModule* march33_mod = sceKernelFindModuleByName("EPI-March33Driver");
