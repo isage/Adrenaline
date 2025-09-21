@@ -292,6 +292,7 @@ Entry general_entries[] = {
 	{ "Extended screen colors mode", NULL, extendedcolors, sizeof(extendedcolors), &config.extended_colors },
 	{ "Recovery color", Setrecovery_color, theme_names, sizeof(theme_names), &config.recovery_color },
 	{ "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.use_sony_psposk },
+	{ "Memory Stick Cache", NULL, endisabled, sizeof(endisabled), &config.no_ms_cache },
 	{ "NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.no_nodrm_engine },
 	{ "XMB Control", NULL, endisabled, sizeof(endisabled), &config.no_xmbctrl },
 	{ "", NULL, NULL, 0, NULL },
