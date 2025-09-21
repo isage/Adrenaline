@@ -29,6 +29,7 @@
 
 
 [Glossary](./XX-Glossary.md)
+[Compatibility Issues](./XX-CompatIssues.md)
 [Fun Facts and FAQ](./XX-FAQ.md)
 [Changelog](./XX-Changelog.md)
 [Credits](./XX-Credits.md)

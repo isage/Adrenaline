@@ -12,14 +12,16 @@ It is recommended to do this approach for a fresh installation. Otherwise, use t
 4. Relaunch Adrenaline; this time, it will go into PSPemu mode. Follow the instructions on the screen.
 
 > [!TIP] Getting rid of the double launch bug
-> Adrenaline needs to launch twice every time you reboot your device. To get rid of such a limitation, simply write this line to `*KERNEL`:
+> Adrenaline needs to launch twice every time you reboot your device. This is done automatically but that increases the boot time for Adrenaline.
+>
+> To get rid of such a limitation, simply write this line to `*KERNEL` section of you `ur0:/tai/config.txt` file:
 >
 > ```
 > *KERNEL
 > ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 > ```
 >
-> After that, Adrenaline will only need to be launched once.
+> After that, Adrenaline will only need to be launched once, improving the time to boot the [vPSP](./XX-Glossary.md) environment.
 
 ## Update
 ---

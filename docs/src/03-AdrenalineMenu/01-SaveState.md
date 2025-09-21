@@ -8,10 +8,12 @@ Adrenaline has native support to Save States, accessible in the [Adrenaline Menu
 </p>
 
 ## What is a Save State
+---
 
 A save state is a snapshot of the current status of a game, allowing you to save and restore your progress at any point. Unlike traditional in-game saves, save states capture everything in memory, so you can resume exactly where you left off, even if the game itself doesn’t support saving at that moment.
 
 ## Creating Save State
+---
 
 To create a save state, do the following:
 
@@ -40,6 +42,7 @@ Alternatively, you can save the state by substituting a previously saved state (
 </p>
 
 ## Loading Save State
+---
 
 To load a save state, do the following:
 
@@ -55,6 +58,7 @@ To load a save state, do the following:
 </p>
 
 ## Deleting Save State
+---
 
 To delete a save state, do the following:
 

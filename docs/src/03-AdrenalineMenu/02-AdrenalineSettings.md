@@ -26,7 +26,7 @@ It offers these options:
 
 ## Smooth Graphics
 
-When enabled, apply a stronger smooth effect filter on top of the filter selected on[Graphical Filtering](#graphics-filtering) configuration.
+When enabled, apply a stronger smooth effect filter on top of the filter selected on [Graphical Filtering](#graphics-filtering) configuration.
 
 ## f.lux Filter Color
 

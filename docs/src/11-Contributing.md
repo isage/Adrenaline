@@ -44,6 +44,20 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 - `cef/xmbctrl`: The `XMB Control` module provides access to CFW configuration and plugin management directly from the XMB `Settings` section.
 
 
+## Setting up the development environment
+---
+
+To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depend on four thing: **VITASDK**, **PSPSDK**, **Python3** and **psp-packer**.
+
+For the [VITASDK](https://vitasdk.org/) and [PSPSDK](https://pspdev.github.io/), follow their instructions to install it in your system.
+
+[Python3](https://www.python.org/downloads/) installation will depend on your system and setup. Google is your friend on this one.
+
+For psp-packer, there are two tested implementations that works with Adrenaline, the [Davee's implementation](https://bitbucket.org/DaveeFTW/psp-packer/src/master/) and [GrayJack's implementation](https://github.com/VitaArchive/psp-packer).
+
+Once everything is installed, you can build the project.
+
+
 ## Building the project
 ---
 

@@ -56,7 +56,7 @@
 > [!IMPORTANT] Plugin Migration Instructions
 > This is how to migrate your plugins to the new format after updating Adrenaline to 8.0.0
 >
-> 1. Open Recovery Menu
+> 1. Open [Recovery Menu](./09-RecoveryMenu.md)
 > 2. Go to the `Advanced` section
 > 3. Select and click on `Import classic plugins`
 >

@@ -316,7 +316,6 @@ int AdrenalineCompat(SceSize args, void *argp) {
 
 					if (fd < 0) {
 						path = "sdstor0:int-lp-ign-userext";
-
 					} else {
 						sceIoClose(fd);
 					}
@@ -426,8 +425,8 @@ int AdrenalineCompat(SceSize args, void *argp) {
 			res = 0;
 
 		} else if (request->cmd == ADRENALINE_VITA_CMD_POWER_TICK) {
-		res = sceKernelPowerTick(*request->args);
-	}
+			res = sceKernelPowerTick(*request->args);
+		}
 
 		ScePspemuKermitSendResponse(KERMIT_MODE_EXTRA_2, request, (uint64_t)res);
 	}

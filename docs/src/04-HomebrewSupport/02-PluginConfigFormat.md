@@ -1,7 +1,7 @@
 # Plugin Configuration Format
 ---
 
-The configuration format for the plugins on Adrenaline is composed of three sections per line: runlevel(s), plugin path, and switch state (on/off), separated by a comma.
+The configuration format for the plugins on Adrenaline is composed of three sections per line: **runlevel**(s), **plugin path**, and **switch state** (on/off), separated by a comma.
 
 It also accepts line comments with `//` and `#`.
 
@@ -15,7 +15,7 @@ The available runlevels are:
 - `hbw`/`homebrew`: Homebrew runlevel — Plugins configuration for homebrew application and games
 - `app`/`game`: UMD + Homebrew — Plugins configuration for any PSP application or game; retail or homebrew
 - `always`/`all`: All runlevels — Plugins configuration for all runlevels
-- `⟨GAME ID⟩`: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID
+- `⟨TITLE ID⟩`: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID
 - `⟨PATH⟩`: Path-specific runlevel — Plugins configuration for an application or game in the specified path. **This is more advanced**
 
 You can specify more than one runlevel for a specific plugin by separating with a space character, more on [example](#example).
@@ -52,7 +52,7 @@ The switch state defines whether the plugin is enabled or not. The accepted "On"
 > # Always
 > always, ms0:/seplugins/example.prx, off
 >
-> # Game ID example
+> # Title ID example
 > ULES00151, ms0:/seplugins/gta_remastered.prx, on
 >
 > # Path example
@@ -86,7 +86,7 @@ The switch state defines whether the plugin is enabled or not. The accepted "On"
 >
 > If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:
 >
-> 1. Open Recovery Menu
+> 1. Open [**Recovery Menu**](../09-RecoveryMenu.md)
 > 2. Go to the `Advanced` section
 > 3. Select and click on `Import classic plugins`
 >

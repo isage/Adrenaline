@@ -159,7 +159,7 @@ Controls whether to force the unlock extra RAM space for the user-space RAM part
 #### Options:
 
 - `Disabled`: With this option, no specific memory layout is forced.
-	- By default, user partition gets the standard 24MB.
+	- By default, user RAM partition gets the standard 24MB.
 	- Homebrew games/apps can request other layout by using the `MEMSIZE` in their `SFO` information or by using the CFW API.
 	- Plugin author can use the CFW API to request changing the layout.
 - `Stable`: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
@@ -240,7 +240,7 @@ Any option other than `Auto` will always use that value for all ISO games and ap
 
 ### UMDemu ISO seek time delay factor
 
-Adrenaline's `Inferno` and `March33` UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.
+Adrenaline's UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.
 
 This setting allows to control a factor of how much **slower** is that seek time simulation.
 
@@ -259,7 +259,7 @@ This can be used to bypass the anti-CFW checks in some games. Adrenaline automat
 
 ### UMDemu ISO read speed delay factor
 
-Adrenaline's `Inferno` and `March33` UMDemu drivers have the ability to simulate the **slower** read speed of a physical UMD.
+Adrenaline's UMDemu drivers have the ability to simulate the **slower** read speed of a physical UMD.
 
 This setting allows to control a factor of how much **slower** is that read speed simulation.
 

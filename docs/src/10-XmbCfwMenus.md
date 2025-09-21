@@ -4,10 +4,13 @@
 Adrenaline adds extra menus to the XMB that allow the user to change CFW settings and work as a plugin manager.
 
 ## ★ Adrenaline CFW settings
+---
 
 This menu can be found in the `Settings` section of the XMB. It allows modifying the [Adrenaline CFW Settings](./08-CfwConfiguration.md).
 
 Some options may require that the system be restarted before taking effect. This will be informed in the menu (third image).
+
+Advanced settings are marked with the `▲` symbol at the start.
 
 <p align="center">
 <img src="./assets/10-cfw-settings.png" width="49%" />
@@ -16,6 +19,7 @@ Some options may require that the system be restarted before taking effect. This
 </p>
 
 ## ★ Plugins Manager
+---
 
 This menu can be found in the `Settings` section of the XMB. It allows modifying the [plugin configuration](./04-HomebrewSupport/02-PluginConfigFormat.md) directly from the XMB.
 

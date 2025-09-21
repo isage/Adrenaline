@@ -33,3 +33,6 @@ There are a number of ways to contribute to the Adrenaline project for both prog
   - Be mindful that some issues are harder to fix than others and that the project is developed in the maintainers spare time as a hobby and may take a while for some issue to be solved.
 - **Feature ideas**: You can suggest a feature to be implemented on Adrenaline by opening an [Issue ticket](https://github.com/isage/Adrenaline/issues).
   - Be mindful that your request may not be possible to be implemented or be considered low priority or even impractical to be implemented.
+- **Financial support**: If you like, you can help the devs with monetary support
+  - Cat (isage) is currently unable to receive any international money. If you so prefer, a donation to your local animal shelter is encouraged.
+  - Grayjack can receive support by [Github Sponsors](https://github.com/sponsors/GrayJack) or [PIX](https://nubank.com.br/cobrar/2a8up/68cf317a-627c-4d09-afb4-0faddf7968d3). If neither are possible to you, consider a donation to your local animal shelter.

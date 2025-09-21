@@ -33,7 +33,7 @@ This is the default UMDemu ISO driver and the one with the most person-hours put
 
 ### March 33 2
 
-March33 driver was originally developed for the March33 CFW by the M33 Team. Adrenaline comes with a modified version with ISO and Compressed ISO read improvements; other than that, there were no other significant changes in the source code.
+March33 driver was originally developed for the March33 CFW by the M33 Team. Adrenaline comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.
 
 This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than `NP9660` and `Inferno`. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.
 
@@ -46,7 +46,7 @@ This driver is made available mostly for compatibility reasons, as historically 
 
 It is the original PSP UMDemu driver from Sony, but with patches to trick it into running ISO and Compressed ISO formats. This driver is also the one used on `PBP` games; it has guaranteed compatibility with all games that Sony released on PSN.
 
-This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than `March33` and `Inferno`. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.
+This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than `March33` and `Inferno`. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`.
 - **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.

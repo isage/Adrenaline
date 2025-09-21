@@ -62,7 +62,7 @@ Enables WMA playback without connecting to the internet.
 
 ### Activate Flash Player
 
-Enables Flash Player  without connecting to the internet.
+Enables Flash Player without connecting to the internet.
 
 ### Reset settings
 

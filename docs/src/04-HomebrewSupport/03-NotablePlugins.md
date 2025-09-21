@@ -42,12 +42,12 @@ An important plugin that brings back Online functionality to the PSP on many gam
 On Adrenaline this plugin is compatible with the "Inferno Cache" settings.
 
 > [!IMPORTANT]
-> This plugin should be enabled for `GAME ID`, or limited testing of `GAME` mode **ONLY**
+> This plugin should be enabled for `TITLE ID`, or limited testing of `GAME` mode **ONLY**
 
 [Download PRO Online Here](https://github.com/Kethen/aemu/releases)
 
 > [!EXAMPLE]
-> Note that this example if for **Motorstorm Artic Edge** US version, change or add `GAME ID`s according to the games you want that it enabled.
+> Note that this example if for **Motorstorm Artic Edge** US version, change or add `TITLE ID`s according to the games you want that it enabled.
 >
 > On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
 >
@@ -61,7 +61,7 @@ On Adrenaline this plugin is compatible with the "Inferno Cache" settings.
 An experimental plugin for Adrenaline that allows to run a few games in native resolution.
 
 > [!IMPORTANT]
-> This plugin should be enabled for `GAME ID`, or limited testing of `GAME` mode **ONLY**.
+> This plugin should be enabled for `TITLE ID`, or limited testing of `GAME` mode **ONLY**.
 >
 > And this plugins in incompatible with the `Force High Memory` CFW configuration, so it is best to disable this configuration before starting a game with this plugin
 
@@ -70,7 +70,7 @@ An experimental plugin for Adrenaline that allows to run a few games in native r
 [Link to the compatibility list spreadsheet](https://docs.google.com/spreadsheets/d/1aZlmKwELcdpCb9ezI5iRfgcX9hoGxgL4tNC-673aKqk/edit#gid=0)
 
 > [!EXAMPLE]
-> Note that this example if for **Final Fantasy III** US version, change or add `GAME ID`s according to the games you want that it enabled.
+> Note that this example if for **Final Fantasy III** US version, change or add `TITLE ID`s according to the games you want that it enabled.
 >
 > On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
 >
@@ -96,12 +96,12 @@ It includes plugins for:
 - `Tony Hawk's Project 8`
 
 > [!IMPORTANT]
-> This plugin should be enabled for `GAME ID` **ONLY**.
+> This plugin should be enabled for `TITLE ID` **ONLY**.
 
 [Download Remastered Controls Plugins Here](https://github.com/TheOfficialFloW/RemasteredControls/releases)
 
 > [!EXAMPLE]
-> Note that this example if for **Kingdom Hearts: Birth By Sleep** US version, change or add `GAME ID`s and plugin path according to the games you want that it enabled.
+> Note that this example if for **Kingdom Hearts: Birth By Sleep** US version, change or add `TITLE ID`s and plugin path according to the games you want that it enabled.
 >
 > On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
 >

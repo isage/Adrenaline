@@ -4,6 +4,7 @@
 `Compressed ISO` is an `ISO` image compressed in some way to reduce the space usage. There are a few competing formats, each with different tradeoffs. The formats are specified below.
 
 ## Technical Overview
+---
 
 | Format |Author              | Supported Algorithm | Supported Block Size | Compression Ratio vs Decompression Speed            | Comments                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 |--------|--------------------|---------------------|----------------------|-----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -25,6 +26,7 @@
 
 
 ## History: Format Wars
+---
 
 Format wars aren't a thing exclusive to the movie industry, and Sony is certainly no stranger to them, though they had nothing to do with this one (at least initially, they did end up making their own PBP format for PSN releases).
 
