@@ -296,16 +296,21 @@ static int OnModuleStart(SceModule *mod) {
 	} else if (strcmp(modname, "sceUSBCam_Driver") == 0) {
 		PatchUSBCamDriver(mod);
 
+	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
+		ready_gamepatch_mod = 1;
+		PatchGameByGameId();
+
+	} else if (strcmp(modname, "sceMp3_Library") == 0 || (strcmp(modname, "sceVshOSK_Module") == 0 && config.use_sony_psposk)) {
+		// Unlock mp3 variable bitrate and qwerty osk on old games/homebrew
+		sctrlHENHookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion, 0);
+		sctrlFlushCache();
+
 	} else if (strcmp(modname, "vsh_module") == 0) {
 		PatchVshForDrm(mod);
 		PatchDrmOnVsh();
 
 	} else if (strcmp(modname, "sysconf_plugin_module") == 0) {
 		PatchSysconfForDrm(mod);
-
-	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
-		ready_gamepatch_mod = 1;
-		PatchGameByGameId();
 
 	} else if (strcmp(modname, "VLF_Module") == 0) {
 		PatchVlfLib(mod);
