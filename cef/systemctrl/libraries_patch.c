@@ -526,7 +526,17 @@ int sctrlKernelSetNidResolver(char* libname, u32 enabled) {
 u32 sctrlHENMakeSyscallStub(void *function) {
 	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
 	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
-	MAKE_SYSCALL_FUNCTION(stub, sceKernelQuerySystemCall(function));
+	s32 syscall_num = sceKernelQuerySystemCall(function);
+	if (stub == 0) {
+		logmsg("[ERROR]: %s: No memory to create stub\n", __func__);
+		return 0;
+	}
+	if (syscall_num < 0) {
+		logmsg("[ERROR]: %s: Function not properly exported for syscalls\n", __func__);
+		return 0;
+	}
+
+	MAKE_SYSCALL_FUNCTION(stub, syscall_num);
 	return stub;
 }
 

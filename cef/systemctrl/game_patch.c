@@ -73,7 +73,7 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 	return res;
 }
 
-static int moduleLoaderJackass(char* name, int value) {
+int moduleLoaderJackass(char* name, int value) {
 	char path[256] = {0};
 
 	SceKernelLMOption option;

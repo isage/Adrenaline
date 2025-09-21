@@ -771,14 +771,11 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr);
  * calls in a user module without overwriting a existing syscall stub in the
  * module being modified.
  *
- * @note This also have the side-effect of not requiring the `function` to be
- * exported as syscall by the kernel program to work as syscall. But it is
- * extremely recommended to export anyway to facilitate using the `function`
- * with other CFW APIs (e.g. `sctrlHENPatchSyscall`, `sctrlHENHookImportByNID`).
+ * @note The given `function` must be exported as syscall for it to work.
  *
  * @param function The function pointer to the function to create the syscall stub
  *
- * @returns The syscall stub of the given function.
+ * @returns The syscall stub of the given function (> 0). Or zero if the function fails to create the stub.
  *
  * @attention Every call to this function allocates 8 bytes of memory in the
  * user RAM, which is also the available memory for the running application. So,
