@@ -137,7 +137,7 @@ u32 sctrlHENFindImport(const char *mod_name, const char *library, u32 nid) {
 			int j;
 			for (j = 0; j < stub->stubcount; j++) {
 				if (table[j] == nid) {
-					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
+					logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
 					return ((u32)stub->stubtable + (j * 8));
 				}
 			}
@@ -146,7 +146,7 @@ u32 sctrlHENFindImport(const char *mod_name, const char *library, u32 nid) {
 		i += (stub->len * 4);
 	}
 
-	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
+	logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
@@ -239,7 +239,7 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
 			int j;
 			for (j = 0; j < stub->stubcount; j++) {
 				if (table[j] == nid) {
-					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
+					logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
 					return ((u32)stub->stubtable + (j * 8));
 				}
 			}
@@ -248,7 +248,7 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
 		i += (stub->len * 4);
 	}
 
-	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
+	logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
@@ -274,7 +274,7 @@ u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid) {
 			int j;
 			for (j = 0; j < total; j++) {
 				if (table[j] == nid) {
-					logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
+					logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
 					return table[j + total];
 				}
 			}
@@ -283,7 +283,7 @@ u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid) {
 		i += (entry->len * 4);
 	}
 
-	logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
+	logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: NOT FOUND\n", __func__, mod->modname, library, nid);
 	return 0;
 }
 
@@ -297,27 +297,27 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 	u32 stub = sctrlHENFindFunctionInMod(mod, library, nid);
 
 	if (stub == 0) {
-		logmsg2("%s: [WARN]: %s — %s — 0x%08lX: Failed to find function\n", __func__, mod->modname, library, nid);
+		logmsg2("[WARN]: %s: %s — %s — 0x%08lX: Failed to find function\n", __func__, mod->modname, library, nid);
 		u32 new_nid = ResolveOldNIDs(library, nid);
 
 		// resolver fail
 		if (new_nid == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, mod->modname, library, nid);
+			logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, mod->modname, library, nid);
 			return -2;
 		} else {
-			logmsg4("%s: [DEBUG]:  %s — %s — 0x%08lX: NID resolved: 0x%08X->0x%08X\n", __func__, mod->modname, library, nid, nid, new_nid);
+			logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: NID resolved: 0x%08X->0x%08X\n", __func__, mod->modname, library, nid, nid, new_nid);
 		}
 
 		stub = sctrlHENFindFunctionInMod(mod, library, nid);
 
 		if (stub == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to find function with resolved nid\n", __func__, mod->modname, library, nid);
+			logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Failed to find function with resolved nid\n", __func__, mod->modname, library, nid);
 			return -3;
 		} else {
-			logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Function found\n", __func__, mod->modname, library, nid);
+			logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Function found\n", __func__, mod->modname, library, nid);
 		}
 	} else {
-		logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Function found\n", __func__, mod->modname, library, nid);
+		logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Function found\n", __func__, mod->modname, library, nid);
 	}
 
 	// Function as 32-Bit Unsigned Integer
@@ -327,11 +327,11 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 	if (func == NULL) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, dummy);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, dummy);
+		logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, dummy);
 	} else if (func_int <= 0xFFFF) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, func_int);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, func_int);
+		logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, func_int);
 	} else { // Normal Hook
 		// Syscall Hook
 		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
@@ -341,7 +341,7 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 
 				// Syscall table not found.
 				if (NULL == ptr) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall table not found\n", __func__, mod->modname, library, nid);
+					logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Syscall table not found\n", __func__, mod->modname, library, nid);
 					return -4;
 				}
 
@@ -356,29 +356,29 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 
 				// Syscall not found in the table
 				if (!found) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found in syscall table\n", __func__, mod->modname, library, nid);
+					logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Syscall not found in syscall table\n", __func__, mod->modname, library, nid);
 					return -5;
 				}
 
-				logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: Made a syscall substitution\n", __func__, mod->modname, library, nid);
+				logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: Made a syscall substitution\n", __func__, mod->modname, library, nid);
 			} else {
 				// Query Syscall Number
 				int syscall = sceKernelQuerySystemCall(func);
 
 				// Not properly exported in exports.exp
 				if(syscall < 0) {
-					logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, mod->modname, library, nid);
+					logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Syscall not found\n", __func__, mod->modname, library, nid);
 					return -3;
 				}
 
 				// Create Syscall Hook
 				MAKE_SYSCALL_FUNCTION(stub, syscall);
-				logmsg4("%s: [DEBUG]: %s — %s — 0x%08lX: Made a syscall hook\n", __func__, mod->modname, library, nid);
+				logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: Made a syscall hook\n", __func__, mod->modname, library, nid);
 			}
 		} else {
 			// Create Direct Jump Hook
 			REDIRECT_FUNCTION(stub, func);
-			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, mod->modname, library, nid);
+			logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, mod->modname, library, nid);
 		}
 	}
 
@@ -400,28 +400,28 @@ int sctrlHENHookImportByNID(SceModule * mod, const char * library, u32 nid, void
 	u32 stub = sctrlHENFindImportInMod(mod, library, nid);
 
 	if (stub == 0) {
-		logmsg2("%s: [WARN]: %s — %s — 0x%08lX: Failed to find import\n", __func__, mod->modname, library, nid);
+		logmsg2("[WARN]: %s: %s — %s — 0x%08lX: Failed to find import\n", __func__, mod->modname, library, nid);
 
 		u32 new_nid = ResolveOldNIDs(library, nid);
 
 		// resolver fail
 		if (new_nid == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, mod->modname, library, nid);
+			logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Failed to resolve NID\n", __func__, mod->modname, library, nid);
 			return -2;
 		} else {
-			logmsg4("%s: [DEBUG]:  %s — %s — 0x%08X: NID resolved: 0x%08lX -> 0x%08lX\n", __func__, mod->modname, library, nid, nid, new_nid);
+			logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: NID resolved: 0x%08lX -> 0x%08lX\n", __func__, mod->modname, library, nid, nid, new_nid);
 		}
 		stub = sctrlHENFindImportInMod(mod, library, new_nid);
 
 		// Stub not found again...
 		if (stub == 0) {
-			logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Failed to find import with resolved nid\n", __func__, mod->modname, library, nid);
+			logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Failed to find import with resolved nid\n", __func__, mod->modname, library, nid);
 			return -3;
 		} else {
-			logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
+			logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
 		}
 	} else {
-		logmsg3("%s: [INFO]: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
+		logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
 	}
 
 	// Function as 32-Bit Unsigned Integer
@@ -431,11 +431,11 @@ int sctrlHENHookImportByNID(SceModule * mod, const char * library, u32 nid, void
 	if (func == NULL) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, dummy);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, dummy);
+		logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, dummy);
 	} else if (func_int <= 0xFFFF) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, func_int);
-		logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, func_int);
+		logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, func_int);
 	} else { // Normal Hook
 		// Syscall Hook
 		if ((stub & 0x80000000) == 0 && (func_int & 0x80000000) != 0) {
@@ -444,17 +444,17 @@ int sctrlHENHookImportByNID(SceModule * mod, const char * library, u32 nid, void
 
 			// Not properly exported in exports.exp
 			if(syscall < 0) {
-				logmsg("%s: [ERROR]: %s — %s — 0x%08lX: Syscall not found\n", __func__, mod->modname, library, nid);
+				logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Syscall not found\n", __func__, mod->modname, library, nid);
 				return -3;
 			}
 
 			// Create Syscall Hook
 			MAKE_SYSCALL_FUNCTION(stub, syscall);
-			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a syscall hook\n", __func__, mod->modname, library, nid);
+			logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a syscall hook\n", __func__, mod->modname, library, nid);
 		} else {
 			// Create Direct Jump Hook
 			REDIRECT_FUNCTION(stub, func);
-			logmsg4("%s: [DEBUG]: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, mod->modname, library, nid);
+			logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a direct jump hook\n", __func__, mod->modname, library, nid);
 		}
 	}
 
