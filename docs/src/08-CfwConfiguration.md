@@ -125,6 +125,10 @@ Modifies the system to use a extended color space based on the configuration.
 
 When enabled, makes the system to use the PSP On Screen Keyboard (OSK) instead of the VITA/PSTV native OSK.
 
+### Memory Stick Cache
+
+When enabled, the system will use a cache in I/O operations of the Memory Stick drive (`ms0:`) to improve speed.
+
 ### NoDRM engine
 
 Controls whether to patch the DRM engine of the PSP system.

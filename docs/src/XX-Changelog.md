@@ -21,10 +21,12 @@
 - Add Custom POPS Configuration injection for custom or converted PS1 game/apps
 - Patch libcrypt for custom or converted PS1 game/apps
 - Add image overlay filter for PS1 game/apps
+- Add `Memory Stick Cache` to speedup I/O operations in the Memory Stick drive (`ms0`)
 - "Fix" manual double launch on first install
 - Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews
   - Fix `SenseMe` launch error
   - Fix potential issues related to privilege level to other official apps
+  - Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
 - Implement PSP native music player and `SenseMe` to continue to play music after system suspend
 - Implement "Hold L while launching apps" to not load plugins
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN`
@@ -49,6 +51,7 @@
 - **DEV:** Add support for `MEMSIZE=2` (to request only stable extra RAM)
 - **DEV:** Make PSPemu `sceKernelPowerTick` to behave as the VITA `sceKernelPowerTick`
 - **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use even outside of Adrenaline (i.e. your project)
+- **DEV:** Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
 
 - **Internal:** Some code reorganization
 - **Internal:** Code clean ups

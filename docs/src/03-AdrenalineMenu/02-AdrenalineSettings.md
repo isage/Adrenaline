@@ -52,7 +52,7 @@ Same as [Screen Scale X/Y (PSP)](#screen-scale-xy-psp), but exclusively on PS1 g
 
 ## Memory Stick Location
 
-Chooses the drive Adrenaline App shows up for the Adrenaline CFW as the Memory Stick drive (`ms0:/`).
+Chooses the drive Adrenaline App shows up for the Adrenaline CFW as the Memory Stick drive (`ms0:`).
 
 The options are:
 
