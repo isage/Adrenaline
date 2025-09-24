@@ -22,6 +22,7 @@
 #include <adrenaline_log.h>
 
 #include "utils.h"
+#include "main.h"
 
 extern RebootexConfig rebootex_config;
 extern AdrenalineConfig config;
@@ -64,9 +65,9 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-static int (*utilityGetParam)(int, int*) = NULL;
+static int (*_utilityGetParam)(int, int*) = NULL;
 static int utilityGetParamPatched_ULJM05221(int param, int* value) {
-	int res = utilityGetParam(param, value);
+	int res = _utilityGetParam(param, value);
 	if (param == PSP_SYSTEMPARAM_ID_INT_LANGUAGE && *value > 1) {
 		*value = 0;
 	}
@@ -102,9 +103,34 @@ static int wweModuleOnStart(SceModule * mod) {
 	}
 
 	// Call Previous Module Start Handler
-	if(game_previous) game_previous(mod);
+	if(game_previous) {
+		game_previous(mod);
+	}
 
 	return 0;
+}
+
+// Reimplement the function without cache
+int sceWlanGetSwitchStatePatched() {
+	int k1 = pspSdkSetK1(0);
+
+	char buf[sizeof(SceKermitRequest) + 0x40];
+	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
+
+	u64 resp;
+	int res = sceKermitSendRequest(request_uncached, KERMIT_MODE_WLAN, 0x49, 0, 0, &resp);
+
+	if (res == 0) {
+		res = resp;
+	}
+
+	res = res & 1;
+
+	logmsg4("[DEBUG]: %s: () -> 0x%02X\n", __func__, res);
+	pspSdkSetK1(k1);
+	return res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,9 +160,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		// Fix Anti-CFW checks on `DJ Max` games
-		// Another option is to simulate physical UMD seek and read times with a
-		// factor of 2x, but this makes the game as slow as reading from an UMD.
-		// This patch allow to bypass the check without slowing things down.
+		// Stops it trying to delete CFW folders and their contents
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
@@ -195,6 +219,10 @@ void PatchGamesByMod(SceModule* mod) {
 	} else if (strcmp(modname, "BAMG") == 0) {
 		// Fix freeze on `Bust-A-Move Deluxe`
 		SetUmdEmuSpeed(2, 2);
+
+	} else if (strcmp(modname, "starwars_psp") == 0) {
+		// Fix `Lego Star Wars 2` WLAN switch state returning `off` due to cache syncronization issues on ePSP implementation.
+		sctrlHENHookImportByNID(mod, "sceWlanDrv", 0xD7763699, sceWlanGetSwitchStatePatched, 0);
 	}
 
 	sctrlFlushCache();
