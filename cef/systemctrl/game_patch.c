@@ -142,8 +142,8 @@ void PatchGameByGameId() {
 
 	// Fix TwinBee Portable when not using English or Japanese language
 	if (strcasecmp("ULJM05221", game_id) == 0) {
-		utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
-		sctrlHENPatchSyscall((u32)utilityGetParam, utilityGetParamPatched_ULJM05221);
+		_utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
+		sctrlHENPatchSyscall((u32)_utilityGetParam, utilityGetParamPatched_ULJM05221);
 
 	} else if (strcasecmp("ULES01472", game_id) == 0 || strcasecmp("ULUS10543", game_id) == 0) {
 		// Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
