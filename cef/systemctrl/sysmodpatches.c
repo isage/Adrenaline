@@ -371,8 +371,8 @@ int RunRebootPatched(u32 *params) {
 }
 
 int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
-	memcpy((void *)0x88FC0000, rebootex, size_rebootex);
-	memcpy((void *)0x88FB0000, &rebootex_config, sizeof(RebootexConfig));
+	memcpy((void *)EPI_REBOOTEX_MOD_ADDR, rebootex, size_rebootex);
+	memcpy((void *)EPI_REBOOTEX_CFG_ADDR, &rebootex_config, sizeof(RebootexConfig));
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 

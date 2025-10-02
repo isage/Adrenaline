@@ -32,7 +32,7 @@ int (* DecryptExecutable)(void *buf, int size, int *retSize);
 void (* SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table);
 int (* sceKernelBootLoadFile)(BootFile *file, void *a1, void *a2, void *a3, void *t0);
 
-RebootexConfig *rebootex_config = (RebootexConfig *)0x88FB0000;
+RebootexConfig *rebootex_config = (RebootexConfig *)EPI_REBOOTEX_CFG_ADDR;
 
 void ClearCaches() {
 	DcacheClear();

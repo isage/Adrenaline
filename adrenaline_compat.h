@@ -39,6 +39,9 @@
 #define PSP_SCREEN_HEIGHT 272
 #define PSP_SCREEN_LINE 512
 
+#define EPI_REBOOTEX_CFG_ADDR 0x88FB0000
+#define EPI_REBOOTEX_MOD_ADDR 0x88FC0000
+
 typedef struct {
 	SceSize size;
 	char shortFileName[13];
