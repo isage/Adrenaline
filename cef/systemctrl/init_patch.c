@@ -71,12 +71,40 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		}
 	}
 
+	if (config.use_ge2) {
+		if (strcmp(info->name, "/kd/ge.prx") == 0) {
+			info->name = "/kd/ge_2.prx";
+
+			char* path = "flash0:/kd/ge_2.prx";
+			SceUID mod = sceKernelLoadModule(path, 0, NULL);
+			logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", path, mod);
+			if (mod >= 0) {
+				return mod;
+			}
+		}
+	}
+
+	if (config.use_me2) {
+		if (strcmp(info->name, "/kd/kermit_me_wrapper.prx") == 0) {
+			info->name = "/kd/kermit_me_wrapper_2.prx";
+
+			char* path = "flash0:/kd/kermit_me_wrapper_2.prx";
+			SceUID mod = sceKernelLoadModule(path, 0, NULL);
+			logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", path, mod);
+			if (mod >= 0) {
+				return mod;
+			}
+		}
+	}
+
 	char path[64];
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name); //not use flash0 cause of cxmb
 
 	SceUID mod = sceKernelLoadModule(path, 0, NULL);
-	if (mod >= 0)
+	logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", info->name, mod);
+	if (mod >= 0) {
 		return mod;
+	}
 
 	return sceKernelLoadModuleBufferBootInitBtcnf(info->size, buf, flags, option);
 }
@@ -86,8 +114,9 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name);
 
 	SceUID mod = sceKernelLoadModule(path, 0, NULL);
-	if (mod >= 0)
+	if (mod >= 0) {
 		return mod;
+	}
 
 	return LoadModuleBufferAnchorInBtcnf(buf, (info->attr >> 8) & 1);
 }

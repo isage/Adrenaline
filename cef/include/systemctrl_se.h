@@ -136,6 +136,7 @@ enum HidePicsOpt {
 
 #define ADRENALINE_CFG_MAGIC_1 0x192EFC3C
 #define ADRENALINE_CFG_MAGIC_2 0x17BEB6AA
+
 typedef struct {
 	int magic[2];
 	/** 0 - Disabled, 1 - Enabled */
@@ -194,6 +195,10 @@ typedef struct {
     u8 umd_speed;
 	/** Cache `ms0:`. 0 - Use cache, 1 - do not use cache. */
     u8 no_ms_cache;
+	/** Use `ge_2.prx` instead of `ge.prx`. 0 - Off, 1 - On. */
+	u8 use_ge2;
+	/** Use `kermit_me_wrapper_2.prx` instead of `kermit_me_wrapper.prx`. 0- Off, 1 = On. */
+	u8 use_me2;
 } AdrenalineConfig;
 
 typedef AdrenalineConfig SEConfig;

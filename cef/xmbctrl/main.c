@@ -59,15 +59,17 @@ GetItem GetItemes[] = {
 	{16, 1, "NoDRM engine", 1, 0, &se_config.no_nodrm_engine},
 	{17, 1, "XMB Control", 1, 0, &se_config.no_xmbctrl},
 	{18, 0, "Force high memory layout", 1, 1, &se_config.force_high_memory},
-	{19, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1, &se_config.execute_boot_bin},
-	{20, 0, "Inferno ISO cache policy", 0, 1, &se_config.iso_cache},
-	{21, 0, "Inferno ISO cache number", 0, 1, &se_config.iso_cache_num},
-	{22, 0, "Inferno ISO cache size", 0, 1, &se_config.iso_cache_size},
-	{23, 0, "UMDemu ISO seek time delay factor", 0, 1, &se_config.umd_seek},
-	{24, 0, "UMDemu ISO read speed delay factor", 0, 1, &se_config.umd_speed},
-	{25, 1, "XMB Plugins", 1, 1, &se_config.no_xmb_plugins},
-	{26, 1, "Game Plugins", 1, 1, &se_config.no_game_plugins},
-	{27, 1, "POPS Plugins", 1, 1, &se_config.no_pops_plugins},
+	{19, 0, "Use Graphic Engine 2", 1, 1, &se_config.use_ge2},
+	{20, 0, "Use Media Engine 2", 1, 1, &se_config.use_me2},
+	{21, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1, &se_config.execute_boot_bin},
+	{22, 0, "Inferno ISO cache policy", 0, 1, &se_config.iso_cache},
+	{23, 0, "Inferno ISO cache number", 0, 1, &se_config.iso_cache_num},
+	{24, 0, "Inferno ISO cache size", 0, 1, &se_config.iso_cache_size},
+	{25, 0, "UMDemu ISO seek time delay factor", 0, 1, &se_config.umd_seek},
+	{26, 0, "UMDemu ISO read speed delay factor", 0, 1, &se_config.umd_speed},
+	{27, 1, "XMB Plugins", 1, 1, &se_config.no_xmb_plugins},
+	{28, 1, "Game Plugins", 1, 1, &se_config.no_game_plugins},
+	{29, 1, "POPS Plugins", 1, 1, &se_config.no_pops_plugins},
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -88,9 +90,12 @@ ItemOptions item_opts[] = {
 	{NELEMS(region_options), region_options}, // Fake region
 	{3, use_extended_color_option}, // Use extended color
 	{2, boolean_options},           // Use Sony PSP OSK
+	{2, boolean_options},           // Memory Stick Cache
 	{2, boolean_options},           // Use NoDRM Engine
 	{2, boolean_options},           // XMB Control
 	{3, highmem_options},           // Force high memory layout
+	{2, boolean_options},           // Use Graphic Engine 2
+	{2, boolean_options},           // Use Media Engine 2
 	{2, boolean_options},           // Execute BOOT.BIN in Game
 	{NELEMS(iso_cache_options), iso_cache_options}, // ISO cache kind
 	{NELEMS(iso_cache_num_options), iso_cache_num_options}, // ISO cache number
