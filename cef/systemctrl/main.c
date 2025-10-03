@@ -348,13 +348,18 @@ int module_start(SceSize args, void *argp) {
 	PatchModuleMgr();
 	sctrlFlushCache();
 
+	// Restore CFW config from the RAM backup in the start (if it exists)
+	if (IS_EPI_CONFIG(EPI_CONFIG_ADDR)) {
+		memcpy(&config, (void *)EPI_CONFIG_ADDR, sizeof(AdrenalineConfig));
+	}
+
 	sctrlHENSetStartModuleHandler((STMOD_HANDLER)OnModuleStart);
 
 	UnprotectExtraMemory();
 
 	initAdrenaline();
 
-	memcpy(&rebootex_config, (void *)0x88FB0000, sizeof(RebootexConfig));
+	memcpy(&rebootex_config, (void *)EPI_REBOOTEX_CFG_ADDR, sizeof(RebootexConfig));
 
 	tty_init();
 

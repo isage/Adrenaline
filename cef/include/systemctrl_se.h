@@ -198,6 +198,8 @@ typedef struct {
 
 typedef AdrenalineConfig SEConfig;
 
+#define IS_EPI_CONFIG(config) ((((AdrenalineConfig*)config)->magic[0] == ADRENALINE_CFG_MAGIC_1) && (((AdrenalineConfig*)config)->magic[1] == ADRENALINE_CFG_MAGIC_2))
+
 /**
  * Gets the SE/OE version
  *

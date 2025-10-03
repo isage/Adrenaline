@@ -41,6 +41,7 @@
 
 #define EPI_REBOOTEX_CFG_ADDR 0x88FB0000
 #define EPI_REBOOTEX_MOD_ADDR 0x88FC0000
+#define EPI_CONFIG_ADDR 0x08800010
 
 typedef struct {
 	SceSize size;
