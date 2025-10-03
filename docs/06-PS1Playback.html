@@ -431,35 +431,15 @@
 </p>
 <p>An older alternative to <code>pop-fe</code> is <code>PSX2PSP</code>, it is an unmaintained project and has lower compatibility than <code>pop-fe</code>, more so in the case of VITA/PSTV. A game converted with <code>PSX2PSP</code> will show up in Adrenaline, and most likely run, but will be unable to use custom POPS configuration, as the tool doesn't add a required section in the outputted <code>PBP</code> file to do custom POPS configuration injection.</p>
 </div>
-<p>Adrenaline comes with a set of added features tailored for better support of custom PS1 games/apps.</p>
-<h2 id="cdda-support"><a class="header" href="#cdda-support">CDDA Support</a></h2>
+<p>Adrenaline comes with a set of added features tailored for better game experience and better support of custom PS1 games/apps.</p>
+<h2 id="fast-forward"><a class="header" href="#fast-forward">Fast-forward</a></h2>
 <hr />
-<p><strong>CD Direct Audio</strong> was one of the methods (along with the proprietary XA format) to encode sound in PS1 games.
-Games that use CDDA are usually separated into different tracks, with the first one being the main data track and the rest being CD audio tracks. Many regular CD players were capable of playing these audio tracks when a PS1 disc was inserted.</p>
-<p>The PS1 emulator was originally coded to use CD audio tracks packaged into the EBOOT itself, however on later firmware revisions, Sony decided to replace those CDDA tracks with equivalent tracks encoded (and compressed) in AT3 format, which the PSP could also decode and play, this was done to drastically reduce the size of some PS1 games that used a lot of the disc space for CDDA.</p>
-<p>Though Sony replaced CDDA with AT3, they didn't really remove the ability to play CDDA-encoded games; they just disabled it.
-A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> was released to re-enable CDDA functionality in the PS1 emulator, allowing games encoded with the older format to be playable with full working sound (whereas before they would produce no sound).</p>
-<p>The patch to re-enable CDDA has been added to Adrenaline's <code>PopCorn</code> module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the <code>cdda_enabler</code> plugin on Adrenaline.</p>
-<h2 id="custom-pops-configuration"><a class="header" href="#custom-pops-configuration">Custom POPS Configuration</a></h2>
-<hr />
-<p>The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.</p>
-<p>With Adrenaline, you can implement these custom patches in a single external file <code>CONFIG.BIN</code>, stored alongside the <code>EBOOT.PBP</code> of the custom PS1 game/app (i.e. <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code>), without the need to be injected into the <code>EBOOT.PBP</code> file; as the CFW will do that for you on-the-fly.</p>
-<div class="mdbook-callouts mdbook-callouts-tip">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  tip
-</p>
-<p>Getting the <code>TITLE_ID</code> is simple: launch the app/game and opening the <code>Adrenaline Menu</code> in the <code>Main</code> tab.</p>
-<p>It is better explained how to get it in the <a href="./XX-FAQ.html#how-to-get-the-title-id-for-an-applicationgame">FAQ</a>.</p>
-</div>
-<h2 id="anti-libcrypt-patch"><a class="header" href="#anti-libcrypt-patch">Anti-LibCrypt patch</a></h2>
-<hr />
-<p>Adrenaline contains a patch to defeat <code>libcrypt</code> protection for known games without requiring rebuilding the <code>PBP</code> file.</p>
-<p>This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.</p>
+<p>Adrenaline can increase the speed of a running PS1 app/game. You can toggle this feature by pressing <code>L+Select</code> while a PS1 app/game is running.</p>
+<p>This feature is more often used to speed-up repetitive gameplay, or skip slow sections &amp; cutscenes.</p>
 <h2 id="overlay-image"><a class="header" href="#overlay-image">Overlay Image</a></h2>
 <hr />
-<p>With Adrenaline, you can include an extra overlay filter based on an image. You can set one image overlay per PS1 game.</p>
-<p>The image should be <code>960x544</code> pixels to work properly. And the image must be stored as <code>???0:/pspemu/overlays/⟨TITLE_ID⟩.png</code>.</p>
+<p>With Adrenaline, you can include an extra overlay filter based on an image that can be used to decorate the empty space on the sides of the game or custom scanline textures.</p>
+<p>One image overlay per PS1 game can be set. The image should be <code>960x544</code> pixels to work properly. And the image must be stored as <code>???0:/pspemu/overlays/⟨TITLE_ID⟩.png</code>.</p>
 <div class="mdbook-callouts mdbook-callouts-warning">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -486,6 +466,30 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <img src="./assets/06-overlay.png" width="49%" />
 </p>
 </div>
+<h2 id="cdda-support"><a class="header" href="#cdda-support">CDDA Support</a></h2>
+<hr />
+<p><strong>CD Direct Audio</strong> was one of the methods (along with the proprietary XA format) to encode sound in PS1 games.
+Games that use CDDA are usually separated into different tracks, with the first one being the main data track and the rest being CD audio tracks. Many regular CD players were capable of playing these audio tracks when a PS1 disc was inserted.</p>
+<p>The PS1 emulator was originally coded to use CD audio tracks packaged into the EBOOT itself, however on later firmware revisions, Sony decided to replace those CDDA tracks with equivalent tracks encoded (and compressed) in AT3 format, which the PSP could also decode and play, this was done to drastically reduce the size of some PS1 games that used a lot of the disc space for CDDA.</p>
+<p>Though Sony replaced CDDA with AT3, they didn't really remove the ability to play CDDA-encoded games; they just disabled it.
+A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> was released to re-enable CDDA functionality in the PS1 emulator, allowing games encoded with the older format to be playable with full working sound (whereas before they would produce no sound).</p>
+<p>The patch to re-enable CDDA has been added to Adrenaline's <code>PopCorn</code> module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the <code>cdda_enabler</code> plugin on Adrenaline.</p>
+<h2 id="custom-pops-configuration"><a class="header" href="#custom-pops-configuration">Custom POPS Configuration</a></h2>
+<hr />
+<p>The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.</p>
+<p>With Adrenaline, you can implement these custom patches in a single external file <code>CONFIG.BIN</code>, stored alongside the <code>EBOOT.PBP</code> of the custom PS1 game/app (i.e. <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code>), without the need to be injected into the <code>EBOOT.PBP</code> file; as the CFW will do that for you on-the-fly.</p>
+<div class="mdbook-callouts mdbook-callouts-tip">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  tip
+</p>
+<p>Getting the <code>TITLE_ID</code> is simple: launch the app/game and opening the <code>Adrenaline Menu</code> in the <code>Main</code> tab.</p>
+<p>It is better explained how to get it in the <a href="./XX-FAQ.html#how-to-get-the-title-id-for-an-applicationgame">FAQ</a>.</p>
+</div>
+<h2 id="anti-libcrypt-patch"><a class="header" href="#anti-libcrypt-patch">Anti-LibCrypt patch</a></h2>
+<hr />
+<p>Adrenaline contains a patch to defeat <code>libcrypt</code> protection for known games without requiring rebuilding the custom PS1 game/app <code>PBP</code> file.</p>
+<p>This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.</p>
 
                     </main>
 

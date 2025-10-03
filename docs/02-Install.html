@@ -429,11 +429,12 @@
   <span class="mdbook-callouts-icon"></span>
   getting rid of the double launch bug
 </p>
-<p>Adrenaline needs to launch twice every time you reboot your device. To get rid of such a limitation, simply write this line to <code>*KERNEL</code>:</p>
+<p>Adrenaline needs to launch twice every time you reboot your device. This is done automatically but that increases the boot time for Adrenaline.</p>
+<p>To get rid of such a limitation, simply write this line to <code>*KERNEL</code> section of you <code>ur0:/tai/config.txt</code> file:</p>
 <pre><code>*KERNEL
 ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </code></pre>
-<p>After that, Adrenaline will only need to be launched once.</p>
+<p>After that, Adrenaline will only need to be launched once, improving the time to boot the <a href="./XX-Glossary.html">vPSP</a> environment.</p>
 </div>
 <h2 id="update"><a class="header" href="#update">Update</a></h2>
 <hr />

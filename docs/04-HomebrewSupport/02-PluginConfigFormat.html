@@ -415,7 +415,7 @@
 </style>
 <h1 id="plugin-configuration-format"><a class="header" href="#plugin-configuration-format">Plugin Configuration Format</a></h1>
 <hr />
-<p>The configuration format for the plugins on Adrenaline is composed of three sections per line: runlevel(s), plugin path, and switch state (on/off), separated by a comma.</p>
+<p>The configuration format for the plugins on Adrenaline is composed of three sections per line: <strong>runlevel</strong>(s), <strong>plugin path</strong>, and <strong>switch state</strong> (on/off), separated by a comma.</p>
 <p>It also accepts line comments with <code>//</code> and <code>#</code>.</p>
 <h2 id="runlevels"><a class="header" href="#runlevels">Runlevels</a></h2>
 <p>The available runlevels are:</p>
@@ -426,7 +426,7 @@
 <li><code>hbw</code>/<code>homebrew</code>: Homebrew runlevel — Plugins configuration for homebrew application and games</li>
 <li><code>app</code>/<code>game</code>: UMD + Homebrew — Plugins configuration for any PSP application or game; retail or homebrew</li>
 <li><code>always</code>/<code>all</code>: All runlevels — Plugins configuration for all runlevels</li>
-<li><code>⟨GAME ID⟩</code>: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID</li>
+<li><code>⟨TITLE ID⟩</code>: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID</li>
 <li><code>⟨PATH⟩</code>: Path-specific runlevel — Plugins configuration for an application or game in the specified path. <strong>This is more advanced</strong></li>
 </ul>
 <p>You can specify more than one runlevel for a specific plugin by separating with a space character, more on <a href="#example">example</a>.</p>
@@ -459,7 +459,7 @@ app, ms0:/seplugins/example.prx, off
 # Always
 always, ms0:/seplugins/example.prx, off
 
-# Game ID example
+# Title ID example
 ULES00151, ms0:/seplugins/gta_remastered.prx, on
 
 # Path example
@@ -494,7 +494,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <p>And following the format of <code>⟨PLUGIN PATH⟩ ⟨0 or 1⟩</code> per plugin.</p>
 <p>If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:</p>
 <ol>
-<li>Open Recovery Menu</li>
+<li>Open <a href="../09-RecoveryMenu.html"><strong>Recovery Menu</strong></a></li>
 <li>Go to the <code>Advanced</code> section</li>
 <li>Select and click on <code>Import classic plugins</code></li>
 </ol>

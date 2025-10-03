@@ -471,15 +471,15 @@
 <h2 id="key-combos-cheat-sheet"><a class="header" href="#key-combos-cheat-sheet">Key Combos Cheat Sheet</a></h2>
 <hr />
 <div class="table-wrapper"><table><thead><tr><th>Key Combo</th><th>Event</th><th>Availability</th></tr></thead><tbody>
-<tr><td>L+R+Down+Select</td><td>Fast exit to VSH</td><td>Anytime</td></tr>
-<tr><td>L+R+Down+Start</td><td>Fast exit to VSH</td><td>Anytime</td></tr>
-<tr><td>L2+R2+Down+Select</td><td>Fast exit to VSH</td><td>PS1 Application on Vita</td></tr>
-<tr><td>L2+R2+Down+Start</td><td>Fast exit to VSH</td><td>PS1 Application on Vita</td></tr>
+<tr><td>L+R+Down+Select</td><td>Fast exit to XMB/VSH</td><td>Anytime on XMB or PSP Application</td></tr>
+<tr><td>L+R+Down+Start</td><td>Fast exit to XMB/VSH</td><td>Anytime on XMB or PSP Application</td></tr>
+<tr><td>L2+R2+Down+Select</td><td>Fast exit to XMB/VSH</td><td>Anytime on PS1 Application on Vita</td></tr>
+<tr><td>L2+R2+Down+Start</td><td>Fast exit to XMB/VSH</td><td>Anytime on PS1 Application on Vita</td></tr>
 <tr><td>L+Select</td><td>Toggle PS1 Fast Forward</td><td>PS1/POPS Apps and Games</td></tr>
 <tr><td>Select</td><td>Open VSH Menu</td><td>XMB/VSH</td></tr>
-<tr><td>Hold L</td><td>Plugins disabled</td><td>Reset/Power on/booting PSP/PS1 application</td></tr>
+<tr><td>Hold L</td><td>Plugins disabled</td><td>On PSP/PS1 application Reset/Power-on/launch</td></tr>
 <tr><td>Hold R</td><td>Start Adrenaline CFW on Recovery mode</td><td>On Adrenaline App bubble start</td></tr>
-<tr><td>Hold R</td><td>Execute BOOT.BIN in UMDemu ISO</td><td>On PSP ISO and Compressed ISO apps and games</td></tr>
+<tr><td>Hold R</td><td>Execute BOOT.BIN in UMDemu ISO</td><td>On PSP ISO apps and games launch</td></tr>
 <tr><td>PS button 2x</td><td>Return to Vita live area</td><td>Anytime</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><style>
@@ -735,11 +735,12 @@
   <span class="mdbook-callouts-icon"></span>
   getting rid of the double launch bug
 </p>
-<p>Adrenaline needs to launch twice every time you reboot your device. To get rid of such a limitation, simply write this line to <code>*KERNEL</code>:</p>
+<p>Adrenaline needs to launch twice every time you reboot your device. This is done automatically but that increases the boot time for Adrenaline.</p>
+<p>To get rid of such a limitation, simply write this line to <code>*KERNEL</code> section of you <code>ur0:/tai/config.txt</code> file:</p>
 <pre><code>*KERNEL
 ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </code></pre>
-<p>After that, Adrenaline will only need to be launched once.</p>
+<p>After that, Adrenaline will only need to be launched once, improving the time to boot the <a href="./XX-Glossary.html">vPSP</a> environment.</p>
 </div>
 <h2 id="update"><a class="header" href="#update">Update</a></h2>
 <hr />
@@ -1279,8 +1280,10 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <img src="03-AdrenalineMenu/../assets/03-epi-menu-main-states.png" width="70%" />
 </p>
 <h2 id="what-is-a-save-state"><a class="header" href="#what-is-a-save-state">What is a Save State</a></h2>
+<hr />
 <p>A save state is a snapshot of the current status of a game, allowing you to save and restore your progress at any point. Unlike traditional in-game saves, save states capture everything in memory, so you can resume exactly where you left off, even if the game itself doesn’t support saving at that moment.</p>
 <h2 id="creating-save-state"><a class="header" href="#creating-save-state">Creating Save State</a></h2>
+<hr />
 <p>To create a save state, do the following:</p>
 <ol>
 <li>Open <strong>Adrenaline Menu</strong>
@@ -1312,6 +1315,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <img src="03-AdrenalineMenu/../assets/03-state-overwrite.png" width="70%" />
 </p>
 <h2 id="loading-save-state"><a class="header" href="#loading-save-state">Loading Save State</a></h2>
+<hr />
 <p>To load a save state, do the following:</p>
 <ol>
 <li>Open <strong>Adrenaline Menu</strong>
@@ -1328,6 +1332,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <img src="03-AdrenalineMenu/../assets/03-state-load.png" width="70%" />
 </p>
 <h2 id="deleting-save-state"><a class="header" href="#deleting-save-state">Deleting Save State</a></h2>
+<hr />
 <p>To delete a save state, do the following:</p>
 <ol>
 <li>Open <strong>Adrenaline Menu</strong>
@@ -1605,7 +1610,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <p>When the <strong>Original</strong> option is selected, all graphics-related options will not take effect.</p>
 </div>
 <h2 id="smooth-graphics"><a class="header" href="#smooth-graphics">Smooth Graphics</a></h2>
-<p>When enabled, apply a stronger smooth effect filter on top of the filter selected on<a href="03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">Graphical Filtering</a> configuration.</p>
+<p>When enabled, apply a stronger smooth effect filter on top of the filter selected on <a href="03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">Graphical Filtering</a> configuration.</p>
 <h2 id="flux-filter-color"><a class="header" href="#flux-filter-color">f.lux Filter Color</a></h2>
 <p>Configures a color filter option that will be applied on top of the other filters.</p>
 <p>The available options are:</p>
@@ -1627,7 +1632,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <p>For this config, I like to set it to <code>1.215</code> on both X and Y axis. Maximizes the size while maintaining the original game proportions.</p>
 </div>
 <h2 id="memory-stick-location"><a class="header" href="#memory-stick-location">Memory Stick Location</a></h2>
-<p>Chooses the drive Adrenaline App shows up for the Adrenaline CFW as the Memory Stick drive (<code>ms0:/</code>).</p>
+<p>Chooses the drive Adrenaline App shows up for the Adrenaline CFW as the Memory Stick drive (<code>ms0:</code>).</p>
 <p>The options are:</p>
 <ul>
 <li><code>ux0:pspemu</code></li>
@@ -2480,7 +2485,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </style>
 <h1 id="plugin-configuration-format"><a class="header" href="#plugin-configuration-format">Plugin Configuration Format</a></h1>
 <hr />
-<p>The configuration format for the plugins on Adrenaline is composed of three sections per line: runlevel(s), plugin path, and switch state (on/off), separated by a comma.</p>
+<p>The configuration format for the plugins on Adrenaline is composed of three sections per line: <strong>runlevel</strong>(s), <strong>plugin path</strong>, and <strong>switch state</strong> (on/off), separated by a comma.</p>
 <p>It also accepts line comments with <code>//</code> and <code>#</code>.</p>
 <h2 id="runlevels"><a class="header" href="#runlevels">Runlevels</a></h2>
 <p>The available runlevels are:</p>
@@ -2491,7 +2496,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <li><code>hbw</code>/<code>homebrew</code>: Homebrew runlevel — Plugins configuration for homebrew application and games</li>
 <li><code>app</code>/<code>game</code>: UMD + Homebrew — Plugins configuration for any PSP application or game; retail or homebrew</li>
 <li><code>always</code>/<code>all</code>: All runlevels — Plugins configuration for all runlevels</li>
-<li><code>⟨GAME ID⟩</code>: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID</li>
+<li><code>⟨TITLE ID⟩</code>: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID</li>
 <li><code>⟨PATH⟩</code>: Path-specific runlevel — Plugins configuration for an application or game in the specified path. <strong>This is more advanced</strong></li>
 </ul>
 <p>You can specify more than one runlevel for a specific plugin by separating with a space character, more on <a href="04-HomebrewSupport/02-PluginConfigFormat.html#example">example</a>.</p>
@@ -2524,7 +2529,7 @@ app, ms0:/seplugins/example.prx, off
 # Always
 always, ms0:/seplugins/example.prx, off
 
-# Game ID example
+# Title ID example
 ULES00151, ms0:/seplugins/gta_remastered.prx, on
 
 # Path example
@@ -2559,7 +2564,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <p>And following the format of <code>⟨PLUGIN PATH⟩ ⟨0 or 1⟩</code> per plugin.</p>
 <p>If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:</p>
 <ol>
-<li>Open Recovery Menu</li>
+<li>Open <a href="04-HomebrewSupport/../09-RecoveryMenu.html"><strong>Recovery Menu</strong></a></li>
 <li>Go to the <code>Advanced</code> section</li>
 <li>Select and click on <code>Import classic plugins</code></li>
 </ol>
@@ -2847,7 +2852,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
   <span class="mdbook-callouts-icon"></span>
   important
 </p>
-<p>This plugin should be enabled for <code>GAME ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong></p>
+<p>This plugin should be enabled for <code>TITLE ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong></p>
 </div>
 <p><a href="https://github.com/Kethen/aemu/releases">Download PRO Online Here</a></p>
 <div class="mdbook-callouts mdbook-callouts-example">
@@ -2855,7 +2860,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
   <span class="mdbook-callouts-icon"></span>
   example
 </p>
-<p>Note that this example if for <strong>Motorstorm Artic Edge</strong> US version, change or add <code>GAME ID</code>s according to the games you want that it enabled.</p>
+<p>Note that this example if for <strong>Motorstorm Artic Edge</strong> US version, change or add <code>TITLE ID</code>s according to the games you want that it enabled.</p>
 <p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
 <pre><code>UCES01250, ms0:/seplugins/atpro.prx, on
 </code></pre>
@@ -2868,7 +2873,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
   <span class="mdbook-callouts-icon"></span>
   important
 </p>
-<p>This plugin should be enabled for <code>GAME ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong>.</p>
+<p>This plugin should be enabled for <code>TITLE ID</code>, or limited testing of <code>GAME</code> mode <strong>ONLY</strong>.</p>
 <p>And this plugins in incompatible with the <code>Force High Memory</code> CFW configuration, so it is best to disable this configuration before starting a game with this plugin</p>
 </div>
 <p><a href="https://github.com/TheOfficialFloW/GePatch/releases">Download GePatch Here</a></p>
@@ -2878,7 +2883,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
   <span class="mdbook-callouts-icon"></span>
   example
 </p>
-<p>Note that this example if for <strong>Final Fantasy III</strong> US version, change or add <code>GAME ID</code>s according to the games you want that it enabled.</p>
+<p>Note that this example if for <strong>Final Fantasy III</strong> US version, change or add <code>TITLE ID</code>s according to the games you want that it enabled.</p>
 <p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
 <pre><code>NPUH10125, ms0:/seplugins/ge_patch.prx, on
 </code></pre>
@@ -2903,7 +2908,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
   <span class="mdbook-callouts-icon"></span>
   important
 </p>
-<p>This plugin should be enabled for <code>GAME ID</code> <strong>ONLY</strong>.</p>
+<p>This plugin should be enabled for <code>TITLE ID</code> <strong>ONLY</strong>.</p>
 </div>
 <p><a href="https://github.com/TheOfficialFloW/RemasteredControls/releases">Download Remastered Controls Plugins Here</a></p>
 <div class="mdbook-callouts mdbook-callouts-example">
@@ -2911,7 +2916,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
   <span class="mdbook-callouts-icon"></span>
   example
 </p>
-<p>Note that this example if for <strong>Kingdom Hearts: Birth By Sleep</strong> US version, change or add <code>GAME ID</code>s and plugin path according to the games you want that it enabled.</p>
+<p>Note that this example if for <strong>Kingdom Hearts: Birth By Sleep</strong> US version, change or add <code>TITLE ID</code>s and plugin path according to the games you want that it enabled.</p>
 <p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
 <pre><code>ULUS10505, ms0:/seplugins/khbbs_remastered.prx, on
 </code></pre>
@@ -3247,7 +3252,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </li>
 </ul>
 <h3 id="march-33-2"><a class="header" href="#march-33-2">March 33 2</a></h3>
-<p>March33 driver was originally developed for the March33 CFW by the M33 Team. Adrenaline comes with a modified version with ISO and Compressed ISO read improvements; other than that, there were no other significant changes in the source code.</p>
+<p>March33 driver was originally developed for the March33 CFW by the M33 Team. Adrenaline comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.</p>
 <p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
@@ -3260,7 +3265,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </ul>
 <h3 id="sonys-np9660"><a class="header" href="#sonys-np9660">Sony's NP9660</a></h3>
 <p>It is the original PSP UMDemu driver from Sony, but with patches to trick it into running ISO and Compressed ISO formats. This driver is also the one used on <code>PBP</code> games; it has guaranteed compatibility with all games that Sony released on PSN.</p>
-<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
+<p>This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
 <li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
@@ -3525,6 +3530,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <hr />
 <p><code>Compressed ISO</code> is an <code>ISO</code> image compressed in some way to reduce the space usage. There are a few competing formats, each with different tradeoffs. The formats are specified below.</p>
 <h2 id="technical-overview"><a class="header" href="#technical-overview">Technical Overview</a></h2>
+<hr />
 <div class="table-wrapper"><table><thead><tr><th>Format</th><th>Author</th><th>Supported Algorithm</th><th>Supported Block Size</th><th>Compression Ratio vs Decompression Speed</th><th>Comments</th></tr></thead><tbody>
 <tr><td>CSO</td><td>by Booster</td><td>DEFLATE</td><td>Any (2K is Standard)</td><td>Great compression size, Slow decompression speed</td><td>Uses the same de/compression algorithm as DAX, but a lighter structure. While it supported any block size, the standard was 2K (it was also the only size allowed by compression tools, including the official one), in contrast to DAX's 8K. Traditionally, this meant DAX was faster as it had to process fewer blocks than CSO, but this is no longer true with the new reader; thus, they both perform the same regardless of block size. However, this also means that standard 2K CSO is bigger than DAX, but CSO compressed using the same 8K block size as DAX actually produces a smaller image. Meaning that an 8K CSO is superior to DAX in every way (this could be the reason DAX himself dropped support for DAX in favor of CSO, though the M33 driver never supported anything other than 2K CSO).</td></tr>
 <tr><td>DAX</td><td>by Dark_AleX</td><td>DEFLATE</td><td>8K Only</td><td>Great compression size, Slow decompression speed</td><td>A competing format of CSO, it uses a slightly different structure, though the compression algorithm is the same. The original version did not allow for Non-Compressed sectors, a feature added in Version 1, though in a complicated and inefficient way. Though the format used to be faster than CSO, this was merely due to unoptimized IO access in the older drivers. Eventually, support for the format was dropped with the M33 CFW.</td></tr>
@@ -3544,6 +3550,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <p>The format can also depend on the game, with more intensive games benefiting more from faster decompression (such as <code>ZSO</code> with GTA games), while with other games the slower decompression only results in a bit more loading times but no difference in gameplay and thus <code>CSO</code>/<code>DAX</code> works fine (such as the case of Minis).</p>
 </div>
 <h2 id="history-format-wars"><a class="header" href="#history-format-wars">History: Format Wars</a></h2>
+<hr />
 <p>Format wars aren't a thing exclusive to the movie industry, and Sony is certainly no stranger to them, though they had nothing to do with this one (at least initially, they did end up making their own PBP format for PSN releases).</p>
 <p>Back when the first ISO drivers showed up on the console, memory sticks weren't bigger than 2GB, which necessitated the implementation of a space-saving mechanism in the form of a compression format for <code>ISO</code> files.</p>
 <p>Compressing an <code>ISO</code> into a ZIP file would not be enough, as you can't do random-access on ZIP files; you have to decompress the entire file before you can use it. This works for classic retro console roms as they are small enough that the entire file can be loaded into RAM, but for a UMD that can reach up to 1.8GB, this was not going to cut it.</p>
@@ -3812,7 +3819,7 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <li><strong><code>Completely revamped Compressed ISO Reader</code></strong>: The <code>CSO</code> driver available with the original Inferno was heavily hardcoded to work only with <code>CSO</code> and only with the PSP. The entire reader was completely rewritten from scratch with much less and lighter code, much more portability (it has been ported to PC, PS2/OPL, and Wii/Nintendont), as well as a much more generic and configurable structure, allowing for easily adding support for other formats without changing the core reader.</li>
 <li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks seen on <code>Inferno 1.5</code>.</li>
 <li><strong><code>Support for other compressed formats</code></strong>: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only <code>CSO</code> and <code>ZSO</code> as seen on <code>Inferno 1.5</code>, but also adds support for <code>DAX</code> as seen on ME's Inferno update as well as early SE/OE CFW, as well as the rarely seen before <code>JSO</code> and <code>CSOv2</code> formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.</li>
-<li><strong><code>Improved Inferno Cache compatibility</code></strong>: Issues between Inferno Cache and Force Extra RAM have been resolved, including being able to use it with PRO Online, as well as allowing the use of Inferno Cache on PS Vita and PSP 1K. The Cache size is no longer configurable, but it adjusts automatically depending on device/configuration, while also allowing for enough free space for other features or plugins.</li>
+<li><strong><code>Improved Inferno Cache compatibility</code></strong>: Issues between Inferno Cache and Force Extra RAM have been resolved, including being able to use it with PRO Online, as well as allowing the use of Inferno Cache on PS Vita and PSP 1K.</li>
 <li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><style>
@@ -4586,35 +4593,15 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 </p>
 <p>An older alternative to <code>pop-fe</code> is <code>PSX2PSP</code>, it is an unmaintained project and has lower compatibility than <code>pop-fe</code>, more so in the case of VITA/PSTV. A game converted with <code>PSX2PSP</code> will show up in Adrenaline, and most likely run, but will be unable to use custom POPS configuration, as the tool doesn't add a required section in the outputted <code>PBP</code> file to do custom POPS configuration injection.</p>
 </div>
-<p>Adrenaline comes with a set of added features tailored for better support of custom PS1 games/apps.</p>
-<h2 id="cdda-support"><a class="header" href="#cdda-support">CDDA Support</a></h2>
+<p>Adrenaline comes with a set of added features tailored for better game experience and better support of custom PS1 games/apps.</p>
+<h2 id="fast-forward"><a class="header" href="#fast-forward">Fast-forward</a></h2>
 <hr />
-<p><strong>CD Direct Audio</strong> was one of the methods (along with the proprietary XA format) to encode sound in PS1 games.
-Games that use CDDA are usually separated into different tracks, with the first one being the main data track and the rest being CD audio tracks. Many regular CD players were capable of playing these audio tracks when a PS1 disc was inserted.</p>
-<p>The PS1 emulator was originally coded to use CD audio tracks packaged into the EBOOT itself, however on later firmware revisions, Sony decided to replace those CDDA tracks with equivalent tracks encoded (and compressed) in AT3 format, which the PSP could also decode and play, this was done to drastically reduce the size of some PS1 games that used a lot of the disc space for CDDA.</p>
-<p>Though Sony replaced CDDA with AT3, they didn't really remove the ability to play CDDA-encoded games; they just disabled it.
-A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> was released to re-enable CDDA functionality in the PS1 emulator, allowing games encoded with the older format to be playable with full working sound (whereas before they would produce no sound).</p>
-<p>The patch to re-enable CDDA has been added to Adrenaline's <code>PopCorn</code> module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the <code>cdda_enabler</code> plugin on Adrenaline.</p>
-<h2 id="custom-pops-configuration"><a class="header" href="#custom-pops-configuration">Custom POPS Configuration</a></h2>
-<hr />
-<p>The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.</p>
-<p>With Adrenaline, you can implement these custom patches in a single external file <code>CONFIG.BIN</code>, stored alongside the <code>EBOOT.PBP</code> of the custom PS1 game/app (i.e. <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code>), without the need to be injected into the <code>EBOOT.PBP</code> file; as the CFW will do that for you on-the-fly.</p>
-<div class="mdbook-callouts mdbook-callouts-tip">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  tip
-</p>
-<p>Getting the <code>TITLE_ID</code> is simple: launch the app/game and opening the <code>Adrenaline Menu</code> in the <code>Main</code> tab.</p>
-<p>It is better explained how to get it in the <a href="./XX-FAQ.html#how-to-get-the-title-id-for-an-applicationgame">FAQ</a>.</p>
-</div>
-<h2 id="anti-libcrypt-patch"><a class="header" href="#anti-libcrypt-patch">Anti-LibCrypt patch</a></h2>
-<hr />
-<p>Adrenaline contains a patch to defeat <code>libcrypt</code> protection for known games without requiring rebuilding the <code>PBP</code> file.</p>
-<p>This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.</p>
+<p>Adrenaline can increase the speed of a running PS1 app/game. You can toggle this feature by pressing <code>L+Select</code> while a PS1 app/game is running.</p>
+<p>This feature is more often used to speed-up repetitive gameplay, or skip slow sections &amp; cutscenes.</p>
 <h2 id="overlay-image"><a class="header" href="#overlay-image">Overlay Image</a></h2>
 <hr />
-<p>With Adrenaline, you can include an extra overlay filter based on an image. You can set one image overlay per PS1 game.</p>
-<p>The image should be <code>960x544</code> pixels to work properly. And the image must be stored as <code>???0:/pspemu/overlays/⟨TITLE_ID⟩.png</code>.</p>
+<p>With Adrenaline, you can include an extra overlay filter based on an image that can be used to decorate the empty space on the sides of the game or custom scanline textures.</p>
+<p>One image overlay per PS1 game can be set. The image should be <code>960x544</code> pixels to work properly. And the image must be stored as <code>???0:/pspemu/overlays/⟨TITLE_ID⟩.png</code>.</p>
 <div class="mdbook-callouts mdbook-callouts-warning">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -4641,6 +4628,30 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <img src="./assets/06-overlay.png" width="49%" />
 </p>
 </div>
+<h2 id="cdda-support"><a class="header" href="#cdda-support">CDDA Support</a></h2>
+<hr />
+<p><strong>CD Direct Audio</strong> was one of the methods (along with the proprietary XA format) to encode sound in PS1 games.
+Games that use CDDA are usually separated into different tracks, with the first one being the main data track and the rest being CD audio tracks. Many regular CD players were capable of playing these audio tracks when a PS1 disc was inserted.</p>
+<p>The PS1 emulator was originally coded to use CD audio tracks packaged into the EBOOT itself, however on later firmware revisions, Sony decided to replace those CDDA tracks with equivalent tracks encoded (and compressed) in AT3 format, which the PSP could also decode and play, this was done to drastically reduce the size of some PS1 games that used a lot of the disc space for CDDA.</p>
+<p>Though Sony replaced CDDA with AT3, they didn't really remove the ability to play CDDA-encoded games; they just disabled it.
+A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> was released to re-enable CDDA functionality in the PS1 emulator, allowing games encoded with the older format to be playable with full working sound (whereas before they would produce no sound).</p>
+<p>The patch to re-enable CDDA has been added to Adrenaline's <code>PopCorn</code> module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the <code>cdda_enabler</code> plugin on Adrenaline.</p>
+<h2 id="custom-pops-configuration"><a class="header" href="#custom-pops-configuration">Custom POPS Configuration</a></h2>
+<hr />
+<p>The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.</p>
+<p>With Adrenaline, you can implement these custom patches in a single external file <code>CONFIG.BIN</code>, stored alongside the <code>EBOOT.PBP</code> of the custom PS1 game/app (i.e. <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code>), without the need to be injected into the <code>EBOOT.PBP</code> file; as the CFW will do that for you on-the-fly.</p>
+<div class="mdbook-callouts mdbook-callouts-tip">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  tip
+</p>
+<p>Getting the <code>TITLE_ID</code> is simple: launch the app/game and opening the <code>Adrenaline Menu</code> in the <code>Main</code> tab.</p>
+<p>It is better explained how to get it in the <a href="./XX-FAQ.html#how-to-get-the-title-id-for-an-applicationgame">FAQ</a>.</p>
+</div>
+<h2 id="anti-libcrypt-patch"><a class="header" href="#anti-libcrypt-patch">Anti-LibCrypt patch</a></h2>
+<hr />
+<p>Adrenaline contains a patch to defeat <code>libcrypt</code> protection for known games without requiring rebuilding the custom PS1 game/app <code>PBP</code> file.</p>
+<p>This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.</p>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
   padding: 8px 16px;
@@ -4881,6 +4892,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <h1 id="adrenaline-vsh-menu"><a class="header" href="#adrenaline-vsh-menu">Adrenaline VSH Menu</a></h1>
 <hr />
 <p>VSH Menu is a menu that can be accessed while on XMB/VSH. It contains the most common CFW configurations that users of Adrenaline change with more frequency and quick commands.</p>
+<p>To access this menu, click the <code>Select</code> button while on XMB/VSH.</p>
 <p align="center">
 <img src="./assets/07-vsh-menu.png" width="60%" />
 </p>
@@ -4890,7 +4902,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <li>Modify the CPU/BUS speed for PSP Games</li>
 <li>Modify the ISO driver to use when launching ISO games</li>
 <li>Quick option to suspend the device</li>
-<li>Quick option to restart the system in the Recovery Menu</li>
+<li>Quick option to restart the system in the <a href="./09-RecoveryMenu.html">Recovery Menu</a></li>
 <li>Quick option to restart XMB/VSH</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><style>
@@ -5230,6 +5242,8 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 </ul>
 <h3 id="use-sony-psp-osk"><a class="header" href="#use-sony-psp-osk">Use Sony PSP OSK</a></h3>
 <p>When enabled, makes the system to use the PSP On Screen Keyboard (OSK) instead of the VITA/PSTV native OSK.</p>
+<h3 id="memory-stick-cache"><a class="header" href="#memory-stick-cache">Memory Stick Cache</a></h3>
+<p>When enabled, the system will use a cache in I/O operations of the Memory Stick drive (<code>ms0:</code>) to improve speed.</p>
 <h3 id="nodrm-engine"><a class="header" href="#nodrm-engine">NoDRM engine</a></h3>
 <p>Controls whether to patch the DRM engine of the PSP system.</p>
 <p>When enabled, the system will allow to launch application, homebrews and games without a valid license.</p>
@@ -5255,7 +5269,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <ul>
 <li><code>Disabled</code>: With this option, no specific memory layout is forced.
 <ul>
-<li>By default, user partition gets the standard 24MB.</li>
+<li>By default, user RAM partition gets the standard 24MB.</li>
 <li>Homebrew games/apps can request other layout by using the <code>MEMSIZE</code> in their <code>SFO</code> information or by using the CFW API.</li>
 <li>Plugin author can use the CFW API to request changing the layout.</li>
 </ul>
@@ -5277,6 +5291,28 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
   max option warning
 </p>
 <p>Some important stuff for the VITA's PSPemu are put in this region of memory. Although Adrenaline protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.</p>
+</div>
+<h3 id="use-graphic-engine-2"><a class="header" href="#use-graphic-engine-2">Use Graphic Engine 2</a></h3>
+<p>Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
+<p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
+<div class="mdbook-callouts mdbook-callouts-note">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  note
+</p>
+<p>The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.</p>
+</div>
+<h3 id="use-media-engine-2"><a class="header" href="#use-media-engine-2">Use Media Engine 2</a></h3>
+<p>Controls wether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
+<p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
+<div class="mdbook-callouts mdbook-callouts-note">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  note
+</p>
+<p>The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.</p>
 </div>
 <h3 id="execute-bootbin-in-umdemu-iso"><a class="header" href="#execute-bootbin-in-umdemu-iso">Execute BOOT.BIN in UMDemu ISO</a></h3>
 <p>This configuration makes the the system to execute <code>BOOT.BIN</code> file instead of <code>EBOOT.BIN</code> when launching ISO game/apps.</p>
@@ -5343,7 +5379,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Even though what is left is more than enough for most plugin configurations, if you have a crazy amounts of plugins that uses a lots of memory, memory starvation will happen.</p>
 </div>
 <h3 id="umdemu-iso-seek-time-delay-factor"><a class="header" href="#umdemu-iso-seek-time-delay-factor">UMDemu ISO seek time delay factor</a></h3>
-<p>Adrenaline's <code>Inferno</code> and <code>March33</code> UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.</p>
+<p>Adrenaline's UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that seek time simulation.</p>
 <p>This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
 <h4 id="option"><a class="header" href="#option">Option:</a></h4>
@@ -5362,7 +5398,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance issues.</p>
 </div>
 <h3 id="umdemu-iso-read-speed-delay-factor"><a class="header" href="#umdemu-iso-read-speed-delay-factor">UMDemu ISO read speed delay factor</a></h3>
-<p>Adrenaline's <code>Inferno</code> and <code>March33</code> UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
+<p>Adrenaline's UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that read speed simulation.</p>
 <p>This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
 <h4 id="option-1"><a class="header" href="#option-1">Option:</a></h4>
@@ -5676,7 +5712,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <h3 id="activate-wma"><a class="header" href="#activate-wma">Activate WMA</a></h3>
 <p>Enables WMA playback without connecting to the internet.</p>
 <h3 id="activate-flash-player"><a class="header" href="#activate-flash-player">Activate Flash Player</a></h3>
-<p>Enables Flash Player  without connecting to the internet.</p>
+<p>Enables Flash Player without connecting to the internet.</p>
 <h3 id="reset-settings"><a class="header" href="#reset-settings">Reset settings</a></h3>
 <p>Resets the CFW settings to the default values.</p>
 <h2 id="plugins"><a class="header" href="#plugins">Plugins</a></h2>
@@ -5925,14 +5961,17 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <hr />
 <p>Adrenaline adds extra menus to the XMB that allow the user to change CFW settings and work as a plugin manager.</p>
 <h2 id="-adrenaline-cfw-settings"><a class="header" href="#-adrenaline-cfw-settings">★ Adrenaline CFW settings</a></h2>
+<hr />
 <p>This menu can be found in the <code>Settings</code> section of the XMB. It allows modifying the <a href="./08-CfwConfiguration.html">Adrenaline CFW Settings</a>.</p>
 <p>Some options may require that the system be restarted before taking effect. This will be informed in the menu (third image).</p>
+<p>Advanced settings are marked with the <code>▲</code> symbol at the start.</p>
 <p align="center">
 <img src="./assets/10-cfw-settings.png" width="49%" />
 <img src="./assets/10-cfw-settings-list.png" width="49%" />
 <img src="./assets/10-cfw-settings-need-restart.png" width="49%" />
 </p>
 <h2 id="-plugins-manager"><a class="header" href="#-plugins-manager">★ Plugins Manager</a></h2>
+<hr />
 <p>This menu can be found in the <code>Settings</code> section of the XMB. It allows modifying the <a href="./04-HomebrewSupport/02-PluginConfigFormat.html">plugin configuration</a> directly from the XMB.</p>
 <p>Once opened, it will show the list of plugins, their runlevels, and their path. Clicking the enter button allows to select the state of the plugin entry (<code>On</code>, <code>Off</code>, <code>Remove</code>).</p>
 <p>The <code>Remove</code> option will remove the configuration line related to the plugin configuration file and restart the XMB.</p>
@@ -6217,6 +6256,13 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <li><code>cef/satelite</code>: Provides the <code>VSH Menu</code> to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.</li>
 <li><code>cef/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section.</li>
 </ul>
+<h2 id="setting-up-the-development-environment"><a class="header" href="#setting-up-the-development-environment">Setting up the development environment</a></h2>
+<hr />
+<p>To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depend on four thing: <strong>VITASDK</strong>, <strong>PSPSDK</strong>, <strong>Python3</strong> and <strong>psp-packer</strong>.</p>
+<p>For the <a href="https://vitasdk.org/">VITASDK</a> and <a href="https://pspdev.github.io/">PSPSDK</a>, follow their instructions to install it in your system.</p>
+<p><a href="https://www.python.org/downloads/">Python3</a> installation will depend on your system and setup. Google is your friend on this one.</p>
+<p>For psp-packer, there are two tested implementations that works with Adrenaline, the <a href="https://bitbucket.org/DaveeFTW/psp-packer/src/master/">Davee's implementation</a> and <a href="https://github.com/VitaArchive/psp-packer">GrayJack's implementation</a>.</p>
+<p>Once everything is installed, you can build the project.</p>
 <h2 id="building-the-project"><a class="header" href="#building-the-project">Building the project</a></h2>
 <hr />
 <p>First, you need to compile the eCFW (ePSP-side) code:</p>
@@ -7067,6 +7113,272 @@ cmake --build build
   --color-pink: #d53984;
 }
 </style>
+<h1 id="known-compatibility-issues"><a class="header" href="#known-compatibility-issues">Known Compatibility Issues</a></h1>
+<hr />
+<p>This is a list of compatibility issues on Adrenaline with games, application, homebrews and plugins.</p>
+<h2 id="eyepet"><a class="header" href="#eyepet">EyePet</a></h2>
+<hr />
+<p>The camera is not working in this game. That seems to be caused by some buffer in PSPemu that somehow gets invalid.</p>
+<p>There are currently no way to solve the issue with this game.</p>
+<h2 id="the-simpson-game"><a class="header" href="#the-simpson-game">The Simpson Game</a></h2>
+<hr />
+<p>The game crashes when the keyboard is opened.</p>
+<p>To fix, enable the <a href="./08-CfwConfiguration.html#use-sony-psp-osk"><code>Use Sony PSP OSK</code></a> CFW option.</p>
+<h2 id="games-with-network-issues-requires-re-testing"><a class="header" href="#games-with-network-issues-requires-re-testing">Games with Network issues (requires re-testing)</a></h2>
+<hr />
+<h3 id="hang-when-trying-to-get-to-the-ap-connection-screen"><a class="header" href="#hang-when-trying-to-get-to-the-ap-connection-screen">Hang when trying to get to the AP connection screen</a></h3>
+<ul>
+<li><code>Twisted Metal Head On</code></li>
+<li><code>NBA</code></li>
+<li><code>ATV Blazin Fury</code></li>
+</ul>
+<h3 id="others"><a class="header" href="#others">Others</a></h3>
+<p>Games that use GameMode API - partial list of games here.</p>
+<ul>
+<li><code>Burnout Dominator</code>: Game becomes too fast for everyone if a Vita player joins, also happens if one of the PSPs is overclocked (video demonstration here).</li>
+<li><code>Lego Star Wars II</code>/<code>Lego Indiana Jones 2</code>: Getting a wireless error (Adrenaline) or the game freezes up (ARK4).</li>
+<li><code>Street Riders</code>/<code>Asphalt: Urban GT 2</code>: Can't see other consoles in lobby (same developer made both games so its most likely the same issue).</li>
+<li><code>CSPSP</code>: Game gets a blue screen/crash when entering multiplayer , note that the game works fine on Adrenaline.</li>
+<li><code>Sega Rally Revo</code>: Game disconnects after it starts in infrastructure mode only.</li>
+</ul>
+<p>Some network issues may be fixed with the updated <a href="https://github.com/Kethen/aemu">PRO Online</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><style>
+.mdbook-callouts {
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  /* border-left: 0.25em solid var(--mdbook-callouts-color); */
+  background: var(--mdbook-callouts-background);
+}
+
+.mdbook-callouts > *:first-child {
+  margin-top: 0;
+}
+
+.mdbook-callouts > *:last-child {
+  margin-bottom: 0;
+}
+
+.mdbook-callouts-title {
+  display: flex;
+  font-weight: 600;
+  align-items: center;
+  line-height: 1;
+  color: var(--mdbook-callouts-color);
+  text-transform: capitalize;
+}
+
+.mdbook-callouts-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.2em;
+  background-color: currentColor;
+  -webkit-mask: no-repeat center / 100%;
+  mask: no-repeat center / 100%;
+  -webkit-mask-image: var(--mdbook-callouts-icon);
+  mask-image: var(--mdbook-callouts-icon);
+}
+
+/* icons at: https://lucide.dev/icons/ */
+
+.mdbook-callouts-info {
+  --mdbook-callouts-color: rgb(var(--color-blue-rgb));
+  --mdbook-callouts-background: rgba(var(--color-blue-rgb), 0.1);
+  /* https://lucide.dev/icons/info */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWluZm8iPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PHBhdGggZD0iTTEyIDE2di00Ii8+PHBhdGggZD0iTTEyIDhoLjAxIi8+PC9zdmc+');
+}
+
+.mdbook-callouts-note {
+  --mdbook-callouts-color: rgb(var(--color-blue-rgb));
+  --mdbook-callouts-background: rgba(var(--color-blue-rgb), 0.1);
+  /* https://lucide.dev/icons/pencil */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXBlbmNpbCI+PHBhdGggZD0iTTE3IDNhMi44NSAyLjgzIDAgMSAxIDQgNEw3LjUgMjAuNSAyIDIybDEuNS01LjVaIi8+PHBhdGggZD0ibTE1IDUgNCA0Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-tip,
+.mdbook-callouts-hint {
+  --mdbook-callouts-color: rgb(var(--color-cyan-rgb));
+  --mdbook-callouts-background: rgba(var(--color-cyan-rgb), 0.1);
+  /* https://lucide.dev/icons/flame */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWZsYW1lIj48cGF0aCBkPSJNOC41IDE0LjVBMi41IDIuNSAwIDAgMCAxMSAxMmMwLTEuMzgtLjUtMi0xLTMtMS4wNzItMi4xNDMtLjIyNC00LjA1NCAyLTYgLjUgMi41IDIgNC45IDQgNi41IDIgMS42IDMgMy41IDMgNS41YTcgNyAwIDEgMS0xNCAwYzAtMS4xNTMuNDMzLTIuMjk0IDEtM2EyLjUgMi41IDAgMCAwIDIuNSAyLjV6Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-important {
+  --mdbook-callouts-color: rgb(var(--color-purple-rgb));
+  --mdbook-callouts-background: rgba(var(--color-purple-rgb), 0.1);
+  /* https://lucide.dev/icons/alert-circle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFsZXJ0LWNpcmNsZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjgiIHkyPSIxMiIvPjxsaW5lIHgxPSIxMiIgeDI9IjEyLjAxIiB5MT0iMTYiIHkyPSIxNiIvPjwvc3ZnPg==');
+}
+
+.mdbook-callouts-success,
+.mdbook-callouts-check,
+.mdbook-callouts-done {
+  --mdbook-callouts-color: rgb(var(--color-green-rgb));
+  --mdbook-callouts-background: rgba(var(--color-green-rgb), 0.1);
+  /* https://lucide.dev/icons/check */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZWNrIj48cGF0aCBkPSJNMjAgNiA5IDE3bC01LTUiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-question,
+.mdbook-callouts-help,
+.mdbook-callouts-faq {
+  --mdbook-callouts-color: rgb(var(--color-pink-rgb));
+  --mdbook-callouts-background: rgba(var(--color-pink-rgb), 0.1);
+  /* https://lucide.dev/icons/help-circle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWhlbHAtY2lyY2xlIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik05LjA5IDlhMyAzIDAgMCAxIDUuODMgMWMwIDItMyAzLTMgMyIvPjxwYXRoIGQ9Ik0xMiAxN2guMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-warning,
+.mdbook-callouts-warn {
+  --mdbook-callouts-color: rgb(var(--color-orange-rgb));
+  --mdbook-callouts-background: rgba(var(--color-orange-rgb), 0.1);
+  /* https://lucide.dev/icons/alert-triangle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFsZXJ0LXRyaWFuZ2xlIj48cGF0aCBkPSJtMjEuNzMgMTgtOC0xNGEyIDIgMCAwIDAtMy40OCAwbC04IDE0QTIgMiAwIDAgMCA0IDIxaDE2YTIgMiAwIDAgMCAxLjczLTNaIi8+PHBhdGggZD0iTTEyIDl2NCIvPjxwYXRoIGQ9Ik0xMiAxN2guMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-caution {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/shield-alert */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXNoaWVsZC1hbGVydCI+PHBhdGggZD0iTTEyIDIyczgtNCA4LTEwVjVsLTgtMy04IDN2N2MwIDYgOCAxMCA4IDEwIi8+PHBhdGggZD0iTTEyIDh2NCIvPjxwYXRoIGQ9Ik0xMiAxNmguMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-failure,
+.mdbook-callouts-fail,
+.mdbook-callouts-missing {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/x */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXgiPjxwYXRoIGQ9Ik0xOCA2IDYgMTgiLz48cGF0aCBkPSJtNiA2IDEyIDEyIi8+PC9zdmc+');
+}
+
+.mdbook-callouts-error,
+.mdbook-callouts-danger {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/zap */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXphcCI+PHBvbHlnb24gcG9pbnRzPSIxMyAyIDMgMTQgMTIgMTQgMTEgMjIgMjEgMTAgMTIgMTAgMTMgMiIvPjwvc3ZnPg==');
+}
+
+.mdbook-callouts-bug {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/bug */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJ1ZyI+PHBhdGggZD0ibTggMiAxLjg4IDEuODgiLz48cGF0aCBkPSJNMTQuMTIgMy44OCAxNiAyIi8+PHBhdGggZD0iTTkgNy4xM3YtMWEzLjAwMyAzLjAwMyAwIDEgMSA2IDB2MSIvPjxwYXRoIGQ9Ik0xMiAyMGMtMy4zIDAtNi0yLjctNi02di0zYTQgNCAwIDAgMSA0LTRoNGE0IDQgMCAwIDEgNCA0djNjMCAzLjMtMi43IDYtNiA2Ii8+PHBhdGggZD0iTTEyIDIwdi05Ii8+PHBhdGggZD0iTTYuNTMgOUM0LjYgOC44IDMgNy4xIDMgNSIvPjxwYXRoIGQ9Ik02IDEzSDIiLz48cGF0aCBkPSJNMyAyMWMwLTIuMSAxLjctMy45IDMuOC00Ii8+PHBhdGggZD0iTTIwLjk3IDVjMCAyLjEtMS42IDMuOC0zLjUgNCIvPjxwYXRoIGQ9Ik0yMiAxM2gtNCIvPjxwYXRoIGQ9Ik0xNy4yIDE3YzIuMS4xIDMuOCAxLjkgMy44IDQiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-examples,
+.mdbook-callouts-example {
+  --mdbook-callouts-color: rgb(var(--color-purple-rgb));
+  --mdbook-callouts-background: rgba(var(--color-purple-rgb), 0.1);
+  /* https://lucide.dev/icons/list */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpc3QiPjxsaW5lIHgxPSI4IiB4Mj0iMjEiIHkxPSI2IiB5Mj0iNiIvPjxsaW5lIHgxPSI4IiB4Mj0iMjEiIHkxPSIxMiIgeTI9IjEyIi8+PGxpbmUgeDE9IjgiIHgyPSIyMSIgeTE9IjE4IiB5Mj0iMTgiLz48bGluZSB4MT0iMyIgeDI9IjMuMDEiIHkxPSI2IiB5Mj0iNiIvPjxsaW5lIHgxPSIzIiB4Mj0iMy4wMSIgeTE9IjEyIiB5Mj0iMTIiLz48bGluZSB4MT0iMyIgeDI9IjMuMDEiIHkxPSIxOCIgeTI9IjE4Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-quote {
+  --mdbook-callouts-color: rgb(158, 158, 158);
+  --mdbook-callouts-background: rgba(158, 158, 158, 0.1);
+  /* https://lucide.dev/icons/quote */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXF1b3RlIj48cGF0aCBkPSJNMyAyMWMzIDAgNy0xIDctOFY1YzAtMS4yNS0uNzU2LTIuMDE3LTItMkg0Yy0xLjI1IDAtMiAuNzUtMiAxLjk3MlYxMWMwIDEuMjUuNzUgMiAyIDIgMSAwIDEgMCAxIDF2MWMwIDEtMSAyLTIgMnMtMSAuMDA4LTEgMS4wMzFWMjBjMCAxIDAgMSAxIDF6Ii8+PHBhdGggZD0iTTE1IDIxYzMgMCA3LTEgNy04VjVjMC0xLjI1LS43NTctMi4wMTctMi0yaC00Yy0xLjI1IDAtMiAuNzUtMiAxLjk3MlYxMWMwIDEuMjUuNzUgMiAyIDJoLjc1YzAgMi4yNS4yNSA0LTIuNzUgNHYzYzAgMSAwIDEgMSAxeiIvPjwvc3ZnPg==');
+}
+
+
+.ayu {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.light {
+  --color-red-rgb: 233, 49, 71;
+  --color-red: #e93147;
+  --color-orange-rgb: 236, 117, 0;
+  --color-orange: #ec7500;
+  --color-yellow-rgb: 224, 172, 0;
+  --color-yellow: #e0ac00;
+  --color-green-rgb: 8, 185, 78;
+  --color-green: #08b94e;
+  --color-cyan-rgb: 0, 191, 188;
+  --color-cyan: #00bfbc;
+  --color-blue-rgb: 8, 109, 221;
+  --color-blue: #086ddd;
+  --color-purple-rgb: 120, 82, 238;
+  --color-purple: #7852ee;
+  --color-pink-rgb: 213, 57, 132;
+  --color-pink: #d53984;
+}
+
+.coal {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.navy {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.rust {
+  --color-red-rgb: 233, 49, 71;
+  --color-red: #e93147;
+  --color-orange-rgb: 236, 117, 0;
+  --color-orange: #ec7500;
+  --color-yellow-rgb: 224, 172, 0;
+  --color-yellow: #e0ac00;
+  --color-green-rgb: 8, 185, 78;
+  --color-green: #08b94e;
+  --color-cyan-rgb: 0, 191, 188;
+  --color-cyan: #00bfbc;
+  --color-blue-rgb: 8, 109, 221;
+  --color-blue: #086ddd;
+  --color-purple-rgb: 120, 82, 238;
+  --color-purple: #7852ee;
+  --color-pink-rgb: 213, 57, 132;
+  --color-pink: #d53984;
+}
+</style>
 <h1 id="fun-facts-and-faq"><a class="header" href="#fun-facts-and-faq">Fun Facts and FAQ</a></h1>
 <hr />
 <h2 id="why-many-things-have-epi-in-the-name"><a class="header" href="#why-many-things-have-epi-in-the-name">Why many things have "EPI" in the name?</a></h2>
@@ -7105,6 +7417,12 @@ cmake --build build
 <li><strong>Feature ideas</strong>: You can suggest a feature to be implemented on Adrenaline by opening an <a href="https://github.com/isage/Adrenaline/issues">Issue ticket</a>.
 <ul>
 <li>Be mindful that your request may not be possible to be implemented or be considered low priority or even impractical to be implemented.</li>
+</ul>
+</li>
+<li><strong>Financial support</strong>: If you like, you can help the devs with monetary support
+<ul>
+<li>Cat (isage) is currently unable to receive any international money. If you so prefer, a donation to your local animal shelter is encouraged.</li>
+<li>Grayjack can receive support by <a href="https://github.com/sponsors/GrayJack">Github Sponsors</a> or <a href="https://nubank.com.br/cobrar/2a8up/68cf317a-627c-4d09-afb4-0faddf7968d3">PIX</a>. If neither are possible to you, consider a donation to your local animal shelter.</li>
 </ul>
 </li>
 </ul>
@@ -7394,10 +7712,24 @@ cmake --build build
 <p>Add image overlay filter for PS1 game/apps</p>
 </li>
 <li>
+<p>Add <code>Memory Stick Cache</code> to speedup I/O operations in the Memory Stick drive (<code>ms0</code>)</p>
+</li>
+<li>
+<p>Add <code>Use Graphic Engine 2</code> and <code>Use Media Engine 2</code> advanced CFW options</p>
+</li>
+<li>
 <p>"Fix" manual double launch on first install</p>
 </li>
 <li>
-<p>"Fix" <code>SenseMe</code> launch error</p>
+<p>Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews</p>
+<ul>
+<li>Fix <code>SenseMe</code> launch error</li>
+<li>Fix potential issues related to privilege level to other official apps</li>
+<li>Fix homebrew software not able to call some <code>sceKernelLoadModule*</code> functions that they should be able to use</li>
+</ul>
+</li>
+<li>
+<p>Implement PSP native music player and <code>SenseMe</code> to continue to play music after system suspend</p>
 </li>
 <li>
 <p>Implement "Hold L while launching apps" to not load plugins</p>
@@ -7423,6 +7755,7 @@ cmake --build build
 <li>Fix <code>Aces of War</code> by bypassing anti-CFW check</li>
 <li>Fix <code>Pangya Fantasy Golf</code> by bypassing anti-CFW check</li>
 <li>Fix freeze on <code>Bust-A-Move</code> by bypassing anti-CFW check</li>
+<li>Fix <code>Lego Star Wars II</code> WLAN switch state wrongly returning "off"</li>
 <li>Patch to remove the "overclocked" message on <code>ATV Pro</code></li>
 </ul>
 </li>
@@ -7439,7 +7772,13 @@ cmake --build build
 <p><strong>DEV:</strong> Add support for <code>MEMSIZE=2</code> (to request only stable extra RAM)</p>
 </li>
 <li>
+<p><strong>DEV:</strong> Make PSPemu <code>sceKernelPowerTick</code> to behave as the VITA <code>sceKernelPowerTick</code></p>
+</li>
+<li>
 <p><strong>DEV:</strong> Introduce <code>Adrenaline Log</code>, a C header library that developers can use even outside of Adrenaline (i.e. your project)</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Fix homebrew software not able to call some <code>sceKernelLoadModule*</code> functions that they should be able to use</p>
 </li>
 <li>
 <p><strong>Internal:</strong> Some code reorganization</p>
@@ -7455,7 +7794,7 @@ cmake --build build
 </p>
 <p>This is how to migrate your plugins to the new format after updating Adrenaline to 8.0.0</p>
 <ol>
-<li>Open Recovery Menu</li>
+<li>Open <a href="./09-RecoveryMenu.html">Recovery Menu</a></li>
 <li>Go to the <code>Advanced</code> section</li>
 <li>Select and click on <code>Import classic plugins</code></li>
 </ol>

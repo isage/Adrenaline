@@ -462,10 +462,24 @@
 <p>Add image overlay filter for PS1 game/apps</p>
 </li>
 <li>
+<p>Add <code>Memory Stick Cache</code> to speedup I/O operations in the Memory Stick drive (<code>ms0</code>)</p>
+</li>
+<li>
+<p>Add <code>Use Graphic Engine 2</code> and <code>Use Media Engine 2</code> advanced CFW options</p>
+</li>
+<li>
 <p>"Fix" manual double launch on first install</p>
 </li>
 <li>
-<p>"Fix" <code>SenseMe</code> launch error</p>
+<p>Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews</p>
+<ul>
+<li>Fix <code>SenseMe</code> launch error</li>
+<li>Fix potential issues related to privilege level to other official apps</li>
+<li>Fix homebrew software not able to call some <code>sceKernelLoadModule*</code> functions that they should be able to use</li>
+</ul>
+</li>
+<li>
+<p>Implement PSP native music player and <code>SenseMe</code> to continue to play music after system suspend</p>
 </li>
 <li>
 <p>Implement "Hold L while launching apps" to not load plugins</p>
@@ -491,6 +505,7 @@
 <li>Fix <code>Aces of War</code> by bypassing anti-CFW check</li>
 <li>Fix <code>Pangya Fantasy Golf</code> by bypassing anti-CFW check</li>
 <li>Fix freeze on <code>Bust-A-Move</code> by bypassing anti-CFW check</li>
+<li>Fix <code>Lego Star Wars II</code> WLAN switch state wrongly returning "off"</li>
 <li>Patch to remove the "overclocked" message on <code>ATV Pro</code></li>
 </ul>
 </li>
@@ -507,7 +522,13 @@
 <p><strong>DEV:</strong> Add support for <code>MEMSIZE=2</code> (to request only stable extra RAM)</p>
 </li>
 <li>
+<p><strong>DEV:</strong> Make PSPemu <code>sceKernelPowerTick</code> to behave as the VITA <code>sceKernelPowerTick</code></p>
+</li>
+<li>
 <p><strong>DEV:</strong> Introduce <code>Adrenaline Log</code>, a C header library that developers can use even outside of Adrenaline (i.e. your project)</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Fix homebrew software not able to call some <code>sceKernelLoadModule*</code> functions that they should be able to use</p>
 </li>
 <li>
 <p><strong>Internal:</strong> Some code reorganization</p>
@@ -523,7 +544,7 @@
 </p>
 <p>This is how to migrate your plugins to the new format after updating Adrenaline to 8.0.0</p>
 <ol>
-<li>Open Recovery Menu</li>
+<li>Open <a href="./09-RecoveryMenu.html">Recovery Menu</a></li>
 <li>Go to the <code>Advanced</code> section</li>
 <li>Select and click on <code>Import classic plugins</code></li>
 </ol>

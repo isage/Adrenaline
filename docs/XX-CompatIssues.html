@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Adrenaline Custom Firmware Settings - Adrenaline Manual/Wiki</title>
+        <title>Compatibility Issues - Adrenaline Manual/Wiki</title>
 
 
         <!-- Custom HTML head -->
@@ -413,304 +413,45 @@
   --color-pink: #d53984;
 }
 </style>
-<h1 id="adrenaline-custom-firmware-settings"><a class="header" href="#adrenaline-custom-firmware-settings">Adrenaline Custom Firmware Settings</a></h1>
+<h1 id="known-compatibility-issues"><a class="header" href="#known-compatibility-issues">Known Compatibility Issues</a></h1>
 <hr />
-<p>Adrenaline CFW has several settings options that modify the behavior of the system. The settings can be split in two categories: <code>General Settings</code> and <code>Advanced Settings</code>.</p>
-<p>You can use the <a href="./10-XmbCfwMenus.html#-adrenaline-cfw-settings">XMB</a> or the <a href="./09-RecoveryMenu.html">Recovery Menu</a> to easily modify the CFW settings.</p>
-<div class="mdbook-callouts mdbook-callouts-caution">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  caution
-</p>
-<p>Not to be confused with <a href="./03-AdrenalineMenu/02-AdrenalineSettings.html"><code>Adrenaline Application Settings</code></a>, which is another thing.</p>
-</div>
-<h2 id="general-settings"><a class="header" href="#general-settings">General Settings</a></h2>
+<p>This is a list of compatibility issues on Adrenaline with games, application, homebrews and plugins.</p>
+<h2 id="eyepet"><a class="header" href="#eyepet">EyePet</a></h2>
 <hr />
-<h3 id="cpubus-clock-speed-in-xmb"><a class="header" href="#cpubus-clock-speed-in-xmb">CPU/BUS clock speed in XMB</a></h3>
-<p>Configures the CPU/BUS clock speed on when the system is on the XMB/VSH.</p>
-<h4 id="options"><a class="header" href="#options">Options:</a></h4>
-<ul>
-<li><code>Default</code>: Same as <code>222/111</code> option</li>
-<li><code>20/10</code></li>
-<li><code>75/37</code></li>
-<li><code>100/50</code></li>
-<li><code>133/66</code></li>
-<li><code>222/111</code></li>
-<li><code>266/133</code></li>
-<li><code>300/150</code></li>
-<li><code>333/166</code></li>
-</ul>
-<h3 id="cpubus-clock-speed-in-psp-gameapp"><a class="header" href="#cpubus-clock-speed-in-psp-gameapp">CPU/BUS clock speed in PSP game/app</a></h3>
-<p>Configures the CPU/BUS clock speed on when the system is running a PSP game, PSP app or PSP homebrew.</p>
-<h4 id="options-1"><a class="header" href="#options-1">Options:</a></h4>
-<ul>
-<li><code>Default</code>: Game/app dependant</li>
-<li><code>20/10</code></li>
-<li><code>75/37</code></li>
-<li><code>100/50</code></li>
-<li><code>133/66</code></li>
-<li><code>222/111</code></li>
-<li><code>266/133</code></li>
-<li><code>300/150</code></li>
-<li><code>333/166</code></li>
-</ul>
-<h3 id="umdemu-iso-driver"><a class="header" href="#umdemu-iso-driver">UMDemu ISO driver</a></h3>
-<p>Configures the UMDemu driver to use with <code>ISO</code> and <code>Compressed ISO</code> games.</p>
-<h4 id="options-2"><a class="header" href="#options-2">Options:</a></h4>
-<ul>
-<li><code>Inferno</code></li>
-<li><code>March33</code></li>
-<li><code>Sony NP9660</code></li>
-</ul>
-<h3 id="skip-sony-logo-on-coldboot"><a class="header" href="#skip-sony-logo-on-coldboot">Skip Sony logo on coldboot</a></h3>
-<p>When enabled, skip the "Sony Computer Entertainment" logo when starting the system.</p>
-<h3 id="skip-sony-logo-on-gameboot"><a class="header" href="#skip-sony-logo-on-gameboot">Skip Sony logo on gameboot</a></h3>
-<p>When enabled, skip the "PSP" logo when starting an PSP game/app.</p>
-<h3 id="hide-corrupt-icons-in-game-menu"><a class="header" href="#hide-corrupt-icons-in-game-menu">Hide corrupt icons in game menu</a></h3>
-<p>When enabled, hides corrupt icons in the game menu.</p>
-<p>Corrupt icons happens in the case a game folder does not contain an <code>EBOOT.PBP</code> file.</p>
-<h3 id="hide-dlcs-in-game-menu"><a class="header" href="#hide-dlcs-in-game-menu">Hide DLCs in game menu</a></h3>
-<p>When enabled, hides DLC from showing up as duplicate games when you have DLC installed for your ISO game.</p>
-<h3 id="hide-pic0pic1-in-game-menu"><a class="header" href="#hide-pic0pic1-in-game-menu">Hide PIC0/PIC1 in game menu</a></h3>
-<p>Controls whether to stops displaying PIC0 and/or PIC1 images on XMB, allowing quicker response time to show the game list.</p>
-<h4 id="options-3"><a class="header" href="#options-3">Options:</a></h4>
-<ul>
-<li><code>Disabled</code>: Do not hide PIC0 and PIC1</li>
-<li><code>Both</code>: Hides both PIC0 and PIC1</li>
-<li><code>PIC0 Only</code>: Hides only the PIC0 ("Title/Information image")</li>
-<li><code>PIC1 Only</code>: Hides only the PIC1 ("Background image")</li>
-</ul>
-<h3 id="hide-mac-address"><a class="header" href="#hide-mac-address">Hide MAC address</a></h3>
-<p>When enabled, hides the MAC address from the <code>Settings &gt; System Settings &gt; System Information</code>.</p>
-<h3 id="autorun-pspgamebootebootpbp"><a class="header" href="#autorun-pspgamebootebootpbp">Autorun /PSP/GAME/BOOT/EBOOT.PBP</a></h3>
-<p>When enabled, the system automatically launches the game/app int the <code>???0:/pspemu/PSP/GAME/BOOT/EBOOT.PBP</code>.</p>
-<h3 id="fake-vsh-region"><a class="header" href="#fake-vsh-region">Fake VSH Region</a></h3>
-<p>Modifies the perceived region on XMB/VSH, allowing to unlock region-specific apps and features.</p>
-<h4 id="options-4"><a class="header" href="#options-4">Options:</a></h4>
-<ul>
-<li><code>Disabled</code></li>
-<li><code>Japan</code></li>
-<li><code>America</code></li>
-<li><code>Europe</code></li>
-<li><code>Korea</code></li>
-<li><code>United Kingdom</code></li>
-<li><code>Mexico</code></li>
-<li><code>Australia/NZ</code></li>
-<li><code>East</code></li>
-<li><code>Taiwan</code></li>
-<li><code>Russia</code></li>
-<li><code>China</code></li>
-<li><code>Debug Type I</code></li>
-<li><code>Debug Type II</code></li>
-</ul>
-<h3 id="extended-screen-colors-mode"><a class="header" href="#extended-screen-colors-mode">Extended screen colors mode</a></h3>
-<p>Modifies the system to use a extended color space based on the configuration.</p>
-<h4 id="options-5"><a class="header" href="#options-5">Options:</a></h4>
-<ul>
-<li><code>Disabled</code></li>
-<li><code>02g</code>: Use the same color space as the PSP-2000. More vibrant colors, cooler color tone.</li>
-<li><code>03g</code>: Use the same color space as the PSP-3000. More vibrant colors, warmer color tone.</li>
-</ul>
-<h3 id="use-sony-psp-osk"><a class="header" href="#use-sony-psp-osk">Use Sony PSP OSK</a></h3>
-<p>When enabled, makes the system to use the PSP On Screen Keyboard (OSK) instead of the VITA/PSTV native OSK.</p>
-<h3 id="memory-stick-cache"><a class="header" href="#memory-stick-cache">Memory Stick Cache</a></h3>
-<p>When enabled, the system will use a cache in I/O operations of the Memory Stick drive (<code>ms0:</code>) to improve speed.</p>
-<h3 id="nodrm-engine"><a class="header" href="#nodrm-engine">NoDRM engine</a></h3>
-<p>Controls whether to patch the DRM engine of the PSP system.</p>
-<p>When enabled, the system will allow to launch application, homebrews and games without a valid license.</p>
-<h3 id="xmb-control"><a class="header" href="#xmb-control">XMB Control</a></h3>
-<p>Controls whether to load the extra CFW menus on XMB/VSH.</p>
-<p>When enabled, the menus will show up in the XMB in the <code>Settings</code> section.</p>
-<h3 id="recovery-color"><a class="header" href="#recovery-color">Recovery color</a></h3>
-<p>Configures the color of the Recovery Menu.</p>
-<h2 id="advanced-settings"><a class="header" href="#advanced-settings">Advanced Settings</a></h2>
+<p>The camera is not working in this game. That seems to be caused by some buffer in PSPemu that somehow gets invalid.</p>
+<p>There are currently no way to solve the issue with this game.</p>
+<h2 id="the-simpson-game"><a class="header" href="#the-simpson-game">The Simpson Game</a></h2>
 <hr />
-<p>Advanced settings are called that for a reason. They provide powerful options that can significantly alter system behavior, stability, or compatibility. These settings are intended for experienced users and tinkerers exploring the best set of configuration for cases of bad compatibility with apps and games (anti-CFW checks, slowdowns not solved by general settings, etc).</p>
-<p>Incorrect configuration may lead to unexpected issues, so proceed with caution and consult documentation or community resources if unsure.</p>
-<div class="mdbook-callouts mdbook-callouts-tip">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  tip
-</p>
-<p>On the XMB CFW menu, advanced settings are marked with the <code>▲</code> symbol.</p>
-</div>
-<h3 id="force-high-memory-layout"><a class="header" href="#force-high-memory-layout">Force high memory layout</a></h3>
-<p>Controls whether to force the unlock extra RAM space for the user-space RAM partition, that can be used by games and apps.</p>
-<h4 id="options-6"><a class="header" href="#options-6">Options:</a></h4>
+<p>The game crashes when the keyboard is opened.</p>
+<p>To fix, enable the <a href="./08-CfwConfiguration.html#use-sony-psp-osk"><code>Use Sony PSP OSK</code></a> CFW option.</p>
+<h2 id="games-with-network-issues-requires-re-testing"><a class="header" href="#games-with-network-issues-requires-re-testing">Games with Network issues (requires re-testing)</a></h2>
+<hr />
+<h3 id="hang-when-trying-to-get-to-the-ap-connection-screen"><a class="header" href="#hang-when-trying-to-get-to-the-ap-connection-screen">Hang when trying to get to the AP connection screen</a></h3>
 <ul>
-<li><code>Disabled</code>: With this option, no specific memory layout is forced.
+<li><code>Twisted Metal Head On</code></li>
+<li><code>NBA</code></li>
+<li><code>ATV Blazin Fury</code></li>
+</ul>
+<h3 id="others"><a class="header" href="#others">Others</a></h3>
+<p>Games that use GameMode API - partial list of games here.</p>
 <ul>
-<li>By default, user RAM partition gets the standard 24MB.</li>
-<li>Homebrew games/apps can request other layout by using the <code>MEMSIZE</code> in their <code>SFO</code> information or by using the CFW API.</li>
-<li>Plugin author can use the CFW API to request changing the layout.</li>
+<li><code>Burnout Dominator</code>: Game becomes too fast for everyone if a Vita player joins, also happens if one of the PSPs is overclocked (video demonstration here).</li>
+<li><code>Lego Star Wars II</code>/<code>Lego Indiana Jones 2</code>: Getting a wireless error (Adrenaline) or the game freezes up (ARK4).</li>
+<li><code>Street Riders</code>/<code>Asphalt: Urban GT 2</code>: Can't see other consoles in lobby (same developer made both games so its most likely the same issue).</li>
+<li><code>CSPSP</code>: Game gets a blue screen/crash when entering multiplayer , note that the game works fine on Adrenaline.</li>
+<li><code>Sega Rally Revo</code>: Game disconnects after it starts in infrastructure mode only.</li>
 </ul>
-</li>
-<li><code>Stable</code>: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
-<ul>
-<li>When this options is set, it truly forces it, any requests to modify it will result in it being "ignored" (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
-</ul>
-</li>
-<li><code>Max</code>: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
-<ul>
-<li>When this options is set, it truly forces it, any requests to modify it will result in it being "ignored" (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
-</ul>
-</li>
-</ul>
-<div class="mdbook-callouts mdbook-callouts-warning">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  max option warning
-</p>
-<p>Some important stuff for the VITA's PSPemu are put in this region of memory. Although Adrenaline protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.</p>
-</div>
-<h3 id="use-graphic-engine-2"><a class="header" href="#use-graphic-engine-2">Use Graphic Engine 2</a></h3>
-<p>Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
-<p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
-<div class="mdbook-callouts mdbook-callouts-note">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  note
-</p>
-<p>The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
-<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.</p>
-</div>
-<h3 id="use-media-engine-2"><a class="header" href="#use-media-engine-2">Use Media Engine 2</a></h3>
-<p>Controls wether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
-<p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
-<div class="mdbook-callouts mdbook-callouts-note">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  note
-</p>
-<p>The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
-<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.</p>
-</div>
-<h3 id="execute-bootbin-in-umdemu-iso"><a class="header" href="#execute-bootbin-in-umdemu-iso">Execute BOOT.BIN in UMDemu ISO</a></h3>
-<p>This configuration makes the the system to execute <code>BOOT.BIN</code> file instead of <code>EBOOT.BIN</code> when launching ISO game/apps.</p>
-<p>In the case of the ISO game/apps not having a <code>BOOT.BIN</code> file, it will fallback to <code>EBOOT.BIN</code>.</p>
-<div class="mdbook-callouts mdbook-callouts-warning">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  warning
-</p>
-<p>Enabling this configuration will make many games that have invalid <code>BOOT.BIN</code> file to not run (black screen, exit with error, or even PSPemu crash).</p>
-<p>An better alternative is to launch know apps that need to execute <code>BOOT.BIN</code> to work (mostly ISO of demos, prototypes, and modded games) holding the <code>R</code> button. That will cause to execute <code>BOOT.BIN</code> without changing the configuration and <strong>not</strong> affecting all the ISO game/apps you have.</p>
-</div>
-<h3 id="inferno-iso-cache-policy"><a class="header" href="#inferno-iso-cache-policy">Inferno ISO cache policy</a></h3>
-<p>Configures what cache policy the <code>Inferno</code> UMDemu driver will use for its overall cache (also known as <code>Inferno Cache</code>).</p>
-<h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
-<ul>
-<li><code>LRU</code>: Least Recently Used policy. Uses less cpu cycles because it will just remove the calls from the queue that have not been used in a timeframe.</li>
-<li><code>RR</code>: Round Robin policy. Uses more cpu cycles making it slower because its more data it has to process in the queue, but can be better on the cases where there are highly uniform, or cyclical, data access or requires predicable cache replacement.</li>
-</ul>
-<div class="mdbook-callouts mdbook-callouts-warning">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  warning
-</p>
-<p>If you didn't understood the brief explanation, do not change this setting. The default setting (<code>LRU</code>) is already the better option for games in general.</p>
-</div>
-<h3 id="inferno-iso-cache-number"><a class="header" href="#inferno-iso-cache-number">Inferno ISO cache number</a></h3>
-<p>Configures how many caches the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
-<p>This could improve the execution of a game/app at the cost of using more memory.</p>
-<p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
-<ul>
-<li><code>Auto</code>: Uses the default value <code>32</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
-<li><code>1</code></li>
-<li><code>2</code></li>
-<li><code>4</code></li>
-<li><code>8</code></li>
-<li><code>16</code></li>
-<li><code>32</code></li>
-<li><code>64</code></li>
-<li><code>128</code></li>
-</ul>
-<h3 id="inferno-iso-cache-size"><a class="header" href="#inferno-iso-cache-size">Inferno ISO cache size</a></h3>
-<p>Configures the size of cache the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
-<p>This also could improve the execution of a game/app at the cost of using more memory.</p>
-<p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
-<ul>
-<li><code>Auto</code>: Uses the default value <code>32KB</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
-<li><code>1KB</code></li>
-<li><code>2KB</code></li>
-<li><code>4KB</code></li>
-<li><code>8KB</code></li>
-<li><code>16KB</code></li>
-<li><code>32KB</code></li>
-<li><code>64KB</code></li>
-</ul>
-<div class="mdbook-callouts mdbook-callouts-warning">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  warning
-</p>
-<p>Putting the biggest values for <strong>Inferno ISO cache number</strong> and <strong>Inferno ISO cache size</strong> will use half of the stable extra RAM (8MB).</p>
-<p>Even though what is left is more than enough for most plugin configurations, if you have a crazy amounts of plugins that uses a lots of memory, memory starvation will happen.</p>
-</div>
-<h3 id="umdemu-iso-seek-time-delay-factor"><a class="header" href="#umdemu-iso-seek-time-delay-factor">UMDemu ISO seek time delay factor</a></h3>
-<p>Adrenaline's UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.</p>
-<p>This setting allows to control a factor of how much <strong>slower</strong> is that seek time simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
-<h4 id="option"><a class="header" href="#option">Option:</a></h4>
-<ul>
-<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
-<li><code>1x</code></li>
-<li><code>2x</code></li>
-<li><code>3x</code></li>
-<li><code>4x</code></li>
-</ul>
-<div class="mdbook-callouts mdbook-callouts-warning">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  warning
-</p>
-<p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance issues.</p>
-</div>
-<h3 id="umdemu-iso-read-speed-delay-factor"><a class="header" href="#umdemu-iso-read-speed-delay-factor">UMDemu ISO read speed delay factor</a></h3>
-<p>Adrenaline's UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
-<p>This setting allows to control a factor of how much <strong>slower</strong> is that read speed simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
-<h4 id="option-1"><a class="header" href="#option-1">Option:</a></h4>
-<ul>
-<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
-<li><code>1x</code></li>
-<li><code>2x</code></li>
-<li><code>3x</code></li>
-<li><code>4x</code></li>
-</ul>
-<div class="mdbook-callouts mdbook-callouts-warning">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  warning
-</p>
-<p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance issues.</p>
-</div>
-<div class="mdbook-callouts mdbook-callouts-warning">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  warning
-</p>
-<p>When using the <code>Inferno</code> driver, setting <strong>any</strong> of the <strong>UMDemu ISO seek time delay factor</strong> and the <strong>UMDemu ISO read speed delay factor</strong> settings to any value other than <code>Auto</code> will consequently disable the <code>Inferno Cache</code> feature of the driver.</p>
-<p>This can reduce greatly the performance of executing ISO games/apps that do not need them configured if you forget to return them to <code>Auto</code>.</p>
-</div>
-<h3 id="xmb-plugins"><a class="header" href="#xmb-plugins">XMB plugins</a></h3>
-<p>Controls whether to load plugins on XMB/VSH.</p>
-<h3 id="game-plugins"><a class="header" href="#game-plugins">GAME plugins</a></h3>
-<p>Controls whether to load plugins on PSP game/apps.</p>
-<h3 id="pops-plugins"><a class="header" href="#pops-plugins">POPS plugins</a></h3>
-<p>Controls whether to load plugins on PS1 game/apps.</p>
+<p>Some network issues may be fixed with the updated <a href="https://github.com/Kethen/aemu">PRO Online</a>.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="07-VSHMenu.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="XX-Glossary.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="09-RecoveryMenu.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="XX-FAQ.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -720,11 +461,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="07-VSHMenu.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="XX-Glossary.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="09-RecoveryMenu.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="XX-FAQ.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
