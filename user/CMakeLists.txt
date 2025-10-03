@@ -28,8 +28,8 @@ ExternalProject_Add(libvita2dfbo
 )
 
 add_library(libvita2dfbo_libA STATIC IMPORTED GLOBAL)
-set_property(TARGET libvita2dfbo_libA 
-    PROPERTY IMPORTED_LOCATION 
+set_property(TARGET libvita2dfbo_libA
+    PROPERTY IMPORTED_LOCATION
     ${CMAKE_CURRENT_BINARY_DIR}/libvita2dfbo/libvita2d/libvita2d.a
 )
 
@@ -45,8 +45,8 @@ ExternalProject_Add(vitashadercollection
 )
 
 add_library(vitashadercollection_libA STATIC IMPORTED GLOBAL)
-set_property(TARGET vitashadercollection_libA 
-    PROPERTY IMPORTED_LOCATION 
+set_property(TARGET vitashadercollection_libA
+    PROPERTY IMPORTED_LOCATION
     ${CMAKE_CURRENT_BINARY_DIR}/vitashadercollection/lib/libvitashaders.a
 )
 
