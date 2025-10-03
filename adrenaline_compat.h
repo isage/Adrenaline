@@ -164,6 +164,28 @@ enum AdrenalineVitaResponse {
 	ADRENALINE_VITA_RESPONSE_LOADED,
 };
 
+typedef struct SceIoMount { // size is 0x34-bytes
+    uint32_t mount;
+    int mount_id;
+    char assign_name[0x20];
+    SceUInt32 opened_entry_num;
+    SceBool unk1;
+    int unk2;
+} SceIoMount;
+
+typedef struct SceIoMountInfo { // size is 0x54C-bytes
+	uint32_t mount;
+	int mount_id;
+	char assign_name[0x20];
+	SceUInt32 opened_entry_num;
+	int unk1[23];
+	char unk2[0x400];
+	int unk3;
+	char unk4[0x40];
+	char block_dev_name[0x40];
+	char unk5[0x40];
+} SceIoMountInfo;
+
 typedef struct {
 	int savestate_mode;
 	int num;

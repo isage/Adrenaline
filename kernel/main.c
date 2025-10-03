@@ -188,6 +188,38 @@ int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count) {
 	return res;
 }
 
+int vfsGetMntList(SceIoMount *mounts, SceUInt32 total_num_mounts, SceUInt32 *result_num_mounts);
+int kuVfsGetMntList(SceIoMount *mounts, SceUInt32 total_num_mounts, SceUInt32 *result_num_mounts) {
+	uint32_t state;
+	ENTER_SYSCALL(state);
+
+	SceIoMount p_mount[24];
+	SceUInt32 num_mounts = 0;
+
+	int res = vfsGetMntList(p_mount, 24, &num_mounts);
+
+	*result_num_mounts = num_mounts;
+
+	ksceKernelMemcpyKernelToUser((void*)mounts, p_mount, sizeof(SceIoMount)*num_mounts);
+
+	EXIT_SYSCALL(state);
+	return res;
+}
+
+int vfsGetMntInfo(uint32_t mount, SceIoMountInfo *info);
+int kuVfsGetMntInfo(uint32_t mount, SceIoMountInfo *info) {
+	uint32_t state;
+	ENTER_SYSCALL(state);
+
+	SceIoMountInfo k_info= {0};
+	int res = vfsGetMntInfo(mount, &k_info);
+
+	ksceKernelMemcpyKernelToUser((void*)info, &k_info, sizeof(SceIoMountInfo));
+
+	EXIT_SYSCALL(state);
+	return res;
+}
+
 int adrStartBlanking(int vol) {
 	uint32_t state;
 	ENTER_SYSCALL(state);

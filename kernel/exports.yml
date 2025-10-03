@@ -13,3 +13,5 @@ AdrenalineKernel:
         - kuCtrlPeekBufferPositive
         - adrStartBlanking
         - adrStopBlanking
+        - kuVfsGetMntList
+        - kuVfsGetMntInfo
