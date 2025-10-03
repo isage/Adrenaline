@@ -175,6 +175,28 @@ Controls whether to force the unlock extra RAM space for the user-space RAM part
 > [!WARNING] Max Option Warning
 > Some important stuff for the VITA's PSPemu are put in this region of memory. Although Adrenaline protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.
 
+### Use Graphic Engine 2
+
+Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads `ge_2.prx` instead of `ge.prx`.
+
+This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.
+
+> [!NOTE]
+> The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.
+>
+> So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.
+
+### Use Media Engine 2
+
+Controls wether to load an alternative implementation of the Media Engine module, i.e. loads `kermit_me_wrapper_2.prx` instead of `kermit_me_wrapper.prx`.
+
+This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.
+
+> [!NOTE]
+> The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.
+>
+> So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.
+
 ### Execute BOOT.BIN in UMDemu ISO
 
 This configuration makes the the system to execute `BOOT.BIN` file instead of `EBOOT.BIN` when launching ISO game/apps.

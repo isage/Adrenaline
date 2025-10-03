@@ -22,6 +22,7 @@
 - Patch libcrypt for custom or converted PS1 game/apps
 - Add image overlay filter for PS1 game/apps
 - Add `Memory Stick Cache` to speedup I/O operations in the Memory Stick drive (`ms0`)
+- Add `Use Graphic Engine 2` and `Use Media Engine 2` advanced CFW options
 - "Fix" manual double launch on first install
 - Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews
   - Fix `SenseMe` launch error
@@ -42,6 +43,7 @@
 	- Fix `Aces of War` by bypassing anti-CFW check
 	- Fix `Pangya Fantasy Golf` by bypassing anti-CFW check
 	- Fix freeze on `Bust-A-Move` by bypassing anti-CFW check
+	- Fix `Lego Star Wars II` WLAN switch state wrongly returning "off"
 	- Patch to remove the "overclocked" message on `ATV Pro`
 
 
