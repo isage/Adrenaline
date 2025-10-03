@@ -161,7 +161,8 @@ static void OnSystemStatusIdle() {
 }
 
 static int OnModuleStart(SceModule *mod) {
-	static int ready_gamepatch_mod = 0;
+	static u8 ready_gamepatch_mod = 0;
+	static u8 load_file_config = 0;
 
 	PatchGameInfoGetter(mod);
 
@@ -170,7 +171,9 @@ static int OnModuleStart(SceModule *mod) {
 
 	// Game/App module patches
 	if (ready_gamepatch_mod) {
-		logmsg3("[INFO]: Title Module Name: %s\n", modname);
+		if (sceKernelApplicationType() != SCE_APPTYPE_VSH) {
+			logmsg3("[INFO]: Title Module Name: %s\n", modname);
+		}
 		PatchGamesByMod(mod);
 		PatchDrmGameModule(mod);
 		ready_gamepatch_mod = 0;
@@ -181,6 +184,14 @@ static int OnModuleStart(SceModule *mod) {
 		// Fix 6.60 plugins on 6.61
 		sctrlHENHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion, 0);
         sctrlHENHookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion, 0);
+	}
+
+	if (load_file_config) {
+		int res = sctrlSEGetConfig(&config);
+		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
+		if (res == 0) {
+			load_file_config = 0;
+		}
 	}
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {
@@ -199,6 +210,9 @@ static int OnModuleStart(SceModule *mod) {
 		memset((void *)0xABCD0000, 0, 0x1B0);
 
 		PatchLowIODriver2(mod);
+
+	} else if (strcmp(mod->modname, "sceKermitMsfs_driver") == 0) {
+		load_file_config = 1;
 
 	} else if (strcmp(mod->modname, "sceController_Service") == 0) {
 		PatchController(mod);
@@ -230,8 +244,6 @@ static int OnModuleStart(SceModule *mod) {
 		logmsg3("[INFO]: App Type: 0x%X\n", sceKernelApplicationType());
 		logmsg3("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
 		logmsg3("[INFO]: Filename: %s\n", sceKernelInitFileName());
-
-		sctrlSEGetConfig(&config);
 
 		if (sceKernelApplicationType() == SCE_APPTYPE_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
 			if (config.force_high_memory == HIGHMEM_OPT_STABLE) {
@@ -331,7 +343,7 @@ static int OnModuleStart(SceModule *mod) {
 		}
 	}
 
-	logmsg4("%s: [DEBUG]: mod_name=%s — text_addr=0x%08X\n", __func__, modname, text_addr);
+	logmsg4("[DEBUG]: %s: mod_name=%s — text_addr=0x%08X\n", __func__, modname, text_addr);
 
 	return 0;
 }

@@ -14,14 +14,14 @@ $/kd/systemctrl.prx VGUPAEM
 $/kd/init.prx VGUPAEM
 $/kd/loadexec_01g.prx VGUPAEM
 $/kd/kermit_lowio.prx VGUPAEM
+$/kd/kermit_flashfs.prx VGUPAEM
+$/kd/kermit_msfs.prx VGUPAEM
 $/kd/ge.prx VGUPAEM
 $/kd/kermit_peripheral.prx VGUPAEM
 $/kd/kermit_idstorage.prx VGUPAEM
 $/kd/kermit_rtc.prx VGUPAEM
 $/kd/kermit_display.prx VGUPAEM
 $/kd/kermit_ctrl.prx VGUPAEM
-$/kd/kermit_flashfs.prx VGUPAEM
-$/kd/kermit_msfs.prx VGUPAEM
 $/kd/kermit_power.prx VGUPAEM
 $/kd/kermit_msemu.prx VGUPAEM
 $/kd/kermit_audio.prx VGUAEM
