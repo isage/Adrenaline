@@ -257,6 +257,8 @@ int LoadState(SceAdrenaline *adrenaline, void *savestate_data) {
 
 extern vita2d_texture* overlay_texture;
 
+char g_savedata_path[64] = {0};
+char g_savedata_path_copy[64] = {0};
 int AdrenalineCompat(SceSize args, void *argp) {
 	void *savestate_data = NULL;
 
@@ -321,6 +323,34 @@ int AdrenalineCompat(SceSize args, void *argp) {
 					}
 				}
 
+				// Find drive for the usb device
+				SceIoMount mounts[24] = {0};
+				SceUInt32 num_mounts = 0;
+				int mount_res = kuVfsGetMntList(mounts, 24, &num_mounts);
+
+				if (mount_res < 0) {
+					res = mount_res;
+					goto send_response;
+				}
+
+
+				SceIoMountInfo mount_info = {0};
+				for (int i = 0; i < num_mounts; i++) {
+					mount_res = kuVfsGetMntInfo(mounts[i].mount, &mount_info);
+					if (strcmp(mount_info.block_dev_name, path) == 0) {
+						break;
+					}
+				}
+
+				if (mount_res < 0) {
+					res = mount_res;
+					goto send_response;
+				}
+
+				snprintf(g_savedata_path, 64, "%s/pspemu/PSP/SAVEDATA/", getMsDrive());
+				snprintf(g_savedata_path_copy, 64, "%s/PSP/SAVEDATA/", mount_info.assign_name);
+				copyPath(g_savedata_path, g_savedata_path_copy);
+
 				usbdevice_modid = startUsb("ux0:app/" ADRENALINE_TITLEID "/sce_module/usbdevice.skprx", path, SCE_USBSTOR_VSTOR_TYPE_FAT);
 
 				// Response
@@ -334,6 +364,7 @@ int AdrenalineCompat(SceSize args, void *argp) {
 			res = stopUsb(usbdevice_modid);
 			if (res >= 0) {
 				usbdevice_modid = -1;
+				copyPath(g_savedata_path_copy, g_savedata_path);
 			}
 		} else if (request->cmd == ADRENALINE_VITA_CMD_PAUSE_POPS) {
 			ScePspemuPausePops(1);
@@ -428,6 +459,7 @@ int AdrenalineCompat(SceSize args, void *argp) {
 			res = sceKernelPowerTick(*request->args);
 		}
 
+		send_response:
 		ScePspemuKermitSendResponse(KERMIT_MODE_EXTRA_2, request, (uint64_t)res);
 	}
 

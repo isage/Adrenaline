@@ -141,6 +141,8 @@ extern uint32_t text_addr, text_size, data_addr, data_size;
 int sceKernelIsPSVitaTV();
 int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count);
 uint32_t adrStopBlanking(void);
+int kuVfsGetMntInfo(uint32_t mount, SceIoMountInfo *info);
+int kuVfsGetMntList(SceIoMount *mounts, SceUInt32 total_num_mounts, SceUInt32 *result_num_mounts);
 
 void lockPower();
 void unlockPower();

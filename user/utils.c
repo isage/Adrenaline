@@ -31,9 +31,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
+#include <malloc.h>
 
 #include "main.h"
 #include "utils.h"
+#include "msfs.h"
 
 Pad old_pad, current_pad, pressed_pad, released_pad, hold_pad, hold2_pad;
 Pad hold_count, hold2_count;
@@ -372,3 +375,169 @@ void adr_free(void* ptr) {
 	mspace_free(mspace, ptr);
 }
 
+#define MAX_PATH_LENGTH 1024
+#define MAX_NAME_LENGTH 256
+#define MAX_SHORT_NAME_LENGTH 64
+#define MAX_MOUNT_POINT_LENGTH 16
+
+#define DIRECTORY_SIZE (4 * 1024)
+// #define TRANSFER_SIZE (128 * 1024)
+
+static int hasEndSlash(const char *path) {
+	return path[strlen(path) - 1] == '/';
+}
+
+int copyFile(const char *src_path, const char *dst_path) {
+	// The source and destination paths are identical
+	if (strcasecmp(src_path, dst_path) == 0) {
+		return -1;
+	}
+
+	// The destination is a subfolder of the source folder
+	int len = strlen(src_path);
+	if (strncasecmp(src_path, dst_path, len) == 0 && (dst_path[len] == '/' || dst_path[len - 1] == '/')) {
+		return -2;
+	}
+	SceUID fdsrc = sceIoOpen(src_path, SCE_O_RDONLY, 0);
+	if (fdsrc < 0) {
+		return fdsrc;
+	}
+
+	SceUID fddst = sceIoOpen(dst_path, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
+	if (fddst < 0) {
+		sceIoClose(fdsrc);
+		return fddst;
+	}
+
+	void *buf = memalign(4096, TRANSFER_SIZE);
+
+	while (1) {
+		int read = sceIoRead(fdsrc, buf, TRANSFER_SIZE);
+
+		if (read < 0) {
+			free(buf);
+
+			sceIoClose(fddst);
+			sceIoClose(fdsrc);
+
+			sceIoRemove(dst_path);
+
+			return read;
+		}
+
+		if (read == 0)
+			break;
+
+		int written = sceIoWrite(fddst, buf, read);
+
+		if (written < 0) {
+			free(buf);
+
+			sceIoClose(fddst);
+			sceIoClose(fdsrc);
+
+			sceIoRemove(dst_path);
+
+			return written;
+		}
+	}
+
+	free(buf);
+
+	// Inherit file stat
+	SceIoStat stat;
+	memset(&stat, 0, sizeof(SceIoStat));
+	sceIoGetstatByFd(fdsrc, &stat);
+	sceIoChstatByFd(fddst, &stat, 0x3B);
+
+	sceIoClose(fddst);
+	sceIoClose(fdsrc);
+
+	return 1;
+}
+
+int copyPath(const char *src_path, const char *dst_path) {
+	// The source and destination paths are identical
+	if (strcasecmp(src_path, dst_path) == 0) {
+		return -1;
+	}
+
+	// The destination is a subfolder of the source folder
+	int len = strlen(src_path);
+	if (strncasecmp(src_path, dst_path, len) == 0 && (dst_path[len] == '/' || dst_path[len - 1] == '/')) {
+		return -2;
+	}
+
+	SceUID dfd = sceIoDopen(src_path);
+	if (dfd >= 0) {
+		SceIoStat stat;
+		memset(&stat, 0, sizeof(SceIoStat));
+		sceIoGetstatByFd(dfd, &stat);
+
+		stat.st_mode |= SCE_S_IWUSR;
+
+		int ret = sceIoMkdir(dst_path, stat.st_mode & 0xFFF);
+
+		if (ret < 0 && ret != SCE_ERROR_ERRNO_EEXIST) {
+			sceIoDclose(dfd);
+			return ret;
+		}
+
+		if (ret == SCE_ERROR_ERRNO_EEXIST) {
+			sceIoChstat(dst_path, &stat, 0x3B);
+		}
+
+		int res = 0;
+
+		do {
+			SceIoDirent dir;
+			memset(&dir, 0, sizeof(SceIoDirent));
+
+			res = sceIoDread(dfd, &dir);
+			if (res > 0) {
+				char *new_src_path = malloc(strlen(src_path) + strlen(dir.d_name) + 2);
+				snprintf(new_src_path, MAX_PATH_LENGTH, "%s%s%s", src_path, hasEndSlash(src_path) ? "" : "/", dir.d_name);
+
+				char *new_dst_path = malloc(strlen(dst_path) + strlen(dir.d_name) + 2);
+				snprintf(new_dst_path, MAX_PATH_LENGTH, "%s%s%s", dst_path, hasEndSlash(dst_path) ? "" : "/", dir.d_name);
+
+				int ret = 0;
+
+				if (SCE_S_ISDIR(dir.d_stat.st_mode)) {
+					ret = copyPath(new_src_path, new_dst_path);
+				} else {
+					ret = copyFile(new_src_path, new_dst_path);
+				}
+
+				free(new_dst_path);
+				free(new_src_path);
+
+				if (ret <= 0) {
+					sceIoDclose(dfd);
+					return ret;
+				}
+			}
+		} while (res > 0);
+
+		sceIoDclose(dfd);
+	} else {
+		return copyFile(src_path, dst_path);
+	}
+
+	return 1;
+}
+
+const char* getMsDrive() {
+	switch (config.ms_location) {
+		case MEMORY_STICK_LOCATION_UR0:
+			return "ur0:";
+		case MEMORY_STICK_LOCATION_IMC0:
+			return "imc0:";
+		case MEMORY_STICK_LOCATION_XMC0:
+			return "xmc0:";
+		case MEMORY_STICK_LOCATION_UMA0:
+			return "uma0:";
+		default:
+			return "ux0:";
+	}
+}

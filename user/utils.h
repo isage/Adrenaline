@@ -82,4 +82,7 @@ void* adr_malloc(size_t size);
 void* adr_realloc(void* ptr, size_t size);
 void adr_free(void* ptr);
 
+int copyPath(const char *src_path, const char *dst_path);
+const char* getMsDrive();
+
 #endif
