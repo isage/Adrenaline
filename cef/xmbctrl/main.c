@@ -26,6 +26,9 @@
 #include <vshctrl.h>
 #include <psputility_sysparam.h>
 
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 #include "main.h"
 #include "utils.h"
 
@@ -129,9 +132,19 @@ int OnModuleStart(SceModule *mod) {
 }
 
 int module_start(SceSize args, void *argp) {
+	logInit("ms0:/log_xmbctrl.txt");
+	logmsg("XMBControl started...\n")
+
 	psp_model = kuKernelGetModel();
 
 	sctrlSEGetConfig(&se_config);
+
+	// Sanity check
+	// `item_opts` always should have num of `GetItemes` + 2
+	if (NELEMS(GetItemes) != (NELEMS(item_opts)-2)) {
+		logmsg("[ERROR]: CFW options not properly set\n");
+		return -1;
+	}
 
 	previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 
