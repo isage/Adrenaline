@@ -199,6 +199,8 @@ typedef struct {
 	u8 use_ge2;
 	/** Use `kermit_me_wrapper_2.prx` instead of `kermit_me_wrapper.prx`. 0- Off, 1 = On. */
 	u8 use_me2;
+	/** Hide CFW files from games. 0 - Hide, 1 - Do not hide */
+	u8 no_hide_cfw_files;
 } AdrenalineConfig;
 
 typedef AdrenalineConfig SEConfig;

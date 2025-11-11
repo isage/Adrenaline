@@ -64,6 +64,7 @@ void PatchMeCodecWrapper(SceModule* mod);
 void PatchVolatileMemBug();
 void PatchGameByGameId();
 void PatchGamesByMod(SceModule* mod);
+void PatchHideCfwFolders(SceModule* mod);
 
 void PatchVlfLib(SceModule* mod);
 void PatchCwCheatPlugin(SceModule* mod);
