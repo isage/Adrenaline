@@ -51,28 +51,29 @@ GetItem GetItemes[] = {
 	{5, 0, "Skip Sony logo on coldboot", 1, 0, &se_config.skip_logo},
 	{6, 0, "Skip Sony logo on gameboot", 1, 0, &se_config.skip_game_boot_logo},
 	{7, 0, "Hide corrupt icons in game menu", 1, 0, &se_config.hide_corrupt},
-	{8, 0, "Hide MAC address", 1, 0, &se_config.hide_mac_addr},
-	{9, 0, "Hide DLCs in game menu", 1, 0, &se_config.hide_dlcs},
-	{10, 0, "Hide PIC0/PIC1 in game menu", 1, 0, &se_config.hide_pic0pic1},
-	{11, 0, "Autorun /PSP/GAME/BOOT/EBOOT.PBP", 1, 0, &se_config.startup_program},
-	{12, 0, "Fake VSH Region", 1, 0, &se_config.fake_region},
-	{13, 0, "Extended screen colors mode", 1, 0, &se_config.extended_colors},
-	{14, 0, "Use Sony PSP OSK", 1, 0, &se_config.use_sony_psposk},
-	{15, 1, "Memory Stick Cache", 1, 0, &se_config.no_ms_cache},
-	{16, 1, "NoDRM engine", 1, 0, &se_config.no_nodrm_engine},
-	{17, 1, "XMB Control", 1, 0, &se_config.no_xmbctrl},
-	{18, 0, "Force high memory layout", 1, 1, &se_config.force_high_memory},
-	{19, 0, "Use Graphic Engine 2", 1, 1, &se_config.use_ge2},
-	{20, 0, "Use Media Engine 2", 1, 1, &se_config.use_me2},
-	{21, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1, &se_config.execute_boot_bin},
-	{22, 0, "Inferno ISO cache policy", 0, 1, &se_config.iso_cache},
-	{23, 0, "Inferno ISO cache number", 0, 1, &se_config.iso_cache_num},
-	{24, 0, "Inferno ISO cache size", 0, 1, &se_config.iso_cache_size},
-	{25, 0, "UMDemu ISO seek time delay factor", 0, 1, &se_config.umd_seek},
-	{26, 0, "UMDemu ISO read speed delay factor", 0, 1, &se_config.umd_speed},
-	{27, 1, "XMB Plugins", 1, 1, &se_config.no_xmb_plugins},
-	{28, 1, "Game Plugins", 1, 1, &se_config.no_game_plugins},
-	{29, 1, "POPS Plugins", 1, 1, &se_config.no_pops_plugins},
+	{8, 0, "Hide DLCs in game menu", 1, 0, &se_config.hide_dlcs},
+	{9, 0, "Hide PIC0/PIC1 in game menu", 1, 0, &se_config.hide_pic0pic1},
+	{10, 0, "Hide MAC address", 1, 0, &se_config.hide_mac_addr},
+	{11, 1, "Hide CFW files in PSP games", 1, 0, &se_config.no_hide_cfw_files},
+	{12, 0, "Autorun /PSP/GAME/BOOT/EBOOT.PBP", 1, 0, &se_config.startup_program},
+	{13, 0, "Fake VSH Region", 1, 0, &se_config.fake_region},
+	{14, 0, "Extended screen colors mode", 1, 0, &se_config.extended_colors},
+	{15, 0, "Use Sony PSP OSK", 1, 0, &se_config.use_sony_psposk},
+	{16, 1, "Memory Stick Cache", 1, 0, &se_config.no_ms_cache},
+	{17, 1, "NoDRM engine", 1, 0, &se_config.no_nodrm_engine},
+	{18, 1, "XMB Control", 1, 0, &se_config.no_xmbctrl},
+	{19, 0, "Force high memory layout", 1, 1, &se_config.force_high_memory},
+	{20, 0, "Use Graphic Engine 2", 1, 1, &se_config.use_ge2},
+	{21, 0, "Use Media Engine 2", 1, 1, &se_config.use_me2},
+	{22, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1, &se_config.execute_boot_bin},
+	{23, 0, "Inferno ISO cache policy", 0, 1, &se_config.iso_cache},
+	{24, 0, "Inferno ISO cache number", 0, 1, &se_config.iso_cache_num},
+	{25, 0, "Inferno ISO cache size", 0, 1, &se_config.iso_cache_size},
+	{26, 0, "UMDemu ISO seek time delay factor", 0, 1, &se_config.umd_seek},
+	{27, 0, "UMDemu ISO read speed delay factor", 0, 1, &se_config.umd_speed},
+	{28, 1, "XMB Plugins", 1, 1, &se_config.no_xmb_plugins},
+	{29, 1, "Game Plugins", 1, 1, &se_config.no_game_plugins},
+	{30, 1, "POPS Plugins", 1, 1, &se_config.no_pops_plugins},
 };
 
 #define N_ITEMS (sizeof(GetItemes) / sizeof(GetItem))
@@ -86,9 +87,10 @@ ItemOptions item_opts[] = {
 	{2, boolean_options},           // Skip ColdBoot logo
 	{2, boolean_options},           // Skip GameBoot logo
 	{2, boolean_options},           // Hide corrupt icons
-	{2, boolean_options},           // Hide MAC address
 	{2, boolean_options},           // Hide DLCs in game menu
 	{NELEMS(hide_pics_options), hide_pics_options}, // Hide PIC0/PIC1.PNG in game menu
+	{2, boolean_options},           // Hide MAC address
+	{2, boolean_options},           // Hide CFW files in PSP games
 	{2, boolean_options},           // Autorun /PSP/GAME/BOOT/EBOOT.PBP
 	{NELEMS(region_options), region_options}, // Fake region
 	{3, use_extended_color_option}, // Use extended color
