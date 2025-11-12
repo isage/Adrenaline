@@ -24,7 +24,7 @@
 #include <pspiofilemgr.h>
 #include <systemctrl.h>
 #include <psperror.h>
-#include <macros.h>
+#include <cfwmacros.h>
 #include <adrenaline_log.h>
 
 #include "main.h"

@@ -23,7 +23,7 @@
  */
 
 #include <pspiofilemgr.h>
-#include <macros.h>
+#include <cfwmacros.h>
 
 int ReadFile(char *file, void *buf, int size) {
 	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);

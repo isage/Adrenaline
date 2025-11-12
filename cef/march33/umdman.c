@@ -3,7 +3,7 @@
 #include <psperror.h>
 
 #include <systemctrl.h>
-#include <macros.h>
+#include <cfwmacros.h>
 #include <adrenaline_log.h>
 
 #include "psperror.h"

@@ -25,7 +25,7 @@
 #include <systemctrl_se.h>
 #include <adrenaline_log.h>
 #include <iso_common.h>
-#include <macros.h>
+#include <cfwmacros.h>
 
 #include <stdio.h>
 #include <string.h>

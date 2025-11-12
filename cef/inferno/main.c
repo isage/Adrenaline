@@ -25,7 +25,7 @@
 #include <pspsysevent.h>
 #include <pspumd.h>
 #include <psprtc.h>
-#include <macros.h>
+#include <cfwmacros.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>

@@ -26,7 +26,7 @@
 #include <pspumd.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
-#include <macros.h>
+#include <cfwmacros.h>
 #include <psperror.h>
 
 #include <adrenaline_log.h>

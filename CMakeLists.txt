@@ -53,7 +53,7 @@ add_custom_target(cfw-libs
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/sysclib_user.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/vshctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/rebootexconfig.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/macros.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/cfwmacros.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
 )
 
 #add_dependencies(updater "kernel_all")

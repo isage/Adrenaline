@@ -22,7 +22,7 @@
 #include <systemctrl.h>
 #include <stdio.h>
 #include <string.h>
-#include <macros.h>
+#include <cfwmacros.h>
 
 #include <adrenaline_log.h>
 

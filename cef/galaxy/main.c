@@ -29,7 +29,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <iso_common.h>
-#include <macros.h>
+#include <cfwmacros.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
