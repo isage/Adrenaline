@@ -61,33 +61,12 @@ static inline int is_in_blacklist(const char *dname) {
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-SceUID sceIoOpenDrmPatched(const char *path, int flags, SceMode mode);
-SceUID sceIoOpenHidePatched(const char *path, int flags, SceMode mode) {
-	int k1 = pspSdkSetK1(0);
-
-	if (is_in_blacklist(strrchr(path,'/')+1)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		return SCE_KERR_ILLEGAL_ACCESS;
-	}
-
-	int res = SCE_KERR_ILLEGAL_ACCESS;
-	if (config.no_nodrm_engine) {
-		res = sceIoOpen(path, flags, mode);
-	} else {
-		// Handle the case where we are be substituting the DrmPatched version
-		// of this function
-		res = sceIoOpenDrmPatched(path, flags, mode);
-	}
-
-	pspSdkSetK1(k1);
-    return res;
-}
-
 int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
     int k1 = pspSdkSetK1(0);
     int res = sceIoDread(fd, dir);
 
     if (res > 0 && is_in_blacklist(dir->d_name)) {
+		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, dir->d_name);
         res = sceIoDread(fd, dir);
     }
 
@@ -153,7 +132,6 @@ int sceIoRmdirHidePatched(const char *path) {
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
 
-// Should be called **after** `PatchDrmGameModule`
 void PatchHideCfwFolders(SceModule* mod) {
 	int apitype = sceKernelInitApitype();
 
@@ -164,12 +142,11 @@ void PatchHideCfwFolders(SceModule* mod) {
 		return;
 	}
 
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, &sceIoDreadHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xB8A740F4, &sceIoChstatHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, &sceIoGetstatHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, &sceIoRemoveHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, &sceIoRmdirHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, &sceIoOpenHidePatched, 0);
+    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, sceIoDreadHidePatched, 0);
+    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xB8A740F4, sceIoChstatHidePatched, 0);
+    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, sceIoGetstatHidePatched, 0);
+    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, sceIoRemoveHidePatched, 0);
+    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, sceIoRmdirHidePatched, 0);
 
 	sctrlFlushCache();
 }
