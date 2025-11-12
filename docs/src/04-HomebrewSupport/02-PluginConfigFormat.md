@@ -6,6 +6,7 @@ The configuration format for the plugins on Adrenaline is composed of three sect
 It also accepts line comments with `//` and `#`.
 
 ## Runlevels
+---
 
 The available runlevels are:
 
@@ -21,12 +22,14 @@ The available runlevels are:
 You can specify more than one runlevel for a specific plugin by separating with a space character, more on [example](#example).
 
 ## Plugin Path
+---
 
 The plugin path can be an **absolute path** or a **relative path**.
 
 The **absolute path** must be a PSP Memory Stick absolute path, i.e. starting with `ms0:/`. The **relative path** starts on `ms0:/seplugins/`, e.g. if the file is on `ms0:/seplugins/my_plugin.prx`, you can use `my_plugin.prx`.
 
 ## Switch state
+---
 
 The switch state defines whether the plugin is enabled or not. The accepted "On" values are `on`, `enabled`, `true`, and `1`; and the "off" values are `off`, `disabled`, `false`, and `0`.
 

@@ -4,36 +4,38 @@
 ## Unreleased
 ---
 
-- **Breaking change:** New plugin configuration format
+- **Breaking change:** New plugin configuration format **\[[docs](./04-HomebrewSupport/02-PluginConfigFormat.md)\]**
     - Only one configuration file `/pspemu/seplugins/EPIplugins.txt`
     - Finer control over when to enable/disable plugins
     - Support for plugins in specific games
     - Support for plugin only on homebrew apps
 	- **Migration instructions below**
-- Added `Scale2x` graphical filter options
-- Added support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver.
-- Update the Inferno Driver to Inferno 2
-- Introduce March33 Driver v2: An evolution of the March33 ISO driver
-- Improved the speed and efficiency of all UMDemu ISO drivers
-- Introduce CFW Settings on the XMB
-- Introduce Plugin Manager on the XMB
-- Improve stability of the `Force High Memory` option.
-- Add Custom POPS Configuration injection for custom or converted PS1 game/apps
-- Patch libcrypt for custom or converted PS1 game/apps
-- Add image overlay filter for PS1 game/apps
-- Add `Memory Stick Cache` to speedup I/O operations in the Memory Stick drive (`ms0`)
-- Add `Use Graphic Engine 2` and `Use Media Engine 2` advanced CFW options
+- Add `Scale2x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
+- Add support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver. **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
+- Update the Inferno Driver to Inferno 2 **\[[docs](./05-PSPPlayback/02-Inferno.md)\]**
+- Introduce March33 Driver v2: An evolution of the March33 ISO driver **\[[docs](./05-PSPPlayback/03-March33.md)\]**
+- Introduce an improved implementation of the GalaxyController **\[[docs](./05-PSPPlayback/04-Galaxy.md)\]**
+- Introduce CFW Settings on the XMB **\[[docs](./10-XmbCfwMenus.md#-adrenaline-cfw-settings)\]**
+- Introduce Plugin Manager on the XMB **\[[docs](./10-XmbCfwMenus.md#-plugins-manager)\]**
+- Improve stability of the `Force High Memory` CFW option. **\[[docs](./08-CfwConfiguration.md#force-high-memory-layout)\]**
+- Improve the speed and efficiency of all UMDemu ISO drivers **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
+- Add Custom POPS Configuration injection for custom or converted PS1 game/apps **\[[docs](./06-PS1Playback.md#custom-pops-configuration)\]**
+- Patch libcrypt for custom or converted PS1 game/apps **\[[docs](./06-PS1Playback.md#anti-libcrypt-patch)\]**
+- Add image overlay filter for PS1 game/apps **\[[docs](./06-PS1Playback.md#overlay-image)\]**
+- Add `Memory Stick Cache` to speedup I/O operations in the Memory Stick drive (`ms0`) **\[[docs](./08-CfwConfiguration.md#memory-stick-cache)\]**
+- Add `Use Graphic Engine 2` and `Use Media Engine 2` advanced CFW options **\[[docs](./08-CfwConfiguration.md#use-graphic-engine-2)\]**
+- Add `Hide CFW files in PSP games` general CFW option **\[[docs](./08-CfwConfiguration.md#hide-cfw-files-in-psp-games)\]**
+- Implement "Hold L while launching apps" to not load plugins **\[[docs](./04-HomebrewSupport/01-Plugin.md#launch-without-plugins)\]**
+- Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN` **\[[docs](./08-CfwConfiguration.md#execute-bootbin-in-umdemu-iso)\]**
+- Implement PSP native music player and `SenseMe` to continue to play music after system suspend
+- Add quick exit to VSH key combos **\[[docs](./01-Intro.md#key-combos-cheat-sheet)\]**
+  - PSP games/homebrew: `L+R+Down+Select` or `L+R+Down+Start`
+  - PS1 games: `L2+R2+Down+Select` or `L2+R2+Down+Start`
 - "Fix" manual double launch on first install
 - Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews
   - Fix `SenseMe` launch error
   - Fix potential issues related to privilege level to other official apps
   - Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
-- Implement PSP native music player and `SenseMe` to continue to play music after system suspend
-- Implement "Hold L while launching apps" to not load plugins
-- Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN`
-- Add quick exit to VSH key combos
-  - PSP games/homebrew: `L+R+Down+Select` or `L+R+Down+Start`
-  - PS1 games: `L2+R2+Down+Select` or `L2+R2+Down+Start`
 - **Game Compatibility:**
 	- Fix PBP collection games (e.g. `Ys I&II`, `Sega Genesis Collection`) crashing after game selection
 	- Fix `BEATS` custom tracks

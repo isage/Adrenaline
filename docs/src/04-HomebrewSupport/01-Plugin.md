@@ -10,6 +10,13 @@ Adrenaline should be compatible with most of the plugins made for classic PSP CF
 >
 > If you end up opening an issue on Adrenaline's issue tracker, be mindful that issue resolution depends on many factors, as developers' time, developers' interest in the issue, external contributions, and more; as with any hobbyist open-source project.
 
+## Launch without plugins
+---
+
+Adrenaline allows launching software without plugins by holding the `L` trigger while launching apps/games/XMB.
+
+This feature can be useful for quickly checking whether issues with a software are related to broken/bugged plugins or to plugins that don't interact well with the software.
+
 ## Adding a plugin
 ---
 
