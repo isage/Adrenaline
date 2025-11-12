@@ -86,6 +86,18 @@ Controls whether to stops displaying PIC0 and/or PIC1 images on XMB, allowing qu
 
 When enabled, hides the MAC address from the `Settings > System Settings > System Information`.
 
+### Hide CFW files in PSP games
+
+When enabled, hides the CFW files from being seem or modified by PSP games.
+
+This is not applied to homebrew games/apps or custom updater, even if the option is enabled.
+
+> [!CAUTION]
+> This option does affect **signed** homebrew games/apps (homebrew signed to work on PSP OFW) as signed homebrew is launched in the same way as an official PSP game.
+>
+> For this reason, if you have a homebrew software that only comes signed and it needs to access CFW files, you can disable this option.
+
+
 ### Autorun /PSP/GAME/BOOT/EBOOT.PBP
 
 When enabled, the system automatically launches the game/app int the `???0:/pspemu/PSP/GAME/BOOT/EBOOT.PBP`.
