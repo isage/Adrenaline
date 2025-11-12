@@ -419,7 +419,7 @@
 <hr />
 <ul>
 <li>
-<p><strong>Breaking change:</strong> New plugin configuration format</p>
+<p><strong>Breaking change:</strong> New plugin configuration format <strong>[<a href="./04-HomebrewSupport/02-PluginConfigFormat.html">docs</a>]</strong></p>
 <ul>
 <li>Only one configuration file <code>/pspemu/seplugins/EPIplugins.txt</code></li>
 <li>Finer control over when to enable/disable plugins</li>
@@ -429,43 +429,65 @@
 </ul>
 </li>
 <li>
-<p>Added <code>Scale2x</code> graphical filter options</p>
+<p>Add <code>Scale2x</code> graphical filter options <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">docs</a>]</strong></p>
 </li>
 <li>
-<p>Added support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver.</p>
+<p>Add support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver. <strong>[<a href="./05-PSPPlayback.html#umdemu-iso-drivers">docs</a>]</strong></p>
 </li>
 <li>
-<p>Update the Inferno Driver to Inferno 2</p>
+<p>Update the Inferno Driver to Inferno 2 <strong>[<a href="./05-PSPPlayback/02-Inferno.html">docs</a>]</strong></p>
 </li>
 <li>
-<p>Introduce March33 Driver v2: An evolution of the March33 ISO driver</p>
+<p>Introduce March33 Driver v2: An evolution of the March33 ISO driver <strong>[<a href="./05-PSPPlayback/03-March33.html">docs</a>]</strong></p>
 </li>
 <li>
-<p>Improved the speed and efficiency of all UMDemu ISO drivers</p>
+<p>Introduce an improved implementation of the GalaxyController <strong>[<a href="./05-PSPPlayback/04-Galaxy.html">docs</a>]</strong></p>
 </li>
 <li>
-<p>Introduce CFW Settings on the XMB</p>
+<p>Introduce CFW Settings on the XMB <strong>[<a href="./10-XmbCfwMenus.html#-adrenaline-cfw-settings">docs</a>]</strong></p>
 </li>
 <li>
-<p>Introduce Plugin Manager on the XMB</p>
+<p>Introduce Plugin Manager on the XMB <strong>[<a href="./10-XmbCfwMenus.html#-plugins-manager">docs</a>]</strong></p>
 </li>
 <li>
-<p>Improve stability of the <code>Force High Memory</code> option.</p>
+<p>Improve stability of the <code>Force High Memory</code> CFW option. <strong>[<a href="./08-CfwConfiguration.html#force-high-memory-layout">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add Custom POPS Configuration injection for custom or converted PS1 game/apps</p>
+<p>Improve the speed and efficiency of all UMDemu ISO drivers <strong>[<a href="./05-PSPPlayback.html#umdemu-iso-drivers">docs</a>]</strong></p>
 </li>
 <li>
-<p>Patch libcrypt for custom or converted PS1 game/apps</p>
+<p>Add Custom POPS Configuration injection for custom or converted PS1 game/apps <strong>[<a href="./06-PS1Playback.html#custom-pops-configuration">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add image overlay filter for PS1 game/apps</p>
+<p>Patch libcrypt for custom or converted PS1 game/apps <strong>[<a href="./06-PS1Playback.html#anti-libcrypt-patch">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add <code>Memory Stick Cache</code> to speedup I/O operations in the Memory Stick drive (<code>ms0</code>)</p>
+<p>Add image overlay filter for PS1 game/apps <strong>[<a href="./06-PS1Playback.html#overlay-image">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add <code>Use Graphic Engine 2</code> and <code>Use Media Engine 2</code> advanced CFW options</p>
+<p>Add <code>Memory Stick Cache</code> to speedup I/O operations in the Memory Stick drive (<code>ms0</code>) <strong>[<a href="./08-CfwConfiguration.html#memory-stick-cache">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add <code>Use Graphic Engine 2</code> and <code>Use Media Engine 2</code> advanced CFW options <strong>[<a href="./08-CfwConfiguration.html#use-graphic-engine-2">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add <code>Hide CFW files in PSP games</code> general CFW option <strong>[<a href="./08-CfwConfiguration.html#hide-cfw-files-in-psp-games">docs</a>]</strong></p>
+</li>
+<li>
+<p>Implement "Hold L while launching apps" to not load plugins <strong>[<a href="./04-HomebrewSupport/01-Plugin.html#launch-without-plugins">docs</a>]</strong></p>
+</li>
+<li>
+<p>Implement "Hold R while launching ISO apps/games" to execute <code>BOOT.BIN</code> instead of <code>EBOOT.BIN</code> <strong>[<a href="./08-CfwConfiguration.html#execute-bootbin-in-umdemu-iso">docs</a>]</strong></p>
+</li>
+<li>
+<p>Implement PSP native music player and <code>SenseMe</code> to continue to play music after system suspend</p>
+</li>
+<li>
+<p>Add quick exit to VSH key combos <strong>[<a href="./01-Intro.html#key-combos-cheat-sheet">docs</a>]</strong></p>
+<ul>
+<li>PSP games/homebrew: <code>L+R+Down+Select</code> or <code>L+R+Down+Start</code></li>
+<li>PS1 games: <code>L2+R2+Down+Select</code> or <code>L2+R2+Down+Start</code></li>
+</ul>
 </li>
 <li>
 <p>"Fix" manual double launch on first install</p>
@@ -476,22 +498,6 @@
 <li>Fix <code>SenseMe</code> launch error</li>
 <li>Fix potential issues related to privilege level to other official apps</li>
 <li>Fix homebrew software not able to call some <code>sceKernelLoadModule*</code> functions that they should be able to use</li>
-</ul>
-</li>
-<li>
-<p>Implement PSP native music player and <code>SenseMe</code> to continue to play music after system suspend</p>
-</li>
-<li>
-<p>Implement "Hold L while launching apps" to not load plugins</p>
-</li>
-<li>
-<p>Implement "Hold R while launching ISO apps/games" to execute <code>BOOT.BIN</code> instead of <code>EBOOT.BIN</code></p>
-</li>
-<li>
-<p>Add quick exit to VSH key combos</p>
-<ul>
-<li>PSP games/homebrew: <code>L+R+Down+Select</code> or <code>L+R+Down+Start</code></li>
-<li>PS1 games: <code>L2+R2+Down+Select</code> or <code>L2+R2+Down+Start</code></li>
 </ul>
 </li>
 <li>

@@ -418,6 +418,7 @@
 <p>The configuration format for the plugins on Adrenaline is composed of three sections per line: <strong>runlevel</strong>(s), <strong>plugin path</strong>, and <strong>switch state</strong> (on/off), separated by a comma.</p>
 <p>It also accepts line comments with <code>//</code> and <code>#</code>.</p>
 <h2 id="runlevels"><a class="header" href="#runlevels">Runlevels</a></h2>
+<hr />
 <p>The available runlevels are:</p>
 <ul>
 <li><code>vsh</code>/<code>xmb</code>: VSH runlevel — Plugins configuration for XMB/VSH</li>
@@ -431,9 +432,11 @@
 </ul>
 <p>You can specify more than one runlevel for a specific plugin by separating with a space character, more on <a href="#example">example</a>.</p>
 <h2 id="plugin-path"><a class="header" href="#plugin-path">Plugin Path</a></h2>
+<hr />
 <p>The plugin path can be an <strong>absolute path</strong> or a <strong>relative path</strong>.</p>
 <p>The <strong>absolute path</strong> must be a PSP Memory Stick absolute path, i.e. starting with <code>ms0:/</code>. The <strong>relative path</strong> starts on <code>ms0:/seplugins/</code>, e.g. if the file is on <code>ms0:/seplugins/my_plugin.prx</code>, you can use <code>my_plugin.prx</code>.</p>
 <h2 id="switch-state"><a class="header" href="#switch-state">Switch state</a></h2>
+<hr />
 <p>The switch state defines whether the plugin is enabled or not. The accepted "On" values are <code>on</code>, <code>enabled</code>, <code>true</code>, and <code>1</code>; and the "off" values are <code>off</code>, <code>disabled</code>, <code>false</code>, and <code>0</code>.</p>
 <br>
 <div class="mdbook-callouts mdbook-callouts-example">

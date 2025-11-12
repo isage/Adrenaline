@@ -2166,6 +2166,10 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <p>If you find a plugin that is not working, first open an issue on the plugin project issue tracker before opening an issue on the Adrenaline issue tracker.</p>
 <p>If you end up opening an issue on Adrenaline's issue tracker, be mindful that issue resolution depends on many factors, as developers' time, developers' interest in the issue, external contributions, and more; as with any hobbyist open-source project.</p>
 </div>
+<h2 id="launch-without-plugins"><a class="header" href="#launch-without-plugins">Launch without plugins</a></h2>
+<hr />
+<p>Adrenaline allows launching software without plugins by holding the <code>L</code> trigger while launching apps/games/XMB.</p>
+<p>This feature can be useful for quickly checking whether issues with a software are related to broken/bugged plugins or to plugins that don't interact well with the software.</p>
 <h2 id="adding-a-plugin"><a class="header" href="#adding-a-plugin">Adding a plugin</a></h2>
 <hr />
 <ol>
@@ -2246,7 +2250,8 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <p align="center">
 <img src="04-HomebrewSupport/../assets/04-rec-plugin.png" width="49%" alt="Recovery Menu plugin section" />
 <img src="04-HomebrewSupport/../assets/04-rec-exit.png" width="49%" alt="Recovery Menu exit" />
-</p><div style="break-before: page; page-break-before: always;"></div><style>
+</p>
+<div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
   padding: 8px 16px;
   margin-bottom: 16px;
@@ -2488,6 +2493,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <p>The configuration format for the plugins on Adrenaline is composed of three sections per line: <strong>runlevel</strong>(s), <strong>plugin path</strong>, and <strong>switch state</strong> (on/off), separated by a comma.</p>
 <p>It also accepts line comments with <code>//</code> and <code>#</code>.</p>
 <h2 id="runlevels"><a class="header" href="#runlevels">Runlevels</a></h2>
+<hr />
 <p>The available runlevels are:</p>
 <ul>
 <li><code>vsh</code>/<code>xmb</code>: VSH runlevel — Plugins configuration for XMB/VSH</li>
@@ -2501,9 +2507,11 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </ul>
 <p>You can specify more than one runlevel for a specific plugin by separating with a space character, more on <a href="04-HomebrewSupport/02-PluginConfigFormat.html#example">example</a>.</p>
 <h2 id="plugin-path"><a class="header" href="#plugin-path">Plugin Path</a></h2>
+<hr />
 <p>The plugin path can be an <strong>absolute path</strong> or a <strong>relative path</strong>.</p>
 <p>The <strong>absolute path</strong> must be a PSP Memory Stick absolute path, i.e. starting with <code>ms0:/</code>. The <strong>relative path</strong> starts on <code>ms0:/seplugins/</code>, e.g. if the file is on <code>ms0:/seplugins/my_plugin.prx</code>, you can use <code>my_plugin.prx</code>.</p>
 <h2 id="switch-state"><a class="header" href="#switch-state">Switch state</a></h2>
+<hr />
 <p>The switch state defines whether the plugin is enabled or not. The accepted "On" values are <code>on</code>, <code>enabled</code>, <code>true</code>, and <code>1</code>; and the "off" values are <code>off</code>, <code>disabled</code>, <code>false</code>, and <code>0</code>.</p>
 <br>
 <div class="mdbook-callouts mdbook-callouts-example">
@@ -5211,6 +5219,17 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 </ul>
 <h3 id="hide-mac-address"><a class="header" href="#hide-mac-address">Hide MAC address</a></h3>
 <p>When enabled, hides the MAC address from the <code>Settings &gt; System Settings &gt; System Information</code>.</p>
+<h3 id="hide-cfw-files-in-psp-games"><a class="header" href="#hide-cfw-files-in-psp-games">Hide CFW files in PSP games</a></h3>
+<p>When enabled, hides the CFW files from being seem or modified by PSP games.</p>
+<p>This is not applied to homebrew games/apps or custom updater, even if the option is enabled.</p>
+<div class="mdbook-callouts mdbook-callouts-caution">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  caution
+</p>
+<p>This option does affect <strong>signed</strong> homebrew games/apps (homebrew signed to work on PSP OFW) as signed homebrew is launched in the same way as an official PSP game.</p>
+<p>For this reason, if you have a homebrew software that only comes signed and it needs to access CFW files, you can disable this option.</p>
+</div>
 <h3 id="autorun-pspgamebootebootpbp"><a class="header" href="#autorun-pspgamebootebootpbp">Autorun /PSP/GAME/BOOT/EBOOT.PBP</a></h3>
 <p>When enabled, the system automatically launches the game/app int the <code>???0:/pspemu/PSP/GAME/BOOT/EBOOT.PBP</code>.</p>
 <h3 id="fake-vsh-region"><a class="header" href="#fake-vsh-region">Fake VSH Region</a></h3>
@@ -7669,7 +7688,7 @@ cmake --build build
 <hr />
 <ul>
 <li>
-<p><strong>Breaking change:</strong> New plugin configuration format</p>
+<p><strong>Breaking change:</strong> New plugin configuration format <strong>[<a href="./04-HomebrewSupport/02-PluginConfigFormat.html">docs</a>]</strong></p>
 <ul>
 <li>Only one configuration file <code>/pspemu/seplugins/EPIplugins.txt</code></li>
 <li>Finer control over when to enable/disable plugins</li>
@@ -7679,43 +7698,65 @@ cmake --build build
 </ul>
 </li>
 <li>
-<p>Added <code>Scale2x</code> graphical filter options</p>
+<p>Add <code>Scale2x</code> graphical filter options <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">docs</a>]</strong></p>
 </li>
 <li>
-<p>Added support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver.</p>
+<p>Add support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver. <strong>[<a href="./05-PSPPlayback.html#umdemu-iso-drivers">docs</a>]</strong></p>
 </li>
 <li>
-<p>Update the Inferno Driver to Inferno 2</p>
+<p>Update the Inferno Driver to Inferno 2 <strong>[<a href="./05-PSPPlayback/02-Inferno.html">docs</a>]</strong></p>
 </li>
 <li>
-<p>Introduce March33 Driver v2: An evolution of the March33 ISO driver</p>
+<p>Introduce March33 Driver v2: An evolution of the March33 ISO driver <strong>[<a href="./05-PSPPlayback/03-March33.html">docs</a>]</strong></p>
 </li>
 <li>
-<p>Improved the speed and efficiency of all UMDemu ISO drivers</p>
+<p>Introduce an improved implementation of the GalaxyController <strong>[<a href="./05-PSPPlayback/04-Galaxy.html">docs</a>]</strong></p>
 </li>
 <li>
-<p>Introduce CFW Settings on the XMB</p>
+<p>Introduce CFW Settings on the XMB <strong>[<a href="./10-XmbCfwMenus.html#-adrenaline-cfw-settings">docs</a>]</strong></p>
 </li>
 <li>
-<p>Introduce Plugin Manager on the XMB</p>
+<p>Introduce Plugin Manager on the XMB <strong>[<a href="./10-XmbCfwMenus.html#-plugins-manager">docs</a>]</strong></p>
 </li>
 <li>
-<p>Improve stability of the <code>Force High Memory</code> option.</p>
+<p>Improve stability of the <code>Force High Memory</code> CFW option. <strong>[<a href="./08-CfwConfiguration.html#force-high-memory-layout">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add Custom POPS Configuration injection for custom or converted PS1 game/apps</p>
+<p>Improve the speed and efficiency of all UMDemu ISO drivers <strong>[<a href="./05-PSPPlayback.html#umdemu-iso-drivers">docs</a>]</strong></p>
 </li>
 <li>
-<p>Patch libcrypt for custom or converted PS1 game/apps</p>
+<p>Add Custom POPS Configuration injection for custom or converted PS1 game/apps <strong>[<a href="./06-PS1Playback.html#custom-pops-configuration">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add image overlay filter for PS1 game/apps</p>
+<p>Patch libcrypt for custom or converted PS1 game/apps <strong>[<a href="./06-PS1Playback.html#anti-libcrypt-patch">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add <code>Memory Stick Cache</code> to speedup I/O operations in the Memory Stick drive (<code>ms0</code>)</p>
+<p>Add image overlay filter for PS1 game/apps <strong>[<a href="./06-PS1Playback.html#overlay-image">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add <code>Use Graphic Engine 2</code> and <code>Use Media Engine 2</code> advanced CFW options</p>
+<p>Add <code>Memory Stick Cache</code> to speedup I/O operations in the Memory Stick drive (<code>ms0</code>) <strong>[<a href="./08-CfwConfiguration.html#memory-stick-cache">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add <code>Use Graphic Engine 2</code> and <code>Use Media Engine 2</code> advanced CFW options <strong>[<a href="./08-CfwConfiguration.html#use-graphic-engine-2">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add <code>Hide CFW files in PSP games</code> general CFW option <strong>[<a href="./08-CfwConfiguration.html#hide-cfw-files-in-psp-games">docs</a>]</strong></p>
+</li>
+<li>
+<p>Implement "Hold L while launching apps" to not load plugins <strong>[<a href="./04-HomebrewSupport/01-Plugin.html#launch-without-plugins">docs</a>]</strong></p>
+</li>
+<li>
+<p>Implement "Hold R while launching ISO apps/games" to execute <code>BOOT.BIN</code> instead of <code>EBOOT.BIN</code> <strong>[<a href="./08-CfwConfiguration.html#execute-bootbin-in-umdemu-iso">docs</a>]</strong></p>
+</li>
+<li>
+<p>Implement PSP native music player and <code>SenseMe</code> to continue to play music after system suspend</p>
+</li>
+<li>
+<p>Add quick exit to VSH key combos <strong>[<a href="./01-Intro.html#key-combos-cheat-sheet">docs</a>]</strong></p>
+<ul>
+<li>PSP games/homebrew: <code>L+R+Down+Select</code> or <code>L+R+Down+Start</code></li>
+<li>PS1 games: <code>L2+R2+Down+Select</code> or <code>L2+R2+Down+Start</code></li>
+</ul>
 </li>
 <li>
 <p>"Fix" manual double launch on first install</p>
@@ -7726,22 +7767,6 @@ cmake --build build
 <li>Fix <code>SenseMe</code> launch error</li>
 <li>Fix potential issues related to privilege level to other official apps</li>
 <li>Fix homebrew software not able to call some <code>sceKernelLoadModule*</code> functions that they should be able to use</li>
-</ul>
-</li>
-<li>
-<p>Implement PSP native music player and <code>SenseMe</code> to continue to play music after system suspend</p>
-</li>
-<li>
-<p>Implement "Hold L while launching apps" to not load plugins</p>
-</li>
-<li>
-<p>Implement "Hold R while launching ISO apps/games" to execute <code>BOOT.BIN</code> instead of <code>EBOOT.BIN</code></p>
-</li>
-<li>
-<p>Add quick exit to VSH key combos</p>
-<ul>
-<li>PSP games/homebrew: <code>L+R+Down+Select</code> or <code>L+R+Down+Start</code></li>
-<li>PS1 games: <code>L2+R2+Down+Select</code> or <code>L2+R2+Down+Start</code></li>
 </ul>
 </li>
 <li>
