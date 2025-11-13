@@ -226,8 +226,8 @@ Configures what cache policy the `Inferno` UMDemu driver will use for its overal
 
 #### Options:
 
-- `LRU`: Least Recently Used policy. Uses less cpu cycles because it will just remove the calls from the queue that have not been used in a timeframe.
-- `RR`: Round Robin policy. Uses more cpu cycles making it slower because its more data it has to process in the queue, but can be better on the cases where there are highly uniform, or cyclical, data access or requires predicable cache replacement.
+- `LRU`: Least Recently Used policy. Uses less cpu cycles because it will discards the cache slot from the queue that have not been used in a timeframe when new cache item needs to be added.
+- `RR`: Random Replacement policy. Uses slightly less memory as it doesn't need to keep track of data related to cache slots usage. It can be beneficial for uniform or streaming reading patterns.
 
 > [!WARNING]
 > If you didn't understood the brief explanation, do not change this setting. The default setting (`LRU`) is already the better option for games in general.

@@ -24,9 +24,9 @@ This is the default UMDemu ISO driver and the one with the most person-hours put
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`
 - **Emulation of empty UMD drive**: Several bugs existed that caused malfunction when the driver was used without an ISO file specified on other drivers and older versions of this driver.
 - **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.
-- **Inferno Cache**: Usage of overall caches as another read-time speedup hack. The amount of cache is configurable in the CFW configuration option, limiting a maximum to allow for enough free space for other features or plugins. It is also possible to configure the cache policy strategy between two algorithms: Least Recently Used (`LRU`, default) and Round Robin (`RR`).
-    - **`LRU`**: Uses fewer CPU cycles because it will just remove the calls from the queue that have not been used in a timeframe.
-    - **`RR`**: Uses more CPU cycles, making it slower because there's more data to process in the queue, but can be better in cases where there are highly uniform or cyclical data access patterns or require predictable cache replacement.
+- **Inferno Cache**: Usage of overall caches as another read-time speedup hack. The amount of cache is configurable in the CFW configuration option, limiting a maximum to allow for enough free space for other features or plugins. It is also possible to configure the cache policy strategy between two algorithms: Least Recently Used (`LRU`, default) and Random Replacement (`RR`).
+    - **`LRU`**: Uses fewer CPU cycles because it will discards the cache slot from the queue that have not been used in a timeframe when new cache item needs to be added.
+    - **`RR`**: Uses slightly less memory as it doesn't need to keep track of the least used cache slot.
 - **Configurable seek and read speed delays**: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
     - By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.
     - This feature is incompatible with **Inferno Cache**, enabling this will cause **Inferno Cache** to be disabled.
