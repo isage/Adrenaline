@@ -258,7 +258,7 @@ SceOff umd_lseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 	} else if (whence == PSP_SEEK_CUR) {
 		descriptors[i].discpointer += ofs;
 	} else if (whence == PSP_SEEK_END) {
-		descriptors[i].discpointer = discsize-ofs;
+		descriptors[i].discpointer = discsize + ofs;
 	} else {
 		UNLOCK();
 		return SCE_EINVAL;
