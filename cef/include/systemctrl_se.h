@@ -52,8 +52,11 @@ enum SEUmdModes {
 };
 
 enum InfernoCachePolicy {
-    CACHE_POLICY_LRU = 0,
-    CACHE_POLICY_RR = 1,
+    INFERNO_CACHE_DISABLED = 0,
+	// Least Recently Used
+    INFERNO_CACHE_LRU = 1,
+	// Random Replacement
+    INFERNO_CACHE_RR = 2,
 };
 
 enum InfernoCacheConf {

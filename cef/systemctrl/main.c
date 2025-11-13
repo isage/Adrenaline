@@ -131,10 +131,10 @@ static void OnSystemStatusIdle() {
 			int (*CacheSetPolicy)(int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xC0736FD6);
 			if (CacheSetPolicy != NULL) {
 				if (config.iso_cache == CACHE_CONFIG_LRU) {
-					CacheSetPolicy(CACHE_POLICY_LRU);
+					CacheSetPolicy(INFERNO_CACHE_LRU);
 					logmsg3("[INFO]: Inferno ISO cache policy: LRU\n");
 				} else if (config.iso_cache == 2) {
-					CacheSetPolicy(CACHE_POLICY_RR);
+					CacheSetPolicy(INFERNO_CACHE_RR);
 					logmsg3("[INFO]: Inferno ISO cache policy: RR\n");
 				}
 			}

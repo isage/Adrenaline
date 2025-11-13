@@ -61,6 +61,22 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 	}
 }
 
+static void DisableInfernoCache() {
+	int (*CacheInit)(int, int, int) = NULL;
+	if (rebootex_config.bootfileindex == BOOT_INFERNO) {
+		SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+		CacheInit = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+
+		if (CacheInit != NULL) {
+			CacheInit(0, 0, 0);
+		}
+
+		// Modify the CFW setting at runtime without saving.
+		// Avoids the CFW to try to re-enable the cache once again
+		config.iso_cache = CACHE_CONFIG_OFF;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,8 +156,8 @@ int sceWlanGetSwitchStatePatched() {
 void PatchGameByGameId() {
 	char* game_id = rebootex_config.game_id;
 
-	// Fix TwinBee Portable when not using English or Japanese language
 	if (strcasecmp("ULJM05221", game_id) == 0) {
+		// Fix TwinBee Portable when not using English or Japanese language
 		_utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		sctrlHENPatchSyscall((u32)_utilityGetParam, utilityGetParamPatched_ULJM05221);
 
@@ -152,6 +168,12 @@ void PatchGameByGameId() {
 	} else if (strcasecmp("ULES00590", game_id) == 0 || strcasecmp("ULJM05075", game_id) == 0) {
 		// Patch Aces of War anti-CFW check (UMD speed)
 		SetUmdEmuSpeed(1, 1);
+
+	} else if (strcasecmp("ULUS10201", game_id) == 0 || strcasecmp("ULUS10328", game_id) == 0 || strcasecmp("ULES00968", game_id) == 0) {
+		// Patch Luxor - The Wrath of Set and Flat-Out Head On (US/EU) as they
+		// don't play well with Inferno cache
+		DisableInfernoCache();
+
 	}
 }
 
