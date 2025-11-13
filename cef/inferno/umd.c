@@ -15,22 +15,23 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
-#include <pspkernel.h>
 #include <pspreg.h>
-#include <stdio.h>
-#include <string.h>
-#include <systemctrl.h>
-#include <systemctrl_se.h>
-#include <pspsysmem.h>
-#include <pspthreadman_kernel.h>
 #include <pspumd.h>
 #include <psprtc.h>
-#include <cfwmacros.h>
 #include <psperror.h>
+#include <pspsysmem.h>
+#include <pspkernel.h>
+#include <pspthreadman_kernel.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #include <adrenaline_log.h>
 
-#include "utils.h"
+#include <stdio.h>
+#include <string.h>
+
 #include "inferno.h"
 
 extern int sceKernelGetCompiledSdkVersion(void);
@@ -38,26 +39,30 @@ extern int sceKernelCancelEventFlag(SceUID evf, SceUInt new_value, int *num_wait
 
 static void do_umd_notify(int arg);
 
-// 0x000027AC
 int g_umd_error_status = 0;
-
-// 0x000027B0
 int g_drive_status = 0;
 
-// 0x00002794
 u32 g_prev_gp = 0;
 int (*g_ie_callback)(int, void*, int) = NULL;
 u32 g_ie_callback_id = 0;
 void* g_ie_callback_arg = NULL;
 
-// 0x000027A4
 SceUID g_umd_cbid = 0;
-
 SceUID g_drive_status_evf = -1;
-
 int g_disc_type = PSP_UMD_TYPE_GAME;
 
 extern int sceKernelCancelSema(SceUID semaid, int newcount, int *num_wait_threads);
+
+static int check_memory(const void *addr, int size) {
+	u32 k1 = pspSdkGetK1();
+	const void *end_addr = addr + size - 1;
+
+	if ((int)(((u32)end_addr | (u32)addr) & (k1 << 11)) < 0) {
+		return 0;
+	}
+
+	return 1;
+}
 
 int sceUmdCheckMedium(void) {
 	if (g_iso_fn[0] == '\0'){
@@ -248,7 +253,7 @@ int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
 
 	SceModule* mod = (SceModule*)sceKernelFindModuleByName("sceIsofs_driver");
 	u32 text_addr = mod->text_addr;
-	u32 intr = ((0x2402 << 16) | ((0) & 0xFFFF));
+	u32 intr = LI_V0(0);
 
 	int patches = 4;
 	u32 top_addr = text_addr+mod->text_size;

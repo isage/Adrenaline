@@ -15,23 +15,24 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
-#include <pspkernel.h>
 #include <pspreg.h>
-#include <stdio.h>
-#include <string.h>
-#include <systemctrl.h>
-#include <systemctrl_se.h>
-#include <pspsysmem.h>
 #include <psprtc.h>
 #include <pspumd.h>
+#include <psperror.h>
+#include <pspkernel.h>
+#include <pspsysmem.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
+
 #include <cfwmacros.h>
-#include <psperror.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #include <adrenaline_log.h>
 
-#include "utils.h"
+#include <stdio.h>
+#include <string.h>
+
 #include "inferno.h"
 
 /*
@@ -69,15 +70,12 @@ struct IoIoctlSeekCmd {
 	u32 whence;
 };
 
-// 0x00002740
 SceUID g_umd9660_sema_id = -1;
 
-// 0x00002744
 static struct IsoOpenSlot g_open_slot[MAX_FILES_NR];
 
 void* g_sector_buf = NULL;
 
-// 0x000023D8
 // it's the serial of Coded arms
 static const char *g_umd_ids[] = {
 	"ULES-00124",
@@ -86,11 +84,9 @@ static const char *g_umd_ids[] = {
 	"ULAS-42009",
 };
 
-// 0x00002480
 int g_game_fix_type = 0;
 
 int inferno_mount(SceSize args, void *arg) {
-
 	while (0 == g_iso_opened) {
 		iso_open();
 		sceKernelDelayThread(20000);
@@ -123,7 +119,6 @@ out:
 	return 0;
 }
 
-// 0x00000CB0
 static int IoInit(PspIoDrvArg* arg) {
 	void *p;
 	if (g_sector_buf == NULL){
@@ -157,7 +152,6 @@ static int IoInit(PspIoDrvArg* arg) {
 	return 0;
 }
 
-// 0x000002E8
 static int IoExit(PspIoDrvArg* arg) {
 	SceUInt timeout = 500000;
 
@@ -169,7 +163,6 @@ static int IoExit(PspIoDrvArg* arg) {
 	return 0;
 }
 
-// 0x00000A78
 static int IoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 	int ret;
 
@@ -229,7 +222,6 @@ exit:
 	return ret;
 }
 
-// 0x00000250
 static int IoClose(PspIoDrvFileArg *arg) {
 	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
@@ -256,7 +248,6 @@ static int IoClose(PspIoDrvFileArg *arg) {
 	return retv;
 }
 
-// 0x00000740
 static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
@@ -310,7 +301,6 @@ exit:
 	return ret;
 }
 
-// 0x000000D8
 static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, NULL);
 
@@ -359,12 +349,13 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 exit:
 	logmsg("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
 
-	if (ret>=0) cur_offset = ret;
+	if (ret>=0) {
+		cur_offset = ret;
+	}
 
 	return ret;
 }
 
-// 0x0000083C
 static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	int ret;
 
@@ -437,7 +428,6 @@ exit:
 	return ret;
 }
 
-// 0x00000488
 static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param) {
 	u32 byte_size_total = param->byte_size_total;
 
@@ -464,7 +454,6 @@ static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param) {
 	return ret;
 }
 
-// 0x000004F4
 static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	int ret;
 
@@ -621,7 +610,6 @@ exit:
 	return ret;
 }
 
-// 0x000023EC
 static PspIoDrvFuncs g_drv_funcs = {
 	.IoInit    = &IoInit,
 	.IoExit    = &IoExit,
@@ -647,7 +635,6 @@ static PspIoDrvFuncs g_drv_funcs = {
 	.IoUnk21   = NULL,
 };
 
-// 0x00002444
 PspIoDrv g_iodrv = {
 	.name = "umd",
 	.dev_type = 4, // block device

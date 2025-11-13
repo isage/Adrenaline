@@ -1,18 +1,20 @@
 #include <pspsdk.h>
+
 #include <pspsysmem.h>
 #include <pspkernel.h>
-#include <psputilsforkernel.h>
 #include <pspsysevent.h>
 #include <pspiofilemgr.h>
+#include <psputilsforkernel.h>
+
+#include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <stdio.h>
-#include <string.h>
-#include <cfwmacros.h>
 
 #include <adrenaline_log.h>
 
-#include "utils.h"
+#include <stdio.h>
+#include <string.h>
+
 #include "inferno.h"
 
 static u32 read_call = 0;
@@ -119,8 +121,7 @@ static int get_hit_caches(u32 pos, int len, char *data, ISOCache **last_cache) {
 	return cur - pos;
 }
 
-static void update_cache_info(void)
-{
+static void update_cache_info(void) {
 	int i;
 
 	if (cache_policy != CACHE_POLICY_LRU)

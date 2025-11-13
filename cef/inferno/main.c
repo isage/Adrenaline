@@ -15,22 +15,23 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
-#include <pspkernel.h>
 #include <pspreg.h>
-#include <stdio.h>
-#include <string.h>
-#include <systemctrl.h>
-#include <systemctrl_se.h>
-#include <pspsysmem.h>
-#include <pspsysevent.h>
 #include <pspumd.h>
 #include <psprtc.h>
+#include <pspsysmem.h>
+#include <pspkernel.h>
+#include <pspsysevent.h>
+
 #include <cfwmacros.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 
-#include "utils.h"
+#include <stdio.h>
+#include <string.h>
+
 #include "inferno.h"
 
 PSP_MODULE_INFO("EPI-InfernoDriver", 0x1000, 2, 2);
@@ -40,7 +41,6 @@ u32 psp_fw_version;
 
 int sceKernelSetQTGP3(void *data);
 
-// 0x00002248
 u8 g_umddata[16] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
@@ -55,7 +55,6 @@ PspSysEventHandler g_power_event = {
 	.handler = &power_event_handler,
 };
 
-// 00000090
 int setup_umd_device(void) {
 	memset(g_iso_fn, 0, sizeof(g_iso_fn));
 	strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
@@ -74,7 +73,6 @@ int setup_umd_device(void) {
 	return ret;
 }
 
-// 00001514
 int init_inferno(void) {
 	g_drive_status = PSP_UMD_INITING;
 	g_umd_cbid = -1;
@@ -85,7 +83,6 @@ int init_inferno(void) {
 	return MIN(g_drive_status_evf, 0);
 }
 
-// 0x00000000
 int module_start(SceSize args, void* argp) {
 	logInit("ms0:/log_inferno.txt");
 	logmsg("Inferno driver started...\n")
@@ -103,7 +100,6 @@ int module_start(SceSize args, void* argp) {
 	return MIN(ret, 0);
 }
 
-// 0x0000006C
 int module_stop(SceSize args, void *argp) {
 	sceIoDelDrv("umd");
 	sceKernelDeleteEventFlag(g_drive_status_evf);
