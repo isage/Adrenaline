@@ -29,6 +29,7 @@ target_link_libraries(adrenaline_kernel
   SceProcessmgrForDriver_stub
   SceSysclibForDriver_stub
   SceSysmemForDriver_stub
+  SceSysmemForKernel_stub
   SceSysrootForKernel_stub
   SceSysrootForDriver_stub
   SceThreadmgrForDriver_stub

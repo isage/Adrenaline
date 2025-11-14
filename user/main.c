@@ -323,33 +323,12 @@ int AdrenalineCompat(SceSize args, void *argp) {
 					}
 				}
 
-				// Find drive for the usb device
-				SceIoMount mounts[24] = {0};
-				SceUInt32 num_mounts = 0;
-				int mount_res = kuVfsGetMntList(mounts, 24, &num_mounts);
+				int cp_res = kuCopyFiles(path, "/pspemu/PSP/SAVEDATA/", "/PSP/SAVEDATA/");
 
-				if (mount_res < 0) {
-					res = mount_res;
+				if (cp_res < 0) {
+					res = cp_res;
 					goto send_response;
 				}
-
-
-				SceIoMountInfo mount_info = {0};
-				for (int i = 0; i < num_mounts; i++) {
-					mount_res = kuVfsGetMntInfo(mounts[i].mount, &mount_info);
-					if (strcmp(mount_info.block_dev_name, path) == 0) {
-						break;
-					}
-				}
-
-				if (mount_res < 0) {
-					res = mount_res;
-					goto send_response;
-				}
-
-				snprintf(g_savedata_path, 64, "%s/pspemu/PSP/SAVEDATA/", getMsDrive());
-				snprintf(g_savedata_path_copy, 64, "%s/PSP/SAVEDATA/", mount_info.assign_name);
-				copyPath(g_savedata_path, g_savedata_path_copy);
 
 				usbdevice_modid = startUsb("ux0:app/" ADRENALINE_TITLEID "/sce_module/usbdevice.skprx", path, SCE_USBSTOR_VSTOR_TYPE_FAT);
 
@@ -364,7 +343,28 @@ int AdrenalineCompat(SceSize args, void *argp) {
 			res = stopUsb(usbdevice_modid);
 			if (res >= 0) {
 				usbdevice_modid = -1;
-				copyPath(g_savedata_path_copy, g_savedata_path);
+
+				char *dev_name;
+
+				if (config.usbdevice == USBDEVICE_MODE_INTERNAL_STORAGE) {
+					dev_name = "sdstor0:int-lp-ign-user";
+				} else if (config.usbdevice == USBDEVICE_MODE_SD2VITA) {
+					dev_name = "sdstor0:gcd-lp-ign-entire";
+				} else if (config.usbdevice == USBDEVICE_MODE_PSVSD) {
+					dev_name = "sdstor0:uma-pp-act-a";
+				} else {
+					dev_name = "sdstor0:xmc-lp-ign-userext";
+
+					SceUID fd = sceIoOpen(dev_name, SCE_O_RDONLY, 0);
+
+					if (fd < 0) {
+						dev_name = "sdstor0:int-lp-ign-userext";
+					} else {
+						sceIoClose(fd);
+					}
+				}
+
+				kuCopyFiles(dev_name, "/PSP/SAVEDATA/", "/pspemu/PSP/SAVEDATA/");
 			}
 		} else if (request->cmd == ADRENALINE_VITA_CMD_PAUSE_POPS) {
 			ScePspemuPausePops(1);
