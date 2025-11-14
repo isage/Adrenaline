@@ -59,8 +59,9 @@ int open_iso(void);
 // Init ISO Emulator
 int initEmulator(void);
 
+#define readDiscSectorNP9660Patched isoReadUmdFile
+int isoReadUmdFile(u32 sector, void * buffer, u32 size);
 SceUID sceKernelCreateThreadPatched(const char * name, SceKernelThreadEntry entry, int initPriority, int stackSize, SceUInt attr, SceKernelThreadOptParam * option);
-int readDiscSectorNP9660Patched(unsigned int sector, unsigned char * buffer, unsigned int size);
 int sceIoClosePatched(int fd);
 int sceKernelStartThreadPatched(SceUID thid, SceSize arglen, void * argp);
 

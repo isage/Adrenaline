@@ -44,7 +44,7 @@ char *game_group2[N_GAME_GROUP2] = {
 
 
 // iso_read_with_stack
-static int ReadUmdFile(int offset, void *buf, int outsize) {
+int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
 	LOCK();
 
 	g_read_arg.offset = offset;
@@ -234,7 +234,7 @@ int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 		len = discsize - discpointer;
 	}
 
-	int res = ReadUmdFile(discpointer*SECTOR_SIZE, data, len*SECTOR_SIZE); //***
+	int res = isoReadUmdFile(discpointer*SECTOR_SIZE, data, len*SECTOR_SIZE); //***
 
 	if (res > 0) {
 		res = res / SECTOR_SIZE;
@@ -351,7 +351,7 @@ int ProcessDevctlRead(void *outdata, int size, u32 *indata) {
 		offset = (lba*ISO_SECTOR_SIZE)-dataoffset+ISO_SECTOR_SIZE;
 	}
 
-	return ReadUmdFile(offset, outdata, datasize);
+	return isoReadUmdFile(offset, outdata, datasize);
 }
 
 int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {

@@ -51,10 +51,10 @@ unsigned char g_umddata[16] = {
 };
 
 // NP9660 Initialization Call
-void (* initNP9660)(unsigned int zero) = NULL;
+void (* initNP9660)(u32 zero) = NULL;
 
 // NP9660 Disc Sector Reader
-int (* readDiscSectorNP9660)(unsigned int sector, unsigned char * buffer, unsigned int size) = NULL;
+int (* readDiscSectorNP9660)(u32 sector, void * buffer, u32 size) = NULL;
 
 // NP9660 Sector Flush
 void (* readSectorFlushNP9660)(void) = NULL;
@@ -102,7 +102,7 @@ int open_iso(void) {
 	return 0;
 }
 
-int readDiscSectorNP9660Patched(unsigned int sector, unsigned char * buffer, unsigned int size) {
+int isoReadUmdFile(u32 sector, void *buffer, u32 size) {
 	// This will fail but it sets some needed variables
 	readDiscSectorNP9660(sector, buffer, size);
 

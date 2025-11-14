@@ -13,6 +13,8 @@ PSP_EXPORT_FUNC(isoGetTitleId)
 PSP_EXPORT_FUNC(isoSetUmdDelay)
 # Compat with inferno 2
 PSP_EXPORT_FUNC_NID(isoSetUmdDelay, 0xB6522E93)
+# galaxy_driver_3F83B110
+PSP_EXPORT_FUNC(isoReadUmdFile)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS
