@@ -11,17 +11,16 @@ TARGET = updater
 OBJS = main.o
 
 INCDIR = ../include
-CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -D__USER__ -D__UPDATER__
+CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
 
 BUILD_PRX = 1
+USE_UPDATER_LIBS = 1
 
 #LIBDIR = ../lib
 LIBS = ../lib/libpspsystemctrl_user.a
 EXTRA_TARGETS = version psp-updatelist.txt adrenaline_kernel.h adrenaline_user.h adrenaline_vsh.h frame_xml.h template_xml.h
 
-PSPSDK = $(shell psp-config --pspsdk-path)
-include $(PSPSDK)/lib/build.mak
-
+include ../lib/build.mak

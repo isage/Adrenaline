@@ -24,5 +24,4 @@ USE_PSPSDK_LIBC = 0
 LIBDIR = ../lib
 LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspvshctrl -lpsppower_user
 
-PSPSDK = $(shell psp-config --pspsdk-path)
-include $(PSPSDK)/lib/build_prx.mak
+include ../lib/build_prx.mak

@@ -7,7 +7,7 @@ OBJS = main.o adrenaline.o executable_patch.o libraries_patch.o io_patch.o init_
 	   lz4.o minilzo.o sysclibforuser.o gameinfo.o plugin.o pgd.o utils.o storage_cache.o
 
 INCDIR = ../include
-CFLAGS = -Os -G0 -Wall -Wno-builtin-declaration-mismatch -fshort-wchar -fno-pic -mno-check-zero-division -D__KERNEL__
+CFLAGS = -Os -G0 -Wall -Wno-builtin-declaration-mismatch -fshort-wchar -fno-pic -mno-check-zero-division
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
@@ -29,5 +29,4 @@ LIBS = -lpspsemaphore -lpspamctrl_driver -lpspinit_kernel -lpspthreadman_kernel 
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
-PSPSDK = $(shell psp-config --pspsdk-path)
-include $(PSPSDK)/lib/build_prx.mak
+include ../lib/build_prx.mak
