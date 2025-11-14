@@ -220,6 +220,45 @@ int kuVfsGetMntInfo(uint32_t mount, SceIoMountInfo *info) {
 	return res;
 }
 
+int kuCopyFiles(const char* dev_name, const char* rel_src, const char* rel_dest) {
+	uint32_t state;
+	ENTER_SYSCALL(state);
+	int res = -1;
+
+	if (my_mallocinit() != 0) {
+		goto exit;
+	}
+
+	// Find drive for the usb device
+	SceIoMount mounts[24] = {0};
+	SceUInt32 num_mounts = 0;
+	int mount_res = vfsGetMntList(mounts, 24, &num_mounts);
+
+	if (mount_res < 0) {
+		res = mount_res;
+		goto exit;
+	}
+
+
+	SceIoMountInfo mount_info = {0};
+	for (int i = 0; i < num_mounts; i++) {
+		mount_res = vfsGetMntInfo(mounts[i].mount, &mount_info);
+		if (strcmp(mount_info.block_dev_name, dev_name) == 0) {
+			break;
+		}
+	}
+
+	char dest[64] = {0};
+	char src[64] = {0};
+	snprintf(dest, 64, "%s%s", mount_info.assign_name, rel_dest);
+	snprintf(src, 64, "%s%s", mount_info.assign_name, rel_src);
+	copyPath(src, dest);
+
+exit:
+	EXIT_SYSCALL(state);
+	return res;
+}
+
 int adrStartBlanking(int vol) {
 	uint32_t state;
 	ENTER_SYSCALL(state);

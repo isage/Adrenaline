@@ -14,4 +14,4 @@ AdrenalineKernel:
         - adrStartBlanking
         - adrStopBlanking
         - kuVfsGetMntList
-        - kuVfsGetMntInfo
+        - kuCopyFiles

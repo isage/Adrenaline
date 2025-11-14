@@ -19,6 +19,8 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+#include <psp2/types.h>
+
 #define debugPrintf(...) \
 { \
 	char msg[128]; \
@@ -29,5 +31,11 @@
 void debug_printf(char *msg);
 int ReadFile(char *file, void *buf, int size);
 int WriteFile(char *file, void *buf, int size);
+
+int copyPath(const char *src_path, const char *dst_path);
+
+int my_mallocinit();
+void* my_malloc(SceSize size);
+void my_free(void* ptr);
 
 #endif

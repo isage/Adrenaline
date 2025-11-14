@@ -143,6 +143,7 @@ int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count);
 uint32_t adrStopBlanking(void);
 int kuVfsGetMntInfo(uint32_t mount, SceIoMountInfo *info);
 int kuVfsGetMntList(SceIoMount *mounts, SceUInt32 total_num_mounts, SceUInt32 *result_num_mounts);
+int kuCopyFiles(const char* dev_name, const char* rel_src, const char* rel_dest);
 
 void lockPower();
 void unlockPower();
