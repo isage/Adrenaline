@@ -52,6 +52,13 @@ The `SystemControl` headers (`systemctrl.h` and `systemctrl_se.h`) limit the vis
 
 Alternatively, to facilitate things, you can import the `mak` (`build.mak` and `build_prx.mak`) files at the generated `libs` folder in your project `Makefile`. With those, the setup of the macros are automatic.
 
+> [!EXAMPLE]
+> ```makefile
+> # At the end of your Makefile
+>
+> include ../lib/build.mak
+> ```
+
 
 ## My homebrew already uses CFW APIs
 ---
