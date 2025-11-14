@@ -624,12 +624,12 @@ int iso_re_open(void) {
 }
 #endif // __ISO_EXTRA__
 
-int isoGetGameId(char game_id[10]) {
+int isoGetTitleId(char title_id[10]) {
 	// game ID is always at offset 0x8373 within the ISO
 	// lba=16, offset=883
 	u32 pos = 16 * ISO_SECTOR_SIZE + 883;
 	IoReadArg read_arg = {
-		.address = (u8*)game_id,
+		.address = (u8*)title_id,
 		.size = 10,
 		.offset = pos
 	};
@@ -639,11 +639,11 @@ int isoGetGameId(char game_id[10]) {
 	}
 
 	// remove the dash in the middle: ULUS-01234 -> ULUS01234
-	game_id[4] = game_id[5];
-	game_id[5] = game_id[6];
-	game_id[6] = game_id[7];
-	game_id[7] = game_id[8];
-	game_id[8] = game_id[9];
-	game_id[9] = 0;
+	title_id[4] = title_id[5];
+	title_id[5] = title_id[6];
+	title_id[6] = title_id[7];
+	title_id[7] = title_id[8];
+	title_id[8] = title_id[9];
+	title_id[9] = 0;
 	return 1;
 }

@@ -139,8 +139,8 @@ PSP_EXPORT_FUNC_NID(isoReadUmdFile, 0xB573209C)
 # Compat with march33 v2 and galaxy controller unified API
 PSP_EXPORT_FUNC(isoReadUmdFile)
 PSP_EXPORT_ALIAS(isoReadUmdFile, infernoIsoRead)
-# inferno_driver_FF8838D4
-PSP_EXPORT_FUNC(isoGetGameId)
+# inferno_driver_D4FAB33F
+PSP_EXPORT_FUNC(isoGetTitleId)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

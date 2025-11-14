@@ -74,34 +74,34 @@ int readGameIdFromPBP() {
 
 // 0 - Not able to get | 1 - Able to get
 int readGameIdFromISO() {
-	int (*isoGetGameId)(char game_id[10]) = NULL;
+	int (*isoGetTitleId)(char title_id[10]) = NULL;
 	int boot_conf = rebootex_config.bootfileindex;
 
 	switch (boot_conf) {
 		case BOOT_INFERNO:
-			isoGetGameId = (void*)FindProc("EPI-InfernoDriver", "inferno_driver", 0xFF8838D4);
+			isoGetTitleId = (void*)FindProc("EPI-InfernoDriver", "inferno_driver", 0xD4FAB33F);
 			break;
 
 		case BOOT_MARCH33:
-			isoGetGameId = (void*)FindProc("EPI-March33Driver", "march33_driver", 0xFF8838D4);
+			isoGetTitleId = (void*)FindProc("EPI-March33Driver", "march33_driver", 0xD4FAB33F);
 			break;
 
 		case BOOT_NP9660:
-			isoGetGameId = (void*)FindProc("EPI-GalaxyController", "galaxy_driver", 0xFF8838D4);
+			isoGetTitleId = (void*)FindProc("EPI-GalaxyController", "galaxy_driver", 0xD4FAB33F);
 			break;
 
 		default:
 			break;
 	}
 
-	if (isoGetGameId == NULL) {
-		logmsg4("%s: [DEBUG]: Not found `isoGetGameId`\n", __func__);
+	if (isoGetTitleId == NULL) {
+		logmsg4("%s: [DEBUG]: Not found `isoGetTitleId`\n", __func__);
 		return 0;
 	}
 
-	logmsg4("%s: [DEBUG]: Found `isoGetGameId`\n", __func__);
+	logmsg4("%s: [DEBUG]: Found `isoGetTitleId`\n", __func__);
 
-	return isoGetGameId(rebootex_config.game_id);
+	return isoGetTitleId(rebootex_config.game_id);
 }
 
 void findAndSetGameId() {
