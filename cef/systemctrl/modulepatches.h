@@ -62,7 +62,7 @@ void PatchMeCodecWrapper(SceModule* mod);
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchVolatileMemBug();
-void PatchGameByGameId();
+void PatchGameByTitleId();
 void PatchGamesByMod(SceModule* mod);
 void PatchHideCfwFolders(SceModule* mod);
 

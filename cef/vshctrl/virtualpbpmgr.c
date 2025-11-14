@@ -643,12 +643,12 @@ char *virtualpbp_getdiscid(int i) {
 }
 
 void virtualpbp_fixisopath(int index, char* path) {
-	char *game_id = virtualpbp_getdiscid(index);
+	char *title_id = virtualpbp_getdiscid(index);
 
 	char* tmp = strrchr(path, '/');
 	char* filename = tmp+1;
 	*tmp = 0;
 
 	tmp = strrchr(path, '/');
-	sprintf(tmp+1, "%s/%s", game_id, filename);
+	sprintf(tmp+1, "%s/%s", title_id, filename);
 }

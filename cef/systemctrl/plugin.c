@@ -175,13 +175,13 @@ static int isPath(char* runlevel) {
 	);
 }
 
-static int isGameId(char* runlevel) {
-	if (rebootex_config.game_id[0] == 0) {
+static int isTitleId(char* runlevel) {
+	if (rebootex_config.title_id[0] == 0) {
 		return 0;
 	}
 	char gameid[10];
 	memset(gameid, 0, sizeof(gameid));
-	memcpy(gameid, rebootex_config.game_id, 9);
+	memcpy(gameid, rebootex_config.title_id, 9);
 	lowerString(gameid, gameid, strlen(gameid)+1);
 	return (strstr(runlevel, gameid) != NULL);
 }
@@ -205,8 +205,8 @@ static int matchingRunlevel(char * runlevel) {
 	}
 
 	if (isPopsRunlevel() && !config.no_pops_plugins) {
-		// check if plugin loads on specific game
-		if (isGameId(runlevel)) {
+		// check if plugin loads on specific title
+		if (isTitleId(runlevel)) {
 			return 1;
 		}
 		// check keywords
@@ -221,8 +221,8 @@ static int matchingRunlevel(char * runlevel) {
 	}
 
 	if (isUmdRunlevel() && !config.no_game_plugins) {
-		// check if plugin loads on specific game
-		if (isGameId(runlevel)) {
+		// check if plugin loads on specific title
+		if (isTitleId(runlevel)) {
 			return 1;
 		}
 		// check keywords

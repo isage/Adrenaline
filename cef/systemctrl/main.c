@@ -286,8 +286,8 @@ static int OnModuleStart(SceModule *mod) {
 
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
-		findAndSetGameId();
-		logmsg3("[INFO]: Title ID: %s\n", rebootex_config.game_id);
+		findAndSetTitleId();
+		logmsg3("[INFO]: Title ID: %s\n", rebootex_config.title_id);
 		CheckControllerInput();
 
 	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
@@ -318,7 +318,7 @@ static int OnModuleStart(SceModule *mod) {
 
 	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
 		ready_gamepatch_mod = 1;
-		PatchGameByGameId();
+		PatchGameByTitleId();
 
 	} else if (strcmp(modname, "sceMp3_Library") == 0 || (strcmp(modname, "sceVshOSK_Module") == 0 && config.use_sony_psposk)) {
 		// Unlock mp3 variable bitrate and qwerty osk on old games/homebrew

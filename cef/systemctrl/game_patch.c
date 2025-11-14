@@ -64,8 +64,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 static void DisableInfernoCache() {
 	int (*CacheInit)(int, int, int) = NULL;
 	if (rebootex_config.bootfileindex == BOOT_INFERNO) {
-		SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
-		CacheInit = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+		CacheInit = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0x8CDE7F95);
 
 		if (CacheInit != NULL) {
 			CacheInit(0, 0, 0);
@@ -153,23 +152,23 @@ int sceWlanGetSwitchStatePatched() {
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchGameByGameId() {
-	char* game_id = rebootex_config.game_id;
+void PatchGameByTitleId() {
+	char* title_id = rebootex_config.title_id;
 
-	if (strcasecmp("ULJM05221", game_id) == 0) {
+	if (strcasecmp("ULJM05221", title_id) == 0) {
 		// Fix TwinBee Portable when not using English or Japanese language
 		_utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		sctrlHENPatchSyscall((u32)_utilityGetParam, utilityGetParamPatched_ULJM05221);
 
-	} else if (strcasecmp("ULES01472", game_id) == 0 || strcasecmp("ULUS10543", game_id) == 0) {
+	} else if (strcasecmp("ULES01472", title_id) == 0 || strcasecmp("ULUS10543", title_id) == 0) {
 		// Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
 		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
 
-	} else if (strcasecmp("ULES00590", game_id) == 0 || strcasecmp("ULJM05075", game_id) == 0) {
+	} else if (strcasecmp("ULES00590", title_id) == 0 || strcasecmp("ULJM05075", title_id) == 0) {
 		// Patch Aces of War anti-CFW check (UMD speed)
 		SetUmdEmuSpeed(1, 1);
 
-	} else if (strcasecmp("ULUS10201", game_id) == 0 || strcasecmp("ULUS10328", game_id) == 0 || strcasecmp("ULES00968", game_id) == 0) {
+	} else if (strcasecmp("ULUS10201", title_id) == 0 || strcasecmp("ULUS10328", title_id) == 0 || strcasecmp("ULES00968", title_id) == 0) {
 		// Patch Luxor - The Wrath of Set and Flat-Out Head On (US/EU) as they
 		// don't play well with Inferno cache
 		DisableInfernoCache();
@@ -202,31 +201,31 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "Jackass") == 0) {
 		// Fix infinite loading screen on `Jackass: The Game`
-		char* game_id = rebootex_config.game_id;
-		if (strcasecmp("ULES00897", game_id) == 0) { // PAL
+		char* title_id = rebootex_config.title_id;
+		if (strcasecmp("ULES00897", title_id) == 0) { // PAL
 			logmsg4("%s: [DEBUG]: Patching Jackass PAL\n", __func__);
 			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, sctrlHENMakeSyscallStub(moduleLoaderJackass));
 
-		} else if (strcasecmp("ULUS10303", game_id) == 0) { // NTSC
+		} else if (strcasecmp("ULUS10303", title_id) == 0) { // NTSC
 			logmsg4("%s: [DEBUG]: Patching Jackass NTSC\n", __func__);
 			REDIRECT_FUNCTION(mod->text_addr + 0x357B54, sctrlHENMakeSyscallStub(moduleLoaderJackass));
 		}
 
 	} else if (strcmp(modname, "projectg_psp") == 0) {
 		// Fix black screen on `Pangya Golf Fantasy`
-		char* game_id = rebootex_config.game_id;
+		char* title_id = rebootex_config.title_id;
 		u32 addrs[4] = {0};
-		if (strcasecmp("ULUS10438", game_id) == 0) { // USA
+		if (strcasecmp("ULUS10438", title_id) == 0) { // USA
 			addrs[0] = mod->text_addr + 0x35fd88;
 			addrs[1] = addrs[0] + 8;
 			addrs[2] = addrs[0] + 16;
 
-		} else if (strcasecmp("ULJM05440", game_id) == 0) { // JAPAN
+		} else if (strcasecmp("ULJM05440", title_id) == 0) { // JAPAN
 			addrs[0] = mod->text_addr + 0x366498;
 			addrs[1] = addrs[0] + 8;
 			addrs[2] = addrs[0] + 16;
 
-		} else if (strcasecmp("ULKS46164", game_id) == 0) { // KOREA
+		} else if (strcasecmp("ULKS46164", title_id) == 0) { // KOREA
 			addrs[0] = mod->text_addr + 0x363c50;
 			addrs[1] = addrs[0] + 8;
 		}

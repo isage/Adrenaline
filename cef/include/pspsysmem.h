@@ -75,7 +75,7 @@ typedef struct SceGameInfo {
 	char qtgp2[8]; // 40
 	char qtgp3[16]; // 48
 	u32 allow_replace_umd; // 64
-	char game_id[16]; // 68
+	char title_id[16]; // 68
 	u32 parental_level; // 84
 	char vsh_version[8]; // 88
 	u32 umd_cache_on; // 96

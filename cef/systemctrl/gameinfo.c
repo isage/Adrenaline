@@ -39,11 +39,11 @@ typedef struct LbaParams {
 } LbaParams;
 
 SceGameInfo default_gameinfo = {
-	.game_id = "HOME0000\0\0\0\0\0\0\0\0",
+	.title_id = "HOME0000\0\0\0\0\0\0\0\0",
 };
 
 // 0 - Not able to get | 1 - Able to get
-int readGameIdFromDisc() {
+int readTitleIdFromDisc() {
 	int disc_fd = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
 
 	if (disc_fd < 0) {
@@ -51,20 +51,20 @@ int readGameIdFromDisc() {
 	}
 
 	// Country code
-	sceIoRead(disc_fd, rebootex_config.game_id, 4);
+	sceIoRead(disc_fd, rebootex_config.title_id, 4);
 	// Delimiter skip
 	sceIoLseek(disc_fd, 1, PSP_SEEK_CUR);
-	// Game ID
-	sceIoRead(disc_fd, rebootex_config.game_id + 4, 5);
+	// Title ID
+	sceIoRead(disc_fd, rebootex_config.title_id + 4, 5);
 
 	sceIoClose(disc_fd);
 	return 1;
 }
 
 // 0 - Not able to get | 1 - Able to get
-int readGameIdFromPBP() {
-	u32 size = sizeof(rebootex_config.game_id);
-	int res = sctrlGetInitPARAM("DISC_ID", NULL, &size, rebootex_config.game_id);
+int readTitleIdFromPBP() {
+	u32 size = sizeof(rebootex_config.title_id);
+	int res = sctrlGetInitPARAM("DISC_ID", NULL, &size, rebootex_config.title_id);
 
 	if (res < 0) {
 		return 0;
@@ -73,7 +73,7 @@ int readGameIdFromPBP() {
 }
 
 // 0 - Not able to get | 1 - Able to get
-int readGameIdFromISO() {
+int readTitleIdFromISO() {
 	int (*isoGetTitleId)(char title_id[10]) = NULL;
 	int boot_conf = rebootex_config.bootfileindex;
 
@@ -101,35 +101,35 @@ int readGameIdFromISO() {
 
 	logmsg4("%s: [DEBUG]: Found `isoGetTitleId`\n", __func__);
 
-	return isoGetTitleId(rebootex_config.game_id);
+	return isoGetTitleId(rebootex_config.title_id);
 }
 
-void findAndSetGameId() {
+void findAndSetTitleId() {
 	int apitype = sceKernelInitApitype();
 	if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2 || apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2 || apitype >= SCE_APITYPE_VSH_KERNEL) {
 		return;
 	}
 
-	if (rebootex_config.game_id[0] == '\0') {
+	if (rebootex_config.title_id[0] == '\0') {
 		int is_iso = rebootex_config.bootfileindex == BOOT_INFERNO || rebootex_config.bootfileindex == BOOT_MARCH33 || rebootex_config.bootfileindex == BOOT_NP9660;
 		if (is_iso) {
-			readGameIdFromISO();
+			readTitleIdFromISO();
 		} else {
-			readGameIdFromPBP();
+			readTitleIdFromPBP();
 		}
 	}
 
 	SceGameInfo* gameinfo = sceKernelGetGameInfo();
 	if (gameinfo != NULL) {
-		memcpy(gameinfo->game_id, rebootex_config.game_id, 9);
+		memcpy(gameinfo->title_id, rebootex_config.title_id, 9);
 	}
 
-	if (rebootex_config.game_id[0] == '\0') {
-		memcpy(default_gameinfo.game_id, rebootex_config.game_id, 9);
+	if (rebootex_config.title_id[0] == '\0') {
+		memcpy(default_gameinfo.title_id, rebootex_config.title_id, 9);
 	}
 
-	if (rebootex_config.game_id[0] == '\0' && adrenaline != NULL) {
-		memcpy(adrenaline->titleid, rebootex_config.game_id, 9);
+	if (rebootex_config.title_id[0] == '\0' && adrenaline != NULL) {
+		memcpy(adrenaline->titleid, rebootex_config.title_id, 9);
 	}
 }
 
@@ -140,8 +140,8 @@ SceGameInfo* sceKernelGetGameInfoPatched() {
 		return gameinfo;
 	}
 
-	if (rebootex_config.game_id[0] != 0) {
-		memcpy(gameinfo->game_id, rebootex_config.game_id, 9);
+	if (rebootex_config.title_id[0] != 0) {
+		memcpy(gameinfo->title_id, rebootex_config.title_id, 9);
 	}
 
 	return gameinfo;

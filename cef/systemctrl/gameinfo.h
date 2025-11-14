@@ -19,9 +19,9 @@
 #ifndef __GAMEINFO_H__
 #define __GAMEINFO_H__
 
-/** Find and set game_id on rebootex (Not on DISC, for disc, patch _sceLoadExecVSHWithApitype) */
-void findAndSetGameId(void);
-int readGameIdFromDisc(void);
+/** Find and set title_id on rebootex (Not on DISC, for disc, patch _sceLoadExecVSHWithApitype) */
+void findAndSetTitleId(void);
+int readTitleIdFromDisc(void);
 
 void PatchGameInfoGetter(SceModule* mod);
 

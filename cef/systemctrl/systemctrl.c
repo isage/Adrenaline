@@ -199,7 +199,7 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler) {
 int (*_sceKernelExitVSH)(void*) = (void*)sceKernelExitVSHVSH;
 int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
-	memset(rebootex_config.game_id, 0, 10);
+	memset(rebootex_config.title_id, 0, 10);
 	int res = _sceKernelExitVSH(param);
 	pspSdkSetK1(k1);
 
@@ -243,12 +243,12 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 	}
 
 	// obtain game id
-    u32 gameid_size = sizeof(rebootex_config.game_id);
-    memset(rebootex_config.game_id, 0, gameid_size);
+    u32 gameid_size = sizeof(rebootex_config.title_id);
+    memset(rebootex_config.title_id, 0, gameid_size);
     if (apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2){
-        readGameIdFromDisc();
+        readTitleIdFromDisc();
     } else {
-        sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, rebootex_config.game_id);
+        sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, rebootex_config.title_id);
     }
 
 	int res = _sceLoadExecVSHWithApitype(apitype, file, param, 0x10000);

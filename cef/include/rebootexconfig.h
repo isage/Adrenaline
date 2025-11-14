@@ -36,7 +36,7 @@ typedef struct {
 	u32 ram11;
 
 	char umdfilename[256];
-	char game_id[10];
+	char title_id[10];
 } RebootexConfig;
 
 #endif // _REBOOTCONFIG_H_
