@@ -9,6 +9,7 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <infernoctrl.h>
 
 #include <adrenaline_log.h>
 
