@@ -46,12 +46,18 @@ add_custom_target(cfw-libs
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsystemctrl_user.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsysc_user.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspvshctrl.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspisoctrl_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspinferno_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspmarch33_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspgalaxy_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
   COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/kubridge.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl_se.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/sysclib_user.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/vshctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/isoctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/infernoctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/rebootexconfig.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
   COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/cfwmacros.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
 )

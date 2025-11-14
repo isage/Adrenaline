@@ -23,11 +23,31 @@ _cfw_libs:
 	make -C lib/libpspsysc_user -j
 	cp "lib/libpspsysc_user/libpspsysc_user.a" "lib/"
 
+	make -C lib/libpspgalaxy_driver clean
+	make -C lib/libpspgalaxy_driver -j
+	cp "lib/libpspgalaxy_driver/libpspgalaxy_driver.a" "lib/"
+
+	make -C lib/libpspinferno_driver clean
+	make -C lib/libpspinferno_driver -j
+	cp "lib/libpspinferno_driver/libpspinferno_driver.a" "lib/"
+
+	make -C lib/libpspmarch33_driver clean
+	make -C lib/libpspmarch33_driver -j
+	cp "lib/libpspmarch33_driver/libpspmarch33_driver.a" "lib/"
+
+	make -C lib/libpspisoctrl_driver clean
+	make -C lib/libpspisoctrl_driver -j
+	cp "lib/libpspisoctrl_driver/libpspisoctrl_driver.a" "lib/"
+
 	make -C lib/libpspkubridge clean
 	make -C lib/libpspsystemctrl_kernel clean
 	make -C lib/libpspsystemctrl_user clean
 	make -C lib/libpspvshctrl clean
 	make -C lib/libpspsysc_user clean
+	make -C lib/libpspgalaxy_driver clean
+	make -C lib/libpspinferno_driver clean
+	make -C lib/libpspmarch33_driver clean
+	make -C lib/libpspisoctrl_driver clean
 
 _libs: _cfw_libs
 	make -C lib/system_stubs clean
@@ -156,6 +176,10 @@ clean:
 	make -C lib/libpspsystemctrl_user clean
 	make -C lib/libpspvshctrl clean
 	make -C lib/libpspsysc_user clean
+	make -C lib/libpspgalaxy_driver clean
+	make -C lib/libpspinferno_driver clean
+	make -C lib/libpspmarch33_driver clean
+	make -C lib/libpspisoctrl_driver clean
 	make -C btcnf/pspbtcnf_inferno clean
 	make -C btcnf/pspbtcnf_march33 clean
 	make -C btcnf/pspbtcnf_normal clean

@@ -22,6 +22,10 @@
  * Header for the unified API of the UMDemu ISO drivers: Inferno, March33 and Galaxy (NP9660).
  *
  * To use the functions, it is required to link to one of the driver stubs.
+ * - `libpspisoctrl_driver`: unified for all UMDemu ISO drivers of Adrenaline
+ * - `libpspinferno_driver`
+ * - `libpspmarch33_driver`
+ * - `libpspgalaxy_driver`
  */
 
 #ifndef ISO_CTRL_H
