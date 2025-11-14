@@ -17,6 +17,8 @@
 
 #ifndef __LOADEXEC_H__
 #define __LOADEXEC_H__
+// Protect from double definition of mixing our modified header with pspsdk header
+#define PSPLOADEXEC_KERNEL_H
 
 /** @defgroup LoadExec LoadExec Library */
 

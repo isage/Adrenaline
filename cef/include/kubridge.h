@@ -24,6 +24,7 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspsysmem.h>
+#include <pspsysmem_kernel.h>
 #include <pspctrl.h>
 
 // interface for passing arguments to kernel functions

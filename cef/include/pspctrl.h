@@ -18,6 +18,8 @@
 
 #ifndef __CTRL_H__
 #define __CTRL_H__
+// Protect from double definition of mixing our modified header with pspsdk header
+#define __CTRL_KERNEL_H__
 
 #include <psptypes.h>
 

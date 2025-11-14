@@ -18,6 +18,8 @@
 
 #ifndef __MODLOAD_H__
 #define __MODLOAD_H__
+// Protect from double definition of mixing our modified header with pspsdk header
+#define __MODMGRKERNEL_H__
 
 #include <pspkerneltypes.h>
 

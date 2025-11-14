@@ -16,6 +16,8 @@
 
 #ifndef PSPSYSMEM_H
 #define PSPSYSMEM_H
+// Protect from double definition of mixing our modified header with pspsdk header
+#define PSPSYSMEMKERNEL_H
 
 #include <pspkerneltypes.h>
 

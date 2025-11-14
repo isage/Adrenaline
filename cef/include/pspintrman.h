@@ -12,6 +12,8 @@
 
 #ifndef PSPINTRMAN_H
 #define PSPINTRMAN_H
+// Protect from double definition of mixing our modified header with pspsdk header
+#define PSPINTRMAN_KERNEL_H
 
 #include <pspkerneltypes.h>
 

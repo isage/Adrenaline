@@ -27,6 +27,7 @@
 #include <psptypes.h>
 #include <pspiofilemgr_kernel.h>
 #include <psploadexec.h>
+#include <psploadexec_kernel.h>
 #include <psploadcore.h>
 
 enum BootModes {
