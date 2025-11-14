@@ -156,13 +156,13 @@ int sctrlSEGetVersion() {
 	return ADRENALINE_VERSION;
 }
 
-PspIoDrv *sctrlHENFindDriver(char *drvname) {
+PspIoDrv *sctrlHENFindDriver(const char *drvname) {
 	int k1 = pspSdkSetK1(0);
 
 	SceModule *mod = sceKernelFindModuleByName("sceIOFileManager");
 	u32 text_addr = mod->text_addr;
 
-	u32 *(* GetDevice)(char *) = NULL;
+	u32 *(* GetDevice)(const char *) = NULL;
 
 	for (int i = 0; i < mod->text_size; i += 4) {
 		u32 addr = text_addr + i;

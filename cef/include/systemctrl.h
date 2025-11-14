@@ -322,7 +322,7 @@ int sctrlKernelSetNidResolver(char* libname, u32 enabled);
  * @returns the driver if found, NULL otherwise
  *
  */
-PspIoDrv *sctrlHENFindDriver(char *drvname);
+PspIoDrv *sctrlHENFindDriver(const char *drvname);
 
 /**
  *  Find a import library stub table.
