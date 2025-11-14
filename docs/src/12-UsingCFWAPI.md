@@ -50,6 +50,8 @@ Then, to link to the stub, you should pass the `-l` argument to your compilation
 
 The `SystemControl` headers (`systemctrl.h` and `systemctrl_se.h`) limit the visualization of some function definitions because some functions are exclusive to user-space and some are exclusive to kernel-space. To make them appear, it uses macro definitions to make them available. If your project is a user plugin, or a homebrew app, pass the `-D__USER__` flag into your `CFLAGS`; if your project is a kernel plugin, pass the `-D__KERNEL__` flag into your `CFLAGS`.
 
+Alternatively, to facilitate things, you can import the `mak` (`build.mak` and `build_prx.mak`) files at the generated `libs` folder in your project `Makefile`. With those, the setup of the macros are automatic.
+
 
 ## My homebrew already uses CFW APIs
 ---
@@ -58,9 +60,9 @@ In the case of your homebrew already using CFW APIs, there is a very good chance
 
 The Adrenaline's `SystemCtrlForUser` and `KUBridge` have 100% API compatibility with the same libraries of M33, ME, PRO, and ARK custom firmwares. That means that if the API provided by the original targeted CFW is sufficient for your project, you won't need to change the stubs and header and create a build only targeted to Adrenaline. You will only need to change if you desire to access newly added APIs.
 
-The Adrenaline's `SystemCtrlForKernel` is mostly compatible with M33, ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Adrenaline. If you couldn't find any, at worst, you will need to rebuild your kernel plugin project for the 6.61 firmware version to support Adrenaline.
+The Adrenaline's `SystemCtrlForKernel` is mostly compatible with M33, ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Adrenaline. If you couldn't find any, at worst, you will need to rebuild your kernel plugin project for the 6.61 PSP firmware version to support Adrenaline.
 
-The Adrenaline's `SysclibForUser` only exists on Adrenaline and ARK-4, and they have total parity. If you already use it, you don't need to change.
+The Adrenaline's `SysclibForUser` only exists on Adrenaline and ARK, and they have total parity. If you already use it, you don't need to change.
 
 The Adrenaline's `VshCtrlLib` is 100% compatible with M33, and mostly compatible with ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Adrenaline. If you couldn't find any, you don't need to change a thing to support Adrenaline.
 

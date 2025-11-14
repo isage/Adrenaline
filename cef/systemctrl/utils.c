@@ -59,7 +59,7 @@ u32 FindFirstBEQ(u32 addr) {
 	return 0;
 }
 
-// Taken from ARK-4
+// Taken from ARK CFW
 // TODO: Rewrite using `_findJALaddr`
 u32 _findJAL(u32 addr, int reversed, int skip) {
 	if (addr != 0) {

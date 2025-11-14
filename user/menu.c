@@ -126,7 +126,7 @@ static MenuEntry about_entries[] = {
 	{ "Rinnegatamante for f.lux", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 	{ "xerpi for vita2dlib", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 	{ "qwikrazor87 for DRM RE", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
-	{ "ARK-4 team for Inferno v2, collaboration, and more", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
+	{ "ARK CFW team for Inferno v2, collaboration, and more", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 //   { "Cat for featurrrs", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 //   { "GrayJack for hyperfocus time", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 };

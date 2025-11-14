@@ -7,7 +7,7 @@ It is a custom PSP UMDemu driver with support for ISO and many Compressed ISO fo
 ## Credits
 
  - PRO CFW Team: For original Inferno
- - ARK-4 Team: For Inferno 2
+ - ARK CFW Team: For Inferno 2
 
 ## License
 

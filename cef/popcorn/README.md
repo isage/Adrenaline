@@ -8,7 +8,7 @@ It handles all the patches needed to get custom PSX games running and loading ex
 
  - M33 Team: For bits of code
  - TheFl0w: For starting Adrenaline
- - ARK-4 Team: For help and camaraderie. And the idea of external config
+ - ARK CFW Team: For help and camaraderie. And the idea of external config
 
 ## License
 

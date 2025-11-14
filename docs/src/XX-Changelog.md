@@ -51,11 +51,12 @@
 
 - **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size
 - **DEV:** Expand CFW libraries API
-- **DEV:** Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK-4): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel`, and `SysclibForUser`
+- **DEV:** Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel`, and `SysclibForUser`
 - **DEV:** Add support for `MEMSIZE=2` (to request only stable extra RAM)
 - **DEV:** Make PSPemu `sceKernelPowerTick` to behave as the VITA `sceKernelPowerTick`
 - **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use even outside of Adrenaline (i.e. your project)
 - **DEV:** Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
+- **DEV:** Add stubs for the UMDemu ISO drivers
 
 - **Internal:** Some code reorganization
 - **Internal:** Code clean ups

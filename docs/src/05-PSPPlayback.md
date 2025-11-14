@@ -19,7 +19,7 @@ This is a brief overview of the features of each driver in the versions that com
 
 ### Inferno 2
 
-This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on `ARK-4`, with minor modifications for better code reuse with other drivers and integration with the Adrenaline CFW.
+This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on `ARK CFW`, with minor modifications for better code reuse with other drivers and integration with the Adrenaline CFW.
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`
 - **Emulation of empty UMD drive**: Several bugs existed that caused malfunction when the driver was used without an ISO file specified on other drivers and older versions of this driver.

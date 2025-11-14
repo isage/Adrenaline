@@ -7,7 +7,7 @@ It is a custom PSP UMDemu driver with support for ISO and many Compressed ISO fo
 ## Credits
 
  - M33 Team: For original M33
- - ARK-4 Team: For improvements and the most unified, generic and portable base image-reading implementation
+ - ARK CFW Team: For improvements and the most unified, generic and portable base image-reading implementation
 
 ## License
 

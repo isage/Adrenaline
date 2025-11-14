@@ -8,7 +8,7 @@ It is the heart of the CFW. Provides patches for unsigned code execution and the
 
  - M33 Team: For bits of code
  - TheFl0w: For starting Adrenaline
- - ARK-4 Team: For help and camaraderie
+ - ARK CFW Team: For help and camaraderie
  - qwikrazor87 for DRM RE
  - meetpatty for fixing autoboot
 

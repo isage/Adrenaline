@@ -295,7 +295,7 @@ int sctrlKernelBootFrom(void);
  *
  * @returns The function pointer to the resolved function, `0` otherwise
  *
- * @note Compat with ARK-4
+ * @note Compat with ARK CFW
  */
 u32 sctrlKernelResolveNid(const char *libname, u32 nid);
 
@@ -310,7 +310,7 @@ u32 sctrlKernelResolveNid(const char *libname, u32 nid);
  *
  * @return previous value if set, < 0 on error
  *
- * @note Compat with ARK-4. On Adrenaline returns `SCE_ENOSYS`
+ * @note Compat with ARK CFW. On Adrenaline returns `SCE_ENOSYS`
  */
 int sctrlKernelSetNidResolver(char* libname, u32 enabled);
 
@@ -423,7 +423,7 @@ int sctrlHENHookImportByNID(SceModule * mod, const char *library, u32 nid, void 
  * the `func` syscall; in this case, manually exporting in exports.exp is still
  * required for Syscalls to work.
  *
- * @note ARK-4 compatibility, similar to `sctrlHENHookImportByNID`
+ * @note ARK CFW compatibility, similar to `sctrlHENHookImportByNID`
  *
  * @param mod - The module where to search the function
  * @param library - The library name
@@ -437,7 +437,7 @@ int sctrlHENHookImportByNID(SceModule * mod, const char *library, u32 nid, void 
  * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
  * -3 if failed to find import by NID after successful resolve to older firmware version
  *
- * @note Compat with ARK-4
+ * @note Compat with ARK CFW
  */
 int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void * func);
 
@@ -520,7 +520,7 @@ int sctrlHENIsSystemBooted();
  *
  * @returns 1 if system is a dev Toolkit, 0 otherwise.
  *
- * @note Compat with ARK-4
+ * @note Compat with ARK CFW
 */
 int sctrlHENIsToolKit();
 
@@ -632,7 +632,7 @@ int sctrlGetInitPARAM(const char* param_name, u16* param_type, u32* param_length
  *
  * @return < 0 on error
  *
- * @note Compat with PRO, ARK-4
+ * @note Compat with PRO, ARK
  */
 int sctrlPatchModule(char *modname, u32 inst, u32 offset);
 
@@ -643,7 +643,7 @@ int sctrlPatchModule(char *modname, u32 inst, u32 offset);
  *
  * @return text address, or 0 if not found
  *
- * @note Compat with PRO, ARK-4
+ * @note Compat with PRO, ARK
  */
 u32 sctrlModuleTextAddr(char *modname);
 
@@ -715,7 +715,7 @@ int sctrlDeflateDecompress(void* dest, void* src, int size);
 int sctrlGzipDecompress(void* dest, void* src, int size);
 
 /**
- * @note Compat with ARK-4
+ * @note Compat with ARK
  */
 u32 sctrlHENFakeDevkitVersion();
 
@@ -794,7 +794,7 @@ int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
  *
  * @returns A pointer to the global rebootex configuration.
  *
- * @note Compat with ARK-4
+ * @note Compat with ARK
  */
 RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config);
 
@@ -807,7 +807,7 @@ RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config);
  *
  * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note - Compat with PRO and ARK-4
+ * @note - Compat with PRO and ARK
  */
 void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
 
@@ -822,7 +822,7 @@ void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *arg
  *
  * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note - Compat with ME and ARK-4
+ * @note - Compat with ME and ARK
  */
 void* sctrlSetStartModuleExtra(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
 
@@ -833,7 +833,7 @@ void* sctrlSetStartModuleExtra(int (*func)(int modid, SceSize argsize, void *arg
  *
  * @return text address, or 0 if not found
  *
- * @note - Compat with PRO and ARK-4
+ * @note - Compat with PRO and ARK
  */
 u32 sctrlGetInitTextAddr(void);
 

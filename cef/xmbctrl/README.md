@@ -6,7 +6,7 @@ A plugin that adds to XMB extra configuration items related to the CFW, like CFW
 
 ## Credits
 
- - ARK-4 Team: For help and camaraderie and bits of code
+ - ARK CFW Team: For help and camaraderie and bits of code
 
 ## License
 

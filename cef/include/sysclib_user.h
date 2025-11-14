@@ -49,7 +49,7 @@ void user_free(void *ptr);
 #define memalign(align, size) user_memalign(align, size);
 #define free(ptr) user_free(ptr);
 
-// ARK-4 compat
+// ARK CFW compat
 void oe_free(void *ptr);
 
 void lowerString(char *orig, char *ret, int strSize);

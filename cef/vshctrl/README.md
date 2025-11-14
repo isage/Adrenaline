@@ -8,7 +8,7 @@ Provides main patches for VSH (XMB) to allow booting homebrew and ISO files and 
 
  - M33 Team: For bits of code
  - TheFl0w: For starting Adrenaline
- - ARK-4 Team: For help and camaraderie
+ - ARK CFW Team: For help and camaraderie
 
 ## License
 

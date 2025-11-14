@@ -1,4 +1,4 @@
-// Adapted from ARK-4
+// Adapted from ARK CFW
 #include <pspkernel.h>
 #include <string.h>
 

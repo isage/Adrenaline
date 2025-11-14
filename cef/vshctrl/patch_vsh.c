@@ -37,7 +37,7 @@ extern AdrenalineConfig config;
 
 static int exec_boot_bin = 0;
 
-// Credits: ARK-4
+// Credits: ARK CFW
 static inline void ascii2utf16(char *dest, const char *src) {
     while(*src != '\0') {
         *dest++ = *src;

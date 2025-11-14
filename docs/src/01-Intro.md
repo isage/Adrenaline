@@ -41,7 +41,7 @@ Adrenaline is two software projects in one: Adrenaline Application (1) and Adren
 - Built-in anti-CFW, fixes some protections and bugs in games. Compatible with NoDRM plugins
 - Built-in CFW configuration and plugin manager on XMB/VSH for easy CFW management
 - Support for autoboot software on system launch if enabled
-- Extensive CFW API with good compatibility with M33, ME, PRO, and ARK-4 API
+- Extensive CFW API with good compatibility with M33, ME, PRO, and ARK API
     - Resulting in good compatibility with plugins and homebrew apps and/or easier porting effort for projects using CFW API
 
 ## Key Combos Cheat Sheet

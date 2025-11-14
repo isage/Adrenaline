@@ -280,7 +280,7 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 	return 0;
 }
 
-// ARK-4 compat
+// ARK CFW compat
 int sctrlHENApplyMemory(u32 p2) {
 	if (p2 > 52) {
 		p2 = 52;
