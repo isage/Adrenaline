@@ -271,7 +271,7 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 		read_len = g_total_sectors - offset;
 	}
 
-	int retv = iso_read_with_stack(offset * ISO_SECTOR_SIZE, data, read_len * ISO_SECTOR_SIZE);
+	int retv = isoReadUmdFile(offset * ISO_SECTOR_SIZE, data, read_len * ISO_SECTOR_SIZE);
 
 	if (retv <= 0) {
 		ret = retv;
@@ -449,7 +449,7 @@ static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param) {
 		offset = lba_top * ISO_SECTOR_SIZE - byte_size_start + ISO_SECTOR_SIZE;
 	}
 
-	int ret = iso_read_with_stack(offset, outdata, byte_size_total);
+	int ret = isoReadUmdFile(offset, outdata, byte_size_total);
 
 	return ret;
 }

@@ -130,10 +130,15 @@ PSP_EXPORT_FUNC(infernoCacheSetPolicy)
 PSP_EXPORT_FUNC(infernoCacheInit)
 # inferno_driver_B6522E93
 PSP_EXPORT_FUNC(infernoSetUmdDelay)
-# Compat with march33 2
+PSP_EXPORT_ALIAS(infernoSetUmdDelay, isoSetUmdDelay)
+# Compat with march33 v2 and galaxy controller
 PSP_EXPORT_FUNC_NID(infernoSetUmdDelay, 0xFAEC97D6)
-# inferno_driver_B573209C
-PSP_EXPORT_FUNC(iso_read_with_stack)
+PSP_EXPORT_ALIAS(infernoSetUmdDelay, isoSetUmdDelay)
+# inferno_driver_B573209C | Previously `iso_read_with_stack`
+PSP_EXPORT_FUNC_NID(isoReadUmdFile, 0xB573209C)
+# Compat with march33 v2 and galaxy controller unified API
+PSP_EXPORT_FUNC(isoReadUmdFile)
+PSP_EXPORT_ALIAS(isoReadUmdFile, infernoIsoRead)
 # inferno_driver_FF8838D4
 PSP_EXPORT_FUNC(isoGetGameId)
 PSP_EXPORT_END

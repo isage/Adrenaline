@@ -53,7 +53,7 @@ extern void sceUmdSetDriveStatus(int status);
 extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
 extern int iso_cache_read(struct IoReadArg *args);
-extern int iso_read_with_stack(u32 offset, void *ptr, u32 data_len);
+extern int isoReadUmdFile(u32 offset, void *ptr, u32 data_len);
 
 extern int infernoSetDiscType(int type);
 extern int infernoCacheInit(int cache_size, int cache_num, int partition);

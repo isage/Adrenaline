@@ -38,7 +38,7 @@ u32 cur_offset = 0;
 u32 last_read_offset = 0;
 
 int (*iso_reader)(IoReadArg *args) = &iso_read;
-int iso_read_with_stack(u32 offset, void *ptr, u32 data_len) {
+int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
     int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
     if (ret < 0) {
