@@ -15,6 +15,7 @@
 #ifndef PSPLOADCORE_H
 #define PSPLOADCORE_H
 
+#include <pspmoduleinfo.h>
 #include <pspkerneltypes.h>
 
 /** @defgroup LoadCore Interface to the LoadCoreForKernel library.
@@ -29,9 +30,6 @@ extern "C" {
 
 #define SCE_KERNEL_MAX_MODULE_SEGMENT (4)
 
-#ifndef __THREADMAN_H__
-typedef s32 (*SceKernelThreadEntry)(SceSize args, void *argp);
-#endif
 /** Reboot preparation functions */
 typedef s32 (*SceKernelRebootBeforeForKernel)(void *arg1, s32 arg2, s32 arg3, s32 arg4);
 typedef s32 (*SceKernelRebootPhaseForKernel)(s32 arg1, void *arg2, s32 arg3, s32 arg4);
