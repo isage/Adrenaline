@@ -18,6 +18,9 @@
 
 #include <common.h>
 
+#include <pspamctrl.h>
+#include <pspcrypt.h>
+
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 
@@ -39,7 +42,6 @@ static int config_size = 0;
 // pops supports up to 5 discs, but config is the same for all of them even if
 // it doesn't have to
 static int psiso_offsets[5] = {0, 0, 0, 0, 0};
-
 
 STMOD_HANDLER previous;
 
@@ -186,8 +188,6 @@ exit:
 // PGD decryption by Hykem
 // https://github.com/Hykem/psxtract/blob/master/Linux/crypto.c
 
-int sceUtilsBufferCopyWithRange(void *inbuf, SceSize insize, void *outbuf, int outsize, int cmd);
-
 int kirk7(u8 *buf, int size, int type) {
 	u32 *header = (u32 *)buf;
 
@@ -217,20 +217,20 @@ int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id)
 
 	if (is_official) {
 		// Set mac type
-		int mac_type = 0;
+		int mac_type = MAC_KEY_TYPE_UNK0;
 
 		if (((u32 *)pgd_buf)[2] == 1) {
-			mac_type = 1;
+			mac_type = MAC_KEY_TYPE_UNK1;
 
 			if (((u32 *)pgd_buf)[1] > 1) {
-				mac_type = 3;
+				mac_type = MAC_KEY_TYPE_FIXED;
 			}
 		} else {
-			mac_type = 2;
+			mac_type = MAC_KEY_TYPE_FUSE_ID;
 		}
 
 		// Generate the key from MAC 0x70
-		MAC_KEY mac_key;
+		SceMacKey mac_key;
 		sceDrmBBMacInit(&mac_key, mac_type);
 		sceDrmBBMacUpdate(&mac_key, pgd_buf, 0x70);
 
@@ -239,7 +239,7 @@ int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id)
 
 		u8 kirk_buf[VERSION_KEY_SIZE + KIRK7_HEADER_SIZE];
 
-		if (mac_key.type == 3) {
+		if (mac_key.type == MAC_KEY_TYPE_FIXED) {
 			memcpy(kirk_buf + KIRK7_HEADER_SIZE, pgd_buf + 0x70, VERSION_KEY_SIZE);
 			kirk7(kirk_buf, VERSION_KEY_SIZE, 0x63);
 		} else {
@@ -403,7 +403,7 @@ static int initGlobals() {
 	return 0;
 }
 
-static void patchScePopsMgr(void) {
+static void PatchScePopsMgr(void) {
 	SceModule *mod = sceKernelFindModuleByName("scePops_Manager");
 	u32 text_addr = mod->text_addr;
 
@@ -487,7 +487,7 @@ int module_start(SceSize args, void *argp) {
 
 	previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 
-	patchScePopsMgr();
+	PatchScePopsMgr();
 
 	return 0;
 }
