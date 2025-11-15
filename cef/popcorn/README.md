@@ -1,4 +1,4 @@
-# Adrenaline Popcorn
+# Adrenaline PopCorn
 
 A core Adrenaline CFW plugin.
 

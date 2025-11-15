@@ -1,5 +1,5 @@
 TARGET = popcorn
-OBJS = main.o libcrypt.o exports.o
+OBJS = main.o syspatches.o libcrypt.o exports.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division

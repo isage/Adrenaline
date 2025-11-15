@@ -1,6 +1,7 @@
 // Adapted from ARK CFW
-#include <pspkernel.h>
 #include <string.h>
+
+#include <pspkernel.h>
 
 typedef struct LibCryptMagicTable {
 	char *disc_id;

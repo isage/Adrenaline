@@ -16,10 +16,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __POPCORN_H__
+#define __POPCORN_H__
 
 #include <psptypes.h>
+#include <psploadcore.h>
 
 #define KIRK7_HEADER_SIZE 0x14
 
@@ -31,5 +32,9 @@
 
 
 u32 searchLibCryptMagicWord(u8* disc_id);
+int initGlobals();
 
-#endif
+void PatchScePopsMgr(void);
+void PatchPops(SceModule *mod);
+
+#endif // __POPCORN_H__
