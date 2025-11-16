@@ -1,5 +1,5 @@
 TARGET = galaxy
-OBJS = main.o exports.o ../bits/iso_common.o
+OBJS = main.o syspatches.o exports.o ../bits/iso_common.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -Wno-array-bounds -fshort-wchar -fno-pic -mno-check-zero-division

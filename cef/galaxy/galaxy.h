@@ -53,9 +53,6 @@
 #define NP9660_FNPTR_INIT_VITA (0x368c)
 #define NP9660_FNPTR_READDISCSECTOR_VITA (0x5054)
 
-// Open ISO File
-int open_iso(void);
-
 // Init ISO Emulator
 int initEmulator(void);
 
@@ -64,6 +61,9 @@ int isoReadUmdFile(u32 sector, void * buffer, u32 size);
 SceUID sceKernelCreateThreadPatched(const char * name, SceKernelThreadEntry entry, int initPriority, int stackSize, SceUInt attr, SceKernelThreadOptParam * option);
 int sceIoClosePatched(int fd);
 int sceKernelStartThreadPatched(SceUID thid, SceSize arglen, void * argp);
+
+void PatchNp9660Driver();
+void PatchThreadManager(void);
 
 #endif // _GALAXY_H_
 
