@@ -1,5 +1,4 @@
 #ifndef __UMD9660_H__
-
 #define __UMD9660_H__
 
 #define SECTOR_SIZE	0x0800
@@ -13,5 +12,5 @@ typedef struct UmdFD {
 
 int  InitUmd9660();
 
-#endif
+#endif // __UMD9660_H__
 

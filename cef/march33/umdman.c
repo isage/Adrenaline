@@ -1,18 +1,18 @@
 #include <pspsdk.h>
-#include <pspkernel.h>
 #include <psperror.h>
+#include <pspkernel.h>
 
 #include <systemctrl.h>
 #include <cfwmacros.h>
+
 #include <adrenaline_log.h>
 
-#include "psperror.h"
 #include "umdman.h"
 
-int id_iecallback;
-u32 gp_iecallback;
-void *arg_iecallback;
-int (* iecallback)(int id, void *arg, int unk);
+static int g_id_iecallback;
+static u32 g_gp_iecallback;
+static void *g_arg_iecallback;
+static int (* g_iecallback)(int id, void *arg, int unk);
 
 int sceUmdManRegisterImposeCallBack(int id, void *callback) {
 	return 0;
@@ -23,24 +23,24 @@ int sceUmdManUnRegisterImposeCallback(int id) {
 }
 
 static void NotifyInsertEjectCallback(int u) {
-	if (iecallback) {
-		asm("lw $gp, 0(%0)\n" :: "r"(&gp_iecallback));
-		iecallback(id_iecallback, arg_iecallback, u);
+	if (g_iecallback) {
+		asm("lw $gp, 0(%0)\n" :: "r"(&g_gp_iecallback));
+		g_iecallback(g_id_iecallback, g_arg_iecallback, u);
 	}
 }
 
 int sceUmdManRegisterInsertEjectUMDCallBack(int id, void *callback, void *arg) {
 	int res = 0;
 
-	if (id_iecallback != 0) {
+	if (g_id_iecallback != 0) {
 		res = SCE_ENOMEM;
 		goto out;
 	}
 
-	id_iecallback = id;
-	asm("sw $gp, 0(%0)\n" :: "r"(&gp_iecallback));
-	arg_iecallback = arg;
-	iecallback = callback;
+	g_id_iecallback = id;
+	asm("sw $gp, 0(%0)\n" :: "r"(&g_gp_iecallback));
+	g_arg_iecallback = arg;
+	g_iecallback = callback;
 
 	u32 *mod =  (u32 *)sceKernelFindModuleByName("sceIsofs_driver");
 	u32 text_addr = *(mod+27);
@@ -61,15 +61,15 @@ out:
 
 int sceUmdManUnRegisterInsertEjectUMDCallBack(int id) {
 	int res = 0;
-	if (id != id_iecallback) {
+	if (id != g_id_iecallback) {
 		res = SCE_ENOENT;
 		goto out;
 	}
 
-	id_iecallback = 0;
-	gp_iecallback = 0;
-	arg_iecallback = 0;
-	iecallback = NULL;
+	g_id_iecallback = 0;
+	g_gp_iecallback = 0;
+	g_arg_iecallback = 0;
+	g_iecallback = NULL;
 
 out:
 	logmsg("%s: id=0x%08X -> 0x%08X\n", __func__, id, res);
