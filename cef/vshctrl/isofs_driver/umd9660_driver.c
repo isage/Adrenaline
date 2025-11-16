@@ -1,9 +1,8 @@
 #include <common.h>
 #include <psperror.h>
 
-#include <iso_common.h>
-
 #include "umd9660_driver.h"
+#include "../bits/iso_common.h"
 
 void VshCtrlSetUmdFile(const char *file) {
 	SetUmdFile(file);

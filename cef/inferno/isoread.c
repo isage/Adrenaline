@@ -15,6 +15,8 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
+#include <string.h>
+
 #include <pspreg.h>
 #include <pspsysmem.h>
 #include <pspkernel.h>
@@ -22,15 +24,13 @@
 #include <pspthreadman_kernel.h>
 
 #include <cfwmacros.h>
-#include <iso_common.h>
 #include <systemctrl.h>
-#include <systemctrl_se.h>
+// #include <systemctrl_se.h>
 #include <adrenaline_log.h>
 
-#include <stdio.h>
-#include <string.h>
 
 #include "inferno.h"
+#include "../bits/iso_common.h"
 
 u8 umd_seek = 0;
 u8 umd_speed = 0;

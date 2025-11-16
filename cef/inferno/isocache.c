@@ -1,5 +1,6 @@
-#include <pspsdk.h>
+#include <string.h>
 
+#include <pspsdk.h>
 #include <pspsysmem.h>
 #include <pspkernel.h>
 #include <pspsysevent.h>
@@ -12,9 +13,6 @@
 #include <infernoctrl.h>
 
 #include <adrenaline_log.h>
-
-#include <stdio.h>
-#include <string.h>
 
 #include "inferno.h"
 

@@ -15,6 +15,8 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
+#include <string.h>
+
 #include <pspreg.h>
 #include <psprtc.h>
 #include <pspumd.h>
@@ -29,9 +31,6 @@
 #include <systemctrl_se.h>
 
 #include <adrenaline_log.h>
-
-#include <stdio.h>
-#include <string.h>
 
 #include "inferno.h"
 

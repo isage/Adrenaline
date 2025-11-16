@@ -18,7 +18,7 @@
 #ifndef INFERNO_H
 #define INFERNO_H
 
-#include <iso_common.h>
+#include "../bits/iso_common.h"
 
 #define MAX_FILES_NR 8
 
