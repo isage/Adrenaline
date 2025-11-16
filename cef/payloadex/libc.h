@@ -19,6 +19,8 @@
 #ifndef __LIBC_H__
 #define __LIBC_H__
 
+#include <stddef.h>
+
 unsigned int _strlen(const char *s);
 int _strcmp(const char *s1, const char *s2);
 void *_memcpy(void *dst, const void *src, int len);

@@ -16,7 +16,9 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <stddef.h>
+
+#include <psptypes.h>
 
 unsigned int _strlen(const char *s) {
 	int len = 0;
@@ -99,6 +101,6 @@ void *_memmove(void *dst, const void *src, size_t len) {
 			len--;
 		}
 	}
-	
+
 	return pRet;
 }

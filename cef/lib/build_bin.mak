@@ -28,7 +28,7 @@ STRIP    = psp-strip
 INCDIR   := $(INCDIR) . $(PSPSDK)/include
 LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib
 
-CFLAGS   := $(addprefix -I,$(INCDIR)) $(CFLAGS)
+CFLAGS   := $(addprefix -I,$(INCDIR)) $(CFLAGS) -D__KERNEL__
 CXXFLAGS := $(CFLAGS) $(CXXFLAGS)
 ASFLAGS  := $(CFLAGS) $(ASFLAGS)
 

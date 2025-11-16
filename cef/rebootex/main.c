@@ -16,10 +16,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <psperror.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
+#include <extratypes.h>
 
 #include "main.h"
 #include "libc.h"
+#include "../../adrenaline_compat.h"
 
 #define REBOOT_MODULE "/rtm.prx"
 
