@@ -1,4 +1,5 @@
-#include <common.h>
+#include <string.h>
+#include <pspsdk.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
