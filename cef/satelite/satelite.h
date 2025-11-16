@@ -16,14 +16,17 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __SATELITE_H__
+#define __SATELITE_H__
+
+#include <pspctrl.h>
+
+#include <systemctrl_se.h>
 
 #define ALL_CTRL (PSP_CTRL_SELECT|PSP_CTRL_START|PSP_CTRL_UP|PSP_CTRL_RIGHT|PSP_CTRL_DOWN|PSP_CTRL_LEFT| \
 				 PSP_CTRL_L2|PSP_CTRL_R2|PSP_CTRL_TRIANGLE|PSP_CTRL_CIRCLE|PSP_CTRL_CROSS|PSP_CTRL_SQUARE|PSP_CTRL_HOME)
 
-extern AdrenalineConfig config;
 
-extern u32 cur_buttons, button_on;
+extern u32 g_button_on;
 
-#endif
+#endif // __SATELITE_H__

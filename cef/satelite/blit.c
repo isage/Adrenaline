@@ -16,16 +16,17 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <psptypes.h>
+#include <pspdisplay.h>
 
 #include "blit.h"
 
 extern u8 msx[];
 
-int pwidth, pheight, bufferwidth, pixelformat;
-u32 *vram32;
+static int g_pwidth, g_pheight, g_bufferwidth, g_pixelformat;
+static u32 *g_vram32;
 
-__attribute__((noinline)) u32 adjust_alpha(u32 col) {
+__attribute__((noinline)) static u32 adjust_alpha(u32 col) {
 	u32 alpha = col >> 24;
 
 	if (alpha == 0) return col;
@@ -41,9 +42,11 @@ __attribute__((noinline)) u32 adjust_alpha(u32 col) {
 
 int blit_setup() {
 	int unk;
-	sceDisplayGetMode(&unk, &pwidth, &pheight);
-	sceDisplayGetFrameBuf((void *)&vram32, &bufferwidth, &pixelformat, unk);
-	if (bufferwidth == 0 || pixelformat != 3) return -1;
+	sceDisplayGetMode(&unk, &g_pwidth, &g_pheight);
+	sceDisplayGetFrameBuf((void *)&g_vram32, &g_bufferwidth, &g_pixelformat, unk);
+	if (g_bufferwidth == 0 || g_pixelformat != 3) {
+		return -1;
+	}
 
 	return 0;
 }
@@ -52,15 +55,17 @@ int blit_string(int sx, int sy, int fcolor, int bcolor, const char *msg) {
 	u32 fg_col = adjust_alpha(fcolor);
 	u32 bg_col = adjust_alpha(bcolor);
 
-	if (bufferwidth == 0 || pixelformat != 3) return -1;
+	if (g_bufferwidth == 0 || g_pixelformat != 3) {
+		return -1;
+	}
 
 	int x;
-	for (x = 0; msg[x] && x < (pwidth / 8); x++) {
+	for (x = 0; msg[x] && x < (g_pwidth / 8); x++) {
 		char code = msg[x] & 0x7F; // 7bit ANK
 
 		int y;
 		for (y = 0; y < 8; y++) {
-			int offset = (sy + y) * bufferwidth + sx + x * 8;
+			int offset = (sy + y) * g_bufferwidth + sx + x * 8;
 			u8 font = y >= 7 ? 0x00 : msx[code * 8 + y];
 
 			int p;
@@ -69,14 +74,14 @@ int blit_string(int sx, int sy, int fcolor, int bcolor, const char *msg) {
 
 				u32 alpha = col >> 24;
 				if (alpha == 0) {
-					vram32[offset] = col;
+					g_vram32[offset] = col;
 				} else if (alpha != 0xFF) {
-					u32 c2 = vram32[offset];
+					u32 c2 = g_vram32[offset];
 					u32 c1 = c2 & 0x00FF00FF;
 					c2 = c2 & 0x0000FF00;
 					c1 = ((c1 * alpha) >> 8) & 0x00FF00FF;
 					c2 = ((c2 * alpha) >> 8) & 0x0000FF00;
-					vram32[offset] = (col & 0xFFFFFF) + c1 + c2;
+					g_vram32[offset] = (col & 0xFFFFFF) + c1 + c2;
 				}
 
 				font <<= 1;
