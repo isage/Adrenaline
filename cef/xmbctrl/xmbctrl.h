@@ -20,10 +20,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __XMBCTRL_H__
+#define __XMBCTRL_H__
+
+#include <stddef.h>
 
 #include <psptypes.h>
+
+#include <systemctrl_se.h>
 
 enum {
 	CPU_CLOCK_VSH,
@@ -67,10 +71,11 @@ typedef struct {
   char **c;
 } ItemOptions;
 
-extern GetItem GetItemes[];
-extern int num_items;
-extern ItemOptions item_opts[];
-extern int psp_model;
+extern AdrenalineConfig g_cfw_config;
+extern GetItem g_menu_items[];
+extern int g_num_items;
+extern ItemOptions g_item_opts[];
+extern int g_psp_model;
 
 #define sysconf_console_id 4
 #define sysconf_console_action 2
@@ -128,8 +133,28 @@ typedef struct {
 	u32 unknown[2];
 } SceRcoEntry;
 
+#define paf_wcslen sce_paf_private_wcslen
+#define paf_sprintf sce_paf_private_sprintf
+#define paf_snprintf sce_paf_private_snprintf
+#define paf_memcpy sce_paf_private_memcpy
+#define paf_memset sce_paf_private_memset
+#define paf_strlen sce_paf_private_strlen
+#define paf_strcpy sce_paf_private_strcpy
+#define paf_strncpy sce_paf_private_strncpy
+#define paf_strcmp sce_paf_private_strcmp
+#define paf_strncmp sce_paf_private_strncmp
+#define paf_strcasecmp sce_paf_private_strcasecmp
+#define paf_strncasecmp sce_paf_private_strncasecmp
+#define paf_strchr sce_paf_private_strchr
+#define paf_strrchr sce_paf_private_strrchr
+#define paf_strpbrk sce_paf_private_strpbrk
+#define paf_strtoul sce_paf_private_strtoul
+#define paf_malloc sce_paf_private_malloc
+#define paf_free sce_paf_private_free
+
 int sce_paf_private_wcslen(wchar_t *);
 int sce_paf_private_sprintf(char *, const char *, ...);
+int sce_paf_private_snprintf(char *, SceSize, const char *, ...);
 void *sce_paf_private_memcpy(void *, void *, int);
 void *sce_paf_private_memset(void *, char, int);
 int sce_paf_private_strlen(char *);
@@ -137,6 +162,8 @@ char *sce_paf_private_strcpy(char *, const char *);
 char *sce_paf_private_strncpy(char *, const char *, int);
 int sce_paf_private_strcmp(const char *, const char *);
 int sce_paf_private_strncmp(const char *, const char *, int);
+int sce_paf_private_strcasecmp(const char *, const char *);
+int sce_paf_private_strncasecmp(const char *, const char *, SceSize);
 char *sce_paf_private_strchr(const char *, int);
 char *sce_paf_private_strrchr(const char *, int);
 int sce_paf_private_strpbrk(const char *, const char *);
@@ -160,4 +187,4 @@ void PatchVshMain(u32 text_addr, u32 text_size);
 void PatchAuthPlugin(u32 text_addr, u32 text_size);
 void PatchSysconfPlugin(u32 text_addr, u32 text_size);
 
-#endif
+#endif // __XMBCTRL_H__

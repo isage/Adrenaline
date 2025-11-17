@@ -1,5 +1,5 @@
 TARGET = xmbctrl
-OBJS = main.o settings.o list.o plugins.o utils.o exports.o config.o patch_vsh.o
+OBJS = main.o list.o plugins.o utils.o exports.o config.o patch_vsh.o
 
 CFLAGS = -std=c99 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti

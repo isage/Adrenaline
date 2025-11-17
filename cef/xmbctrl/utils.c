@@ -22,7 +22,7 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 
-#include "main.h"
+#include "xmbctrl.h"
 
 #define MASKBITS 0x3F
 #define MASKBYTE 0x80
@@ -81,8 +81,8 @@ int ReadLine(SceUID fd, char *str) {
 	}
 }
 
-void trim(char *str) {
-	for (int i = sce_paf_private_strlen(str) - 1; i >= 0; i--) {
+static void trim(char *str) {
+	for (int i = paf_strlen(str) - 1; i >= 0; i--) {
 		if(str[i] == 0x20 || str[i] == '\t') str[i] = 0;
 		else break;
 	}
@@ -112,11 +112,11 @@ int GetPlugin(char *buf, int size, char *str, int *activated) {
 	*activated = 0;
 
 	if (i > 0) {
-		char *p = (char*)sce_paf_private_strpbrk(s, " \t");
+		char *p = (char*)paf_strpbrk(s, " \t");
 		if (p) {
 			char *q = p + 1;
 			while(*q < 0) q++;
-			if(sce_paf_private_strcmp(q, "1") == 0) *activated = 1;
+			if(paf_strcmp(q, "1") == 0) *activated = 1;
 			*p = 0;
 		}
 	}
@@ -128,5 +128,5 @@ int GetPlugin(char *buf, int size, char *str, int *activated) {
 }
 
 int atoi(const char* txt){
-	return sce_paf_private_strtoul(txt, NULL, 10);
+	return paf_strtoul(txt, NULL, 10);
 }
