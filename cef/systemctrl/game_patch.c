@@ -160,8 +160,8 @@ void PatchGameByTitleId() {
 		_utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		sctrlHENPatchSyscall((u32)_utilityGetParam, utilityGetParamPatched_ULJM05221);
 
-	} else if (strcasecmp("ULES01472", title_id) == 0 || strcasecmp("ULUS10543", title_id) == 0) {
-		// Patch Smakdown vs RAW 2011 anti-CFW check (CPU speed)
+	} else if (strcasecmp("ULES01339", title_id) == 0 || strcasecmp("ULUS10452", title_id) == 0 || strcasecmp("ULES01472", title_id) == 0 || strcasecmp("ULUS10543", title_id) == 0) {
+		// Patch Smakdown vs RAW 2010 - 2011 anti-CFW check (CPU speed)
 		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
 
 	} else if (strcasecmp("ULES00590", title_id) == 0 || strcasecmp("ULJM05075", title_id) == 0) {
