@@ -41,6 +41,7 @@
 	- Fix `BEATS` custom tracks
 	- Fix the infinite loading screen on `Jackass: The Game`
 	- Fix `TwinBee Portable` crashing when not using English or Japanese language
+	- Fix `Smakdown vs RAW 2010` by bypassing anti-CFW check
 	- Fix `Smakdown vs RAW 2011` by bypassing anti-CFW check
 	- Fix `Aces of War` by bypassing anti-CFW check
 	- Fix `Pangya Fantasy Golf` by bypassing anti-CFW check
