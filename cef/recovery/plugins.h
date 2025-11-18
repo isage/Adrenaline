@@ -22,6 +22,8 @@
 #define MAX_PLUGINS_PER_MODE 8
 #define MAX_PLUGINS MAX_PLUGINS_PER_MODE * 3
 
+extern Entry g_plugins_tool_entries[MAX_PLUGINS + 1];
+
 int Plugins();
 void ImportClassicPlugins(int sel);
 

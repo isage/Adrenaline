@@ -16,21 +16,29 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <malloc.h>
+
+#include <pspctrl.h>
+#include <pspiofilemgr.h>
+
+#include <extratypes.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <libpsardumper.h>
 
 #include "main.h"
 #include "menu.h"
 #include "utils.h"
-
 #include "files.h"
+#include "../../adrenaline_compat.h"
 
 #define BIG_BUFFER_SIZE 8 * 1024 * 1024
 #define SMALL_BUFFER_SIZE 2 * 1024 * 1024
 
-char *flash0_dirs[] = {
+static char *g_flash0_dirs[] = {
 	"ms0:/__ADRENALINE__/flash0/codepage",
 	"ms0:/__ADRENALINE__/flash0/data",
 	"ms0:/__ADRENALINE__/flash0/dic",
@@ -44,7 +52,7 @@ char *flash0_dirs[] = {
 	"ms0:/__ADRENALINE__/flash0/vsh/resource",
 };
 
-char *flash1_dirs[] = {
+static char *g_flash1_dirs[] = {
 	"ms0:/__ADRENALINE__/flash1/dic",
 	"ms0:/__ADRENALINE__/flash1/gps",
 	"ms0:/__ADRENALINE__/flash1/net",
@@ -54,7 +62,7 @@ char *flash1_dirs[] = {
 	"ms0:/__ADRENALINE__/flash1/vsh/theme",
 };
 
-int FindTablePath(char *table, int table_size, char *number, char *szOut) {
+static int FindTablePath(char *table, int table_size, char *number, char *szOut) {
 	int i, j, k;
 	for (i = 0; i < table_size - 5; i++) {
 		if (strncmp(number, table+i, 5) == 0) {
@@ -85,7 +93,7 @@ int FindTablePath(char *table, int table_size, char *number, char *szOut) {
 	return 0;
 }
 
-char *GetVersion(char *buf) {
+static char *GetVersion(char *buf) {
 	char *p = strrchr(buf, ',');
 	if (!p) {
 		return NULL;
@@ -94,7 +102,7 @@ char *GetVersion(char *buf) {
 	return p + 1;
 }
 
-int is5Dnum(char *str) {
+static int is5Dnum(char *str) {
 	int len = strlen(str);
 	if (len != 5) {
 		return 0;
@@ -109,7 +117,7 @@ int is5Dnum(char *str) {
 	return 1;
 }
 
-void DrawProgress(int progress) {
+static void DrawProgress(int progress) {
 	VGraphGoto(2, 9);
 	for (int i = 2; i < 58; i++) {
 		VGraphPrintf("\xB1");
@@ -259,7 +267,7 @@ void Installer() {
 	sceIoMkdir("ms0:/__ADRENALINE__/flash2", 0777);
 	sceIoMkdir("ms0:/__ADRENALINE__/flash3", 0777);
 
-	res = CreateDirectories(flash0_dirs, sizeof(flash0_dirs) / sizeof(char **));
+	res = CreateDirectories(g_flash0_dirs, sizeof(g_flash0_dirs) / sizeof(char **));
 	if (res < 0) {
 		VGraphGoto(2, 24);
 		VGraphSetTextColor(0x4, 0x0);
@@ -267,7 +275,7 @@ void Installer() {
 		goto EXIT;
 	}
 
-	res = CreateDirectories(flash1_dirs, sizeof(flash1_dirs) / sizeof(char **));
+	res = CreateDirectories(g_flash1_dirs, sizeof(g_flash1_dirs) / sizeof(char **));
 	if (res < 0) {
 		VGraphGoto(2, 24);
 		VGraphSetTextColor(0x4, 0x0);
@@ -353,7 +361,7 @@ void Installer() {
 						if (found) {
 							if (strncmp(name, "flash0", 6) == 0) {
 								for (int i = 0; i < N_FILES; i++) {
-									if (strcmp(name + 7, files[i]) == 0) {
+									if (strcmp(name + 7, g_files[i]) == 0) {
 										char path[256];
 										sprintf(path, "ms0:/__ADRENALINE__/flash0/%s", name + 8);
 										res = WriteFile(path, sm_buffer2, cbExpanded);
@@ -427,7 +435,7 @@ void ResetSettings() {
 
 	sceIoMkdir("ms0:/__ADRENALINE__/flash1", 0777);
 
-	int res = CreateDirectories(flash1_dirs, sizeof(flash1_dirs) / sizeof(char **));
+	int res = CreateDirectories(g_flash1_dirs, sizeof(g_flash1_dirs) / sizeof(char **));
 	if (res < 0) {
 		printf("Error creating directories (0x%08X).\n", res);
 		goto EXIT;

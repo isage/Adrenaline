@@ -16,36 +16,40 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <string.h>
+
+#include <pspreg.h>
+#include <psploadexec.h>
+
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #include "main.h"
 #include "menu.h"
 #include "installer.h"
 #include "plugins.h"
 #include "utils.h"
-
 #include "options.h"
 
 PSP_MODULE_INFO("EPI-RecoveryMode", 0, 2, 0);
 PSP_DISABLE_NEWLIB();
 PSP_DISABLE_AUTOSTART_PTHREAD();
 
-static int usbStatus = 0;
+static int g_usb_status = 0;
+static int g_recovery_exit = 0;
 
-int recovery_exit = 0;
+u32 g_button_assign_value = 0;
 
-u32 button_assign_value = 0;
-
-AdrenalineConfig config;
+AdrenalineConfig g_cfw_config;
 
 void ToggleUSB() {
-	if (!usbStatus) {
+	if (!g_usb_status) {
 		sctrlStartUsb();
-		usbStatus = 1;
+		g_usb_status = 1;
 		ShowDialog("USB enabled");
 	} else {
 		sctrlStopUsb();
-		usbStatus = 0;
+		g_usb_status = 0;
 		ShowDialog("USB disabled");
 	}
 }
@@ -53,7 +57,7 @@ void ToggleUSB() {
 void RunRecovery() {
 	sctrlStopUsb();
 
-	sctrlSESetConfig(&config);
+	sctrlSESetConfig(&g_cfw_config);
 
 	static u32 vshmain_args[0x100];
 	memset(vshmain_args, 0, sizeof(vshmain_args));
@@ -75,12 +79,12 @@ void RunRecovery() {
 	sctrlKernelLoadExecVSHMs2(param.argp, &param);
 }
 
-void RegistryHacks() {
-	GetRegistryData("/CONFIG/SYSTEM/XMB", "button_assign", REG_TYPE_INT, &button_assign_value, sizeof(u32));
+static void RegistryHacks() {
+	GetRegistryData("/CONFIG/SYSTEM/XMB", "button_assign", REG_TYPE_INT, &g_button_assign_value, sizeof(u32));
 }
 
 void SetButtonAssign(int sel) {
-	SetRegistryData("/CONFIG/SYSTEM/XMB", "button_assign", REG_TYPE_INT, (void *)&button_assign_value, sizeof(u32));
+	SetRegistryData("/CONFIG/SYSTEM/XMB", "button_assign", REG_TYPE_INT, (void *)&g_button_assign_value, sizeof(u32));
 }
 
 void SetWMA(int sel) {
@@ -111,11 +115,11 @@ void SetFlashPlayer(int sel) {
 }
 
 void Setrecovery_color(int sel) {
-	theme = config.recovery_color;
+	g_theme = g_cfw_config.recovery_color;
 }
 
 void Exit() {
-	recovery_exit = 1;
+	g_recovery_exit = 1;
 }
 
 int main(int argc, char *argv[]) {
@@ -127,19 +131,19 @@ int main(int argc, char *argv[]) {
 	}
 
 	VGraphInit(1);
-	sctrlSEGetConfig(&config);
-	Setrecovery_color(config.recovery_color);
+	sctrlSEGetConfig(&g_cfw_config);
+	Setrecovery_color(g_cfw_config.recovery_color);
 
 	RegistryHacks();
 	UpdatePluginCount(Plugins());
 
-	while (!recovery_exit) {
+	while (!g_recovery_exit) {
 		MenuLoop();
 	}
 
 	sctrlStopUsb();
 
-	sctrlSESetConfig(&config);
+	sctrlSESetConfig(&g_cfw_config);
 
 	sctrlKernelExitVSH(NULL);
 

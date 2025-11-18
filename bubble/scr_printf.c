@@ -33,7 +33,7 @@ static int bg_enable = 1;
 static void* g_vram_base = NULL;
 static int g_vram_offset = 0;
 static int g_vram_mode = SCE_DISPLAY_PIXELFORMAT_A8B8G8R8;
-static int init = 0;
+static int g_init = 0;
 static int clearline_en = 1;
 
 static void clear_screen_32(uint32_t color)
@@ -89,7 +89,7 @@ void psvDebugScreenInitEx(void *vram_base, int mode, int setup)
     sceDisplaySetFrameBuf(&framebuf, 1);
   }
   clear_screen(bg_col);
-  init = 1;
+  g_init = 1;
 }
 
 void psvDebugScreenInit()
@@ -139,7 +139,7 @@ void psvDebugScreenClear()
 {
   int y;
 
-  if(!init)
+  if(!g_init)
   {
     return;
   }
@@ -178,7 +178,7 @@ static void debug_put_char_32(int x, int y, uint32_t color, uint32_t bgc, uint8_
   uint32_t *vram_ptr;
   uint32_t *vram;
 
-  if(!init)
+  if(!g_init)
   {
     return;
   }
@@ -257,7 +257,7 @@ int psvDebugScreenPrintData(const char *buff, int size)
   int j;
   char c;
 
-  if(!init)
+  if(!g_init)
   {
     return 0;
   }

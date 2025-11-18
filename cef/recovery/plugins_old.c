@@ -16,8 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
-#include <stdio.h>
+#include <pspiofilemgr.h>
 
 #include "main.h"
 #include "menu.h"
@@ -30,13 +29,15 @@ typedef struct {
 	char name[64];
 	int activated;
 } PluginsInfo;
-PluginsInfo plugins_info[MAX_PLUGINS];
+static PluginsInfo g_plugins_info[MAX_PLUGINS];
 
-char plugins_path[MAX_PLUGINS][64]; //8 vsh, 8 game, 8 pops
+static char g_plugins_path[MAX_PLUGINS][64]; //8 vsh, 8 game, 8 pops
 
-Entry plugins_tool_entries[MAX_PLUGINS + 1];
+Entry g_plugins_tool_entries[MAX_PLUGINS + 1];
 
-int n_vsh = 0, n_game = 0, n_pops = 0;
+static int g_n_vsh = 0;
+static int g_n_game = 0;
+static int g_n_pops = 0;
 
 void trim(char *str) {
 	for (int i = strlen(str) - 1; i >= 0; i--) {
@@ -103,9 +104,9 @@ void SavePlugins(char *mode, int start, int end) {
 	SceUID fd = sceIoOpen(file, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 	if (fd >= 0) {
 		for (int i = start; i < end; i++) {
-			if (plugins_path[i][0] != '\0') {
+			if (g_plugins_path[i][0] != '\0') {
 				char string[128];
-				sprintf(string, "%s %d\r\n", plugins_path[i], plugins_info[i].activated);
+				sprintf(string, "%s %d\r\n", g_plugins_path[i], g_plugins_info[i].activated);
 				sceIoWrite(fd, string, strlen(string));
 			}
 		}
@@ -129,13 +130,13 @@ int ReadPlugins(char *mode, int get_name, int n) {
 		int res = 0;
 
 		do {
-			res = GetPlugin(p, size, plugins_path[n], &plugins_info[n].activated);
+			res = GetPlugin(p, size, g_plugins_path[n], &g_plugins_info[n].activated);
 
 			if (res > 0) {
-				char *q = strrchr(plugins_path[n], '/');
+				char *q = strrchr(g_plugins_path[n], '/');
 				if (q) {
 					if (get_name) {
-						sprintf(plugins_info[n].name, "%s [%s]", q + 1, mode);
+						sprintf(g_plugins_info[n].name, "%s [%s]", q + 1, mode);
 					}
 
 					i++;
@@ -157,18 +158,18 @@ void SetPlugins(int sel) {
 	char *mode = NULL;
 	int start = 0, end = 0;
 
-	if (sel >= 0 && sel < n_vsh) {
+	if (sel >= 0 && sel < g_n_vsh) {
 		mode = "vsh";
 		start = 0;
-		end = n_vsh;
-	} else if (sel >= n_vsh && sel < n_vsh+n_game) {
+		end = g_n_vsh;
+	} else if (sel >= g_n_vsh && sel < g_n_vsh+g_n_game) {
 		mode = "game";
-		start = n_vsh;
-		end = n_vsh+n_game;
-	} else if (sel >= n_vsh+n_game && sel < n_vsh+n_game+n_pops) {
+		start = g_n_vsh;
+		end = g_n_vsh+g_n_game;
+	} else if (sel >= g_n_vsh+g_n_game && sel < g_n_vsh+g_n_game+g_n_pops) {
 		mode = "pops";
-		start = n_vsh+n_game;
-		end = n_vsh+n_game+n_pops;
+		start = g_n_vsh+g_n_game;
+		end = g_n_vsh+g_n_game+g_n_pops;
 	}
 
 	// Save
@@ -176,21 +177,21 @@ void SetPlugins(int sel) {
 }
 
 int Plugins() {
-	memset(plugins_tool_entries, 0, sizeof(plugins_tool_entries));
-	memset(plugins_path, 0, sizeof(plugins_path));
-	memset(plugins_info, 0, sizeof(plugins_info));
+	memset(g_plugins_tool_entries, 0, sizeof(g_plugins_tool_entries));
+	memset(g_plugins_path, 0, sizeof(g_plugins_path));
+	memset(g_plugins_info, 0, sizeof(g_plugins_info));
 
-	n_vsh = ReadPlugins("vsh", 1, 0);
-	n_game = ReadPlugins("game", 1, n_vsh);
-	n_pops = ReadPlugins("pops", 1, n_vsh+n_game);
+	g_n_vsh = ReadPlugins("vsh", 1, 0);
+	g_n_game = ReadPlugins("game", 1, g_n_vsh);
+	g_n_pops = ReadPlugins("pops", 1, g_n_vsh+g_n_game);
 
-	for (int i = 0; i < (n_vsh+n_game+n_pops); i++) {
-	    printf(plugins_info[i].name);
-		plugins_tool_entries[i].name = plugins_info[i].name;
-		plugins_tool_entries[i].function = (void *)SetPlugins;
-		plugins_tool_entries[i].options = disenabled;
-		plugins_tool_entries[i].size_options = sizeof(disenabled);
-		plugins_tool_entries[i].value = &plugins_info[i].activated;
+	for (int i = 0; i < (g_n_vsh+g_n_game+g_n_pops); i++) {
+	    printf(g_plugins_info[i].name);
+		g_plugins_tool_entries[i].name = g_plugins_info[i].name;
+		g_plugins_tool_entries[i].function = (void *)SetPlugins;
+		g_plugins_tool_entries[i].options = g_disenabled;
+		g_plugins_tool_entries[i].size_options = sizeof(g_disenabled);
+		g_plugins_tool_entries[i].value = &g_plugins_info[i].activated;
 	}
-	return n_vsh+n_game+n_pops;
+	return g_n_vsh+g_n_game+g_n_pops;
 }

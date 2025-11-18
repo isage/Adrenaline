@@ -16,9 +16,9 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define N_FILES (sizeof(files) / sizeof(char **))
+#define N_FILES (sizeof(g_files) / sizeof(char **))
 
-char *files[] = {
+char *g_files[] = {
 	"/codepage/cptbl.dat",
 	"/data/cert/CA_LIST.cer",
 	"/dic/apotp.dic",

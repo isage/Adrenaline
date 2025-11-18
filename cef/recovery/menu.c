@@ -16,12 +16,18 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <string.h>
+
+#include <pspctrl.h>
+#include <pspkerneltypes.h>
+
+#include <systemctrl_se.h>
 
 #include "main.h"
 #include "menu.h"
 #include "options.h"
 #include "plugins.h"
+#include "../../adrenaline_compat.h"
 
 #define CTRL_DELAY   100000
 #define CTRL_DEADZONE_DELAY 500000
@@ -32,18 +38,15 @@ typedef struct {
 	char *title;
 } Page;
 
-int sel = 0;
-int sel_page = 0;
-u8 theme = 0;
+static int g_sel = 0;
+static int g_sel_page = 0;
+u8 g_theme = 0;
 
 static u32 g_last_btn = 0;
 static u32 g_last_tick = 0;
 static u32 g_deadzone_tick = 0;
 
-extern u32 button_assign_value;
-extern Entry plugins_tool_entries[MAX_PLUGINS + 1];
-
-Theme themes[] = {
+static Theme g_themes[] = {
 	// Default (done)
 	{
 		.accent_color = 0x4,
@@ -261,7 +264,7 @@ Theme themes[] = {
 	},
 };
 
-static char *theme_names[] = {
+static char *g_theme_names[] = {
 	"Default", // "Blue",
 	"Green",
 	"Red",
@@ -277,46 +280,46 @@ static char *theme_names[] = {
 	"B/Blue",
 };
 
-Entry general_entries[] = {
-	{ "CPU/BUS clock speed in XMB", NULL, cpuspeeds, sizeof(cpuspeeds), &config.vsh_cpu_speed },
-	{ "CPU/BUS clock speed in PSP game/app", NULL, cpuspeeds, sizeof(cpuspeeds), &config.app_cpu_speed },
-	{ "UMDemu ISO driver", NULL, umdmodes, sizeof(umdmodes), &config.umd_mode },
-	{ "Skip Sony logo on coldboot", NULL, disenabled, sizeof(disenabled), &config.skip_logo },
-	{ "Skip Sony logo on gameboot", NULL, disenabled, sizeof(disenabled), &config.skip_game_boot_logo },
-	{ "Hide corrupt icons in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_corrupt },
-	{ "Hide DLCs in game menu", NULL, disenabled, sizeof(disenabled), &config.hide_dlcs },
-	{ "Hide PIC0/PIC1 in game menu", NULL, hide_pics, sizeof(hide_pics), &config.hide_pic0pic1 },
-	{ "Hide MAC address", NULL, disenabled, sizeof(disenabled), &config.hide_mac_addr },
-	{ "Hide CFW files in PSP games", NULL, endisabled, sizeof(endisabled), &config.no_hide_cfw_files },
-	{ "Autorun /PSP/GAME/BOOT/EBOOT.PBP", NULL, disenabled, sizeof(disenabled), &config.startup_program },
-	{ "Fake VSH Region", NULL, regions, sizeof(regions), &config.fake_region },
-	{ "Extended screen colors mode", NULL, extendedcolors, sizeof(extendedcolors), &config.extended_colors },
-	{ "Recovery color", Setrecovery_color, theme_names, sizeof(theme_names), &config.recovery_color },
-	{ "Use Sony PSP OSK", NULL, disenabled, sizeof(disenabled), &config.use_sony_psposk },
-	{ "Memory Stick Cache", NULL, endisabled, sizeof(endisabled), &config.no_ms_cache },
-	{ "NoDRM engine", NULL, endisabled, sizeof(endisabled), &config.no_nodrm_engine },
-	{ "XMB Control", NULL, endisabled, sizeof(endisabled), &config.no_xmbctrl },
+static Entry g_general_entries[] = {
+	{ "CPU/BUS clock speed in XMB", NULL, g_cpuspeeds, sizeof(g_cpuspeeds), &g_cfw_config.vsh_cpu_speed },
+	{ "CPU/BUS clock speed in PSP game/app", NULL, g_cpuspeeds, sizeof(g_cpuspeeds), &g_cfw_config.app_cpu_speed },
+	{ "UMDemu ISO driver", NULL, g_umdmodes, sizeof(g_umdmodes), &g_cfw_config.umd_mode },
+	{ "Skip Sony logo on coldboot", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.skip_logo },
+	{ "Skip Sony logo on gameboot", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.skip_game_boot_logo },
+	{ "Hide corrupt icons in game menu", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.hide_corrupt },
+	{ "Hide DLCs in game menu", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.hide_dlcs },
+	{ "Hide PIC0/PIC1 in game menu", NULL, g_hide_pics, sizeof(g_hide_pics), &g_cfw_config.hide_pic0pic1 },
+	{ "Hide MAC address", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.hide_mac_addr },
+	{ "Hide CFW files in PSP games", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_hide_cfw_files },
+	{ "Autorun /PSP/GAME/BOOT/EBOOT.PBP", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.startup_program },
+	{ "Fake VSH Region", NULL, g_regions, sizeof(g_regions), &g_cfw_config.fake_region },
+	{ "Extended screen colors mode", NULL, g_extendedcolors, sizeof(g_extendedcolors), &g_cfw_config.extended_colors },
+	{ "Recovery color", Setrecovery_color, g_theme_names, sizeof(g_theme_names), &g_cfw_config.recovery_color },
+	{ "Use Sony PSP OSK", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_sony_psposk },
+	{ "Memory Stick Cache", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_ms_cache },
+	{ "NoDRM engine", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_nodrm_engine },
+	{ "XMB Control", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_xmbctrl },
 	{ "", NULL, NULL, 0, NULL },
 	{ "Toggle USB", ToggleUSB, NULL, 0, NULL },
 	{ "", NULL, NULL, 0, NULL },
 	{ "Exit", Exit, NULL, 0, NULL },
 };
 
-Entry advanced_entries[] = {
-	{ "Force high memory layout", NULL, highmem, sizeof(highmem), &config.force_high_memory },
-	{ "Use Graphic Engine 2", NULL, disenabled, sizeof(disenabled), &config.use_ge2 },
-	{ "Use Media Engine 2", NULL, disenabled, sizeof(disenabled), &config.use_me2 },
-	{ "Execute BOOT.BIN in UMDemu ISO", NULL, disenabled, sizeof(disenabled), &config.execute_boot_bin },
-	{ "Inferno ISO cache policy", NULL, iso_cache, sizeof(iso_cache), &config.iso_cache },
-	{ "Inferno ISO cache number", NULL, iso_cache_num, sizeof(iso_cache_num), &config.iso_cache_num },
-	{ "Inferno ISO cache size", NULL, iso_cache_size, sizeof(iso_cache_size), &config.iso_cache_size },
-	{ "UMDemu  ISO seek time delay factor", NULL, umd_seek_read_delay, sizeof(umd_seek_read_delay), &config.umd_seek },
-	{ "UMDemu  ISO read speed delay factor", NULL, umd_seek_read_delay, sizeof(umd_seek_read_delay), &config.umd_speed },
-	{ "XMB  plugins", NULL, endisabled, sizeof(endisabled), &config.no_xmb_plugins },
-	{ "GAME plugins", NULL, endisabled, sizeof(endisabled), &config.no_game_plugins },
-	{ "POPS plugins", NULL, endisabled, sizeof(endisabled), &config.no_pops_plugins },
+static Entry g_advanced_entries[] = {
+	{ "Force high memory layout", NULL, g_highmem, sizeof(g_highmem), &g_cfw_config.force_high_memory },
+	{ "Use Graphic Engine 2", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_ge2 },
+	{ "Use Media Engine 2", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_me2 },
+	{ "Execute BOOT.BIN in UMDemu ISO", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.execute_boot_bin },
+	{ "Inferno ISO cache policy", NULL, g_iso_cache, sizeof(g_iso_cache), &g_cfw_config.iso_cache },
+	{ "Inferno ISO cache number", NULL, g_iso_cache_num, sizeof(g_iso_cache_num), &g_cfw_config.iso_cache_num },
+	{ "Inferno ISO cache size", NULL, g_iso_cache_size, sizeof(g_iso_cache_size), &g_cfw_config.iso_cache_size },
+	{ "UMDemu  ISO seek time delay factor", NULL, g_umd_seek_read_delay, sizeof(g_umd_seek_read_delay), &g_cfw_config.umd_seek },
+	{ "UMDemu  ISO read speed delay factor", NULL, g_umd_seek_read_delay, sizeof(g_umd_seek_read_delay), &g_cfw_config.umd_speed },
+	{ "XMB  plugins", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_xmb_plugins },
+	{ "GAME plugins", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_game_plugins },
+	{ "POPS plugins", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_pops_plugins },
 	{ "", NULL, NULL, 0, NULL },
-	{ "Button assign", SetButtonAssign, buttonassign, sizeof(buttonassign), (int *)&button_assign_value },
+	{ "Button assign", SetButtonAssign, g_buttonassign, sizeof(g_buttonassign), (int *)&g_button_assign_value },
 	{ "Import classic plugins", ImportClassicPlugins, NULL, 0, NULL },
 	{ "Activate WMA", SetWMA, NULL, 0, NULL },
 	{ "Activate Flash Player", SetFlashPlayer, NULL, 0, NULL },
@@ -324,17 +327,17 @@ Entry advanced_entries[] = {
 	{ "Reset settings", ResetSettings, NULL, 0, NULL },
 };
 
-#define N_GENERAL (sizeof(general_entries) / sizeof(Entry))
-#define N_ADVANCED (sizeof(advanced_entries) / sizeof(Entry))
+#define N_GENERAL (sizeof(g_general_entries) / sizeof(Entry))
+#define N_ADVANCED (sizeof(g_advanced_entries) / sizeof(Entry))
 
-Page pages[] = {
-	{ general_entries, N_GENERAL, "General" },
-	{ advanced_entries, N_ADVANCED, "Advanced" },
-	{ plugins_tool_entries, 0, "Plugins" }
+static Page g_pages[] = {
+	{ g_general_entries, N_GENERAL, "General" },
+	{ g_advanced_entries, N_ADVANCED, "Advanced" },
+	{ g_plugins_tool_entries, 0, "Plugins" }
 };
 
 void UpdatePluginCount(int count) {
-	pages[2].n_entries = count;
+	g_pages[2].n_entries = count;
 }
 
 u32 ReadKey(void) {
@@ -367,57 +370,57 @@ void WaitPress(u32 buttons) {
 }
 
 void ChangeValue(int interval) {
-	if (pages[sel_page].entries[sel].options) {
-		int max = pages[sel_page].entries[sel].size_options / sizeof(char **);
-		(*pages[sel_page].entries[sel].value) = (max + (*pages[sel_page].entries[sel].value) + interval) % max;
+	if (g_pages[g_sel_page].entries[g_sel].options) {
+		int max = g_pages[g_sel_page].entries[g_sel].size_options / sizeof(char **);
+		(*g_pages[g_sel_page].entries[g_sel].value) = (max + (*g_pages[g_sel_page].entries[g_sel].value) + interval) % max;
 	}
 
-	if (pages[sel_page].entries[sel].function) {
-		pages[sel_page].entries[sel].function(sel);
+	if (g_pages[g_sel_page].entries[g_sel].function) {
+		g_pages[g_sel_page].entries[g_sel].function(g_sel);
 	}
 }
 
 void DrawHeader() {
-	VGraphSetBackColor(themes[theme].main_bg);
+	VGraphSetBackColor(g_themes[g_theme].main_bg);
 //  VGraphClear();
 	VGraphGoto(0, 0);
 
-	VGraphClearLine(themes[theme].panel_bg);
+	VGraphClearLine(g_themes[g_theme].panel_bg);
 
-	VGraphSetTextColor(themes[theme].accent_color, themes[theme].select_text_bg);
+	VGraphSetTextColor(g_themes[g_theme].accent_color, g_themes[g_theme].select_text_bg);
 	VGraphPrintf(" \x11 L ");
 
-	for (int i = 0; i < sizeof(pages) / sizeof(Page);i++) {
-		if (sel_page == i) {
-			VGraphSetTextColor(themes[theme].panel_select_text, themes[theme].panel_select_bg);
+	for (int i = 0; i < sizeof(g_pages) / sizeof(Page);i++) {
+		if (g_sel_page == i) {
+			VGraphSetTextColor(g_themes[g_theme].panel_select_text, g_themes[g_theme].panel_select_bg);
 		} else {
-			VGraphSetTextColor(themes[theme].panel_text, themes[theme].panel_bg);
+			VGraphSetTextColor(g_themes[g_theme].panel_text, g_themes[g_theme].panel_bg);
 		}
 		VGraphPutc(' ');
 
-		if (sel_page == i) {
-			VGraphSetTextColor(themes[theme].accent_color, themes[theme].panel_select_bg);
+		if (g_sel_page == i) {
+			VGraphSetTextColor(g_themes[g_theme].accent_color, g_themes[g_theme].panel_select_bg);
 		} else {
-			VGraphSetTextColor(themes[theme].accent_color, themes[theme].panel_bg);
+			VGraphSetTextColor(g_themes[g_theme].accent_color, g_themes[g_theme].panel_bg);
 		}
 
-		VGraphPutc(pages[i].title[0]);
+		VGraphPutc(g_pages[i].title[0]);
 
-		if (sel_page == i) {
-			VGraphSetTextColor(themes[theme].panel_select_text, themes[theme].panel_select_bg);
+		if (g_sel_page == i) {
+			VGraphSetTextColor(g_themes[g_theme].panel_select_text, g_themes[g_theme].panel_select_bg);
 		} else {
-			VGraphSetTextColor(themes[theme].panel_text, themes[theme].panel_bg);
+			VGraphSetTextColor(g_themes[g_theme].panel_text, g_themes[g_theme].panel_bg);
 		}
 
-		VGraphPrintf(pages[i].title+1);
+		VGraphPrintf(g_pages[i].title+1);
 		VGraphPutc(' ');
 	}
 
 	VGraphGoto(55, 0);
-	VGraphSetTextColor(themes[theme].accent_color, themes[theme].select_text_bg);
+	VGraphSetTextColor(g_themes[g_theme].accent_color, g_themes[g_theme].select_text_bg);
 	VGraphPrintf(" R \x10 ");
 
-	VGraphSetTextColor(themes[theme].text_color, themes[theme].main_bg);
+	VGraphSetTextColor(g_themes[g_theme].text_color, g_themes[g_theme].main_bg);
 	VGraphPrintf("\xC9");
 	for (int i = 1; i < 59; i++) {
 		VGraphPrintf("\xCD");
@@ -427,22 +430,22 @@ void DrawHeader() {
 
 void DrawFooter() {
 	VGraphGoto(0, 32);
-	VGraphSetTextColor(themes[theme].text_color, themes[theme].main_bg);
+	VGraphSetTextColor(g_themes[g_theme].text_color, g_themes[g_theme].main_bg);
 	VGraphPrintf("\xC8");
 	for (int i = 1; i < 59; i++) {
 		VGraphPrintf("\xCD");
 	}
 	VGraphPrintf("\xBC");
 
-	VGraphClearLine(themes[theme].panel_bg);
-	VGraphSetTextColor(themes[theme].accent_color, themes[theme].panel_bg);
+	VGraphClearLine(g_themes[g_theme].panel_bg);
+	VGraphSetTextColor(g_themes[g_theme].accent_color, g_themes[g_theme].panel_bg);
 	VGraphPrintf("A");
-	VGraphSetTextColor(themes[theme].panel_text, themes[theme].panel_bg);
+	VGraphSetTextColor(g_themes[g_theme].panel_text, g_themes[g_theme].panel_bg);
 	VGraphPrintf("drenaline Recovery Menu v%d.%d.%d", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO);
 }
 
 void ShowDialog(char* message) {
-	VGraphSetTextColor(themes[theme].dialog_text, themes[theme].dialog_bg);
+	VGraphSetTextColor(g_themes[g_theme].dialog_text, g_themes[g_theme].dialog_bg);
 	VGraphGoto(18, 10);
 	VGraphPrintf("\xC9");
 	for (int i = 1; i < 21; i++) {
@@ -497,60 +500,60 @@ void MenuCtrl() {
 	}
 
 	if (key & PSP_CTRL_UP) {
-		sel = (pages[sel_page].n_entries + sel - 1) % pages[sel_page].n_entries;
+		g_sel = (g_pages[g_sel_page].n_entries + g_sel - 1) % g_pages[g_sel_page].n_entries;
 		// skip empty lines
-		if (strcmp(pages[sel_page].entries[sel].name,"")==0)
-			sel = (pages[sel_page].n_entries + sel - 1) % pages[sel_page].n_entries;
+		if (strcmp(g_pages[g_sel_page].entries[g_sel].name,"")==0)
+			g_sel = (g_pages[g_sel_page].n_entries + g_sel - 1) % g_pages[g_sel_page].n_entries;
 	}
 	if (key & PSP_CTRL_DOWN) {
-		sel = (pages[sel_page].n_entries + sel + 1) % pages[sel_page].n_entries;
+		g_sel = (g_pages[g_sel_page].n_entries + g_sel + 1) % g_pages[g_sel_page].n_entries;
 		// skip empty lines
-		if (strcmp(pages[sel_page].entries[sel].name,"")==0)
-			sel = (pages[sel_page].n_entries + sel + 1) % pages[sel_page].n_entries;
+		if (strcmp(g_pages[g_sel_page].entries[g_sel].name,"")==0)
+			g_sel = (g_pages[g_sel_page].n_entries + g_sel + 1) % g_pages[g_sel_page].n_entries;
 	}
 
 	if (key & PSP_CTRL_LTRIGGER) {
-		sel_page = ((sizeof(pages) / sizeof(Page)) + sel_page - 1) % (sizeof(pages) / sizeof(Page));
-		sel = 0;
+		g_sel_page = ((sizeof(g_pages) / sizeof(Page)) + g_sel_page - 1) % (sizeof(g_pages) / sizeof(Page));
+		g_sel = 0;
 	}
 	if (key & PSP_CTRL_RTRIGGER) {
-		sel_page = ((sizeof(pages) / sizeof(Page)) + sel_page + 1) % (sizeof(pages) / sizeof(Page));
-		sel = 0;
+		g_sel_page = ((sizeof(g_pages) / sizeof(Page)) + g_sel_page + 1) % (sizeof(g_pages) / sizeof(Page));
+		g_sel = 0;
 	}
 }
 
 void MenuLoop() {
 	DrawHeader();
 
-	VGraphSetTextColor(themes[theme].text_color, themes[theme].main_bg);
+	VGraphSetTextColor(g_themes[g_theme].text_color, g_themes[g_theme].main_bg);
 	for (int i = 2; i < 32; i++) {
 		VGraphGoto(0, i);
-		VGraphClearLine(themes[theme].main_bg);
+		VGraphClearLine(g_themes[g_theme].main_bg);
 		VGraphPrintf("\xBA");
 		VGraphGoto(59, i);
 		VGraphPrintf("\xBA");
 	}
 
-	for (int i = 0; i < pages[sel_page].n_entries; i++) {
+	for (int i = 0; i < g_pages[g_sel_page].n_entries; i++) {
 		VGraphGoto(3, 5 + i);
 
-		if (sel == i) {
-			VGraphSetTextColor(themes[theme].accent_color, themes[theme].main_bg);
+		if (g_sel == i) {
+			VGraphSetTextColor(g_themes[g_theme].accent_color, g_themes[g_theme].main_bg);
 			VGraphPrintf("\x10");
 		} else {
-			VGraphSetTextColor(themes[theme].main_bg, themes[theme].main_bg);
+			VGraphSetTextColor(g_themes[g_theme].main_bg, g_themes[g_theme].main_bg);
 			VGraphPrintf(" ");
 		}
 
-		VGraphSetTextColor(sel == i ? themes[theme].select_text_color : themes[theme].text_color, sel == i ? themes[theme].select_text_bg : themes[theme].main_bg);
+		VGraphSetTextColor(g_sel == i ? g_themes[g_theme].select_text_color : g_themes[g_theme].text_color, g_sel == i ? g_themes[g_theme].select_text_bg : g_themes[g_theme].main_bg);
 
-		VGraphPrintf(pages[sel_page].entries[i].name);
+		VGraphPrintf(g_pages[g_sel_page].entries[i].name);
 
-		if (pages[sel_page].entries[i].options) {
-			int max = pages[sel_page].entries[i].size_options / sizeof(char **);
+		if (g_pages[g_sel_page].entries[i].options) {
+			int max = g_pages[g_sel_page].entries[i].size_options / sizeof(char **);
 			VGraphGoto(3 + (60 - 22), 5 + i);
-			VGraphSetTextColor((*pages[sel_page].entries[i].value) == 0 ? themes[theme].default_value_color : themes[theme].changed_value_color, themes[theme].main_bg);
-			VGraphPrintf("%14s", pages[sel_page].entries[i].options[(*pages[sel_page].entries[i].value) % max]);
+			VGraphSetTextColor((*g_pages[g_sel_page].entries[i].value) == 0 ? g_themes[g_theme].default_value_color : g_themes[g_theme].changed_value_color, g_themes[g_theme].main_bg);
+			VGraphPrintf("%14s", g_pages[g_sel_page].entries[i].options[(*g_pages[g_sel_page].entries[i].value) % max]);
 		}
 	}
 

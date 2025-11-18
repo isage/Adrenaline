@@ -16,13 +16,16 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
 #include <stdio.h>
+#include <string.h>
+
+#include <pspiofilemgr.h>
+
+#include <systemctrl_se.h>
 
 #include "main.h"
 #include "menu.h"
 #include "utils.h"
-
 #include "options.h"
 #include "plugins.h"
 
@@ -36,17 +39,17 @@ typedef struct {
 	int active;
 } Plugin;
 
-Entry plugins_tool_entries[MAX_PLUGINS + 1];
+Entry g_plugins_tool_entries[MAX_PLUGINS + 1];
 
-Plugin plugins[MAX_PLUGINS] = {0};
-int plugin_count = 0;
+static Plugin g_plugins[MAX_PLUGINS] = {0};
+static int g_plugin_count = 0;
 
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
 int findEmpySlot() {
 	for (int i = 0; i < MAX_PLUGINS; i++) {
-		if (plugins[i].name[0] == 0) {
+		if (g_plugins[i].name[0] == 0) {
 			return i;
 		}
 	}
@@ -237,23 +240,23 @@ static void processPlugin(char* runlevel, char* path, char* enabled) {
 	char *p = strrchr(path, '/');
 
 	if (p != NULL) {
-		snprintf(plugins[idx].name, 138, "%s [%s]", p+1, runlevel);
+		snprintf(g_plugins[idx].name, 138, "%s [%s]", p+1, runlevel);
 	} else {
-		snprintf(plugins[idx].name, 138, "%s [%s]", path, runlevel);
+		snprintf(g_plugins[idx].name, 138, "%s [%s]", path, runlevel);
 	}
 
-	snprintf(plugins[idx].path, path_len, "%s", path);
+	snprintf(g_plugins[idx].path, path_len, "%s", path);
 
 	int run_level_len = strlen(runlevel) + 10;
-	snprintf(plugins[idx].runlevel, run_level_len, "%s", runlevel);
+	snprintf(g_plugins[idx].runlevel, run_level_len, "%s", runlevel);
 
-	plugins[idx].active = isRunlevelEnabled(enabled);
+	g_plugins[idx].active = isRunlevelEnabled(enabled);
 
-	plugin_count += 1;
+	g_plugin_count += 1;
 }
 
 void savePlugins() {
-	if (plugin_count == 0) {
+	if (g_plugin_count == 0) {
 		return;
 	}
 
@@ -263,8 +266,8 @@ void savePlugins() {
 		return;
 	}
 
-	for (int i = 0; i < plugin_count; i++) {
-		Plugin* plugin = &plugins[i];
+	for (int i = 0; i < g_plugin_count; i++) {
+		Plugin* plugin = &g_plugins[i];
 
 		if (plugin->name[0] != 0) {
 			char buf[256] = {0};
@@ -280,7 +283,7 @@ void savePlugins() {
 }
 
 void readPlugins() {
-	memset(plugins, 0, MAX_PLUGINS*sizeof(Plugin));
+	memset(g_plugins, 0, MAX_PLUGINS*sizeof(Plugin));
 
 	ProcessConfigFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
 }
@@ -290,20 +293,20 @@ void SetPlugins(int sel) {
 }
 
 int Plugins() {
-	memset(plugins_tool_entries, 0, sizeof(plugins_tool_entries));
+	memset(g_plugins_tool_entries, 0, sizeof(g_plugins_tool_entries));
 
 	readPlugins();
 
-	for (int i = 0; i < plugin_count; i++) {
-		Plugin* plugin = &plugins[i];
+	for (int i = 0; i < g_plugin_count; i++) {
+		Plugin* plugin = &g_plugins[i];
 	    printf(plugin->name);
-		plugins_tool_entries[i].name = plugin->name;
-		plugins_tool_entries[i].function = (void *)SetPlugins;
-		plugins_tool_entries[i].options = disenabled;
-		plugins_tool_entries[i].size_options = sizeof(disenabled);
-		plugins_tool_entries[i].value = &plugin->active;
+		g_plugins_tool_entries[i].name = plugin->name;
+		g_plugins_tool_entries[i].function = (void *)SetPlugins;
+		g_plugins_tool_entries[i].options = g_disenabled;
+		g_plugins_tool_entries[i].size_options = sizeof(g_disenabled);
+		g_plugins_tool_entries[i].value = &plugin->active;
 	}
-	return plugin_count;
+	return g_plugin_count;
 }
 
 #define CHUNK_SIZE 512

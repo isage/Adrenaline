@@ -16,7 +16,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+#include <malloc.h>
+
+#include <pspreg.h>
+#include <psperror.h>
+#include <pspiofilemgr.h>
 
 char *stristr(const char *str1, const char *str2) {
 	#define MAXLEN 256
