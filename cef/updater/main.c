@@ -16,13 +16,23 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
 
-#include "adrenaline_user.h"
-#include "adrenaline_vsh.h"
-#include "adrenaline_kernel.h"
+#include <pspsdk.h>
+#include <pspctrl.h>
+#include <pspiofilemgr.h>
+
+#include <systemctrl.h>
+#include <systemctrl_se.h>
+
 #include "frame_xml.h"
 #include "template_xml.h"
+#include "adrenaline_vsh.h"
+#include "adrenaline_user.h"
+#include "adrenaline_kernel.h"
+#include "../../adrenaline_version.h"
 
 PSP_MODULE_INFO("updater", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);
@@ -35,7 +45,7 @@ typedef struct {
 	int size;
 } File;
 
-File files[] = {
+static File g_files[] = {
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_user.suprx", adrenaline_user, sizeof(adrenaline_user) },
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_kernel.skprx", adrenaline_kernel, sizeof(adrenaline_kernel) },
 	{ "ms0:/__ADRENALINE__/sce_module/adrenaline_vsh.suprx", adrenaline_vsh, sizeof(adrenaline_vsh) },
@@ -94,19 +104,20 @@ int main(void) {
 		SceCtrlData pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 
-		if (pad.Buttons & PSP_CTRL_CROSS)
+		if (pad.Buttons & PSP_CTRL_CROSS) {
 			break;
-		else if (pad.Buttons & PSP_CTRL_RTRIGGER)
+		} else if (pad.Buttons & PSP_CTRL_RTRIGGER) {
 			ErrorExit(5000, "Cancelled by user.\n");
+		}
 	}
 
-	for (int i = 0; i < (sizeof(files) / sizeof(File)); i++) {
-		char *p = strrchr(files[i].path, '/');
-		printf("Writing %s (%d)... ", p+1, files[i].size);
+	for (int i = 0; i < (sizeof(g_files) / sizeof(File)); i++) {
+		char *p = strrchr(g_files[i].path, '/');
+		printf("Writing %s (%d)... ", p+1, g_files[i].size);
 		sceKernelDelayThread(100 * 1000);
 
-		int written = WriteFile(files[i].path, files[i].buf, files[i].size);
-		if (written != files[i].size) {
+		int written = WriteFile(g_files[i].path, g_files[i].buf, g_files[i].size);
+		if (written != g_files[i].size) {
 			ErrorExit(5000, "Error 0x%08X\n", written);
 		}
 
@@ -120,8 +131,9 @@ int main(void) {
 		SceCtrlData pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 
-		if (pad.Buttons & PSP_CTRL_CROSS)
+		if (pad.Buttons & PSP_CTRL_CROSS) {
 			break;
+		}
 	}
 
 	printf("Rebooting...\n");
