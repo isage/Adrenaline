@@ -68,3 +68,9 @@ Adrenaline also supports manuals for ISO games. For it to work, the `.DAT` file 
 
 > [!EXAMPLE]
 > For the ISO file in `???0:/pspemu/ISO/my_game.cso`, the `DAT` file should be at `???0:/pspemu/ISO/my_game.DAT`
+
+### Execute BOOT.BIN instead of EBOOT.BIN
+
+Adrenaline supports launching ISO games/apps executing the `BOOT.BIN` inside the ISO instead of the `EBOOT.BIN` by holding `R` while launching the game/app.
+
+This feature can be used in the few games that requires usage of the `BOOT.BIN` to work properly, as it is the case for ISO of demos, prototypes, decrypted and modded games.

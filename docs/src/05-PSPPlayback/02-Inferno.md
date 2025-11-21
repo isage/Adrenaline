@@ -1,7 +1,7 @@
 # Inferno Driver
 ---
 
-The Adrenaline version of the **Inferno 2** driver is an adaptation from the ARK-4 version of the driver. The ARK-4 version is an evolution of the Inferno Driver found, among others, in the PRO CFW, for which ARK itself is an evolution of.
+The Adrenaline version of the **Inferno 2** driver is an adaptation from the ARK version of the driver. The ARK version is an evolution of the Inferno Driver found, among others, in the PRO CFW, for which ARK itself is an evolution of.
 
 
 ## Evolution of the driver
