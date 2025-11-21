@@ -430,7 +430,7 @@
 <hr />
 <p>This is a brief overview of the features of each driver in the versions that come with Adrenaline.</p>
 <h3 id="inferno-2"><a class="header" href="#inferno-2">Inferno 2</a></h3>
-<p>This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on <code>ARK-4</code>, with minor modifications for better code reuse with other drivers and integration with the Adrenaline CFW.</p>
+<p>This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on <code>ARK CFW</code>, with minor modifications for better code reuse with other drivers and integration with the Adrenaline CFW.</p>
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code></li>
 <li><strong>Emulation of empty UMD drive</strong>: Several bugs existed that caused malfunction when the driver was used without an ISO file specified on other drivers and older versions of this driver.</li>
@@ -486,6 +486,9 @@
 </p>
 <p>For the ISO file in <code>???0:/pspemu/ISO/my_game.cso</code>, the <code>DAT</code> file should be at <code>???0:/pspemu/ISO/my_game.DAT</code></p>
 </div>
+<h3 id="execute-bootbin-instead-of-ebootbin"><a class="header" href="#execute-bootbin-instead-of-ebootbin">Execute BOOT.BIN instead of EBOOT.BIN</a></h3>
+<p>Adrenaline supports launching ISO games/apps executing the <code>BOOT.BIN</code> inside the ISO instead of the <code>EBOOT.BIN</code> by holding <code>R</code> while launching the game/app.</p>
+<p>This feature can be used in the few games that requires usage of the <code>BOOT.BIN</code> to work properly, as it is the case for ISO of demos, prototypes, decrypted and modded games.</p>
 
                     </main>
 
