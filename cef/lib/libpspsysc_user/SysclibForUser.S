@@ -9,16 +9,16 @@
 	IMPORT_START "SysclibForUser",0x40090000
 #endif
 #ifdef F_SysclibForUser_0001
-	IMPORT_FUNC  "SysclibForUser",0x4C0FE24C,user_malloc
+	IMPORT_FUNC_WITH_ALIAS  "SysclibForUser",0x4C0FE24C,user_malloc,malloc
 #endif
 #ifdef F_SysclibForUser_0002
-	IMPORT_FUNC  "SysclibForUser",0x12BC667F,user_free
+	IMPORT_FUNC_WITH_ALIAS  "SysclibForUser",0x12BC667F,user_free,free
 #endif
 #ifdef F_SysclibForUser_0003
 	IMPORT_FUNC  "SysclibForUser",0xA65E8BC4,oe_free
 #endif
 #ifdef F_SysclibForUser_0004
-	IMPORT_FUNC  "SysclibForUser",0xB19C939A,user_memalign
+	IMPORT_FUNC_WITH_ALIAS  "SysclibForUser",0xB19C939A,user_memalign,memalign
 #endif
 #ifdef F_SysclibForUser_0005
 	IMPORT_FUNC  "SysclibForUser",0x7661E728,sprintf
@@ -108,35 +108,44 @@
 	IMPORT_FUNC  "SysclibForUser",0xEC6F1CF2,strcpy
 #endif
 #ifdef F_SysclibForUser_0034
-	IMPORT_FUNC  "SysclibForUser",0x3EB35691,strcasecmp
+	IMPORT_FUNC  "SysclibForUser",0xBC7554DF,strcasecmp
 #endif
 #ifdef F_SysclibForUser_0035
-	IMPORT_FUNC  "SysclibForUser",0x7BA27B01,strncasecmp
+	IMPORT_FUNC  "SysclibForUser",0xAC7554DF,strncasecmp
 #endif
 #ifdef F_SysclibForUser_0036
-	IMPORT_FUNC  "SysclibForUser",0x983B00FB,lowerString
+	IMPORT_FUNC  "SysclibForUser",0x3EB35691,strcasecmp
 #endif
 #ifdef F_SysclibForUser_0037
-	IMPORT_FUNC  "SysclibForUser",0x87F8D2DA,strtok
+	IMPORT_FUNC  "SysclibForUser",0x7BA27B01,strncasecmp
 #endif
 #ifdef F_SysclibForUser_0038
-	IMPORT_FUNC  "SysclibForUser",0x47DD934D,strtol
+	IMPORT_FUNC  "SysclibForUser",0x983B00FB,lowerString
 #endif
 #ifdef F_SysclibForUser_0039
-	IMPORT_FUNC  "SysclibForUser",0xD3D1A3B9,strncat
+	IMPORT_FUNC  "SysclibForUser",0x37DD934D,strtol10
 #endif
 #ifdef F_SysclibForUser_0040
-	IMPORT_FUNC  "SysclibForUser",0xEFB593C9,strncat_s
+	IMPORT_FUNC  "SysclibForUser",0x47DD934D,strtol
 #endif
 #ifdef F_SysclibForUser_0041
-	IMPORT_FUNC  "SysclibForUser",0x5ABF13F5,strncpy_s
+	IMPORT_FUNC  "SysclibForUser",0x87F8D2DA,strtok
 #endif
 #ifdef F_SysclibForUser_0042
-	IMPORT_FUNC  "SysclibForUser",0x7DEE14DE,__udivdi3
+	IMPORT_FUNC  "SysclibForUser",0xD3D1A3B9,strncat
 #endif
 #ifdef F_SysclibForUser_0043
-	IMPORT_FUNC  "SysclibForUser",0x5E8E5F42,__umoddi3
+	IMPORT_FUNC  "SysclibForUser",0xEFB593C9,strncat_s
 #endif
 #ifdef F_SysclibForUser_0044
+	IMPORT_FUNC  "SysclibForUser",0x5ABF13F5,strncpy_s
+#endif
+#ifdef F_SysclibForUser_0045
+	IMPORT_FUNC  "SysclibForUser",0x7DEE14DE,__udivdi3
+#endif
+#ifdef F_SysclibForUser_0046
+	IMPORT_FUNC  "SysclibForUser",0x5E8E5F42,__umoddi3
+#endif
+#ifdef F_SysclibForUser_0047
 	IMPORT_FUNC  "SysclibForUser",0xDF17F4A2,__udivmoddi4
 #endif

@@ -32,12 +32,12 @@ int (* search_nid_in_entrytable)(void *lib, u32 nid, int unk, int nidSearchOptio
 #define N_MISSING_NID_LIST (sizeof(missing_nid_list) / sizeof(MissingNidList))
 
 MissingNid SysclibForKernel_nids[] = {
-	{ 0x1AB53A58, strtok_r_clone },
-	{ 0x87F8D2DA, strtok_clone },
-	{ 0x1D83F344, atob_clone },
-	{ 0x62AE052F, strspn_clone },
-	{ 0x89B79CB1, strcspn_clone },
-	{ 0xD3D1A3B9, strncat_clone },
+	{ 0x1AB53A58, strtok_r },
+	{ 0x87F8D2DA, strtok },
+	{ 0x1D83F344, atob },
+	{ 0x62AE052F, strspn },
+	{ 0x89B79CB1, strcspn },
+	{ 0xD3D1A3B9, strncat },
 	{ 0x909C228B, &setjmp_clone },
 	{ 0x18FE80DB, &longjmp_clone },
 };

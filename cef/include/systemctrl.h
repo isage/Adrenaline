@@ -689,6 +689,11 @@ int sctrlLZ4Decompress(void* dest, const void* src, int size);
  */
 int sctrlLzoDecompress(void* dest, unsigned* dst_size, void* src, unsigned src_size);
 
+/** Use `sctrlLZ4Decompress` instead */
+int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+
+/** Use `sctrlLzoDecompress` instead */
+int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
 
 // USER ONLY
 #ifdef __USER__

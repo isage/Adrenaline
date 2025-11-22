@@ -1,6 +1,93 @@
 #include <psptypes.h>
 #include <sysclib_user.h>
 
+static char *__strtok_context;
+
+char *strtok_r(char *string, const char *seps, char **context) {
+	char *head;  // start of word
+	char *tail;  // end of word
+
+	// If we're starting up, initialize context
+	if (string)
+		*context = string;
+
+	// Get potential start of this next word
+	head = *context;
+	if (head == NULL)
+		return NULL;
+
+	// Skip any leading separators
+	while (*head && strchr(seps, *head)) {
+		head++;
+	}
+
+	 // Did we hit the end?
+	if (*head == 0) {
+		// Nothing left
+		*context = NULL;
+		return NULL;
+	}
+
+	// skip over word
+	tail = head;
+	while (*tail && !strchr(seps, *tail)) {
+		tail++;
+	}
+
+	// Save head for next time in context
+	if (*tail == 0) {
+		*context = NULL;
+	} else {
+		*tail = 0;
+		tail++;
+		*context = tail;
+	}
+
+	// Return current word
+	return head;
+}
+
+char *strtok(char *str, const char *seps) {
+	return strtok_r(str, seps, &__strtok_context);
+}
+
+void atob(const char *a0, int *a1) {
+	char *p;
+	*a1 = strtol(a0, &p, 10);
+}
+
+int strtol10(const char * str, int * res) {
+	char * endptr = NULL;
+
+	int ret = strtol(str, &endptr, 10);
+
+	if (res) {
+		*res = ret;
+	}
+
+	return ret;
+}
+
+SceSize strspn(const char *s, const char *accept) {
+	const char *c;
+	for (c = s; *c; c++) {
+		if (!strchr(accept, *c))
+			return c - s;
+	}
+
+	return c - s;
+}
+
+SceSize strcspn(const char *s, const char *reject) {
+	const char *c;
+	for (c = s; *c; c++) {
+		if (strchr(reject, *c))
+			return c - s;
+	}
+
+	return c - s;
+}
+
 void lowerString(char* orig, char* ret, int strSize) {
 	int i=0;
 	while (*(orig+i) && i<strSize-1){

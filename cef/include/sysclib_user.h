@@ -45,9 +45,9 @@ void *user_memalign(SceSize align, SceSize size);
  */
 void user_free(void *ptr);
 
-#define malloc(size) user_malloc(size);
-#define memalign(align, size) user_memalign(align, size);
-#define free(ptr) user_free(ptr);
+void *malloc(SceSize size);
+void *memalign(SceSize align, SceSize size);
+void free(void *ptr);
 
 // ARK CFW compat
 void oe_free(void *ptr);
@@ -83,13 +83,14 @@ int strcmp(const char *str1, const char *str2);
 char *strcpy(char *dest, const char *src);
 char *strncpy(char *dest, const char *src, SceSize max_size);
 SceSize strncpy_s(char *dest, SceSize numberOfElements, const char *src, SceSize count);
-unsigned long strtoul(const char* str, char** str_end, int base );
+long strtol(const char* str, char** str_end, int base);
+unsigned long strtoul(const char* str, char** str_end, int base);
 char *strpbrk(const char *dest, const char *breakset);
 
 int toupper(int ch);
 int tolower(int ch);
 
-void atob(char *a0, int *a1);
+void atob(const char *a0, int *a1);
 
 int sprintf(char *str, const char *format, ...);
 int snprintf(char *str, SceSize n, const char * format, ... );

@@ -19,11 +19,11 @@
 #ifndef __STRING_CLONE_H__
 #define __STRING_CLONE_H__
 
-char *strtok_r_clone(char *string, const char *seps, char **context);
-char *strtok_clone(char *str, const char *seps);
-void atob_clone(char *a0, int *a1);
-size_t strspn_clone(const char *s, const char *accept);
-size_t strcspn_clone(const char *s, const char *reject);
-char *strncat_clone(char *s, const char *append, size_t count);
+char *strtok_r(char *string, const char *seps, char **context);
+char *strtok(char *str, const char *seps);
+void atob(char *a0, int *a1);
+size_t strspn(const char *s, const char *accept);
+size_t strcspn(const char *s, const char *reject);
+char *strncat(char *s, const char *append, size_t count);
 
 #endif
