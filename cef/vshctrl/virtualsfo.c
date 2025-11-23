@@ -25,7 +25,7 @@
 
 #include "virtualsfo.h"
 
-unsigned char virtualsfo[] = {
+static unsigned char g_virtualsfo[] = {
 	0x00, 0x50, 0x53, 0x46, 0x01, 0x01, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00, 0xe8, 0x00, 0x00, 0x00,
 	0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x09, 0x00, 0x04, 0x02, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
@@ -54,58 +54,58 @@ unsigned char virtualsfo[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-struct sfo_header {
+static struct sfo_header {
 	uint32_t magic;
 	uint32_t version;
 	uint32_t key_table_offset;
 	uint32_t data_table_offset;
 	uint32_t entries_count;
-} *sfo_header;
+} *g_sfo_header;
 
-struct sfo_index_table_entry {
+static struct sfo_index_table_entry {
 	uint16_t key_offset;
 	uint16_t param_fmt;
 	uint32_t param_len;
 	uint32_t param_max_len;
 	uint32_t data_offset;
-} *sfo_entries;
+} *g_sfo_entries;
 
-unsigned int sfo_entries_size = 0;
+static unsigned int g_sfo_entries_size = 0;
 
-struct sfo_table {
+static struct sfo_table {
 	unsigned int size;
 	char *content;
-} sfo_key_table, sfo_data_table;
+} g_sfo_key_table, g_sfo_data_table;
 
 
 void sfo_load_header(void* sfo) {
-	sfo_header = sfo;
+	g_sfo_header = sfo;
 }
 
 void sfo_load_entries(void* sfo) {
-	sfo_entries_size = sizeof(struct sfo_index_table_entry) * sfo_header->entries_count;
-	sfo_entries = (struct sfo_index_table_entry*)(sfo + sizeof(struct sfo_header));
+	g_sfo_entries_size = sizeof(struct sfo_index_table_entry) * g_sfo_header->entries_count;
+	g_sfo_entries = (struct sfo_index_table_entry*)(sfo + sizeof(struct sfo_header));
 }
 
 void sfo_load_key_table(void *sfo) {
-	sfo_key_table.size = sfo_header->data_table_offset - sfo_header->key_table_offset;
-	sfo_key_table.content = sfo + sizeof(struct sfo_header) + sfo_entries_size;
+	g_sfo_key_table.size = g_sfo_header->data_table_offset - g_sfo_header->key_table_offset;
+	g_sfo_key_table.content = sfo + sizeof(struct sfo_header) + g_sfo_entries_size;
 }
 
 void sfo_load_data_table(void* sfo) {
-	if (sfo_header->entries_count) {
-		sfo_data_table.size = (sfo_entries[sfo_header->entries_count - 1].data_offset
-			+ sfo_entries[sfo_header->entries_count - 1].param_max_len);
+	if (g_sfo_header->entries_count) {
+		g_sfo_data_table.size = (g_sfo_entries[g_sfo_header->entries_count - 1].data_offset
+			+ g_sfo_entries[g_sfo_header->entries_count - 1].param_max_len);
 	} else {
-		sfo_data_table.size = 0;
+		g_sfo_data_table.size = 0;
 	}
 
-	sfo_data_table.content = sfo + sizeof(struct sfo_header) + sfo_entries_size + sfo_key_table.size;
+	g_sfo_data_table.content = sfo + sizeof(struct sfo_header) + g_sfo_entries_size + g_sfo_key_table.size;
 }
 
 int sfo_get_index(char *key) {
-	for (int i = 0; i < sfo_header->entries_count; i++) {
-		if (strcmp(key, &sfo_key_table.content[sfo_entries[i].key_offset]) == 0) {
+	for (int i = 0; i < g_sfo_header->entries_count; i++) {
+		if (strcmp(key, &g_sfo_key_table.content[g_sfo_entries[i].key_offset]) == 0) {
 			return i;
 		}
 	}
@@ -118,12 +118,12 @@ int sfo_get_int_param(char *key) {
 		return -1;
 	}
 
-	switch(sfo_entries[index].param_fmt) {
+	switch(g_sfo_entries[index].param_fmt) {
 		case 516:
 		case 1024:
 			return 0;
 		case 1028:
-			uint32_t *integer = (uint32_t *) &sfo_data_table.content[sfo_entries[index].data_offset];
+			uint32_t *integer = (uint32_t *) &g_sfo_data_table.content[g_sfo_entries[index].data_offset];
 			return *integer;
 	}
 	return -1; // Parameter not found
@@ -136,10 +136,10 @@ char* sfo_get_string_param(char *key) {
 		return NULL;
 	}
 
-	switch(sfo_entries[index].param_fmt) {
+	switch(g_sfo_entries[index].param_fmt) {
 		case 516:
 		case 1024:
-			return &sfo_data_table.content[sfo_entries[index].data_offset];
+			return &g_sfo_data_table.content[g_sfo_entries[index].data_offset];
 		case 1028:
 			return NULL;
 	}
@@ -153,20 +153,20 @@ void sfo_set_string_param(char *key, char *value) {
 		return;
 	}
 
-	switch (sfo_entries[index].param_fmt) {
+	switch (g_sfo_entries[index].param_fmt) {
 		case 516: // String
 		case 1024: // Special mode string
-			sfo_entries[index].param_len = strlen(value) + 1;
-			int diff = sfo_entries[index].param_len - sfo_entries[index].param_max_len;
+			g_sfo_entries[index].param_len = strlen(value) + 1;
+			int diff = g_sfo_entries[index].param_len - g_sfo_entries[index].param_max_len;
 			if (diff > 0) {
 				return; // error
 			}
 
 			// Overwrite old data with zeros
-			memset(&sfo_data_table.content[sfo_entries[index].data_offset], 0, sfo_entries[index].param_max_len);
+			memset(&g_sfo_data_table.content[g_sfo_entries[index].data_offset], 0, g_sfo_entries[index].param_max_len);
 
 			// Save new string to data table
-			snprintf(&sfo_data_table.content[sfo_entries[index].data_offset], sfo_entries[index].param_max_len, "%s", value);
+			snprintf(&g_sfo_data_table.content[g_sfo_entries[index].data_offset], g_sfo_entries[index].param_max_len, "%s", value);
 			break;
 		case 1028: // Integer
 			break;
@@ -179,12 +179,12 @@ void sfo_set_int_param(char *key, int value) {
 		return;
 	}
 
-	switch (sfo_entries[index].param_fmt) {
+	switch (g_sfo_entries[index].param_fmt) {
 		case 516: // String
 		case 1024: // Special mode string
 			break;
 		case 1028: // Integer
-			memcpy(&sfo_data_table.content[sfo_entries[index].data_offset], &value, 4);
+			memcpy(&g_sfo_data_table.content[g_sfo_entries[index].data_offset], &value, 4);
 			break;
 	}
 }
@@ -197,13 +197,13 @@ void sfo_parse(void* data) {
 }
 
 void virtual_sfo_init() {
-	sfo_parse(virtualsfo);
+	sfo_parse(g_virtualsfo);
 }
 
 int virtual_sfo_size() {
-	return sizeof(virtualsfo);
+	return sizeof(g_virtualsfo);
 }
 
 unsigned char* virtual_sfo_get() {
-	return virtualsfo;
+	return g_virtualsfo;
 }

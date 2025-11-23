@@ -18,7 +18,10 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <string.h>
+
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
@@ -29,8 +32,8 @@ PSP_MODULE_INFO("VshControl", 0x1007, 1, 2);
 
 STMOD_HANDLER previous;
 
-AdrenalineConfig config;
-u32 firsttick;
+AdrenalineConfig g_cfw_config;
+u32 g_firsttick;
 
 int OnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
@@ -57,10 +60,10 @@ int module_start(SceSize args, void *argp) {
 
 	PatchLoadExec();
 
-	sctrlSEGetConfig(&config);
+	sctrlSEGetConfig(&g_cfw_config);
 
-	if (config.vsh_cpu_speed != 0) {
-		firsttick = sceKernelGetSystemTimeLow();
+	if (g_cfw_config.vsh_cpu_speed != 0) {
+		g_firsttick = sceKernelGetSystemTimeLow();
 	}
 
 	previous = sctrlHENSetStartModuleHandler(OnModuleStart);

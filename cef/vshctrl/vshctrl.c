@@ -18,41 +18,44 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <string.h>
+
+#include <pspumd.h>
+#include <pspreg.h>
+#include <psperror.h>
+
 #include <vshctrl.h>
 
 #include "isofs_driver/isofs_driver.h"
 
 #include <externs.h>
 
-extern AdrenalineConfig config;
+u8 g_set = 0;
 
-u8 set = 0;
+int (* g_vshmenu_ctrl)(SceCtrlData *pad_data, int count);
 
-int (* vshmenu_ctrl)(SceCtrlData *pad_data, int count);
-
-int cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
-int bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
+int g_cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
+int g_bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
 
 int vctrlVSHRegisterVshMenu(int (* ctrl)(SceCtrlData *, int)) {
 	int k1 = pspSdkSetK1(0);
-	vshmenu_ctrl = (void *)((u32)ctrl | 0x80000000);
+	g_vshmenu_ctrl = (void *)((u32)ctrl | 0x80000000);
 	pspSdkSetK1(k1);
 	return 0;
 }
 
 int vctrlVSHExitVSHMenu(AdrenalineConfig *conf) {
 	int k1 = pspSdkSetK1(0);
-	int oldspeed = config.vsh_cpu_speed;
+	int oldspeed = g_cfw_config.vsh_cpu_speed;
 
-	vshmenu_ctrl = NULL;
-	memcpy(&config, conf, sizeof(AdrenalineConfig));
-	sctrlSEApplyConfig(&config);
+	g_vshmenu_ctrl = NULL;
+	memcpy(&g_cfw_config, conf, sizeof(AdrenalineConfig));
+	sctrlSEApplyConfig(&g_cfw_config);
 
-	if (set) {
-		if (config.vsh_cpu_speed != oldspeed) {
-			if (config.vsh_cpu_speed) {
-				SetSpeed(cpu_list[config.vsh_cpu_speed % N_CPU], bus_list[config.vsh_cpu_speed % N_CPU]);
+	if (g_set) {
+		if (g_cfw_config.vsh_cpu_speed != oldspeed) {
+			if (g_cfw_config.vsh_cpu_speed) {
+				SetSpeed(g_cpu_list[g_cfw_config.vsh_cpu_speed % N_CPU], g_bus_list[g_cfw_config.vsh_cpu_speed % N_CPU]);
 			} else {
 				SetSpeed(222, 111);
 			}

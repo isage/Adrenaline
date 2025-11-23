@@ -18,14 +18,22 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <pspreg.h>
+#include <pspsysmem.h>
+#include <psploadexec.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
+
 #include <adrenaline_log.h>
 
 #include "virtualpbpmgr.h"
 #include "patch_io.h"
 #include "externs.h"
-
-extern AdrenalineConfig config;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -35,7 +43,7 @@ extern AdrenalineConfig config;
 #define EBOOT_BIN "disc0:/PSP_GAME/SYSDIR/EBOOT.BIN"
 #define EBOOT_OLD "disc0:/PSP_GAME/SYSDIR/EBOOT.OLD"
 
-static int exec_boot_bin = 0;
+static int g_exec_boot_bin = 0;
 
 // Credits: ARK CFW
 static inline void ascii2utf16(char *dest, const char *src) {
@@ -52,7 +60,7 @@ static void CheckControllerInput() {
 	SceCtrlData pad_data;
 	sceCtrlPeekBufferPositive(&pad_data, 1);
 	if ((pad_data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER) {
-		exec_boot_bin = 1;
+		g_exec_boot_bin = 1;
 		logmsg2("[INFO]: Set to exec BOOT.BIN (if exist) by holding `R` at the ISO application start\n");
 	}
 }
@@ -66,14 +74,14 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 	int res = sceCtrlReadBufferPositive(pad_data, count);
 	int k1 = pspSdkSetK1(0);
 
-	if (!set && config.vsh_cpu_speed != 0) {
+	if (!g_set && g_cfw_config.vsh_cpu_speed != 0) {
 		u32 curtick = sceKernelGetSystemTimeLow();
-		curtick -= firsttick;
+		curtick -= g_firsttick;
 
 		u32 t = (u32)curtick;
 		if (t >= (10 * 1000 * 1000)) {
-			set = 1;
-			SetSpeed(cpu_list[config.vsh_cpu_speed % N_CPU], bus_list[config.vsh_cpu_speed % N_CPU]);
+			g_set = 1;
+			SetSpeed(g_cpu_list[g_cfw_config.vsh_cpu_speed % N_CPU], g_bus_list[g_cfw_config.vsh_cpu_speed % N_CPU]);
 		}
 	}
 
@@ -92,8 +100,8 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 			}
 		}
 	} else {
-		if (vshmenu_ctrl) {
-			vshmenu_ctrl(pad_data, count);
+		if (g_vshmenu_ctrl) {
+			g_vshmenu_ctrl(pad_data, count);
 		} else if (modid >= 0) {
 			if (sceKernelStopModule(modid, 0, NULL, NULL, NULL) >= 0) {
 				sceKernelUnloadModule(modid);
@@ -211,7 +219,7 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 			if (uses_prometheus) {
 				param->argp = EBOOT_OLD;
 			} else {
-				if ((config.execute_boot_bin || exec_boot_bin) && has_bootbin) {
+				if ((g_cfw_config.execute_boot_bin || g_exec_boot_bin) && has_bootbin) {
 					param->argp = BOOT_BIN;
 				} else {
 					param->argp = EBOOT_BIN;
@@ -224,13 +232,13 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		param->key = "umdemu";
 
 		// Set umd_mode
-		if (config.umd_mode == MODE_INFERNO) {
+		if (g_cfw_config.umd_mode == MODE_INFERNO) {
 			logmsg2("[INFO]: Launching with Inferno Driver\n");
 			sctrlSESetBootConfFileIndex(BOOT_INFERNO);
-		} else if (config.umd_mode == MODE_MARCH33) {
+		} else if (g_cfw_config.umd_mode == MODE_MARCH33) {
 			logmsg2("[INFO]: Launching with March33 Driver\n");
 			sctrlSESetBootConfFileIndex(BOOT_MARCH33);
-		} else if (config.umd_mode == MODE_NP9660) {
+		} else if (g_cfw_config.umd_mode == MODE_NP9660) {
 			logmsg2("[INFO]: Launching with NP9660 Driver\n");
 			sctrlSESetBootConfFileIndex(BOOT_NP9660);
 		}
@@ -284,12 +292,12 @@ void PatchVshMain(SceModule* mod) {
 	//	MAKE_DUMMY_FUNCTION(text_addr + 0x38C94, 0);
 	//	MAKE_DUMMY_FUNCTION(text_addr + 0x38D68, 0);
 
-	if (config.skip_game_boot_logo) {
+	if (g_cfw_config.skip_game_boot_logo) {
 		// Disable sceDisplaySetHoldMode
 		MAKE_NOP(text_addr + 0xCA88);
 	}
 
-	if (config.extended_colors == 1) {
+	if (g_cfw_config.extended_colors == 1) {
 		VWRITE16(text_addr + 0x3174A, 0x1000);
 	}
 
@@ -314,12 +322,12 @@ void PatchSysconfPlugin(SceModule* mod) {
 	MAKE_INSTRUCTION(text_addr + 0x192E0, 0x3C020000 | ((u32)(text_addr + 0x2A62C) >> 16));
 	MAKE_INSTRUCTION(text_addr + 0x192E4, 0x34420000 | ((u32)(text_addr + 0x2A62C) & 0xFFFF));
 
-	if (config.hide_mac_addr) {
+	if (g_cfw_config.hide_mac_addr) {
 		memcpy((void *)text_addr + 0x2E9A0, macinfo, sizeof(macinfo));
 	}
 
 	// Allow slim colors
-	if (config.extended_colors != 0) {
+	if (g_cfw_config.extended_colors != 0) {
 		MAKE_INSTRUCTION(text_addr + 0x76EC, VREAD32(text_addr + 0x76F0));
 		MAKE_INSTRUCTION(text_addr + 0x76F0, LI_V0(1));
 	}
@@ -363,17 +371,17 @@ void PatchGamePlugin(SceModule* mod) {
 	// if check patch
 	MAKE_INSTRUCTION(text_addr + 0x20620, MOVE_V0_ZR);
 
-	if (config.hide_pic0pic1 != PICS_OPT_DISABLED) {
-		if (config.hide_pic0pic1 == PICS_OPT_BOTH || config.hide_pic0pic1 == PICS_OPT_PIC0_ONLY) {
+	if (g_cfw_config.hide_pic0pic1 != PICS_OPT_DISABLED) {
+		if (g_cfw_config.hide_pic0pic1 == PICS_OPT_BOTH || g_cfw_config.hide_pic0pic1 == PICS_OPT_PIC0_ONLY) {
 			MAKE_INSTRUCTION(text_addr + 0x1D858, 0x00601021);
 		}
 
-		if (config.hide_pic0pic1 == PICS_OPT_BOTH || config.hide_pic0pic1 == PICS_OPT_PIC1_ONLY) {
+		if (g_cfw_config.hide_pic0pic1 == PICS_OPT_BOTH || g_cfw_config.hide_pic0pic1 == PICS_OPT_PIC1_ONLY) {
 			MAKE_INSTRUCTION(text_addr + 0x1D864, 0x00601021);
 		}
 	}
 
-	if (config.skip_game_boot_logo) {
+	if (g_cfw_config.skip_game_boot_logo) {
 		MAKE_CALL(text_addr + 0x19130, text_addr + 0x194B0);
 		MAKE_INSTRUCTION(text_addr + 0x19134, 0x24040002);
 	}

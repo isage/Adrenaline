@@ -3,14 +3,18 @@
 
 #include <pspctrl.h>
 
-extern int (* vshmenu_ctrl)(SceCtrlData *pad_data, int count);
+#include <systemctrl_se.h>
 
-extern u8 set;
-extern int cpu_list[9];
-extern int bus_list[9];
-#define N_CPU (sizeof(cpu_list) / sizeof(int))
+extern AdrenalineConfig g_cfw_config;
 
-extern u32 firsttick;
+extern int (* g_vshmenu_ctrl)(SceCtrlData *pad_data, int count);
+
+extern u8 g_set;
+extern int g_cpu_list[9];
+extern int g_bus_list[9];
+#define N_CPU (sizeof(g_cpu_list) / sizeof(int))
+
+extern u32 g_firsttick;
 
 
 #endif

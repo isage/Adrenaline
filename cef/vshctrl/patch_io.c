@@ -18,23 +18,38 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <pspsdk.h>
+#include <psperror.h>
+#include <pspiofilemgr.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
+
 #include <adrenaline_log.h>
 
-#include "virtualpbpmgr.h"
+#include "externs.h"
 #include "patch_io.h"
+#include "virtualpbpmgr.h"
 
 #define DUMMY_CAT_ISO_EXTENSION "     "
 #define MAX_FILES 128
 
-extern AdrenalineConfig config;
 
-char categorypath[256];
-SceUID categorydfd = -1;
+static char g_categorypath[256];
+static SceUID g_categorydfd = -1;
 
-SceUID gamedfd = -1, isodfd = -1, overiso = 0;
-int vpbpinited = 0, isoindex = 0, cachechanged = 0;
-VirtualPbp *cache = NULL;
+static SceUID g_gamedfd = -1;
+static SceUID g_isodfd = -1;
+static SceUID g_overiso = 0;
+
+static int g_vpbpinited = 0;
+static int g_isoindex = 0;
+static int g_cachechanged = 0;
+static VirtualPbp *g_cache = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -82,7 +97,7 @@ static int HideDlc(char *name) {
 static void ApplyIsoNamePatch(SceIoDirent *dir) {
 	if (dir->d_name[0] != '.') {
 		memset(dir->d_name, 0, 256);
-		sprintf(dir->d_name, "MMMMMISO%d", isoindex++);
+		sprintf(dir->d_name, "MMMMMISO%d", g_isoindex++);
 	}
 }
 
@@ -90,11 +105,11 @@ static int ReadCache() {
 	SceUID fd;
 	int i;
 
-	if (!cache) {
-		cache = (VirtualPbp *)oe_malloc(MAX_FILES * sizeof(VirtualPbp));
+	if (!g_cache) {
+		g_cache = (VirtualPbp *)oe_malloc(MAX_FILES * sizeof(VirtualPbp));
 	}
 
-	memset(cache, 0, sizeof(VirtualPbp) * MAX_FILES);
+	memset(g_cache, 0, sizeof(VirtualPbp) * MAX_FILES);
 
 	for (i = 0; i < 0x10; i++) {
 		fd = sceIoOpen("ms0:/PSP/SYSTEM/isocache2.bin", PSP_O_RDONLY, 0);
@@ -107,7 +122,7 @@ static int ReadCache() {
 		return -1;
 	}
 
-	sceIoRead(fd, cache, sizeof(VirtualPbp) * MAX_FILES);
+	sceIoRead(fd, g_cache, sizeof(VirtualPbp) * MAX_FILES);
 	sceIoClose(fd);
 
 	return 0;
@@ -117,26 +132,26 @@ static int SaveCache() {
 	SceUID fd;
 	int i;
 
-	if (!cache) {
+	if (!g_cache) {
 		return -1;
 	}
 
 	for (i = 0; i < MAX_FILES; i++) {
-		if (cache[i].isofile[0] != 0) {
+		if (g_cache[i].isofile[0] != 0) {
 			SceIoStat stat;
 			memset(&stat, 0, sizeof(stat));
-			if (sceIoGetstat(cache[i].isofile, &stat) < 0) {
-				cachechanged = 1;
-				memset(&cache[i], 0, sizeof(VirtualPbp));
+			if (sceIoGetstat(g_cache[i].isofile, &stat) < 0) {
+				g_cachechanged = 1;
+				memset(&g_cache[i], 0, sizeof(VirtualPbp));
 			}
 		}
 	}
 
-	if (!cachechanged) {
+	if (!g_cachechanged) {
 		return 0;
 	}
 
-	cachechanged = 0;
+	g_cachechanged = 0;
 
 	sceIoMkdir("ms0:/PSP", 0777);
 	sceIoMkdir("ms0:/PSP/SYSTEM", 0777);
@@ -152,7 +167,7 @@ static int SaveCache() {
 		return -1;
 	}
 
-	sceIoWrite(fd, cache, sizeof(VirtualPbp) * MAX_FILES);
+	sceIoWrite(fd, g_cache, sizeof(VirtualPbp) * MAX_FILES);
 	sceIoClose(fd);
 
 	return 0;
@@ -160,10 +175,10 @@ static int SaveCache() {
 
 static int IsCached(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 	for (int i = 0; i < MAX_FILES; i++) {
-		if (cache[i].isofile[0] != 0) {
-			if (strcmp(cache[i].isofile, isofile) == 0) {
-				if (memcmp(mtime, &cache[i].mtime, sizeof(ScePspDateTime)) == 0) {
-					memcpy(res, &cache[i], sizeof(VirtualPbp));
+		if (g_cache[i].isofile[0] != 0) {
+			if (strcmp(g_cache[i].isofile, isofile) == 0) {
+				if (memcmp(mtime, &g_cache[i].mtime, sizeof(ScePspDateTime)) == 0) {
+					memcpy(res, &g_cache[i], sizeof(VirtualPbp));
 					return 1;
 				}
 			}
@@ -175,9 +190,9 @@ static int IsCached(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 
 static int Cache(VirtualPbp *pbp) {
 	for (int i = 0; i < MAX_FILES; i++) {
-		if (cache[i].isofile[0] == 0) {
-			memcpy(&cache[i], pbp, sizeof(VirtualPbp));
-			cachechanged = 1;
+		if (g_cache[i].isofile[0] == 0) {
+			memcpy(&g_cache[i], pbp, sizeof(VirtualPbp));
+			g_cachechanged = 1;
 			return 1;
 		}
 	}
@@ -277,13 +292,13 @@ SceUID sceIoDopenPatched(const char *dirname) {
 	if (strstr(dirname, DUMMY_CAT_ISO_EXTENSION)) {
 		char *p = strrchr(dirname, '/');
 		if (p) {
-			strcpy(categorypath, "ms0:/ISO");
-			strcat(categorypath, p);
-			categorypath[8 + strlen(p) - 5] = '\0';
+			strcpy(g_categorypath, "ms0:/ISO");
+			strcat(g_categorypath, p);
+			g_categorypath[8 + strlen(p) - 5] = '\0';
 
-			categorydfd = sceIoDopen(categorypath);
+			g_categorydfd = sceIoDopen(g_categorypath);
 			pspSdkSetK1(k1);
-			return categorydfd;
+			return g_categorydfd;
 		}
 	}
 
@@ -292,8 +307,8 @@ SceUID sceIoDopenPatched(const char *dirname) {
 	pspSdkSetK1(0);
 
 	if (game) {
-		gamedfd = res;
-		overiso = 0;
+		g_gamedfd = res;
+		g_overiso = 0;
 	}
 
 	pspSdkSetK1(k1);
@@ -304,7 +319,7 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 	int res;
 	int k1 = pspSdkSetK1(0);
 
-	if (vpbpinited) {
+	if (g_vpbpinited) {
 		res = virtualpbp_dread(fd, dir);
 		if (res >= 0) {
 			pspSdkSetK1(k1);
@@ -313,33 +328,33 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 	}
 
 	if (fd >= 0) {
-		if (fd == gamedfd) {
-			if (isodfd < 0 && !overiso) {
-				isodfd = sceIoDopen("ms0:/ISO");
-				if (isodfd >= 0) {
-					if (!vpbpinited) {
+		if (fd == g_gamedfd) {
+			if (g_isodfd < 0 && !g_overiso) {
+				g_isodfd = sceIoDopen("ms0:/ISO");
+				if (g_isodfd >= 0) {
+					if (!g_vpbpinited) {
 						virtualpbp_init();
-						vpbpinited = 1;
+						g_vpbpinited = 1;
 					} else {
 						virtualpbp_reset();
 					}
 
 					ReadCache();
-					isoindex = 0;
+					g_isoindex = 0;
 				} else {
-					overiso = 1;
+					g_overiso = 1;
 				}
 			}
 
-			if (isodfd >= 0) {
-				res = AddIsoDirent("ms0:/ISO", isodfd, dir, 1);
+			if (g_isodfd >= 0) {
+				res = AddIsoDirent("ms0:/ISO", g_isodfd, dir, 1);
 				if (res > 0) {
 					pspSdkSetK1(k1);
 					return res;
 				}
 			}
-		} else if (fd == categorydfd) {
-			res = AddIsoDirent(categorypath, categorydfd, dir, 0);
+		} else if (fd == g_categorydfd) {
+			res = AddIsoDirent(g_categorypath, g_categorydfd, dir, 0);
 			if (res > 0) {
 				pspSdkSetK1(k1);
 				return res;
@@ -350,11 +365,11 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 	res = sceIoDread(fd, dir);
 
 	if (res > 0) {
-		if (config.hide_corrupt) {
+		if (g_cfw_config.hide_corrupt) {
 			CorruptIconPatch(dir->d_name);
 		}
 
-		if (config.hide_dlcs) {
+		if (g_cfw_config.hide_dlcs) {
 			HideDlc(dir->d_name);
 		}
 	}
@@ -367,7 +382,7 @@ int sceIoDclosePatched(SceUID fd) {
 	int k1 = pspSdkSetK1(0);
 	int res;
 
-	if (vpbpinited) {
+	if (g_vpbpinited) {
 		res = virtualpbp_close(fd);
 		if (res >= 0) {
 			pspSdkSetK1(k1);
@@ -375,13 +390,13 @@ int sceIoDclosePatched(SceUID fd) {
 		}
 	}
 
-	if (fd == categorydfd) {
-		categorydfd = -1;
-	} else if (fd == gamedfd) {
-		sceIoDclose(isodfd);
-		isodfd = -1;
-		gamedfd = -1;
-		overiso = 0;
+	if (fd == g_categorydfd) {
+		g_categorydfd = -1;
+	} else if (fd == g_gamedfd) {
+		sceIoDclose(g_isodfd);
+		g_isodfd = -1;
+		g_gamedfd = -1;
+		g_overiso = 0;
 		SaveCache();
 	}
 
@@ -430,7 +445,7 @@ int sceIoClosePatched(SceUID fd) {
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 
-	if (vpbpinited) {
+	if (g_vpbpinited) {
 		res = virtualpbp_close(fd);
 	}
 
@@ -447,7 +462,7 @@ int sceIoReadPatched(SceUID fd, void *data, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 
-	if (vpbpinited) {
+	if (g_vpbpinited) {
 		res = virtualpbp_read(fd, data, size);
 	}
 
@@ -464,7 +479,7 @@ SceOff sceIoLseekPatched(SceUID fd, SceOff offset, int whence) {
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 
-	if (vpbpinited) {
+	if (g_vpbpinited) {
 		res = virtualpbp_lseek(fd, offset, whence);
 	}
 
@@ -481,7 +496,7 @@ int sceIoLseek32Patched(SceUID fd, int offset, int whence) {
 	int k1 = pspSdkSetK1(0);
 	int res = -1;
 
-	if (vpbpinited) {
+	if (g_vpbpinited) {
 		res = virtualpbp_lseek(fd, offset, whence);
 	}
 
