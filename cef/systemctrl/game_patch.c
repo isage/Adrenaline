@@ -160,8 +160,10 @@ void PatchGameByTitleId() {
 		_utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		sctrlHENPatchSyscall((u32)_utilityGetParam, utilityGetParamPatched_ULJM05221);
 
-	} else if (strcasecmp("ULES01339", title_id) == 0 || strcasecmp("ULUS10452", title_id) == 0 || strcasecmp("ULES01472", title_id) == 0 || strcasecmp("ULUS10543", title_id) == 0) {
-		// Patch Smakdown vs RAW 2010 - 2011 anti-CFW check (CPU speed)
+	} else if (strcasecmp("ULKS46195", title_id) == 0 || strcasecmp("ULUS10384", title_id) == 0 || strcasecmp("ULES01165", title_id) == 0
+		|| strcasecmp("ULES01339", title_id) == 0 || strcasecmp("ULUS10452", title_id) == 0
+		|| strcasecmp("ULES01472", title_id) == 0 || strcasecmp("ULUS10543", title_id) == 0) {
+		// Patch Smakdown vs RAW 2009/2010/2011 anti-CFW check (CPU speed)
 		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
 
 	} else if (strcasecmp("ULES00590", title_id) == 0 || strcasecmp("ULJM05075", title_id) == 0) {
@@ -181,7 +183,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		// Fix Anti-CFW checks on `DJ Max` games
-		// Stops it trying to delete CFW folders and their contents
+		// Stops it trying to find and maybe deleting CFW folders and their contents
 		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
