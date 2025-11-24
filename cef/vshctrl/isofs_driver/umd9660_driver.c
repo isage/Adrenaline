@@ -10,7 +10,7 @@ void VshCtrlSetUmdFile(const char *file) {
 	strncpy(g_iso_fn, file, sizeof(g_iso_fn)-1);
 }
 
-int Umd9660ReadSectors2(int lba, int nsectors, void *buf) {
+int Umd9660ReadSectors(int lba, int nsectors, void *buf) {
 	if (g_iso_opened == 0) {
 		for (int i = 0; i < 0x10; i++) {
 			if (sceIoLseek32(g_iso_fd, 0, PSP_SEEK_CUR) >= 0) {
