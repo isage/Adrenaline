@@ -8,7 +8,7 @@
 
 List g_plugins;
 
-static char* sample_plugin_path = "ULUS01234, ms0:/SEPLUGINS/example.prx";
+static char* sample_plugin_path = "ms0:/SEPLUGINS/example.prx";
 
 static int g_cur_place = 0;
 
@@ -241,11 +241,13 @@ void loadPlugins(){
 		Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
 		plugin->name = (char*)paf_malloc(20);
 		plugin->surname = (char*)paf_malloc(20);
+		plugin->runlevel = (char*)paf_malloc(20);
 		plugin->path = (char*)paf_malloc(paf_strlen(sample_plugin_path)+1);
 		plugin->active = 1;
 		plugin->place = 0;
 		paf_strcpy(plugin->name, "plugin_0");
 		paf_strcpy(plugin->surname, "plugins0");
+		paf_strcpy(plugin->runlevel, "ULUS01234");
 		paf_strcpy(plugin->path, sample_plugin_path);
 		add_list(&g_plugins, plugin);
 	}
