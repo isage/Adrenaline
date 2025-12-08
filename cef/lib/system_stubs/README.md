@@ -238,8 +238,8 @@ Here is the list of all targets:
 .pspthreadman_kernel
 .pspthreadman_user
 .pspumd9660_driver
+.pspumd
 .pspumd_driver
-.pspumd_user
 .pspumdman_driver
 .pspusb
 .pspusb_driver
