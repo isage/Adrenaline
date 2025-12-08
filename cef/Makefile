@@ -1,6 +1,10 @@
 all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
-SYSTEM_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel pspvshbridge_user psppower_user pspreg_user psppaf pspvsh pspvshcommongui
+KERNEL_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspreg_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel
+
+USER_STUBS = psppower pspreg psppaf pspvsh pspvshcommongui
+
+SYSTEM_STUBS = $(KERNEL_STUBS) $(USER_STUBS)
 
 _cfw_libs:
 	make -C lib/libpspkubridge clean

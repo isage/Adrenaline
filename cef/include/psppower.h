@@ -75,7 +75,7 @@ typedef void (*powerCallback_t)(int unknown, int powerInfo);
  *
  * @return 0 on success, the slot number if -1 is passed, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerRegisterCallback(int slot, SceUID cbid);
 
@@ -86,7 +86,7 @@ int scePowerRegisterCallback(int slot, SceUID cbid);
  *
  * @return 0 on success, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerUnregisterCallback(int slot);
 
@@ -95,7 +95,7 @@ int scePowerUnregisterCallback(int slot);
  *
  * @return 1 if plugged in, 0 if not plugged in, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerIsPowerOnline(void);
 
@@ -104,7 +104,7 @@ int scePowerIsPowerOnline(void);
  *
  * @return 1 if battery present, 0 if battery not present, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerIsBatteryExist(void);
 
@@ -113,14 +113,14 @@ int scePowerIsBatteryExist(void);
  *
  * @return 1 if battery charging, 0 if battery not charging, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerIsBatteryCharging(void);
 
 /**
  * Get the status of the battery charging
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryChargingStatus(void);
 
@@ -129,7 +129,7 @@ int scePowerGetBatteryChargingStatus(void);
  *
  * @return 1 if the battery is low, 0 if the battery is not low, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerIsLowBattery(void);
 
@@ -138,7 +138,7 @@ int scePowerIsLowBattery(void);
  *
  * @return 1 if suspend is required, 0 otherwise
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerIsSuspendRequired(void);
 
@@ -147,7 +147,7 @@ int scePowerIsSuspendRequired(void);
  *
  * @return battery remaining capacity in mAh (milliampere hour)
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryRemainCapacity(void);
 
@@ -156,7 +156,7 @@ int scePowerGetBatteryRemainCapacity(void);
  *
  * @return battery full capacity in mAh (milliampere hour)
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryFullCapacity(void);
 
@@ -165,7 +165,7 @@ int scePowerGetBatteryFullCapacity(void);
  *
  * @return Battery charge percentage (0-100), < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryLifePercent(void);
 
@@ -174,28 +174,28 @@ int scePowerGetBatteryLifePercent(void);
  *
  * @return Battery life in minutes, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryLifeTime(void);
 
 /**
  * Get temperature of the battery
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryTemp(void);
 
 /**
  * unknown? - crashes PSP in usermode
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryElec(void);
 
 /**
  * Get battery volt level
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBatteryVolt(void);
 
@@ -204,7 +204,7 @@ int scePowerGetBatteryVolt(void);
  *
  * @param cpufreq - new CPU frequency, valid values are 1 - 333
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerSetCpuClockFrequency(int cpufreq);
 
@@ -213,7 +213,7 @@ int scePowerSetCpuClockFrequency(int cpufreq);
  *
  * @param busfreq - new BUS frequency, valid values are 1 - 167
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerSetBusClockFrequency(int busfreq);
 
@@ -222,7 +222,7 @@ int scePowerSetBusClockFrequency(int busfreq);
  *
  * @return frequency as int
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetCpuClockFrequencyInt(void);
 
@@ -231,7 +231,7 @@ int scePowerGetCpuClockFrequencyInt(void);
  *
  * @return frequency as float
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 float scePowerGetCpuClockFrequencyFloat(void);
 
@@ -240,7 +240,7 @@ float scePowerGetCpuClockFrequencyFloat(void);
  *
  * @return frequency as int
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetBusClockFrequencyInt(void);
 
@@ -249,7 +249,7 @@ int scePowerGetBusClockFrequencyInt(void);
  *
  * @return frequency as float
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 float scePowerGetBusClockFrequencyFloat(void);
 
@@ -266,7 +266,7 @@ float scePowerGetBusClockFrequencyFloat(void);
  * busfreq*2 <= pllfreq
  *
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerSetClockFrequency(int pllfreq, int cpufreq, int busfreq);
 
@@ -280,7 +280,7 @@ int scePowerSetClockFrequency(int pllfreq, int cpufreq, int busfreq);
  *
  * @return 0 on success, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerLock(int unknown);
 
@@ -291,7 +291,7 @@ int scePowerLock(int unknown);
  *
  * @return 0 on success, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerUnlock(int unknown);
 
@@ -303,14 +303,14 @@ int scePowerUnlock(int unknown);
  *
  * @return 0 on success, < 0 on error.
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerTick(int type);
 
 /**
  * Get Idle timer
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerGetIdleTimer(void);
 
@@ -319,7 +319,7 @@ int scePowerGetIdleTimer(void);
  *
  * @param unknown - pass 0
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerIdleTimerEnable(int unknown);
 
@@ -328,7 +328,7 @@ int scePowerIdleTimerEnable(int unknown);
  *
  * @param unknown - pass 0
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerIdleTimerDisable(int unknown);
 
@@ -337,7 +337,7 @@ int scePowerIdleTimerDisable(int unknown);
  *
  * @return 0 always
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerRequestStandby(void);
 
@@ -346,7 +346,7 @@ int scePowerRequestStandby(void);
  *
  * @return 0 always
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerRequestSuspend(void);
 
@@ -357,7 +357,7 @@ int scePowerRequestSuspend(void);
  *
  * @return < 0 on error
  *
- * @attention Needs to link to `psppower_driver` or `psppower_user` stub.
+ * @attention Needs to link to `psppower_driver` or `psppower` stub.
  */
 int scePowerRequestColdReset(int a0);
 
@@ -367,7 +367,7 @@ int scePowerRequestColdReset(int a0);
  *
  * @return frequency as int
  *
- * @attention Needs to link to `psppower_user` stub.
+ * @attention Needs to link to `psppower` stub.
  */
 int scePowerGetBusClockFrequency(void);
 
@@ -376,7 +376,7 @@ int scePowerGetBusClockFrequency(void);
  *
  * @return frequency as int
  *
- * @attention Needs to link to `psppower_user` stub.
+ * @attention Needs to link to `psppower` stub.
  */
 int scePowerGetCpuClockFrequency(void);
 

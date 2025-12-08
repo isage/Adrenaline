@@ -22,6 +22,6 @@ USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspvshctrl -lpsppower_user
+LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspvshctrl -lpsppower
 
 include ../lib/build_prx.mak
