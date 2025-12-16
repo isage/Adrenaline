@@ -135,7 +135,7 @@ static void OnSystemStatusIdle() {
 				if (config.iso_cache == CACHE_CONFIG_LRU) {
 					CacheSetPolicy(INFERNO_CACHE_LRU);
 					logmsg3("[INFO]: Inferno ISO cache policy: LRU\n");
-				} else if (config.iso_cache == 2) {
+				} else if (config.iso_cache == CACHE_CONFIG_RR) {
 					CacheSetPolicy(INFERNO_CACHE_RR);
 					logmsg3("[INFO]: Inferno ISO cache policy: RR\n");
 				}
