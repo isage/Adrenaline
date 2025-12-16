@@ -311,7 +311,7 @@ int initAdrenaline() {
 	// Register sysevent handler
 	static PspSysEventHandler event_handler = {
 		sizeof(PspSysEventHandler),
-		"",
+		"EPI_SysEvent",
 		0x00FFFF00,
 		SysEventHandler
 	};
@@ -322,13 +322,13 @@ int initAdrenaline() {
 	sceKermitRegisterVirtualIntrHandler(KERMIT_VIRTUAL_INTR_IMPOSE_CH1, adrenaline_interrupt);
 
 	// Create adrenaline semaphore
-	adrenaline_semaid = sceKernelCreateSema("", 0, 0, 1, NULL);
+	adrenaline_semaid = sceKernelCreateSema("EPI_Semaphore", 0, 0, 1, NULL);
 	if (adrenaline_semaid < 0) {
 		return adrenaline_semaid;
 	}
 
 	// Create and start adrenaline thread
-	SceUID thid = sceKernelCreateThread("adrenaline_thread", adrenaline_thread, 0x10, 0x4000, 0, NULL);
+	SceUID thid = sceKernelCreateThread("EPI_Thread", adrenaline_thread, 0x10, 0x4000, 0, NULL);
 	if (thid < 0) {
 		return thid;
 	}
