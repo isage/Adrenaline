@@ -10,13 +10,6 @@ The camera is not working in this game. That seems to be caused by some buffer i
 
 There are currently no way to solve the issue with this game.
 
-## The Simpson Game
----
-
-The game crashes when the keyboard is opened.
-
-To fix, enable the [`Use Sony PSP OSK`](./08-CfwConfiguration.md#use-sony-psp-osk) CFW option.
-
 ## Titles that ISO need to use `BOOT.BIN`
 ---
 
@@ -41,4 +34,3 @@ Games that use GameMode API - partial list of games here.
 - `Sega Rally Revo`: Game disconnects after it starts in infrastructure mode only.
 
 Some network issues may be fixed with the updated [PRO Online](https://github.com/Kethen/aemu).
-

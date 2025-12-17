@@ -40,6 +40,7 @@
 	- Fix PBP collection games (e.g. `Ys I&II`, `Sega Genesis Collection`) crashing after game selection
 	- Fix `BEATS` custom tracks
 	- Fix the infinite loading screen on `Jackass: The Game`
+	- Fix `The Simpsons Game` crashing during the start of the game
 	- Fix `TwinBee Portable` crashing when not using English or Japanese language
 	- Fix `Smakdown vs RAW 2009` by bypassing anti-CFW check
 	- Fix `Smakdown vs RAW 2010` by bypassing anti-CFW check
