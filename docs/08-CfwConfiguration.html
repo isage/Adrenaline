@@ -12,24 +12,23 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="highlight-css" href="highlight.css">
-        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
-        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
-        <link rel="stylesheet" href="custom.css">
+        <link rel="stylesheet" href="custom-c2f94617.css">
 
 
         <!-- Provide site root and default themes to javascript -->
@@ -37,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex.js";
+            window.path_to_searchindex_js = "searchindex-b0a6f758.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc.js"></script>
+        <script src="toc-f62a0e12.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -54,7 +53,7 @@
             </div>
         </div>
     </div>
-    <div id="body-container">
+    <div id="mdbook-body-container">
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script>
             try {
@@ -83,12 +82,12 @@
             html.classList.add("js");
         </script>
 
-        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
         <script>
             let sidebar = null;
-            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
             if (document.body.clientWidth >= 1080) {
                 try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
                 sidebar = sidebar || 'visible';
@@ -103,39 +102,39 @@
             }
         </script>
 
-        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
                 <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
             </noscript>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
             </div>
         </nav>
 
-        <div id="page-wrapper" class="page-wrapper">
+        <div id="mdbook-page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <div id="menu-bar-hover-placeholder"></div>
-                <div id="menu-bar" class="menu-bar sticky">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
-                            <i class="fa fa-bars"></i>
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
                         </label>
-                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
-                            <i class="fa fa-paint-brush"></i>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
                         </button>
-                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
-                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
-                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
                         </ul>
-                        <button id="search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="searchbar">
-                            <i class="fa fa-search"></i>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
                         </button>
                     </div>
 
@@ -143,38 +142,38 @@
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
-                            <i id="print-button" class="fa fa-print"></i>
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
                     </div>
                 </div>
 
-                <div id="search-wrapper" class="hidden">
-                    <form id="searchbar-outer" class="searchbar-outer">
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
                         <div class="search-wrapper">
-                            <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
                             <div class="spinner-wrapper">
-                                <i class="fa fa-spinner fa-spin"></i>
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
                             </div>
                         </div>
                     </form>
-                    <div id="searchresults-outer" class="searchresults-outer hidden">
-                        <div id="searchresults-header" class="searchresults-header"></div>
-                        <ul id="searchresults">
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
                         </ul>
                     </div>
                 </div>
 
                 <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
                 <script>
-                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
-                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
-                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
                         link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
                     });
                 </script>
 
-                <div id="content" class="content">
+                <div id="mdbook-content" class="content">
                     <main>
                         <style>
 .mdbook-callouts {
@@ -414,7 +413,7 @@
 }
 </style>
 <h1 id="adrenaline-custom-firmware-settings"><a class="header" href="#adrenaline-custom-firmware-settings">Adrenaline Custom Firmware Settings</a></h1>
-<hr />
+<hr>
 <p>Adrenaline CFW has several settings options that modify the behavior of the system. The settings can be split in two categories: <code>General Settings</code> and <code>Advanced Settings</code>.</p>
 <p>You can use the <a href="./10-XmbCfwMenus.html#-adrenaline-cfw-settings">XMB</a> or the <a href="./09-RecoveryMenu.html">Recovery Menu</a> to easily modify the CFW settings.</p>
 <div class="mdbook-callouts mdbook-callouts-caution">
@@ -422,10 +421,12 @@
   <span class="mdbook-callouts-icon"></span>
   caution
 </p>
+
 <p>Not to be confused with <a href="./03-AdrenalineMenu/02-AdrenalineSettings.html"><code>Adrenaline Application Settings</code></a>, which is another thing.</p>
 </div>
+
 <h2 id="general-settings"><a class="header" href="#general-settings">General Settings</a></h2>
-<hr />
+<hr>
 <h3 id="cpubus-clock-speed-in-xmb"><a class="header" href="#cpubus-clock-speed-in-xmb">CPU/BUS clock speed in XMB</a></h3>
 <p>Configures the CPU/BUS clock speed on when the system is on the XMB/VSH.</p>
 <h4 id="options"><a class="header" href="#options">Options:</a></h4>
@@ -463,9 +464,9 @@
 <li><code>Sony NP9660</code></li>
 </ul>
 <h3 id="skip-sony-logo-on-coldboot"><a class="header" href="#skip-sony-logo-on-coldboot">Skip Sony logo on coldboot</a></h3>
-<p>When enabled, skip the "Sony Computer Entertainment" logo when starting the system.</p>
+<p>When enabled, skip the “Sony Computer Entertainment” logo when starting the system.</p>
 <h3 id="skip-sony-logo-on-gameboot"><a class="header" href="#skip-sony-logo-on-gameboot">Skip Sony logo on gameboot</a></h3>
-<p>When enabled, skip the "PSP" logo when starting an PSP game/app.</p>
+<p>When enabled, skip the “PSP” logo when starting an PSP game/app.</p>
 <h3 id="hide-corrupt-icons-in-game-menu"><a class="header" href="#hide-corrupt-icons-in-game-menu">Hide corrupt icons in game menu</a></h3>
 <p>When enabled, hides corrupt icons in the game menu.</p>
 <p>Corrupt icons happens in the case a game folder does not contain an <code>EBOOT.PBP</code> file.</p>
@@ -477,8 +478,8 @@
 <ul>
 <li><code>Disabled</code>: Do not hide PIC0 and PIC1</li>
 <li><code>Both</code>: Hides both PIC0 and PIC1</li>
-<li><code>PIC0 Only</code>: Hides only the PIC0 ("Title/Information image")</li>
-<li><code>PIC1 Only</code>: Hides only the PIC1 ("Background image")</li>
+<li><code>PIC0 Only</code>: Hides only the PIC0 (“Title/Information image”)</li>
+<li><code>PIC1 Only</code>: Hides only the PIC1 (“Background image”)</li>
 </ul>
 <h3 id="hide-mac-address"><a class="header" href="#hide-mac-address">Hide MAC address</a></h3>
 <p>When enabled, hides the MAC address from the <code>Settings &gt; System Settings &gt; System Information</code>.</p>
@@ -490,9 +491,11 @@
   <span class="mdbook-callouts-icon"></span>
   caution
 </p>
+
 <p>This option does affect <strong>signed</strong> homebrew games/apps (homebrew signed to work on PSP OFW) as signed homebrew is launched in the same way as an official PSP game.</p>
 <p>For this reason, if you have a homebrew software that only comes signed and it needs to access CFW files, you can disable this option.</p>
 </div>
+
 <h3 id="autorun-pspgamebootebootpbp"><a class="header" href="#autorun-pspgamebootebootpbp">Autorun /PSP/GAME/BOOT/EBOOT.PBP</a></h3>
 <p>When enabled, the system automatically launches the game/app int the <code>???0:/pspemu/PSP/GAME/BOOT/EBOOT.PBP</code>.</p>
 <h3 id="fake-vsh-region"><a class="header" href="#fake-vsh-region">Fake VSH Region</a></h3>
@@ -535,7 +538,7 @@
 <h3 id="recovery-color"><a class="header" href="#recovery-color">Recovery color</a></h3>
 <p>Configures the color of the Recovery Menu.</p>
 <h2 id="advanced-settings"><a class="header" href="#advanced-settings">Advanced Settings</a></h2>
-<hr />
+<hr>
 <p>Advanced settings are called that for a reason. They provide powerful options that can significantly alter system behavior, stability, or compatibility. These settings are intended for experienced users and tinkerers exploring the best set of configuration for cases of bad compatibility with apps and games (anti-CFW checks, slowdowns not solved by general settings, etc).</p>
 <p>Incorrect configuration may lead to unexpected issues, so proceed with caution and consult documentation or community resources if unsure.</p>
 <div class="mdbook-callouts mdbook-callouts-tip">
@@ -543,8 +546,10 @@
   <span class="mdbook-callouts-icon"></span>
   tip
 </p>
+
 <p>On the XMB CFW menu, advanced settings are marked with the <code>▲</code> symbol.</p>
 </div>
+
 <h3 id="force-high-memory-layout"><a class="header" href="#force-high-memory-layout">Force high memory layout</a></h3>
 <p>Controls whether to force the unlock extra RAM space for the user-space RAM partition, that can be used by games and apps.</p>
 <h4 id="options-6"><a class="header" href="#options-6">Options:</a></h4>
@@ -558,12 +563,12 @@
 </li>
 <li><code>Stable</code>: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
 <ul>
-<li>When this options is set, it truly forces it, any requests to modify it will result in it being "ignored" (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
+<li>When this options is set, it truly forces it, any requests to modify it will result in it being “ignored” (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
 </ul>
 </li>
 <li><code>Max</code>: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
 <ul>
-<li>When this options is set, it truly forces it, any requests to modify it will result in it being "ignored" (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
+<li>When this options is set, it truly forces it, any requests to modify it will result in it being “ignored” (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
 </ul>
 </li>
 </ul>
@@ -572,8 +577,10 @@
   <span class="mdbook-callouts-icon"></span>
   max option warning
 </p>
-<p>Some important stuff for the VITA's PSPemu are put in this region of memory. Although Adrenaline protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.</p>
+
+<p>Some important stuff for the VITA’s PSPemu are put in this region of memory. Although Adrenaline protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.</p>
 </div>
+
 <h3 id="use-graphic-engine-2"><a class="header" href="#use-graphic-engine-2">Use Graphic Engine 2</a></h3>
 <p>Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
@@ -582,9 +589,11 @@
   <span class="mdbook-callouts-icon"></span>
   note
 </p>
-<p>The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
-<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.</p>
+
+<p>The modules being called “2” doesn’t mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
 </div>
+
 <h3 id="use-media-engine-2"><a class="header" href="#use-media-engine-2">Use Media Engine 2</a></h3>
 <p>Controls wether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
@@ -593,9 +602,11 @@
   <span class="mdbook-callouts-icon"></span>
   note
 </p>
-<p>The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
-<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.</p>
+
+<p>The modules being called “2” doesn’t mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
 </div>
+
 <h3 id="execute-bootbin-in-umdemu-iso"><a class="header" href="#execute-bootbin-in-umdemu-iso">Execute BOOT.BIN in UMDemu ISO</a></h3>
 <p>This configuration makes the the system to execute <code>BOOT.BIN</code> file instead of <code>EBOOT.BIN</code> when launching ISO game/apps.</p>
 <p>In the case of the ISO game/apps not having a <code>BOOT.BIN</code> file, it will fallback to <code>EBOOT.BIN</code>.</p>
@@ -604,23 +615,27 @@
   <span class="mdbook-callouts-icon"></span>
   warning
 </p>
+
 <p>Enabling this configuration will make many games that have invalid <code>BOOT.BIN</code> file to not run (black screen, exit with error, or even PSPemu crash).</p>
 <p>An better alternative is to launch know apps that need to execute <code>BOOT.BIN</code> to work (mostly ISO of demos, prototypes, and modded games) holding the <code>R</code> button. That will cause to execute <code>BOOT.BIN</code> without changing the configuration and <strong>not</strong> affecting all the ISO game/apps you have.</p>
 </div>
+
 <h3 id="inferno-iso-cache-policy"><a class="header" href="#inferno-iso-cache-policy">Inferno ISO cache policy</a></h3>
 <p>Configures what cache policy the <code>Inferno</code> UMDemu driver will use for its overall cache (also known as <code>Inferno Cache</code>).</p>
 <h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
 <ul>
 <li><code>LRU</code>: Least Recently Used policy. Uses less cpu cycles because it will discards the cache slot from the queue that have not been used in a timeframe when new cache item needs to be added.</li>
-<li><code>RR</code>: Random Replacement policy. Uses slightly less memory as it doesn't need to keep track of data related to cache slots usage. It can be beneficial for uniform or streaming reading patterns.</li>
+<li><code>RR</code>: Random Replacement policy. Uses slightly less memory as it doesn’t need to keep track of data related to cache slots usage. It can be beneficial for uniform or streaming reading patterns.</li>
 </ul>
 <div class="mdbook-callouts mdbook-callouts-warning">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
   warning
 </p>
-<p>If you didn't understood the brief explanation, do not change this setting. The default setting (<code>LRU</code>) is already the better option for games in general.</p>
+
+<p>If you didn’t understood the brief explanation, do not change this setting. The default setting (<code>LRU</code>) is already the better option for games in general.</p>
 </div>
+
 <h3 id="inferno-iso-cache-number"><a class="header" href="#inferno-iso-cache-number">Inferno ISO cache number</a></h3>
 <p>Configures how many caches the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This could improve the execution of a game/app at the cost of using more memory.</p>
@@ -657,11 +672,13 @@
   <span class="mdbook-callouts-icon"></span>
   warning
 </p>
+
 <p>Putting the biggest values for <strong>Inferno ISO cache number</strong> and <strong>Inferno ISO cache size</strong> will use half of the stable extra RAM (8MB).</p>
 <p>Even though what is left is more than enough for most plugin configurations, if you have a crazy amounts of plugins that uses a lots of memory, memory starvation will happen.</p>
 </div>
+
 <h3 id="umdemu-iso-seek-time-delay-factor"><a class="header" href="#umdemu-iso-seek-time-delay-factor">UMDemu ISO seek time delay factor</a></h3>
-<p>Adrenaline's UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.</p>
+<p>Adrenaline’s UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that seek time simulation.</p>
 <p>This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
 <h4 id="option"><a class="header" href="#option">Option:</a></h4>
@@ -677,10 +694,12 @@
   <span class="mdbook-callouts-icon"></span>
   warning
 </p>
+
 <p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance issues.</p>
 </div>
+
 <h3 id="umdemu-iso-read-speed-delay-factor"><a class="header" href="#umdemu-iso-read-speed-delay-factor">UMDemu ISO read speed delay factor</a></h3>
-<p>Adrenaline's UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
+<p>Adrenaline’s UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that read speed simulation.</p>
 <p>This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
 <h4 id="option-1"><a class="header" href="#option-1">Option:</a></h4>
@@ -696,16 +715,20 @@
   <span class="mdbook-callouts-icon"></span>
   warning
 </p>
+
 <p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance issues.</p>
 </div>
+
 <div class="mdbook-callouts mdbook-callouts-warning">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
   warning
 </p>
+
 <p>When using the <code>Inferno</code> driver, setting <strong>any</strong> of the <strong>UMDemu ISO seek time delay factor</strong> and the <strong>UMDemu ISO read speed delay factor</strong> settings to any value other than <code>Auto</code> will consequently disable the <code>Inferno Cache</code> feature of the driver.</p>
 <p>This can reduce greatly the performance of executing ISO games/apps that do not need them configured if you forget to return them to <code>Auto</code>.</p>
 </div>
+
 <h3 id="xmb-plugins"><a class="header" href="#xmb-plugins">XMB plugins</a></h3>
 <p>Controls whether to load plugins on XMB/VSH.</p>
 <h3 id="game-plugins"><a class="header" href="#game-plugins">GAME plugins</a></h3>
@@ -718,11 +741,11 @@
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                             <a rel="prev" href="07-VSHMenu.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                                <i class="fa fa-angle-left"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
                             <a rel="next prefetch" href="09-RecoveryMenu.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
                         <div style="clear: both"></div>
@@ -732,16 +755,21 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                     <a rel="prev" href="07-VSHMenu.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
-                        <i class="fa fa-angle-left"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
                     <a rel="next prefetch" href="09-RecoveryMenu.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
 
         </div>
 
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
 
 
 
@@ -750,13 +778,13 @@
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 
