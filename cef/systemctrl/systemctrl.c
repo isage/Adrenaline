@@ -22,6 +22,7 @@
 
 #include <adrenaline_log.h>
 
+#include "modulepatches.h"
 #include "main.h"
 #include "adrenaline.h"
 #include "gameinfo.h"
@@ -199,11 +200,16 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler) {
 int (*_sceKernelExitVSH)(void*) = (void*)sceKernelExitVSHVSH;
 int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
+
+	// Reset rebootex stuff that is per title basis before exiting an app.
 	memset(rebootex_config.title_id, 0, 10);
+	rebootex_config.overwrite_use_psposk = 0;
+	rebootex_config.overwrite_use_psposk_to = 0;
+
 	int res = _sceKernelExitVSH(param);
 	pspSdkSetK1(k1);
 
-	logmsg3("%s: param=0x%p -> 0x%08X\n", __func__, param, res);
+	logmsg3("[DEBUG]: %s: param=0x%p -> 0x%08X\n", __func__, param, res);
 	return res;
 }
 
@@ -251,10 +257,12 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
         sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, rebootex_config.title_id);
     }
 
+	PatchGameByTitleIdOnLoadExec();
+
 	int res = _sceLoadExecVSHWithApitype(apitype, file, param, 0x10000);
 	pspSdkSetK1(k1);
 
-	logmsg3("%s: apitype=0x%04X, file=%s, param=0x%p -> 0x%08X\n", __func__, apitype, file, param, res);
+	logmsg3("[DEBUG]: %s: apitype=0x%04X, file=%s, param=0x%p -> 0x%08X\n", __func__, apitype, file, param, res);
 	return res;
 }
 

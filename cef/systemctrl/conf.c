@@ -52,6 +52,8 @@ typedef struct {
 	int magic[2];
 } AdrenalineMagics;
 
+static u8 g_og_use_psposk_value = 0;
+
 static int getMagicsFromFile(SceUID fd, AdrenalineMagics* magic) {
 	int read = sceIoRead(fd, magic, sizeof(AdrenalineMagics));
 	sceIoLseek(fd, 0, PSP_SEEK_SET);
@@ -86,6 +88,19 @@ static void migrate_config717(AdrenalineConfig717* old, AdrenalineConfig* new){
 	new->recovery_color = old->recovery_color;
 }
 
+static void config_overwrite(AdrenalineConfig *config) {
+	if (rebootex_config.overwrite_use_psposk) {
+		// Overwrite the config
+		g_og_use_psposk_value = config->use_sony_psposk;
+		config->use_sony_psposk = rebootex_config.overwrite_use_psposk_to;
+	}
+}
+
+static inline void restore_overwrite(AdrenalineConfig *config) {
+	if (rebootex_config.overwrite_use_psposk) {
+		config->use_sony_psposk = g_og_use_psposk_value;
+	}
+}
 
 int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 	int k1 = pspSdkSetK1(0);
@@ -142,6 +157,8 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 		}
 	}
 
+	config_overwrite(config);
+
 exit:
 	if (fd >= 0) {
 		sceIoClose(fd);
@@ -162,7 +179,15 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size) {
 	config->magic[0] = ADRENALINE_CFG_MAGIC_1;
 	config->magic[1] = ADRENALINE_CFG_MAGIC_2;
 
-	if (sceIoWrite(fd, config, size) < size) {
+	// Restore the overwrite before saving to file
+	restore_overwrite(config);
+
+	int written = sceIoWrite(fd, config, size);
+
+	// Overwrite again in the memory
+	config_overwrite(config);
+
+	if (written < size) {
 		sceIoClose(fd);
 		pspSdkSetK1(k1);
 		return SCE_EIO;
