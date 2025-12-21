@@ -155,12 +155,12 @@ OldNewNid KDebugForKernel_nid[] = {
 	{ 0xB9C643C9, 0xE8FE3EE3 }, // sceKernelDebugEcho
 	{ 0x7D1C74F0, 0xA1C5B42F }, // sceKernelDebugEchoSet
 	{ 0x24C32559, 0x86010FCB }, // sceKernelDipsw
-	{ 0x333DCEC7, 0x02668C61 },
-	{ 0x8B041DFB, 0x8A0F4E94 },
-	{ 0x9F8703E4, 0x568DCD25 },
-	{ 0xFFD2F2B9, 0xACF427DC },
-	{ 0xA126F497, 0x604276EB },
-	{ 0xB7251823, 0xF339073C },
+	{ 0x333DCEC7, 0x02668C61 }, // sceKernelSm1RegisterOperations
+	{ 0x8B041DFB, 0x8A0F4E94 }, // sceKernelRegisterDebugPutcharByBootloader
+	{ 0x9F8703E4, 0x568DCD25 }, // sceKernelDipswCpTime
+	{ 0xFFD2F2B9, 0xACF427DC }, // sceKernelIsDevelopmentToolMode
+	{ 0xA126F497, 0x604276EB }, // sceKernelDeci2pRegisterOperations
+	{ 0xB7251823, 0xF339073C }, // sceKernelDeci2pReferOperations
 };
 
 OldNewNid LoadCoreForKernel_nid[] = {
@@ -213,12 +213,12 @@ OldNewNid ExceptionManagerForKernel_nid[] = {
 
 OldNewNid InterruptManagerForKernel_nid[] = {
 	{ 0x8A389411, 0x4023E1A7 }, // sceKernelDisableSubIntr
-	{ 0xD2E8363F, 0x68B5CA51 }, // QueryIntrHandlerInfo
+	{ 0xD2E8363F, 0x68B5CA51 }, // sceKernelQueryIntrHandlerInfo
 	{ 0x8B61808B, 0xF153B371 }, // sceKernelQuerySystemCall
 	{ 0x85F7766D, 0x6042AEE0 }, // SaveThreadContext
-	{ 0x15894D0B, 0xA1B88367 }, // InterruptManagerForKernel_15894D0B
+	{ 0x15894D0B, 0xA1B88367 }, // sceKernelSetUserModeIntrHanlerAcceptable
 	{ 0xB5A15B30, 0xB941600E }, // sceKernelSetIntrLevel
-	{ 0x43A7BBDC, 0xAB1FC793 }, // InterruptManagerForKernel_43A7BBDC
+	{ 0x43A7BBDC, 0xAB1FC793 }, // sceKernelSetIntrLogging
 	{ 0x750E2507, 0x2412F096 }, // sceKernelSuspendIntr
 	{ 0x494D6D2B, 0xDB14CBE0 }, // sceKernelResumeIntr
 	{ 0x55242A8B, 0xDB9A5496 }, // ReleaseContextHooks
@@ -237,12 +237,12 @@ OldNewNid InterruptManagerForKernel_nid[] = {
 	{ 0xF4D443F3, 0x14D4C61A }, // sceKernelRegisterSystemCallTable
 	{ 0x36B1EF81, 0x68B5CA51 }, // sceKernelQueryIntrHandlerInfo
 	{ 0xEB988556, 0xF153B371 }, // sceKernelQuerySystemCall(5xx)
-	{ 0x07E138EE, 0xA4C1C627 },
-	{ 0xD8410DE6, 0xF2F1E983 },
+	{ 0x07E138EE, 0xA4C1C627 }, // sceKernelClearIntrLogging
+	{ 0xD8410DE6, 0xF2F1E983 }, // sceKernelIsInterruptOccurred
+	{ 0x0B907DBC, 0x6FCBA912 }, // sceKernelReleaseDebuggerIntrHandler
+	{ 0x7A05D976, 0xDBD52A5D }, // RegisterSubIntrruptMonitor
+	{ 0x7EF7500F, 0x19596CD3 }, // ReleaseSubIntrruptMonitor
 	{ 0x8DC2BAEF, 0x1373F20E },
-	{ 0x0B907DBC, 0x6FCBA912 },
-	{ 0x7A05D976, 0xDBD52A5D },
-	{ 0x7EF7500F, 0x19596CD3 },
 	{ 0x05E9D6C4, 0xA6978B70 },
 	{ 0xD63F3B31, 0x2F3C4DCD },
 	{ 0x72CE22E8, 0x02AC50D5 },
@@ -255,9 +255,9 @@ OldNewNid IoFileMgrForKernel_nid[] = {
 	{ 0xCB0A151F, 0xC30581F4 }, // sceIoChangeThreadCwd
 	{ 0x73B7671F, 0x18881E58 }, // sceIoGetFdDebugInfo(371)
 	{ 0x9B86630B, 0xDCCD6185 }, // sceIoGetUID
-	{ 0x30E8ABB3, 0x2B6A9B21 }, // IoFileMgrForKernel_30E8ABB3
+	{ 0x30E8ABB3, 0x2B6A9B21 }, // sceIoValidateFd
 	{ 0x42F954D4, 0x22F15793 }, // sceIoAddHook
-	{ 0xBD17474F, 0x49356C12 }, // IoFileMgrForKernel_BD17474F
+	{ 0xBD17474F, 0x49356C12 }, // sceIoGetIobUserLevel
 };
 
 OldNewNid ModuleMgrForKernel_nid[] = {
@@ -303,12 +303,12 @@ OldNewNid ModuleMgrForKernel_nid[] = {
 	{ 0x5C88479B, 0x4493E013 }, // sceKernelLoadModuleDeci
 	{ 0xCE70664B, 0x2F3F9B6A }, // sceKernelLoadModuleBufferForLoadExecBufferVSHUsbWlan
 	{ 0xB5DDABD3, 0xC13E2DE5 }, // sceKernelLoadModuleBufferForLoadExecBufferVSHUsbWlanDebug
-	{ 0xEF7A7F02, 0x1CF0B794 },
-	{ 0x2BE2B17E, 0xC3DDABEF },
-	{ 0x25E1F458, 0x955D6CB2 },
-	{ 0xF7E46A72, 0xA40EC254 },
-	{ 0x1B91F6EC, 0x853A6C16 },
-	{ 0x245B698D, 0xE8422026 },
+	{ 0xEF7A7F02, 0x1CF0B794 }, // sceKernelLoadModuleBufferBootInitBtcnf
+	{ 0x2BE2B17E, 0xC3DDABEF }, // sceKernelNpDrmGetModuleKey
+	{ 0x25E1F458, 0x955D6CB2 }, // sceKernelLoadModuleBootInitBtcnf
+	{ 0xF7E46A72, 0xA40EC254 }, // sceKernelSetNpDrmGetModuleKeyFunction
+	{ 0x1B91F6EC, 0x853A6C16 }, // sceKernelLoadModuleForLoadExecVSHDiscEmu
+	{ 0x245B698D, 0xE8422026 }, // sceKernelLoadModuleForLoadExecVSHMs6
 };
 
 OldNewNid LoadExecForKernel_nid[] = {
@@ -368,9 +368,9 @@ OldNewNid sceDmacplus_driver_nid[] = {
 	{ 0xFD183BCF, 0xB0EC610D }, // sceDmacplusSc128LLI
 	{ 0x58C380BB, 0xCCCF6069 }, // sceDmacplusLcdcGetBaseAddr
 	{ 0xC7D33466, 0x2C5FC1E3 }, // sceDmacMemcpy
-	{ 0x1D73DDA8, 0xD126494B },
-	{ 0x74323807, 0x9C492B9B },
-	{ 0xB2EFA681, 0xB269EAC9 },
+	{ 0x1D73DDA8, 0xD126494B }, // sceDmacplusAvcDoAVCdec
+	{ 0x74323807, 0x9C492B9B }, // sceDmacplusAvcDoVME
+	{ 0xB2EFA681, 0xB269EAC9 }, // sceDmacplusAvcSetDestConf
 };
 
 OldNewNid sceSysreg_driver_nid[] = {
@@ -486,6 +486,18 @@ OldNewNid sceSysreg_driver_nid[] = {
 	{ 0x76220E94, 0x48F1C4AD }, // sceSysregMeResetDisable(371)
 	{ 0x3199CF1C, 0x38527743 }, // sceSysregMeBusClockEnable(371)
 	{ 0x07881A0B, 0xC4C21CAB }, // sceSysregMeBusClockDisable(371)
+	{ 0xE88B77ED, 0x4841B2D2 }, // sceSysregVblankIRQPolar
+	{ 0x312F9419, 0x4E5C86AA }, // sceSysregGenerateVblankIRQ
+	{ 0x844AF6BD, 0x9CD29D6C }, // sceSysregSetMasterPriv
+	{ 0xEE8760C6, 0x20B1D0A9 }, // sceSysregAcquireIntr
+	{ 0x5664F8B5, 0x3F6F2CC7 }, // sceClkcSetCpuGear
+	{ 0x44704E1D, 0x2458B6AC }, // sceClkcGetCpuGear
+	{ 0x584AD989, 0x63E1EE9C }, // sceClkcSetBusGear
+	{ 0x377F035F, 0x7CF05E81 }, // sceClkcGetBusGear
+	{ 0xAB3185FD, 0xB413B041 }, // sceClkcSetCpuFrequency
+	{ 0x0EA487FA, 0x73EBC752 }, // sceClkcGetCpuFrequency
+	{ 0x136E8F5A, 0x85B74FDA }, // sceClkcSetBusFrequency
+	{ 0xF4811E00, 0x96D74557 }, // sceClkcGetBusFrequency
 	{ 0x55B18B84, 0x33EE43F0 },
 	{ 0x2112E686, 0x6DA9347D },
 	{ 0x7B9E9A53, 0x9E2F8FD5 },
@@ -494,18 +506,6 @@ OldNewNid sceSysreg_driver_nid[] = {
 	{ 0xA46E9CA8, 0x9275DD37 },
 	{ 0xB08A4E85, 0x1E62714E },
 	{ 0xA41929DA, 0x554E97F7 },
-	{ 0xE88B77ED, 0x4841B2D2 },
-	{ 0x312F9419, 0x4E5C86AA },
-	{ 0x844AF6BD, 0x9CD29D6C },
-	{ 0xEE8760C6, 0x20B1D0A9 },
-	{ 0x5664F8B5, 0x3F6F2CC7 },
-	{ 0x44704E1D, 0x2458B6AC },
-	{ 0x584AD989, 0x63E1EE9C },
-	{ 0x377F035F, 0x7CF05E81 },
-	{ 0xAB3185FD, 0xB413B041 },
-	{ 0x0EA487FA, 0x73EBC752 },
-	{ 0x136E8F5A, 0x85B74FDA },
-	{ 0xF4811E00, 0x96D74557 },
 };
 
 OldNewNid sceDisplay_driver_nid[] = {
@@ -589,13 +589,13 @@ OldNewNid sceAudio_driver_nid[] = {
 OldNewNid SysTimerForKernel_nid[] = {
 	{ 0xC99073E3, 0x893DEC1A }, // sceSTimerAlloc
 	{ 0xC105CF38, 0x93B952D1 }, // sceSTimerFree
-	{ 0xB53534B4, 0xCAC43FEB }, // SysTimerForKernel_B53534B4
+	{ 0xB53534B4, 0xCAC43FEB }, // sceSTimerSetPrscl
 	{ 0x975D8E84, 0xEEE11CA5 }, // sceSTimerSetHandler
 	{ 0xA95143E2, 0x4BC8C61C }, // sceSTimerStartCount
 	{ 0x4A01F9D3, 0x973104D0 }, // sceSTimerStopCount
 	{ 0x54BB5DB4, 0x6AC97B04 }, // sceSTimerResetCount
 	{ 0x228EDAE4, 0xDDA5D3EA }, // sceSTimerGetCount
-	{ 0x53231A15, 0xE265669A }, // SysTimerForKernel_53231A15
+	{ 0x53231A15, 0xE265669A }, // sceSTimerSetTMCY
 };
 
 OldNewNid sceGe_driver_nid[] = {
@@ -667,8 +667,8 @@ OldNewNid sceGe_driver_nid[] = {
 	{ 0x67B01D8E, 0x7AF3DE00 }, // sceGeGetList
 	{ 0xE66CB92E, 0xA8A9CE31 }, // sceGeGetStack
 	{ 0x5BAA5439, 0xD8633888 }, // sceGeEdramSetSize
-	{ 0xBAD6E1CA, 0x17133A54 },
-	{ 0xC576E897, 0x547EC5F0 },
+	{ 0xBAD6E1CA, 0x17133A54 }, // sceGeRegisterLogHandler
+	{ 0xC576E897, 0x547EC5F0 }, // sceGeEdramGetHwSize
 };
 
 OldNewNid sceCtrl_driver_nid[] = {
@@ -681,9 +681,9 @@ OldNewNid sceCtrl_driver_nid[] = {
 	{ 0xC245B57B, 0x33D03FD5 }, // sceCtrlResume
 	{ 0xA88E8D22, 0x6A1DF4CB }, // sceCtrlSetIdleCancelKey
 	{ 0xB7CEAED4, 0x7511CCFE }, // sceCtrlGetIdleCancelKey
-	{ 0x7CA723DC, 0xF8346777 }, // sceCtrl_driver_7CA723DC
-	{ 0x5E77BC8A, 0x1809B9FC }, // sceCtrl_driver_5E77BC8A
-	{ 0x5C56C779, 0xDF53E160 }, // sceCtrl_driver_5C56C779
+	{ 0x7CA723DC, 0xF8346777 }, // sceCtrlSetButtonIntercept
+	{ 0x5E77BC8A, 0x1809B9FC }, // sceCtrlGetButtonIntercept
+	{ 0x5C56C779, 0xDF53E160 }, // sceCtrlSetSpecialButtonCallback
 	{ 0x1F4011E6, 0xF6E94EA3 }, // sceCtrlSetSamplingMode(150)
 	{ 0x3A622550, 0x2BA616AF }, // sceCtrlPeekBufferPositive(150)
 	{ 0xC152080A, 0xE6085C33 }, // sceCtrlPeekBufferNegative(150)
@@ -699,10 +699,10 @@ OldNewNid sceCtrl_driver_nid[] = {
 	{ 0x02BAAD91, 0x501E0C70 }, // sceCtrlGetSamplingCycle
 	{ 0xA68FD260, 0x994488EC }, // sceCtrlClearRapidFire
 	{ 0x252D3A8D, 0xF0074903 }, // sceCtrlSetPollingMode
-	{ 0x6D74BF08, 0x83B15A81 },
-	{ 0xFF847C31, 0x3A6A612A },
-	{ 0x348D99D4, 0x547F89D3 },
-	{ 0xAF5960F3, 0xBC8D1A3B },
+	{ 0x6D74BF08, 0x83B15A81 }, // sceCtrlSetSamplingCycle
+	{ 0xFF847C31, 0x3A6A612A }, // sceCtrlReadBufferNegative
+	{ 0x348D99D4, 0x547F89D3 }, // sceCtrlSetSuspendingExtraSamples
+	{ 0xAF5960F3, 0xBC8D1A3B }, // sceCtrlGetSuspendingExtraSamples
 };
 
 OldNewNid sceUmd_nid[] = {
@@ -735,10 +735,10 @@ OldNewNid sceUmd_nid[] = {
 	{ 0x6A41ED25, 0x899B5C41 }, // sceUmdGetSuspendResumeMode
 	{ 0x4C952ACF, 0x816E656B }, // sceUmdSetSuspendResumeMode
 	{ 0xF2D0EDFB, 0xA9B5B972 }, // sceUmdCheckMedium
+	{ 0x38503380, 0x99CA645A }, // sceUmdUnRegisterDeactivateCallBack
+	{ 0xF8352373, 0x63517CBA }, // sceUmdRegisterMediaPresentCallBack
+	{ 0x5469DC37, 0x1471F63D }, // sceUmdUnRegisterMediaPresentCallBack
 	{ 0x659587F7, 0x040A7090 },
-	{ 0x38503380, 0x99CA645A },
-	{ 0xF8352373, 0x63517CBA },
-	{ 0x5469DC37, 0x1471F63D },
 };
 
 OldNewNid sceHprm_driver_nid[] = {
@@ -758,13 +758,13 @@ OldNewNid sceHprm_driver_nid[] = {
 	{ 0x219C58F1, 0xAD158331 }, // sceHprmIsMicrophoneExist
 	{ 0xC1777D84, 0xB2BEADB8 }, // sceHprmGetCableType
 	{ 0xD22913DB, 0x8AEC8EE9 }, // sceHprmSetConnectCallback
+	{ 0x1528D408, 0xB2BEADB8 }, // sceHprmGetCableType
 	{ 0x9C1D9ADB, 0x301063CC },
 	{ 0xB6B6786B, 0x06C478D4 },
 	{ 0x21E8AFD5, 0x602D5955 },
 	{ 0x6BC7BEE9, 0x2903130A },
 	{ 0xC0FE0FAD, 0xDC895B2B },
 	{ 0x7B1A14B8, 0x8C728BB4 },
-	{ 0x1528D408, 0xB2BEADB8 },
 	{ 0x133DE8FA, 0x2E1A7B7C },
 };
 
@@ -787,7 +787,7 @@ OldNewNid scePower_driver_nid[] = {
 	{ 0x1688935C, 0x04711DFB }, // scePowerGetBusClockFrequencyInt
 	{ 0x6D2CA84B, 0x2638EF48 }, // scePowerWlanActivate
 	{ 0x23BB0A60, 0x8C6BEFD9 }, // scePowerWlanDeactivate
-	{ 0x2B51FE2F, 0xCE2032CD }, // scePower_driver_2B51FE2F
+	{ 0x2B51FE2F, 0xCE2032CD }, // scePowerGetWlanActivity
 	{ 0x442BFBAC, 0x2509FF3B }, // scePowerGetBacklightMaximum
 	{ 0xEDC13FE5, 0xDF336CDE }, // scePowerGetIdleTimer
 	{ 0x7F30B3B1, 0x1E3B1FAE }, // scePowerIdleTimerEnable
@@ -810,7 +810,7 @@ OldNewNid scePower_driver_nid[] = {
 	{ 0x79DB9421, 0x1EC2D4E4 }, // scePowerRebootStart
 	{ 0x7FA406DD, 0x566B8353 }, // scePowerIsRequest
 	{ 0xAC32C9CC, 0x5C1333B7 }, // scePowerRequestSuspend
-	{ 0x2875994B, 0xD1FFF513 }, // scePower_driver_2875994B
+	{ 0x2875994B, 0xD1FFF513 }, // scePowerRequestSuspendTouchAndGo
 	{ 0x3951AF53, 0x3300D85A }, // scePowerEncodeUBattery
 	{ 0x0074EF9B, 0xB45C9066 }, // scePowerGetResumeCount
 	{ 0xF535D928, 0xBA566CD0 }, // scePowerSetWakeupCondition
@@ -838,25 +838,25 @@ OldNewNid scePower_driver_nid[] = {
 	{ 0x75F91FE4, 0x9127E5B2 }, // scePowerGetCurrentDdrVoltage
 	{ 0x06C83A4F, 0x75906F9A }, // scePowerGetDdrVoltage
 	{ 0x4E759486, 0x018AB235 }, // scePowerSetDdrVoltage
-	{ 0x53C1255D, 0x0655D7C3 }, // scePower_driver_53C1255D
-	{ 0x8762BCE6, 0x16F965C9 }, // scePower_driver_8762BCE6
-	{ 0xCAE2A4CA, 0xD13377F7 }, // scePower_driver_CAE2A4CA
-	{ 0xF06B96D4, 0x13D7CCE4 }, // scePower_driver_F06B96D4
+	{ 0x53C1255D, 0x0655D7C3 }, // scePowerGetCurrentDdrStrength
+	{ 0x8762BCE6, 0x16F965C9 }, // scePowerGetDdrStrength
+	{ 0xCAE2A4CA, 0xD13377F7 }, // scePowerSetDdrStrength
+	{ 0xF06B96D4, 0x13D7CCE4 }, // scePowerSetPllUseMask
 	{ 0x34F9C463, 0x67BD889B }, // scePowerGetPllClockFrequencyInt
 	{ 0xEA382A27, 0xBA8CBCBF }, // scePowerGetPllClockFrequencyFloat
-	{ 0x3234844A, 0x5F5006D2 }, // scePower_driver_3234844A
-	{ 0xA4D02055, 0xC463E7F2 }, // scePower_driver_A4D02055
+	{ 0x3234844A, 0x5F5006D2 }, // scePowerGetUsbChargingCapability
+	{ 0xA4D02055, 0xC463E7F2 }, // scePowerGetLedOffTiming
 	{ 0x9C40E184, 0x0EFEE60E }, // scePowerTick(371)
 	{ 0xCB49F5CE, 0x8432901E }, // scePowerGetBatteryChargeCycle
 	{ 0x0442D852, 0x9DAF25A0 }, // scePowerRequestColdReset
 	{ 0x733F973B, 0x72D1B53A }, // scePowerBatteryEnableUsbCharging
 	{ 0x90285886, 0x7EAA4247 }, // scePowerBatteryDisableUsbCharging
 	{ 0xD66EF08D, 0xE52B4362 }, // scePowerCheckWlanCondition
-	{ 0x9B1A9C5F, 0x9B44CFD9 },
-	{ 0xE65F00BD, 0x9DAF25A0 },
-	{ 0xD7B9C925, 0x4E32E9B8 },
-	{ 0xC71EE866, 0x114B75AB },
-	{ 0xC3C33306, 0x071160B1 },
+	{ 0x9B1A9C5F, 0x9B44CFD9 }, // scePowerRequestStandby
+	{ 0xE65F00BD, 0x9DAF25A0 }, // scePowerRequestColdReset
+	{ 0xD7B9C925, 0x4E32E9B8 }, // scePowerGetWatchDog
+	{ 0xC71EE866, 0x114B75AB }, // scePowerSetExclusiveWlan
+	{ 0xC3C33306, 0x071160B1 }, // scePowerGetBatteryType
 };
 
 OldNewNid sceImpose_driver_nid[] = {
@@ -956,8 +956,8 @@ OldNewNid sceReg_driver_nid[] = {
 	{ 0x3615BC87, 0x405D36C3 }, // sceRegRemoveKey
 	{ 0xC5768D02, 0xF2619407 }, // sceRegGetKeyInfoByName
 	{ 0x30BE0259, 0x38415B9F }, // sceRegGetKeyValueByName
-	{ 0xBE8C1263, 0x90AA3904 }, // sceReg_BE8C1263
-	{ 0x835ECE6F, 0x6328E4C6 }, // sceReg_835ECE6F
+	{ 0xBE8C1263, 0x90AA3904 }, // sceRegGetCategoryNumAtRoot
+	{ 0x835ECE6F, 0x6328E4C6 }, // sceRegGetCategoryListAtRoot
 };
 
 OldNewNid memlmd_nid[] = {
