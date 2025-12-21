@@ -540,15 +540,15 @@ OldNewNid sceDisplay_driver_nid[] = {
 	{ 0x21038913, 0x71695015 }, // sceDisplayIsVsync
 	{ 0x92C8F8B7, 0x34516323 }, // sceDisplayIsPseudoField
 	{ 0xAE0E8972, 0xE97E9718 }, // sceDisplaySetPseudoVsync
+	{ 0x1CB8CB47, 0x0043973F }, // sceDisplayGetBrightness
+	{ 0x13AA96B7, 0x1EAA0BDC }, // sceDisplayGetFramePerSec
+	{ 0xF5EEEFEF, 0x996881D2 }, // sceDisplayGetVcount
+	{ 0xE8466BC2, 0x1FBE8856 }, // sceDisplayGetVcount
+	{ 0x946155FD, 0x117C3E2C }, // sceDisplayEnable
+	{ 0x32B67781, 0x33B620AF }, // sceDisplayDisable
 	{ 0x643F3841, 0x3E17FE8D },
 	{ 0x820C6038, 0xF338AAE0 },
-	{ 0x1CB8CB47, 0x0043973F },
-	{ 0x13AA96B7, 0x1EAA0BDC },
 	{ 0x66961521, 0x8475E040 },
-	{ 0xF5EEEFEF, 0x996881D2 },
-	{ 0xE8466BC2, 0x1FBE8856 },
-	{ 0x946155FD, 0x117C3E2C },
-	{ 0x32B67781, 0x33B620AF },
 };
 
 OldNewNid sceAudio_driver_nid[] = {
@@ -621,19 +621,19 @@ OldNewNid sceGe_driver_nid[] = {
 	{ 0xD31AE2FE, 0x816D56EE }, // sceGeContinue
 	{ 0x9E6022CE, 0x6A600875 }, // sceGeSetCallback
 	{ 0xBD23B64C, 0x0B986A8D }, // sceGeUnsetCallback
-	{ 0x51122AC6, 0x9691676D }, // sceGe_driver_9DA4A75F
-	{ 0xFC3ACDDA, 0x2539D845 }, // sceGe_driver_114E1745
+	{ 0x51122AC6, 0x9691676D }, // sceGeSetGeometryClock
+	{ 0xFC3ACDDA, 0x2539D845 }, // sceGeEdramSetRefreshParam
 	{ 0xB8F072CF, 0x1B01E589 }, // sceGeSetReg
 	{ 0xB6B566EA, 0x4F66BD43 }, // sceGeSetCmd
 	{ 0x3F10632E, 0x5E7DE870 }, // sceGeSetMtx
-	{ 0xEFF2BDAF, 0x05238809 }, // sceGe_driver_AEC21518
-	{ 0x6CC7CC78, 0x6E9C829D }, // sceGe_driver_7B481502
+	{ 0xEFF2BDAF, 0x05238809 }, // sceGePutBreakpoint
+	{ 0x6CC7CC78, 0x6E9C829D }, // sceGeGetBreakpoint
 	{ 0x2B0A156D, 0x82F1049F }, // sceGeGetListIdList
 	{ 0x235D1426, 0x7AF3DE00 }, // sceGeGetList
 	{ 0x4618CBEB, 0xA8A9CE31 }, // sceGeGetStack
 	{ 0x1F226BA9, 0xD8633888 }, // sceGeEdramSetSize
-	{ 0xCE3BD4D5, 0x17133A54 },
-	{ 0x244A3948, 0x547EC5F0 },
+	{ 0xCE3BD4D5, 0x17133A54 }, // sceGeRegisterLogHandler
+	{ 0x244A3948, 0x547EC5F0 }, // sceGeEdramGetHwSize
 
 	{ 0x71FCD1D6, 0x410EE294 }, // sceGeInit
 	{ 0x9F2C2948, 0xEF76EDF5 }, // sceGeEnd
@@ -656,13 +656,13 @@ OldNewNid sceGe_driver_nid[] = {
 	{ 0x4C06E472, 0x816D56EE }, // sceGeContinue
 	{ 0xA4FC06A4, 0x6A600875 }, // sceGeSetCallback
 	{ 0x05DB22CE, 0x0B986A8D }, // sceGeUnsetCallback
-	{ 0x9DA4A75F, 0x9691676D }, // sceGe_driver_9DA4A75F
-	{ 0x114E1745, 0x2539D845 }, // sceGe_driver_114E1745
+	{ 0x9DA4A75F, 0x9691676D }, // sceGeSetGeometryClock
+	{ 0x114E1745, 0x2539D845 }, // sceGeEdramSetRefreshParam
 	{ 0x51C8BB60, 0x1B01E589 }, // sceGeSetReg
 	{ 0x51D44C58, 0x4F66BD43 }, // sceGeSetCmd
 	{ 0x5A0103E6, 0x5E7DE870 }, // sceGeSetMtx
-	{ 0xAEC21518, 0x05238809 }, // sceGe_driver_AEC21518
-	{ 0x7B481502, 0x6E9C829D }, // sceGe_driver_7B481502
+	{ 0xAEC21518, 0x05238809 }, // sceGePutBreakpoint
+	{ 0x7B481502, 0x6E9C829D }, // sceGeGetBreakpoint
 	{ 0x9ACFF59D, 0x82F1049F }, // sceGeGetListIdList
 	{ 0x67B01D8E, 0x7AF3DE00 }, // sceGeGetList
 	{ 0xE66CB92E, 0xA8A9CE31 }, // sceGeGetStack
