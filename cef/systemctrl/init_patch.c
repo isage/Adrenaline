@@ -168,7 +168,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 		res = custom_start_module_handler(modid, argsize, argp, status, option);
 
 		if (res < 0) {
-			logmsg3("%s: [INFO]: custom start module handler failed with res=0x%08X\n", __func__, res);
+			logmsg3("[INFO]: %s: Custom start module handler failed with res=0x%08X\n", __func__, res);
 		}
 	}
 

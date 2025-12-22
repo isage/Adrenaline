@@ -21,6 +21,6 @@ USE_PSPSDK_LIBC = 1
 USE_PSPSDK_LIBS = 1
 
 LIBDIR = ../lib
-LIBS = -lz -lpspsystemctrl_user -lpspkubridge -lpspreg -lpspsysc_user
+LIBS = -lz -lpspreg -lpspsystemctrl_user -lpspkubridge -lpspsysc_user
 
 include ../lib/build.mak
