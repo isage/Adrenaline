@@ -65,13 +65,15 @@ SceUID sceKernelLoadModuleMs2Init(int apitype, const char *path, int flags, SceK
 }
 
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
+	SceApplicationType app_type = sceKernelApplicationType();
+
 	if (config.use_sony_psposk) {
 		if (strcmp(info->name, "/kd/kermit_utility.prx") == 0) {
 			info->name = "/kd/utility.prx";
 		}
 	}
 
-	if (config.use_ge2) {
+	if (config.use_ge2 && app_type != SCE_APPTYPE_VSH) {
 		if (strcmp(info->name, "/kd/ge.prx") == 0) {
 			info->name = "/kd/ge_2.prx";
 
@@ -84,7 +86,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		}
 	}
 
-	if (config.use_me2) {
+	if (config.use_me2 && app_type != SCE_APPTYPE_VSH) {
 		if (strcmp(info->name, "/kd/kermit_me_wrapper.prx") == 0) {
 			info->name = "/kd/kermit_me_wrapper_2.prx";
 
