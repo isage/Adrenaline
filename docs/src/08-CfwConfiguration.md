@@ -198,6 +198,9 @@ This is a CFW option made available to tinkerers to explore possible improvement
 >
 > So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.
 
+> [!NOTE] Note 2
+> This option does not affect the XMB/VSH. Even if this option is enabled, the XMB/VSH will be loaded with the usual implementation of the Graphic Engine module.
+
 ### Use Media Engine 2
 
 Controls wether to load an alternative implementation of the Media Engine module, i.e. loads `kermit_me_wrapper_2.prx` instead of `kermit_me_wrapper.prx`.
@@ -208,6 +211,9 @@ This is a CFW option made available to tinkerers to explore possible improvement
 > The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.
 >
 > So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.
+
+> [!NOTE] Note 2
+> This option does not affect the XMB/VSH. Even if this option is enabled, the XMB/VSH will be loaded with the usual implementation of the Media Engine module.
 
 ### Execute BOOT.BIN in UMDemu ISO
 
