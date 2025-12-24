@@ -172,7 +172,7 @@ int sceIoRmdirHidePatched(const char *path) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchHideCfwFolders(SceModule* mod) {
-	int apptype = sceKernelInitApplicationType();
+	int apptype = sceKernelApplicationType();
 	int apitype = sceKernelInitApitype();
 
 	// Do not apply patches:
