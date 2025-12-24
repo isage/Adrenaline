@@ -15,8 +15,6 @@ jobs:
       run: |
         echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
         echo "/usr/local/vitasdk/bin" >> $GITHUB_PATH
-        echo $GITHUB_ENV
-        echo $GITHUB_PATH
 
     - name: Setup VITASDK
       run: |
@@ -30,16 +28,14 @@ jobs:
         sudo mkdir -p /usr/local/pspdev
         echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
         echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
-        echo $GITHUB_ENV
-        echo $GITHUB_PATH
 
     - name: Setup PSPSDK
       run: |
-        wget https://github.com/pspdev/pspdev/releases/latest/download/pspdev-ubuntu-latest-x86_64.tar.gz
+        wget -q https://github.com/pspdev/pspdev/releases/latest/download/pspdev-ubuntu-latest-x86_64.tar.gz
         sudo tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz -C /usr/local/
 
     - name: Build eCFW
-      run: make -C cef
+      run: make -j1 -C cef
 
     - name: Build VITA
       run: |
