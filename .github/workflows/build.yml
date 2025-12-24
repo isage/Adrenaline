@@ -11,10 +11,18 @@ jobs:
     - name: Install Dependencies
       run: sudo apt-get install build-essential cmake pkgconf libreadline8 libusb-0.1 libgpgme11 libarchive-tools fakeroot python3 wget
 
-    - name: Pre-setup VITASDK
+    - name: Install Dependencies 2
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+
+    - name: Pre-setups
       run: |
+        sudo mkdir -p /usr/local/pspdev
         echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
         echo "/usr/local/vitasdk/bin" >> $GITHUB_PATH
+        echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
+        echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
 
     - name: Setup VITASDK
       run: |
@@ -23,16 +31,17 @@ jobs:
         ./bootstrap-vitasdk.sh
         ./install-all.sh
 
-    - name: Pre-setup PSPSDK
-      run: |
-        sudo mkdir -p /usr/local/pspdev
-        echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
-        echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
-
     - name: Setup PSPSDK
       run: |
         wget -q https://github.com/pspdev/pspdev/releases/latest/download/pspdev-ubuntu-latest-x86_64.tar.gz
         sudo tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz -C /usr/local/
+
+    - name: Setup psp-packer
+      run: |
+        git clone https://github.com/VitaArchive/psp-packer.git
+        cd psp-packer
+        cargo build --release --target-dir=target
+        sudo cp target/release/psp-packer /usr/local/pspdev/bin
 
     - name: Build eCFW
       run: make -j1 -C cef
