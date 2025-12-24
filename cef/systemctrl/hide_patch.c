@@ -70,6 +70,21 @@ static inline int is_in_blacklist(const char *dname) {
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
+SceUID sceIoDopenHidePatched(const char *dirname) {
+	SceUID res = SCE_KERR_ILLEGAL_ACCESS;
+
+	if (is_in_blacklist(dirname)) {
+		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, dirname);
+		goto exit;
+	}
+
+	res = sceIoDopen(dirname);
+
+exit:
+	logmsg4("[DEBUG]: %s: dirname=%s -> 0x%08lX\n", __func__, dirname, res);
+    return res;
+}
+
 int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
     int k1 = pspSdkSetK1(0);
     int res = sceIoDread(fd, dir);
@@ -81,6 +96,21 @@ int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
 
     pspSdkSetK1(k1);
     return res;
+}
+
+SceUID sceIoOpenHidePatched(const char *path, int flags, SceMode mode) {
+	SceUID res = SCE_KERR_ILLEGAL_ACCESS;
+
+	if (is_in_blacklist(path)) {
+		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
+		goto exit;
+	}
+
+	res = sceIoOpen(path, flags, mode);
+
+exit:
+	logmsg4("[DEBUG]: %s: path=%s, flags=0x%08X, mode=0x%08X -> 0x%08lX\n", __func__, path, flags, mode, res);
+	return res;
 }
 
 int sceIoRemoveHidePatched(const char *path) {
@@ -142,12 +172,14 @@ int sceIoRmdirHidePatched(const char *path) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchHideCfwFolders(SceModule* mod) {
+	int apptype = sceKernelInitApplicationType();
 	int apitype = sceKernelInitApitype();
 
 	// Do not apply patches:
-	// 1. If it is an (unsigned) homebrew running (SCE_APITYPE_MS2 and SCE_APITYPE_EF2)
-	// 2. If it is configured to not hide even on games
-	if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2 || config.no_hide_cfw_files) {
+	// 1. Sanity check: Not VSH or UPDATE
+	// 2. If it is an (unsigned) homebrew running (SCE_APITYPE_MS2 and SCE_APITYPE_EF2)
+	// 3. If it is configured to not hide even on games
+	if (apptype == SCE_APPTYPE_VSH || apptype == SCE_APPTYPE_UPDATER || apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2 || config.no_hide_cfw_files) {
 		return;
 	}
 
@@ -156,6 +188,8 @@ void PatchHideCfwFolders(SceModule* mod) {
     sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, sceIoGetstatHidePatched, 0);
     sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, sceIoRemoveHidePatched, 0);
     sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, sceIoRmdirHidePatched, 0);
+    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, sceIoOpenHidePatched, 0);
+    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xB29DDF9C, sceIoDopenHidePatched, 0);
 
 	sctrlFlushCache();
 }
