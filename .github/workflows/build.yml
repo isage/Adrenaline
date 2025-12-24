@@ -6,10 +6,11 @@ jobs:
     runs-on: ubuntu-latest
     container: grayjack1/adrenaline:latest # Official VitaSDK Docker image
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Build eCFW
       run: |
+        ls /usr/local/pspdev
         echo $PSPDEV
         echo $PATH
         make -C cef
