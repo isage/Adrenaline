@@ -4,16 +4,42 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: grayjack1/adrenaline:latest # Official VitaSDK Docker image
+    # container: grayjack1/adrenaline:latest # Official VitaSDK Docker image
     steps:
     - uses: actions/checkout@v5
 
-    - name: Build eCFW
+    - name: Install Dependencies
+      run: sudo apt-get install build-essential cmake pkgconf libreadline8 libusb-0.1 libgpgme11 libarchive-tools fakeroot python3 wget
+
+    - name: Pre-setup VITASDK
       run: |
-        ls /usr/local/pspdev
-        echo $PSPDEV
-        echo $PATH
-        make -C cef
+        echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
+        echo "/usr/local/vitasdk/bin" >> $GITHUB_PATH
+        echo $GITHUB_ENV
+        echo $GITHUB_PATH
+
+    - name: Setup VITASDK
+      run: |
+        git clone https://github.com/vitasdk/vdpm
+        cd vdpm
+        ./bootstrap-vitasdk.sh
+        ./install-all.sh
+
+    - name: Pre-setup PSPSDK
+      run: |
+        sudo mkdir -p /usr/local/pspdev
+        echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
+        echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
+        echo $GITHUB_ENV
+        echo $GITHUB_PATH
+
+    - name: Setup PSPSDK
+      run: |
+        wget https://github.com/pspdev/pspdev/releases/latest/download/pspdev-ubuntu-latest-x86_64.tar.gz
+        sudo tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz -C /usr/local/
+
+    - name: Build eCFW
+      run: make -C cef
 
     - name: Build VITA
       run: |

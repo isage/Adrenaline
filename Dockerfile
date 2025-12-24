@@ -9,6 +9,6 @@ ENV PSPDEV=/usr/local/pspdev
 ENV PATH=${PSPDEV}/bin:$PATH
 
 RUN echo "export PSPDEV=${PSPDEV}" > /etc/profile.d/vitasdk.sh && \
-    echo 'export PATH=${PSPDEV}/bin:$PATH'  >> /etc/profile.d/vitasdk.sh
+    echo 'export PATH=$PSPDEV/bin:$PATH'  >> /etc/profile.d/vitasdk.sh
 
 # COPY --chown=user ${PSPDEV} ${PSPDEV}
