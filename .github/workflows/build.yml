@@ -1,0 +1,36 @@
+name: Build Check
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: vitasdk/vitasdk:latest # Official VitaSDK Docker image
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: PSPSDK setup
+      run: |
+        wget https://github.com/pspdev/pspdev/releases/latest/download/pspdev-ubuntu-latest-x86_64.tar.gz
+        tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz
+        ls $(pwd)/pspdev/bin/
+        echo "PSPDEV=$(pwd)/pspdev/" >> $GITHUB_ENV
+        echo "$(pwd)/pspdev/bin" >> $GITHUB_PATH
+
+    - name: Build eCFW
+      run: |
+        echo $PSPDEV
+        echo $PATH
+        export PATH="$PSPDEV/bin:$PATH"
+        echo $PATH
+        make -C cef
+
+    - name: Build VITA
+      run: |
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+        cmake --build build
+
+    # - name: Upload VPK
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: vita-homebrew
+    #     path: build/*.vpk
