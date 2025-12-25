@@ -96,12 +96,15 @@ jobs:
           echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
           echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
 
+      - name: Set Nightly Version
+        run: sed -r -i "s/^(#define[[:space:]]+EPI_NIGHTLY_VER[[:space:]]+\")([0-9]+)(\")/\1$${{ steps.vars.outputs.sha_short }}\3/" adrenaline_version.h
+
       - name: Build eCFW
-        run: make -j1 -C cef
+        run: make -j1 -C cef NIGHTLY=1
 
       - name: Build VPK
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
           cmake --build build
           mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
 
@@ -166,12 +169,15 @@ jobs:
           echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
           echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
 
+      - name: Set Nightly Version
+        run: sed -r -i "s/^(#define[[:space:]]+EPI_NIGHTLY_VER[[:space:]]+\")([0-9]+)(\")/\1$${{ steps.vars.outputs.sha_short }}\3/" adrenaline_version.h
+
       - name: Build eCFW
-        run: make -j1 -C cef SCTRL_DEBUG=3
+        run: make -j1 -C cef NIGHTLY=1 SCTRL_DEBUG=3
 
       - name: Build VPK
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
           cmake --build build
           mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
 
