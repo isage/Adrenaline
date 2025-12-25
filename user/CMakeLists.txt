@@ -13,7 +13,11 @@ include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 include(ExternalProject)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostartfiles -fno-lto -nostdlib -fno-builtin")
+if(DEFINED NIGHTLY AND NIGHTLY EQUAL 1)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostartfiles -fno-lto -nostdlib -fno-builtin -DNIGHTLY=1")
+else()
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostartfiles -fno-lto -nostdlib -fno-builtin")
+endif()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 ExternalProject_Add(libvita2dfbo
@@ -28,8 +32,8 @@ ExternalProject_Add(libvita2dfbo
 )
 
 add_library(libvita2dfbo_libA STATIC IMPORTED GLOBAL)
-set_property(TARGET libvita2dfbo_libA 
-    PROPERTY IMPORTED_LOCATION 
+set_property(TARGET libvita2dfbo_libA
+    PROPERTY IMPORTED_LOCATION
     ${CMAKE_CURRENT_BINARY_DIR}/libvita2dfbo/libvita2d/libvita2d.a
 )
 
@@ -45,8 +49,8 @@ ExternalProject_Add(vitashadercollection
 )
 
 add_library(vitashadercollection_libA STATIC IMPORTED GLOBAL)
-set_property(TARGET vitashadercollection_libA 
-    PROPERTY IMPORTED_LOCATION 
+set_property(TARGET vitashadercollection_libA
+    PROPERTY IMPORTED_LOCATION
     ${CMAKE_CURRENT_BINARY_DIR}/vitashadercollection/lib/libvitashaders.a
 )
 

@@ -9,6 +9,10 @@ set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "
 project(adrenaline)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
+if(DEFINED NIGHTLY AND NIGHTLY EQUAL 1)
+	set(NIGHTLY 1)
+endif()
+
 add_subdirectory(kernel)
 add_subdirectory(user)
 add_subdirectory(vsh)

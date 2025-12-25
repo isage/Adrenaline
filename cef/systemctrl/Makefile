@@ -20,6 +20,10 @@ ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
 endif
 
+ifeq ($(NIGHTLY),1)
+CFLAGS += -DNIGHTLY=1
+endif
+
 BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 

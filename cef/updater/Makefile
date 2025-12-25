@@ -16,6 +16,10 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
 
+ifeq ($(NIGHTLY),1)
+CFLAGS += -DNIGHTLY=1
+endif
+
 BUILD_PRX = 1
 USE_UPDATER_LIBS = 1
 

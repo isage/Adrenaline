@@ -35,6 +35,8 @@
 #include "patch_io.h"
 #include "externs.h"
 
+#include "../../adrenaline_version.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -309,13 +311,12 @@ void PatchSysconfPlugin(SceModule* mod) {
 
 	u32 text_addr = mod->text_addr;
 
-	int version = sctrlSEGetVersion();
-	int version_major = version >> 24;
-	int version_minor = version >> 16 & 0xFF;
-	int version_micro = version >> 8 & 0xFF;
-
 	char verinfo[50] = {0};
-	sprintf(verinfo, "6.61 Adrenaline-%d.%d.%d", version_major, version_minor, version_micro );
+	#ifdef NIGHTLY
+	sprintf(verinfo, "6.61 Adrenaline-%d.%d.%d-%s", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO, EPI_NIGHTLY_VER );
+	#else
+	sprintf(verinfo, "6.61 Adrenaline-%d.%d.%d", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO );
+	#endif
 
 	ascii2utf16( (char*)((void *)text_addr + 0x2A62C), verinfo);
 
