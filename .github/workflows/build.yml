@@ -65,6 +65,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: epi-environ
+          retention-days: 1
           path: |
             /usr/local/vitasdk/
             /usr/local/pspdev/
@@ -105,6 +106,7 @@ jobs:
           mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
 
       - name: Upload VPK
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v6
         with:
           name: epi-vpk
@@ -117,6 +119,7 @@ jobs:
           zip -r build/updater-${{ steps.vars.outputs.sha_short }}.zip build/updater
 
       - name: Upload UPDATER
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v6
         with:
           name: epi-updater
@@ -129,9 +132,10 @@ jobs:
           zip -r 'build/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip' build/hb-dev-setup/
 
       - name: Upload CFW libs
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v6
         with:
-          name: epi-updater
+          name: epi-cfw-libs
           path: 'build/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip'
           compression-level: 0
 
