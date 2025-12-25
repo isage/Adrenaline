@@ -22,10 +22,10 @@ jobs:
   prepare:
     name: Setup Compilation Environment
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
 
     steps:
-      # - uses: actions/checkout@v5
-
       - name: Install Dependencies
         run: sudo apt-get install build-essential cmake pkgconf libreadline8 libusb-0.1 libgpgme11 libarchive-tools fakeroot python3 wget
 
@@ -84,10 +84,12 @@ jobs:
           path: local/
 
       - name: Prepare Environment - Part 2
+        id: vars
         run: |
           sudo mv local/vitasdk /usr/local/vitasdk
           sudo mv local/pspdev /usr/local/pspdev
           sudo chmod -R 755 /usr/local
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
           echo "/usr/local/vitasdk/bin" >> $GITHUB_PATH
           echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
@@ -100,17 +102,78 @@ jobs:
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build
+          mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
 
-    # - name: Upload VPK
-    #   uses: actions/upload-artifact@v6
-    #   with:
-    #     name: epi-vpk
-    #     path: build/bubble/Adrenaline.vpk
+      - name: Upload VPK
+        uses: actions/upload-artifact@v6
+        with:
+          name: epi-vpk
+          path: build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
+          compression-level: 0
 
       - name: Build UPDATER
         run: |
           cmake --build build --target updater
+          zip -r build/updater-${{ steps.vars.outputs.sha_short }}.zip build/updater
+
+      - name: Upload UPDATER
+        uses: actions/upload-artifact@v6
+        with:
+          name: epi-updater
+          path: build/updater-${{ steps.vars.outputs.sha_short }}.zip
+          compression-level: 0
 
       - name: Build CFW libs
         run: |
           cmake --build build --target cfw-libs
+          zip -r 'build/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip' build/hb-dev-setup/
+
+      - name: Upload CFW libs
+        uses: actions/upload-artifact@v6
+        with:
+          name: epi-updater
+          path: 'build/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip'
+          compression-level: 0
+
+
+  build-debug:
+    name: Build Adrenaline with DEBUG
+    runs-on: ubuntu-latest
+    needs: prepare
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Prepare Environment - Part 1
+        uses: actions/download-artifact@v7
+        with:
+          name: epi-environ
+          path: local/
+
+      - name: Prepare Environment - Part 2
+        id: vars
+        run: |
+          sudo mv local/vitasdk /usr/local/vitasdk
+          sudo mv local/pspdev /usr/local/pspdev
+          sudo chmod -R 755 /usr/local
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
+          echo "/usr/local/vitasdk/bin" >> $GITHUB_PATH
+          echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
+          echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
+
+      - name: Build eCFW
+        run: make -j1 -C cef SCTRL_DEBUG=3
+
+      - name: Build VPK
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+          mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
+
+      - name: Upload VPK
+        uses: actions/upload-artifact@v6
+        with:
+          name: epi-vpk-debug
+          path: build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
+          compression-level: 0
