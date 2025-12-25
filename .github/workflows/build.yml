@@ -205,6 +205,7 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           pattern: epi-*
+          path: build/
 
       - name: Create tag
         id: create_tag
@@ -214,14 +215,12 @@ jobs:
       - name: Upload Nightly Release
         id: create_release
         uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.create_tag.outputs.TAG }}
           name: ${{ github.sha }}
           prerelease: true
           files: |
-              Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
-              Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
-              updater-${{ steps.vars.outputs.sha_short }}.zip
-              epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip
+              build/epi-vpk/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
+              build/epi-vpk-debug/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
+              build/epi-updater/updater-${{ steps.vars.outputs.sha_short }}.zip
+              build/epi-cfw-libs/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip
