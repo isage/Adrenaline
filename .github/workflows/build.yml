@@ -193,6 +193,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, build-debug]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions: write-all
     steps:
       - uses: actions/checkout@v5
 
