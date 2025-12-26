@@ -219,7 +219,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.create_tag.outputs.TAG }}
-          name: ${{ github.sha }}
+          name: "Nightly: ${{ github.sha }}"
           prerelease: true
           files: |
               build/epi-vpk/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
