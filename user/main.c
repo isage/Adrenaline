@@ -658,6 +658,20 @@ int module_start(SceSize args, void *argp) {
 			ADRENALINE_VERSION_MICRO
 		);
 		res = sceLiveAreaUpdateFrameSync("01.00", frameXmlStr, strlen(frameXmlStr), "app0:/", 0);
+
+		memset(frameXmlStr, 0, 512);
+		snprintf(
+			frameXmlStr,
+			512,
+			"<frame id=\"frame3\">"
+				"<liveitem>"
+					"<text valign=\"top\" align=\"left\" text-align=\"left\" text-valign=\"top\" line-space=\"2\" ellipsis=\"on\">"
+						"<str size=\"22\" shadow=\"on\">by Cat and GrayJack</str>"
+					"</text>"
+				"</liveitem>"
+			"</frame>"
+		);
+		res = sceLiveAreaUpdateFrameSync("01.00", frameXmlStr, strlen(frameXmlStr), "app0:/", 0);
 	}
 
 	mspace_init();
