@@ -385,7 +385,7 @@ void PatchDrmOnVsh() {
 
 	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
 		if (VREAD32(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
-			HIJACK_FUNCTION(addr - 8, setupEbootVersionKeyPatched, _setupEbootVersionKey);
+			HIJACK_FUNCTION(addr - 8, setupEdatVersionKeyPatched, _setupEdatVersionKey);
 			break;
 		}
 	}
