@@ -36,7 +36,8 @@ If you have already been using Adrenaline, you have three update options: Manual
 
 ### Update PBP
 
-1. Download the updater [EBOOT.PBP](http://adrenaline.sarcasticat.com/EBOOT.PBP)
+1. Download the updater [EBOOT.PBP](http://adrenaline.sarcasticat.com/EBOOT.PBP) (or [updater.zip](https://github.com/isage/Adrenaline/releases))
+  1. **If** `updater.zip`, extract and use the `EBOOT.PBP` inside it.
 2. Put the file at `ux0:/pspemu/PSP/GAME/UPDATE/` directory (create it if needed)
 3. Launch Adrenaline
 4. Run the update application
@@ -49,3 +50,6 @@ If you have already been using Adrenaline, you have three update options: Manual
 
 > [!IMPORTANT]
 > If you have installed a version below v7.1.0, the network update won't work; you will have to update with one of the other two remaining methods.
+
+> [!IMPORTANT] Important 2
+> If you have installed a nightly version, the network update won't work; you will have to update with one of the other two remaining methods.

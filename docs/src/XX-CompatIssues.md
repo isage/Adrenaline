@@ -28,7 +28,7 @@ Titles in the ISO/Compressed ISO format that are decrypted or are demo, prototyp
 
 Games that use GameMode API - partial list of games here.
 - `Burnout Dominator`: Game becomes too fast for everyone if a Vita player joins, also happens if one of the PSPs is overclocked (video demonstration here).
-- `Lego Indiana Jones 2`: Getting a wireless error (Adrenaline) or the game freezes up (ARK4).
+- `Lego Indiana Jones 2`: Getting a wireless error (Adrenaline) or the game freezes up (ARK).
 - `Street Riders`/`Asphalt: Urban GT 2`: Can't see other consoles in lobby (same developer made both games so its most likely the same issue).
 - `CSPSP`: Game gets a blue screen/crash when entering multiplayer , note that the game works fine on Adrenaline.
 - `Sega Rally Revo`: Game disconnects after it starts in infrastructure mode only.

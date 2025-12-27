@@ -36,3 +36,10 @@ There are a number of ways to contribute to the Adrenaline project for both prog
 - **Financial support**: If you like, you can help the devs with monetary support
   - Cat (isage) is currently unable to receive any international money. If you so prefer, a donation to your local animal shelter is encouraged.
   - Grayjack can receive support by [Github Sponsors](https://github.com/sponsors/GrayJack) or [PIX](https://nubank.com.br/cobrar/2a8up/68cf317a-627c-4d09-afb4-0faddf7968d3). If neither are possible to you, consider a donation to your local animal shelter.
+
+## Is this Adrenaline compatible with Adrenaline Bubble Booter/Manager?
+---
+
+No. That project is a whole modified Adrenaline distribution (and not a plugin as many believe), that means when you install it, you are overwriting your entire Adrenaline installation. That means when you install it, now you have "Adrenaline from Adrenaline Bubble Manager" instead of "Adrenaline from TheFlow" or "Adrenaline from Isage fork" (this one, and the only one that is being maintained).
+
+Although, we been thinking on other solution(s) to the launch Adrenaline with app/game X from the livearea.
