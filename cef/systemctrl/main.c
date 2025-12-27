@@ -176,7 +176,7 @@ static int OnModuleStart(SceModule *mod) {
 		if (sceKernelApplicationType() != SCE_APPTYPE_VSH) {
 			logmsg3("[INFO]: Title Module Name: %s\n", modname);
 			PatchDrmGameModule(mod);
-			PatchHideCfwFolders(mod);
+			PatchHideCfwFiles(mod);
 			PatchGamesByMod(mod);
 		}
 		ready_gamepatch_mod = 0;

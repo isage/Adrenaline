@@ -98,6 +98,7 @@ int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
     return res;
 }
 
+static SceUID (* _sceIoOpen)(const char *path, int flags, SceMode mode) = sceIoOpen;
 SceUID sceIoOpenHidePatched(const char *path, int flags, SceMode mode) {
 	SceUID res = SCE_KERR_ILLEGAL_ACCESS;
 
@@ -106,7 +107,7 @@ SceUID sceIoOpenHidePatched(const char *path, int flags, SceMode mode) {
 		goto exit;
 	}
 
-	res = sceIoOpen(path, flags, mode);
+	res = _sceIoOpen(path, flags, mode);
 
 exit:
 	logmsg4("[DEBUG]: %s: path=%s, flags=0x%08X, mode=0x%08X -> 0x%08lX\n", __func__, path, flags, mode, res);
@@ -171,7 +172,7 @@ int sceIoRmdirHidePatched(const char *path) {
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchHideCfwFolders(SceModule* mod) {
+void PatchHideCfwFiles(SceModule* mod) {
 	int apptype = sceKernelApplicationType();
 	int apitype = sceKernelInitApitype();
 
@@ -181,6 +182,13 @@ void PatchHideCfwFolders(SceModule* mod) {
 	// 3. If it is configured to not hide even on games
 	if (apptype == SCE_APPTYPE_VSH || apptype == SCE_APPTYPE_UPDATER || apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2 || config.no_hide_cfw_files) {
 		return;
+	}
+
+	// The hide CFW files overwrite the hook to `sceIoOpen` made by the DRM
+	// patch if both are active. So we use the `sceIoOpenDrmPatched` if that
+	// option is enabled
+	if (!config.no_nodrm_engine) {
+		_sceIoOpen = sceIoOpenDrmPatched;
 	}
 
     sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, sceIoDreadHidePatched, 0);

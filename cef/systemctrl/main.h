@@ -42,5 +42,6 @@ int sceChkregCheckRegion();
 int sceChkregGetPsCode(u8 *pscode);
 
 u32 sctrlHENFakeDevkitVersion();
+SceUID sceIoOpenDrmPatched(const char *path, int flags, SceMode mode);
 
 #endif

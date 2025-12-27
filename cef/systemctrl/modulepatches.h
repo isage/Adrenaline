@@ -65,7 +65,7 @@ void PatchVolatileMemBug();
 void PatchGameByTitleId();
 void PatchGameByTitleIdOnLoadExec();
 void PatchGamesByMod(SceModule* mod);
-void PatchHideCfwFolders(SceModule* mod);
+void PatchHideCfwFiles(SceModule* mod);
 
 void PatchVlfLib(SceModule* mod);
 void PatchCwCheatPlugin(SceModule* mod);
