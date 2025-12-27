@@ -86,19 +86,24 @@ int main(void) {
 		ErrorExit(5000, "This update can only be applied with v6.4 or higher.\n");
 	}
 
+	#if defined(NIGHTLY) && NIGHTLY == 1
+	if (sctrlSEGetVersion() > ADRENALINE_VERSION) {
+		ErrorExit(5000, "This update or a higher one was already applied.\n");
+	}
+	#else
 	if (sctrlSEGetVersion() >= ADRENALINE_VERSION) {
 		ErrorExit(5000, "This update or a higher one was already applied.\n");
 	}
+	#endif
 
-	#ifdef NIGHTLY
+	#if defined(NIGHTLY) && NIGHTLY == 1
 	printf("6.61 Adrenaline-%d.%d.%d-%s Installer\n", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO, EPI_NIGHTLY_VER);
 	#else
 	printf("6.61 Adrenaline-%d.%d.%d Installer\n", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO);
 	#endif
 	printf("Changes:\n\n");
 
-	printf("- Fix autoboot.\n");
-	printf("- Support vita firmwares 3.71-3.74.\n");
+	printf("- See this site http://adrenaline.sarcasticat.com/docs/XX-Changelog.html\n");
 
 	printf("\n");
 
