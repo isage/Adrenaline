@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-b0a6f758.js";
+            window.path_to_searchindex_js = "searchindex-fee02fc0.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f62a0e12.js"></script>
@@ -765,7 +765,8 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </ol>
 <h3 id="update-pbp"><a class="header" href="#update-pbp">Update PBP</a></h3>
 <ol>
-<li>Download the updater <a href="http://adrenaline.sarcasticat.com/EBOOT.PBP">EBOOT.PBP</a></li>
+<li>Download the updater <a href="http://adrenaline.sarcasticat.com/EBOOT.PBP">EBOOT.PBP</a> (or <a href="https://github.com/isage/Adrenaline/releases">updater.zip</a>)</li>
+<li><strong>If</strong> <code>updater.zip</code>, extract and use the <code>EBOOT.PBP</code> inside it.</li>
 <li>Put the file at <code>ux0:/pspemu/PSP/GAME/UPDATE/</code> directory (create it if needed)</li>
 <li>Launch Adrenaline</li>
 <li>Run the update application</li>
@@ -783,6 +784,15 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </p>
 
 <p>If you have installed a version below v7.1.0, the network update won’t work; you will have to update with one of the other two remaining methods.</p>
+</div>
+
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important 2
+</p>
+
+<p>If you have installed a nightly version, the network update won’t work; you will have to update with one of the other two remaining methods.</p>
 </div>
 
 <div style="break-before: page; page-break-before: always;"></div><style>
@@ -5433,6 +5443,15 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
 </div>
 
+<div class="mdbook-callouts mdbook-callouts-note">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  note 2
+</p>
+
+<p>This option does not affect the XMB/VSH. Even if this option is enabled, the XMB/VSH will be loaded with the usual implementation of the Graphic Engine module.</p>
+</div>
+
 <h3 id="use-media-engine-2"><a class="header" href="#use-media-engine-2">Use Media Engine 2</a></h3>
 <p>Controls wether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
@@ -5444,6 +5463,15 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <p>The modules being called “2” doesn’t mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
 <p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
+</div>
+
+<div class="mdbook-callouts mdbook-callouts-note">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  note 2
+</p>
+
+<p>This option does not affect the XMB/VSH. Even if this option is enabled, the XMB/VSH will be loaded with the usual implementation of the Media Engine module.</p>
 </div>
 
 <h3 id="execute-bootbin-in-umdemu-iso"><a class="header" href="#execute-bootbin-in-umdemu-iso">Execute BOOT.BIN in UMDemu ISO</a></h3>
@@ -7316,7 +7344,7 @@ include ../lib/build.mak
 <p>Games that use GameMode API - partial list of games here.</p>
 <ul>
 <li><code>Burnout Dominator</code>: Game becomes too fast for everyone if a Vita player joins, also happens if one of the PSPs is overclocked (video demonstration here).</li>
-<li><code>Lego Indiana Jones 2</code>: Getting a wireless error (Adrenaline) or the game freezes up (ARK4).</li>
+<li><code>Lego Indiana Jones 2</code>: Getting a wireless error (Adrenaline) or the game freezes up (ARK).</li>
 <li><code>Street Riders</code>/<code>Asphalt: Urban GT 2</code>: Can’t see other consoles in lobby (same developer made both games so its most likely the same issue).</li>
 <li><code>CSPSP</code>: Game gets a blue screen/crash when entering multiplayer , note that the game works fine on Adrenaline.</li>
 <li><code>Sega Rally Revo</code>: Game disconnects after it starts in infrastructure mode only.</li>
@@ -7609,6 +7637,10 @@ include ../lib/build.mak
 </ul>
 </li>
 </ul>
+<h2 id="is-this-adrenaline-compatible-with-adrenaline-bubble-bootermanager"><a class="header" href="#is-this-adrenaline-compatible-with-adrenaline-bubble-bootermanager">Is this Adrenaline compatible with Adrenaline Bubble Booter/Manager?</a></h2>
+<hr>
+<p>No. That project is a whole modified Adrenaline distribution (and not a plugin as many believe), that means when you install it, you are overwriting your entire Adrenaline installation. That means when you install it, now you have “Adrenaline from Adrenaline Bubble Manager” instead of “Adrenaline from TheFlow” or “Adrenaline from Isage fork” (this one, and the only one that is being maintained).</p>
+<p>Although, we been thinking on other solution(s) to the launch Adrenaline with app/game X from the livearea.</p>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
   padding: 8px 16px;
