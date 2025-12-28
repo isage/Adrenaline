@@ -223,7 +223,7 @@ static int OnModuleStart(SceModule *mod) {
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod);
 
-		#if defined(DEBUG) && DEBUG >= 3
+		#if defined(DEBUG) && DEBUG >= 4
 		extern int (* _runExec)(RunExecParams*);
 		extern int runExecPatched(RunExecParams* args);
 		HIJACK_FUNCTION(text_addr+0x2148, runExecPatched, _runExec);
