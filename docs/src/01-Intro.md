@@ -4,7 +4,7 @@
 Adrenaline is two software projects in one: Adrenaline Application (1) and Adrenaline CFW (2).
 
 1. A software that modifies the official PSP Emulator (PSPemu/ePSP) using [taiHEN CFW framework](https://github.com/yifanlu/taiHEN) to make it possible to run a PSP 6.61 Custom Firmware (CFW).
-2. A Custom Firmware for the Vita's PSPemu that, besides usual PSP CFW features, enables access to PSP XMB and most of the PSP native environment in the PSPemu
+2. A Custom Firmware for the Vita's PSPemu derived from TN-V CFW that, besides usual PSP CFW features, enables access to PSP XMB and most of the PSP native environment in the PSPemu
 
 > [!INFO]
 > Sony's unmodified PSPemu has a more limited environment, tailored to be enough to run what Sony released on the PS Store.
@@ -21,6 +21,7 @@ Adrenaline is two software projects in one: Adrenaline Application (1) and Adren
 - Compatible with all PS Vita models on firmware 3.60 up to 3.74
 - Support 7 graphical filtering options
 - Support color filter
+- Support to PS1 game overlay image filter
 - Support for PS2/PS3 <-> PSP game link
 - Configurable PSP and PS1 screen scale
 - Configurable Memory Stick driver location
@@ -38,7 +39,7 @@ Adrenaline is two software projects in one: Adrenaline Application (1) and Adren
 - Configurable CPU/BUS clock for XMB/VSH and PSP games/homebrew/apps
 - Three ISO image driver options: Inferno, March33, NP9660
 - Support for ISO, CSO, JSO, ZSO, CSOv2, and DAX image formats
-- Built-in anti-CFW, fixes some protections and bugs in games. Compatible with NoDRM plugins
+- Built-in anti-CFW, fixes some protections and bugs in games.
 - Built-in CFW configuration and plugin manager on XMB/VSH for easy CFW management
 - Support for autoboot software on system launch if enabled
 - Extensive CFW API with good compatibility with M33, ME, PRO, and ARK API
