@@ -468,6 +468,7 @@ static int isCpuIntrEnabled(void) {
 }
 
 int _logCached(char *fmt, ...) {
+	extern SceModuleInfo module_info;
 	va_list args;
 
 	if ( 0 )
@@ -475,8 +476,9 @@ int _logCached(char *fmt, ...) {
 
 	u32 k1 = pspSdkSetK1(0);
 
+	int printed_len = snprintf(log_buf, sizeof(log_buf), "[%s v%d.%d]: ", module_info.modname, module_info.modversion[1], module_info.modversion[0]);
 	va_start(args, fmt);
-	int printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+	printed_len = _vsnprintf(log_buf+printed_len, sizeof(log_buf)-printed_len, fmt, args);
 	va_end(args);
 	printed_len--;
 	appendToMemoryLog(printed_len);
@@ -486,7 +488,8 @@ int _logCached(char *fmt, ...) {
 	return printed_len;
 }
 
-static int __logmsg(char *fmt, ...) {
+int _logmsg(char *fmt, ...) {
+	extern SceModuleInfo module_info;
 	va_list args;
 	int printed_len;
 
@@ -494,15 +497,17 @@ static int __logmsg(char *fmt, ...) {
 
 	if (0 == isCpuIntrEnabled()) {
 		// interrupt disabled, let's do the work quickly before the watchdog bites
+		printed_len = snprintf(log_buf, sizeof(log_buf), "[%s v%d.%d]: ", module_info.modname, module_info.modversion[1], module_info.modversion[0]);
 		va_start(args, fmt);
-		printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+		printed_len += _vsnprintf(log_buf+printed_len, sizeof(log_buf)-printed_len, fmt, args);
 		va_end(args);
 		printed_len--;
 		appendToMemoryLog(printed_len);
 	} else {
 		logLock();
+		printed_len = snprintf(log_buf, sizeof(log_buf), "[%s v%d.%d]: ", module_info.modname, module_info.modversion[1], module_info.modversion[0]);
 		va_start(args, fmt);
-		printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+		printed_len += _vsnprintf(log_buf+printed_len, sizeof(log_buf)-printed_len, fmt, args);
 		va_end(args);
 		printed_len--;
 		logOutput(printed_len);
@@ -512,37 +517,6 @@ static int __logmsg(char *fmt, ...) {
 	pspSdkSetK1(k1);
 
 	return printed_len;
-}
-
-int _logmsg(char *fmt, ...) {
-	extern SceModuleInfo module_info;
-	int res = __logmsg("[%s v%d.%d]: ", module_info.modname, module_info.modversion[1], module_info.modversion[0]);
-
-	va_list args;
-	int printed_len;
-
-	u32 k1 = pspSdkSetK1(0);
-
-	if (0 == isCpuIntrEnabled()) {
-		// interrupt disabled, let's do the work quickly before the watchdog bites
-		va_start(args, fmt);
-		printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
-		va_end(args);
-		printed_len--;
-		appendToMemoryLog(printed_len);
-	} else {
-		logLock();
-		va_start(args, fmt);
-		printed_len = _vsnprintf(log_buf, sizeof(log_buf), fmt, args);
-		va_end(args);
-		printed_len--;
-		logOutput(printed_len);
-		logUnlock();
-	}
-
-	pspSdkSetK1(k1);
-
-	return res + printed_len;
 }
 
 static unsigned long InterlockedExchange(unsigned long volatile *dst, unsigned long exchange) {
