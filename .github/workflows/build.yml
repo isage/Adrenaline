@@ -47,7 +47,9 @@ jobs:
           git clone https://github.com/vitasdk/vdpm
           cd vdpm
           ./bootstrap-vitasdk.sh
-          ./install-all.sh
+          vdpm henkaku taihen libpng libjpeg-turbo freetype
+
+        # ./install-all.sh
 
       - name: Setup PSPSDK
         run: |
@@ -65,6 +67,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: environ
+          compression-level: 3
           retention-days: 1
           path: |
             /usr/local/vitasdk/
