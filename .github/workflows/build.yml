@@ -90,14 +90,12 @@ jobs:
       - name: Prepare Environment - Part 2
         id: vars
         run: |
-          sudo mv local/vitasdk /usr/local/vitasdk
-          sudo mv local/pspdev /usr/local/pspdev
-          sudo chmod -R 755 /usr/local
+          chmod -R 755 $(pwd)/local/
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
-          echo "/usr/local/vitasdk/bin" >> $GITHUB_PATH
-          echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
-          echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
+          echo "VITASDK=$(pwd)/local/vitasdk" >> $GITHUB_ENV
+          echo "$(pwd)/local/vitasdk/bin" >> $GITHUB_PATH
+          echo "PSPDEV=$(pwd)/local/pspdev" >> $GITHUB_ENV
+          echo "$(pwd)/local/pspdev/bin" >> $GITHUB_PATH
 
       - name: Set Nightly Version
         run: sed -r -i "s/^(#define[[:space:]]+EPI_NIGHTLY_VER[[:space:]]+\")([0-9]+)(\")/\1$${{ steps.vars.outputs.sha_short }}\3/" adrenaline_version.h
@@ -163,14 +161,12 @@ jobs:
       - name: Prepare Environment - Part 2
         id: vars
         run: |
-          sudo mv local/vitasdk /usr/local/vitasdk
-          sudo mv local/pspdev /usr/local/pspdev
-          sudo chmod -R 755 /usr/local
+          chmod -R 755 $(pwd)/local/
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-          echo "VITASDK=/usr/local/vitasdk" >> $GITHUB_ENV
-          echo "/usr/local/vitasdk/bin" >> $GITHUB_PATH
-          echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
-          echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
+          echo "VITASDK=$(pwd)/local/vitasdk" >> $GITHUB_ENV
+          echo "$(pwd)/local/vitasdk/bin" >> $GITHUB_PATH
+          echo "PSPDEV=$(pwd)/local/pspdev" >> $GITHUB_ENV
+          echo "$(pwd)/local/pspdev/bin" >> $GITHUB_PATH
 
       - name: Set Nightly Version
         run: sed -r -i "s/^(#define[[:space:]]+EPI_NIGHTLY_VER[[:space:]]+\")([0-9]+)(\")/\1$${{ steps.vars.outputs.sha_short }}\3/" adrenaline_version.h
