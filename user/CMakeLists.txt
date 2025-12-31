@@ -39,7 +39,7 @@ set_property(TARGET libvita2dfbo_libA
 
 ExternalProject_Add(vitashadercollection
     DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}
-    URL https://github.com/frangarcj/vita-shader-collection/releases/download/master-0.1-v86/vita-shader-collection.tar.gz
+    URL https://github.com/VitaArchive/vita-shader-collection/releases/download/master-0.2-v1767160600/vita-shader-collection.tar.gz
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/vitashadercollection
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     BUILD_IN_SOURCE 1
