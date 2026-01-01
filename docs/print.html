@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-fee02fc0.js";
+            window.path_to_searchindex_js = "searchindex-6caa2451.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f62a0e12.js"></script>
@@ -418,7 +418,7 @@
 <p>Adrenaline is two software projects in one: Adrenaline Application (1) and Adrenaline CFW (2).</p>
 <ol>
 <li>A software that modifies the official PSP Emulator (PSPemu/ePSP) using <a href="https://github.com/yifanlu/taiHEN">taiHEN CFW framework</a> to make it possible to run a PSP 6.61 Custom Firmware (CFW).</li>
-<li>A Custom Firmware for the Vita’s PSPemu that, besides usual PSP CFW features, enables access to PSP XMB and most of the PSP native environment in the PSPemu</li>
+<li>A Custom Firmware for the Vita’s PSPemu derived from TN-V CFW that, besides usual PSP CFW features, enables access to PSP XMB and most of the PSP native environment in the PSPemu</li>
 </ol>
 <div class="mdbook-callouts mdbook-callouts-info">
 <p class="mdbook-callouts-title">
@@ -445,6 +445,7 @@
 <li>Compatible with all PS Vita models on firmware 3.60 up to 3.74</li>
 <li>Support 7 graphical filtering options</li>
 <li>Support color filter</li>
+<li>Support to PS1 game overlay image filter</li>
 <li>Support for PS2/PS3 &lt;-&gt; PSP game link</li>
 <li>Configurable PSP and PS1 screen scale</li>
 <li>Configurable Memory Stick driver location</li>
@@ -462,7 +463,7 @@
 <li>Configurable CPU/BUS clock for XMB/VSH and PSP games/homebrew/apps</li>
 <li>Three ISO image driver options: Inferno, March33, NP9660</li>
 <li>Support for ISO, CSO, JSO, ZSO, CSOv2, and DAX image formats</li>
-<li>Built-in anti-CFW, fixes some protections and bugs in games. Compatible with NoDRM plugins</li>
+<li>Built-in anti-CFW, fixes some protections and bugs in games.</li>
 <li>Built-in CFW configuration and plugin manager on XMB/VSH for easy CFW management</li>
 <li>Support for autoboot software on system launch if enabled</li>
 <li>Extensive CFW API with good compatibility with M33, ME, PRO, and ARK API
@@ -1631,8 +1632,10 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <li><strong>Advanced AA</strong>: Advanced Anti-Aliasing. Reduces jagged edges, making graphics less blocky.</li>
 <li><strong>LCD3x</strong>: Simulates the look of an LCD screen, with subtle scanline effect.</li>
 <li><strong>Sharp Bilinear without Scanlines</strong>: Like Sharp Bilinear, but without the scanline effect.</li>
-<li><strong>Scale2x</strong>: Doubles the resolution using pixel interpolation, making graphics less blocky.</li>
+<li><strong>Scale2x</strong>: Increases the size by 2x of small bitmaps by guessing the missing pixels without blurring the images., making graphics less blocky.</li>
+<li><strong>Scale3x</strong>: Same as <code>Scale2x</code>, but increases the size by 3x instead of 2x.</li>
 </ul>
+<!-- TODO: Add Scale2x Plus if we keep it -->
 <div class="mdbook-callouts mdbook-callouts-important">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -2286,7 +2289,6 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </div>
 
 <h3 id="second-method-recovery-menu"><a class="header" href="#second-method-recovery-menu">Second method: Recovery Menu</a></h3>
-<!-- TODO: LINK TO RECOVERY MENU -->
 <ol>
 <li>Open <a href="#adrenaline-recovery-menu">Recovery Menu</a></li>
 <li>Go to the <code>Plugins</code> section</li>
@@ -2907,6 +2909,25 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 
 <p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
 <pre><code>vsh, ms0:/seplugins/category_lite.prx, on
+</code></pre>
+</div>
+
+<h2 id="vshbgm"><a class="header" href="#vshbgm">Vshbgm</a></h2>
+<p>This plugin allows to execute a user-provided mp3 as a background music on the VSH (XMB).</p>
+<p>Music automatically stops for media playback, UMD games, or other sounds. Giving you a smooth audio experience while navigating your XMB menus.</p>
+<p>The plugin expects the mp3 file to be in a very specific format. But no worries, as the site provides a way to convert it in the site, not only that, you can provide more than one mp3 source, it also merge the files in a single mp3 file, giving a experience similar to having a mini playlist as background music.</p>
+<p>The MP3 file is expected to be in <code>???0:/pspemu/bgm.mp3</code>.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<p><a href="https://github.com/PSP-Archive/vshbgm/releases">Download vshbgm Here</a>
+<a href="https://the-sauna.icu/vshbgm/">Convert MP3 Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>vsh, ms0:/seplugins/vshbgm.prx, on
 </code></pre>
 </div>
 
@@ -5869,7 +5890,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 </p>
 
 <h3 id="button-assign"><a class="header" href="#button-assign">Button assign</a></h3>
-<p>Configures what button is used for confirmation/enter.</p>
+<p>Configures what button is used for confirmation/enter system-wide.</p>
 <h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
 <ul>
 <li><code>⭕️ is enter</code></li>
@@ -6427,7 +6448,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <li><code>cef/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
 <li><code>cef/march33</code>: The <code>March33Driver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
 <li><code>cef/popcorn</code>: The <code>PopcornManager</code> module allows the PS1 emulator (POPS) to launch custom PS1 images.</li>
-<li><code>cef/newrecovery</code>: The <code>Recovery Menu</code> module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.</li>
+<li><code>cef/recovery</code>: The <code>Recovery Menu</code> module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.</li>
 <li><code>cef/kermit_idstorage</code>: A custom implementation of <code>sceIdStorage_driver</code> that enables the vPSP environment to work properly.</li>
 <li><code>cef/payloadex</code> and <code>cef/rebootex</code>: Handles the actual injection of the CFW in the (re)boot process. <code>Payloadex</code> is used by <code>user</code> to launch Adrenaline CFW, while <code>Rebootex</code> is set to relaunch it during a ePSP reboot.</li>
 </ul>
@@ -7895,6 +7916,9 @@ include ../lib/build.mak
 </li>
 <li>
 <p>Add <code>Scale2x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add <code>Scale3x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></p>
 </li>
 <li>
 <p>Add support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver. <strong>[<a href="#umdemu-iso-drivers">docs</a>]</strong></p>

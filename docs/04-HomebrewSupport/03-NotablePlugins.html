@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-fee02fc0.js";
+            window.path_to_searchindex_js = "../searchindex-6caa2451.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-f62a0e12.js"></script>
@@ -451,6 +451,25 @@
 
 <p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
 <pre><code>vsh, ms0:/seplugins/category_lite.prx, on
+</code></pre>
+</div>
+
+<h2 id="vshbgm"><a class="header" href="#vshbgm">Vshbgm</a></h2>
+<p>This plugin allows to execute a user-provided mp3 as a background music on the VSH (XMB).</p>
+<p>Music automatically stops for media playback, UMD games, or other sounds. Giving you a smooth audio experience while navigating your XMB menus.</p>
+<p>The plugin expects the mp3 file to be in a very specific format. But no worries, as the site provides a way to convert it in the site, not only that, you can provide more than one mp3 source, it also merge the files in a single mp3 file, giving a experience similar to having a mini playlist as background music.</p>
+<p>The MP3 file is expected to be in <code>???0:/pspemu/bgm.mp3</code>.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<p><a href="https://github.com/PSP-Archive/vshbgm/releases">Download vshbgm Here</a>
+<a href="https://the-sauna.icu/vshbgm/">Convert MP3 Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+
+<p>On <code>???0:/pspemu/seplugins/EPIplugins.txt</code>, add the following line:</p>
+<pre><code>vsh, ms0:/seplugins/vshbgm.prx, on
 </code></pre>
 </div>
 
