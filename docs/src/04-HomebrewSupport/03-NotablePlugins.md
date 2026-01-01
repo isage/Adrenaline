@@ -34,6 +34,28 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 > vsh, ms0:/seplugins/category_lite.prx, on
 > ```
 
+## Vshbgm
+
+This plugin allows to execute a user-provided mp3 as a background music on the VSH (XMB).
+
+Music automatically stops for media playback, UMD games, or other sounds. Giving you a smooth audio experience while navigating your XMB menus.
+
+The plugin expects the mp3 file to be in a very specific format. But no worries, as the site provides a way to convert it in the site, not only that, you can provide more than one mp3 source, it also merge the files in a single mp3 file, giving a experience similar to having a mini playlist as background music.
+
+The MP3 file is expected to be in `???0:/pspemu/bgm.mp3`.
+
+This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
+
+[Download vshbgm Here](https://github.com/PSP-Archive/vshbgm/releases)
+[Convert MP3 Here](https://the-sauna.icu/vshbgm/)
+
+> [!EXAMPLE]
+> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
+>
+> ```
+> vsh, ms0:/seplugins/vshbgm.prx, on
+> ```
+
 ## PRO Online
 ---
 

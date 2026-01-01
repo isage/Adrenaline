@@ -11,6 +11,7 @@
     - Support for plugin only on homebrew apps
 	- **Migration instructions below**
 - Add `Scale2x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
+- Add `Scale3x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver. **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
 - Update the Inferno Driver to Inferno 2 **\[[docs](./05-PSPPlayback/02-Inferno.md)\]**
 - Introduce March33 Driver v2: An evolution of the March33 ISO driver **\[[docs](./05-PSPPlayback/03-March33.md)\]**

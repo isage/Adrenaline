@@ -66,7 +66,6 @@ Adrenaline offers two ways to manage plugins already added.
 
 ### Second method: Recovery Menu
 
-<!-- TODO: LINK TO RECOVERY MENU -->
 1. Open [Recovery Menu](../09-RecoveryMenu.md)
 2. Go to the `Plugins` section
 3. Go over your plugins and use `←`/`→` to select the plugin state

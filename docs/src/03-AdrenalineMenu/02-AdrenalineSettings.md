@@ -19,7 +19,9 @@ It offers these options:
 - **Advanced AA**: Advanced Anti-Aliasing. Reduces jagged edges, making graphics less blocky.
 - **LCD3x**: Simulates the look of an LCD screen, with subtle scanline effect.
 - **Sharp Bilinear without Scanlines**: Like Sharp Bilinear, but without the scanline effect.
-- **Scale2x**: Doubles the resolution using pixel interpolation, making graphics less blocky.
+- **Scale2x**: Increases the size by 2x of small bitmaps by guessing the missing pixels without blurring the images., making graphics less blocky.
+- **Scale3x**: Same as `Scale2x`, but increases the size by 3x instead of 2x.
+<!-- TODO: Add Scale2x Plus if we keep it -->
 
 > [!IMPORTANT]
 > When the **Original** option is selected, all graphics-related options will not take effect.

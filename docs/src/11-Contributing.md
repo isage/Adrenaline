@@ -34,7 +34,7 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 - `cef/inferno`: The `InfernoDriver` module is the custom driver that allows executing ISO and Compressed ISO.
 - `cef/march33`: The `March33Driver` module is the custom driver that allows executing ISO and Compressed ISO.
 - `cef/popcorn`: The `PopcornManager` module allows the PS1 emulator (POPS) to launch custom PS1 images.
-- `cef/newrecovery`: The `Recovery Menu` module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.
+- `cef/recovery`: The `Recovery Menu` module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.
 - `cef/kermit_idstorage`: A custom implementation of `sceIdStorage_driver` that enables the vPSP environment to work properly.
 - `cef/payloadex` and `cef/rebootex`: Handles the actual injection of the CFW in the (re)boot process. `Payloadex` is used by `user` to launch Adrenaline CFW, while `Rebootex` is set to relaunch it during a ePSP reboot.
 

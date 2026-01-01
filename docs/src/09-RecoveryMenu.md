@@ -42,7 +42,7 @@ This section is more focused on the [Advanced CFW Settings](./08-CfwConfiguratio
 
 ### Button assign
 
-Configures what button is used for confirmation/enter.
+Configures what button is used for confirmation/enter system-wide.
 
 #### Options:
 
