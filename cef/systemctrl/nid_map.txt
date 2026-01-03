@@ -1581,6 +1581,15 @@
 0x133DE8FA:0x2E1A7B7C
 @sceMesgLed_driver
 0xDFF0F308:0x2CB700EC
+@sceAudioRouting_driver
+# sceAudioRoutingGetVolumeMode
+0x28235C56:0xD82D02FD
+# sceAudioRoutingSetMode
+0x36FD8AA9:0x18B6F449
+# sceAudioRoutingGetMode
+0x39240E7D:0x931ABEF5
+# sceAudioRoutingSetVolumeMode
+0xBB548475:0x44B384EF
 @scePaf
 0x2BE8DDBB:0xEC805E95
 0xE8CCC611:0x95692855

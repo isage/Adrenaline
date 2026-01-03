@@ -960,6 +960,13 @@ OldNewNid sceReg_driver_nid[] = {
 	{ 0x835ECE6F, 0x6328E4C6 }, // sceRegGetCategoryListAtRoot
 };
 
+OldNewNid sceAudioRouting_driver[] = {
+	{0x28235C56, 0xD82D02FD}, // sceAudioRoutingGetVolumeMode
+	{0x36FD8AA9, 0x18B6F449}, // sceAudioRoutingSetMode
+	{0x39240E7D, 0x931ABEF5}, // sceAudioRoutingGetMode
+	{0xBB548475, 0x44B384EF}, // sceAudioRoutingSetVolumeMode
+};
+
 OldNewNid memlmd_nid[] = {
 	{ 0x323366CA, 0x6192F715 },
 	{ 0x1570BAB4, 0xF26A33C3 },
@@ -1003,6 +1010,7 @@ NidTable nid_table[] = {
 	{ "sceImpose_driver", sceImpose_driver_nid, N_NID(sceImpose_driver_nid) },
 	{ "sceRtc_driver", sceRtc_driver_nid, N_NID(sceRtc_driver_nid) },
 	{ "sceReg_driver", sceReg_driver_nid, N_NID(sceReg_driver_nid) },
+	{ "sceAudioRouting_driver", sceAudioRouting_driver, N_NID(sceAudioRouting_driver) },
 	{ "memlmd", memlmd_nid, N_NID(memlmd_nid) },
 	{ "sceMesgLed_driver", sceMesgLed_driver_nid, N_NID(sceMesgLed_driver_nid) },
 	{ "scePaf", scePaf_nid, N_NID(scePaf_nid) },
