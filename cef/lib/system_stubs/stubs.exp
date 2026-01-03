@@ -3560,10 +3560,10 @@ PSP_EXPORT_END
 
 # ⟨impose_01g.prx⟩ — ⟨sceImpose_Driver⟩ — sceAudioRouting_driver
 PSP_EXPORT_START(sceAudioRouting_driver, 17, 0x0001)
-PSP_EXPORT_FUNC_NID(sceAudioRouting_driver_18B6F449, 0x18B6F449)
-PSP_EXPORT_FUNC_NID(sceAudioRouting_driver_44B384EF, 0x44B384EF)
-PSP_EXPORT_FUNC_NID(sceAudioRouting_driver_931ABEF5, 0x931ABEF5)
-PSP_EXPORT_FUNC_NID(sceAudioRouting_driver_D82D02FD, 0xD82D02FD)
+PSP_EXPORT_FUNC_NID(sceAudioRoutingSetMode, 0x18B6F449)
+PSP_EXPORT_FUNC_NID(sceAudioRoutingSetVolumeMode, 0x44B384EF)
+PSP_EXPORT_FUNC_NID(sceAudioRoutingGetMode, 0x931ABEF5)
+PSP_EXPORT_FUNC_NID(sceAudioRoutingGetVolumeMode, 0xD82D02FD)
 PSP_EXPORT_END
 
 # ⟨kermit_audio.prx, popsman.prx⟩ — ⟨sceAudio_Driver, scePops_Manager⟩ — sceAudio_driver
