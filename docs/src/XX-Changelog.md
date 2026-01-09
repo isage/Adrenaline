@@ -61,6 +61,7 @@
 - **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use even outside of Adrenaline (i.e. your project)
 - **DEV:** Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
 - **DEV:** Add stubs for the UMDemu ISO drivers
+- **DEV:** Add NID translation table to `sceAudioRouting_driver` (Improve plugin compatibility)
 
 - **Internal:** Some code reorganization
 - **Internal:** Code clean ups
