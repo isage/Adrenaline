@@ -224,6 +224,7 @@ PSP_EXPORT_FUNC(sctrlKernelSetNidResolver)
 # sctrlSE - COMMON
 PSP_EXPORT_FUNC(sctrlSEGetConfig)
 PSP_EXPORT_FUNC(sctrlSEGetConfigEx)
+PSP_EXPORT_FUNC(sctrlSEGetConfigInternal)
 PSP_EXPORT_FUNC(sctrlSEGetDiscType)
 PSP_EXPORT_FUNC(sctrlSEGetVersion)
 PSP_EXPORT_FUNC(sctrlSEMountUmdFromFile)

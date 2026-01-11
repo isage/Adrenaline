@@ -381,6 +381,7 @@ extern int sctrlKernelResolveNid;
 extern int sctrlKernelSetNidResolver;
 extern int sctrlSEGetConfig;
 extern int sctrlSEGetConfigEx;
+extern int sctrlSEGetConfigInternal;
 extern int sctrlSEGetDiscType;
 extern int sctrlSEGetVersion;
 extern int sctrlSEMountUmdFromFile;
@@ -430,7 +431,7 @@ extern int sctrlSetCustomStartModule;
 extern int sctrlSetStartModuleExtra;
 extern int sctrlGetInitTextAddr;
 extern int sctrlGetInitTextAddr;
-static const unsigned int __SystemCtrlForKernel_exports[210] __attribute__((section(".rodata.sceResident"))) = {
+static const unsigned int __SystemCtrlForKernel_exports[212] __attribute__((section(".rodata.sceResident"))) = {
 	0x8B2D99E4,
 	0x78E46415,
 	0x159AF5CC,
@@ -487,6 +488,7 @@ static const unsigned int __SystemCtrlForKernel_exports[210] __attribute__((sect
 	0x603EE1D0,
 	0x16C3B7EE,
 	0x8E426F09,
+	0xD67E7551,
 	0xABEF849B,
 	0xB47C9D77,
 	0x85B520C6,
@@ -592,6 +594,7 @@ static const unsigned int __SystemCtrlForKernel_exports[210] __attribute__((sect
 	(unsigned int) &sctrlKernelSetNidResolver,
 	(unsigned int) &sctrlSEGetConfig,
 	(unsigned int) &sctrlSEGetConfigEx,
+	(unsigned int) &sctrlSEGetConfigInternal,
 	(unsigned int) &sctrlSEGetDiscType,
 	(unsigned int) &sctrlSEGetVersion,
 	(unsigned int) &sctrlSEMountUmdFromFile,
@@ -832,7 +835,7 @@ const struct _PspLibraryEntry __library_exports[14] __attribute__((section(".lib
 	{ "sceSyscon_driver", 0x0011, 0x0001, 4, 0, 0, (unsigned int *) &__sceSyscon_driver_exports },
 	{ "KUBridge", 0x0000, 0x4001, 4, 0, 19, (unsigned int *) &__KUBridge_exports },
 	{ "SystemCtrlForUser", 0x0000, 0x4001, 4, 0, 75, (unsigned int *) &__SystemCtrlForUser_exports },
-	{ "SystemCtrlForKernel", 0x0000, 0x0001, 4, 0, 105, (unsigned int *) &__SystemCtrlForKernel_exports },
+	{ "SystemCtrlForKernel", 0x0000, 0x0001, 4, 0, 106, (unsigned int *) &__SystemCtrlForKernel_exports },
 	{ "SystemCtrlPrivate", 0x0000, 0x4001, 4, 0, 10, (unsigned int *) &__SystemCtrlPrivate_exports },
 	{ "SysclibForUser", 0x0000, 0x4001, 4, 0, 47, (unsigned int *) &__SysclibForUser_exports },
 };

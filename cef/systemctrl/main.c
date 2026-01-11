@@ -191,9 +191,9 @@ static int OnModuleStart(SceModule *mod) {
 	}
 
 	if (load_file_config) {
-		SEConfig* res = sctrlSEGetConfig((SEConfig*)&config);
+		int res = sctrlSEGetConfig((SEConfig*)&config);
 		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
-		if (res == &config) {
+		if (res == 0) {
 			load_file_config = 0;
 		}
 	}
