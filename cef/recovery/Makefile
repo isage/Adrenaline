@@ -7,6 +7,15 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
 
+BUILD_PRX = 1
+
+USE_PSPSDK_LIBC = 1
+USE_PSPSDK_LIBS = 1
+
+LIBDIR = ../lib
+LIBS = -lz -lpspreg -lpspsystemctrl_user -lpspkubridge -lpspsysc_user
+
+
 ifdef RECOVERY_DEBUG
 CFLAGS += -DDEBUG=$(RECOVERY_DEBUG)
 endif
@@ -18,13 +27,5 @@ endif
 ifeq ($(NIGHTLY),1)
 CFLAGS += -DNIGHTLY=1
 endif
-
-BUILD_PRX = 1
-
-USE_PSPSDK_LIBC = 1
-USE_PSPSDK_LIBS = 1
-
-LIBDIR = ../lib
-LIBS = -lz -lpspreg -lpspsystemctrl_user -lpspkubridge -lpspsysc_user
 
 include ../lib/build.mak

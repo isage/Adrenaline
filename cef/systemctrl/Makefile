@@ -12,6 +12,16 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
 
+BUILD_PRX = 1
+PRX_EXPORTS = exports.exp
+
+LIBDIR = ../lib
+LIBS = -lpspsemaphore -lpspamctrl_driver -lpspinit_kernel -lpspthreadman_kernel -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
+
+USE_KERNEL_LIBC = 1
+USE_KERNEL_LIBS = 1
+
+
 ifdef SCTRL_DEBUG
 CFLAGS += -DDEBUG=$(SCTRL_DEBUG)
 endif
@@ -23,14 +33,5 @@ endif
 ifeq ($(NIGHTLY),1)
 CFLAGS += -DNIGHTLY=1
 endif
-
-BUILD_PRX = 1
-PRX_EXPORTS = exports.exp
-
-LIBDIR = ../lib
-LIBS = -lpspsemaphore -lpspamctrl_driver -lpspinit_kernel -lpspthreadman_kernel -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
-
-USE_KERNEL_LIBC = 1
-USE_KERNEL_LIBS = 1
 
 include ../lib/build_prx.mak

@@ -6,14 +6,6 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
 
-ifdef XMBCTRL_DEBUG
-CFLAGS += -DDEBUG=$(XMBCTRL_DEBUG)
-endif
-
-ifdef DEBUG
-CFLAGS += -DDEBUG=$(DEBUG)
-endif
-
 BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
@@ -24,5 +16,13 @@ USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
 LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspkubridge -lpspvshctrl -lpsppaf -lpspvsh -lpspvshcommongui
+
+ifdef XMBCTRL_DEBUG
+CFLAGS += -DDEBUG=$(XMBCTRL_DEBUG)
+endif
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+endif
 
 include ../lib/build_prx.mak

@@ -73,7 +73,7 @@ int sceUmdCheckMedium(void) {
 	}
 
 	int ret = 1;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg("%s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -115,6 +115,7 @@ int sceUmdRegisterUMDCallBack(int cbid) {
 exit:
 	pspSdkSetK1(k1);
 
+	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, ret);
 	return ret;
 }
 
@@ -165,7 +166,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	pspSdkSetK1(k1);
 
 exit:
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg("%s: disc_info=0x%p -> 0x%08X\n", __func__, info, ret);
 	return ret;
 }
 
@@ -178,33 +179,34 @@ int sceUmdCancelWaitDriveStat(void) {
 }
 
 u32 sceUmdGetErrorStatus(void) {
-	logmsg("%s: -> 0x%08X\n", __func__, g_umd_error_status);
+	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_error_status);
 	return g_umd_error_status;
 }
 
 void sceUmdSetErrorStatus(u32 status) {
 	g_umd_error_status = status;
-	logmsg("%s: -> 0x%08X\n", __func__, g_umd_error_status);
+	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_error_status);
 }
 
 int sceUmdGetDriveStat(void) {
+	logmsg("%s: () -> 0x%08X\n", __func__, g_drive_status);
 	return g_drive_status;
 }
 
 u32 sceUmdGetDriveStatus(u32 status) {
-	logmsg("%s: -> 0x%08X\n", __func__, g_drive_status);
+	logmsg("%s: status=0x%08lX -> 0x%08X\n", __func__, status, g_drive_status);
 	return g_drive_status;
 }
 
 int sceUmdManRegisterImposeCallBack(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg("%s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmdManUnRegisterImposeCallBack(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg("%s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -223,7 +225,7 @@ int sceUmdManUnRegisterInsertEjectUMDCallBack(u32 id) {
 
 int sceUmdManIsDvdDrive(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg("%s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -241,8 +243,10 @@ static inline void set_gp(u32 gp) {
 
 // for now 6.20/6.35 share the same patch
 int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
+	int res = 0;
 	if (0 != g_ie_callback_id) {
-		return SCE_ENOMEM;
+		res = SCE_ENOMEM;
+		goto exit;
 	}
 
 	g_ie_callback_id = id;
@@ -278,13 +282,16 @@ int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
 	sctrlFlushCache();
 
 	if (NULL == g_ie_callback) {
-		return 0;
+		res = 0;
+		goto exit;
 	}
 
 	set_gp(g_prev_gp);
 	(*g_ie_callback)(g_ie_callback_id, g_ie_callback_arg, 1);
 
-	return 0;
+exit:
+	logmsg("%s: id=0x%08lX, cb=0x%p, arg=0x%p -> 0x%08X\n", __func__, id, callback, arg, res);
+	return res;
 }
 
 // 0x000014F0
@@ -354,12 +361,15 @@ int sceUmdWaitDriveStat(int stat) {
 }
 
 int sceUmdActivate(int unit, const char* drive) {
+	int res = SCE_EINVAL;
 	if (!g_iso_opened) {
-		return SCE_EINVAL;
+		res = SCE_EINVAL;
+		goto exit;
 	}
 
 	if (drive == NULL || !check_memory(drive, strlen(drive) + 1)) {
-		return SCE_EINVAL;
+		res = SCE_EINVAL;
+		goto exit;
 	}
 
 	u32 k1 = pspSdkSetK1(0);
@@ -367,7 +377,8 @@ int sceUmdActivate(int unit, const char* drive) {
 	if (0 != strcmp(drive, "disc0:")) {
 		pspSdkSetK1(k1);
 
-		return SCE_EINVAL;
+		res = SCE_EINVAL;
+		goto exit;
 	}
 
 	int value = 1;
@@ -378,19 +389,23 @@ int sceUmdActivate(int unit, const char* drive) {
 		do_umd_notify(PSP_UMD_PRESENT | PSP_UMD_READY);
 		pspSdkSetK1(k1);
 
-		return 0;
+		res = 0;
+		goto exit;
 	}
 
 	if (g_drive_status & PSP_UMD_READY) {
 		pspSdkSetK1(k1);
 
-		return 0;
+		res = 0;
+		goto exit;
 	}
 
 	do_umd_notify(g_drive_status);
 	pspSdkSetK1(k1);
 
-	return 0;
+exit:
+	logmsg("%s: unit=0x%08X, drive=%s -> 0x%08X\n", __func__, unit, drive, res);
+	return res;
 }
 
 int sceUmdDeactivate(int unit, const char *drive) {
@@ -491,6 +506,7 @@ int sceUmd_040A7090(int orig_error_code) {
 	}
 
 exit:
+	logmsg("%s: error=0x%08X -> 0x%08X\n", __func__, orig_error_code, error_code);
 	return error_code;
 }
 

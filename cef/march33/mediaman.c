@@ -120,14 +120,20 @@ int sceUmdUnRegisterUMDCallBack(SceUID cbid) {
 }
 
 int sceUmdCheckMedium() {
+	int res = 0;
 	if (g_iso_fn[0] == '\0'){
-		return 0;
+		res = 0;
+		goto exit;
 	}
 
 	while (!g_iso_opened) {
 		sceKernelDelayThread(10000);
 	}
 
+	res = 1;
+
+exit:
+	logmsg("%s: () -> 0x%08X\n", __func__, res);
 	return 1;
 }
 

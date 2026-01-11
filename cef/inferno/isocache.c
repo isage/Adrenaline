@@ -372,6 +372,12 @@ int iso_cache_read(IoReadArg *arg) {
 }
 
 int infernoCacheInit(int cache_size, int cache_num, int partition) {
+	// prevent ISO cache in homebrew
+	int apitype = sceKernelInitApitype();
+	if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2) {
+		return 0;
+	}
+
 	if (cache_size == 0){ // disable cache
 		sceKernelFreePartitionMemory(cache_ctrl);
 		sceKernelFreePartitionMemory(cache_mem);
@@ -470,6 +476,7 @@ int infernoCacheAdd(u32 pos, int len) {
 
 // call @EPI-InfernoDriver:CacheCtrl,0x5CC24481@
 #ifdef DEBUG
+#include <stdio.h>
 void isocache_stat(int reset) {
 	char buf[256];
 	int i, used;

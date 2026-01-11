@@ -7,14 +7,6 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
 
-ifdef SATELITE_DEBUG
-CFLAGS += -DDEBUG=$(SATELITE_DEBUG)
-endif
-
-ifdef DEBUG
-CFLAGS += -DDEBUG=$(DEBUG)
-endif
-
 BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
@@ -23,5 +15,13 @@ USE_PSPSDK_LIBC = 0
 
 LIBDIR = ../lib
 LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspvshctrl -lpsppower
+
+ifdef SATELITE_DEBUG
+CFLAGS += -DDEBUG=$(SATELITE_DEBUG)
+endif
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+endif
 
 include ../lib/build_prx.mak

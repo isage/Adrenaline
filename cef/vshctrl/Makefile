@@ -7,6 +7,15 @@ CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 PSP_FW_VERSION = 661
 
+BUILD_PRX = 1
+PRX_EXPORTS = exports.exp
+
+USE_KERNEL_LIBC = 1
+USE_KERNEL_LIBS = 1
+
+LIBDIR = ../lib
+LIBS = -lpspsystemctrl_kernel -lpsppower_driver -lpsprtc_driver -lpspusb_driver -lpspreg_driver -lpspsysclib_kernel -lpspsysmem_kernel -lpspinit_kernel
+
 ifdef VSHCTRL_DEBUG
 CFLAGS += -DDEBUG=$(VSHCTRL_DEBUG)
 endif
@@ -18,14 +27,5 @@ endif
 ifeq ($(NIGHTLY),1)
 CFLAGS += -DNIGHTLY=1
 endif
-
-BUILD_PRX = 1
-PRX_EXPORTS = exports.exp
-
-USE_KERNEL_LIBC = 1
-USE_KERNEL_LIBS = 1
-
-LIBDIR = ../lib
-LIBS = -lpspsystemctrl_kernel -lpsppower_driver -lpsprtc_driver -lpspusb_driver -lpspreg_driver -lpspsysclib_kernel -lpspsysmem_kernel -lpspinit_kernel
 
 include ../lib/build_prx.mak

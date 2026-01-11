@@ -129,6 +129,7 @@ int _logSync(void);
 #include <pspdisplay.h>
 #include <pspiofilemgr.h>
 #include <pspmoduleinfo.h>
+#include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 

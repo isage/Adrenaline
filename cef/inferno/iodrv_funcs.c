@@ -46,7 +46,6 @@
 	lba_param[6] = byte size of start  LBA
 	lba_param[7] = byte size of last   LBA
  */
-
 struct LbaParams {
 	int unknown1; // 0
 	int cmd; // 4
