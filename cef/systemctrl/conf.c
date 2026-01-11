@@ -88,27 +88,26 @@ static void migrate_config717(SEConfigADR717* old, SEConfigADR* new){
 	new->recovery_color = old->recovery_color;
 }
 
-static void config_overwrite(SEConfigADR *config) {
+static void config_overwrite(SEConfigADR *conf) {
 	if (rebootex_config.overwrite_use_psposk) {
 		// Overwrite the config
-		g_og_use_psposk_value = config->use_sony_psposk;
-		config->use_sony_psposk = rebootex_config.overwrite_use_psposk_to;
+		g_og_use_psposk_value = conf->use_sony_psposk;
+		conf->use_sony_psposk = rebootex_config.overwrite_use_psposk_to;
 	}
 }
 
-static inline void restore_overwrite(SEConfigADR *config) {
+static inline void restore_overwrite(SEConfigADR *conf) {
 	if (rebootex_config.overwrite_use_psposk) {
-		config->use_sony_psposk = g_og_use_psposk_value;
+		conf->use_sony_psposk = g_og_use_psposk_value;
 	}
 }
 
-SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size) {
-	if (config == NULL) return NULL;
+SEConfig* sctrlSEGetConfigEx(SEConfig *conf, int size) {
+	if (conf == NULL) return (SEConfig*)&config;
 	int k1 = pspSdkSetK1(0);
 	int read = SCE_ERR_ININDEX;
-	SEConfig* res = NULL;
 
-	memset(config, 0, size);
+	memset(conf, 0, size);
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
 	if (fd < 0) {
 		goto exit;
@@ -127,7 +126,7 @@ SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size) {
 				logmsg("[INFO]: Adrenaline CFW 7.1.7 config found\n");
 				SEConfigADR717 old_conf;
 				read = sceIoRead(fd, &old_conf, sizeof(SEConfigADR717));
-				migrate_config717(&old_conf, (SEConfigADR*)config);
+				migrate_config717(&old_conf, (SEConfigADR*)conf);
 
 				if (read < sizeof(SEConfigADR717)) {
 					goto exit;
@@ -135,11 +134,11 @@ SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size) {
 
 				// Close fd and also set the new config
 				sceIoClose(fd);
-				sctrlSESetConfig(config);
+				sctrlSESetConfig(conf);
 				logmsg("[INFO]: Migrated Adrenaline CFW 7.1.7 config\n");
 				break;
 			default:
-				read = sceIoRead(fd, config, size);
+				read = sceIoRead(fd, conf, size);
 
 				if (read < size) {
 					goto exit;
@@ -147,22 +146,21 @@ SEConfig* sctrlSEGetConfigEx(SEConfig *config, int size) {
 				break;
 		}
 	} else {
-		read = sceIoRead(fd, config, size);
+		read = sceIoRead(fd, conf, size);
 
 		if (read < size) {
 			goto exit;
 		}
 	}
 
-	config_overwrite((SEConfigADR*)config);
-	res = config;
+	config_overwrite((SEConfigADR*)conf);
 
 exit:
 	if (fd >= 0) {
 		sceIoClose(fd);
 	}
 	pspSdkSetK1(k1);
-	return res;
+	return (SEConfig*)&config;
 }
 
 int sctrlSESetConfigEx(SEConfig *cfg, int size) {
@@ -199,23 +197,27 @@ int sctrlSESetConfigEx(SEConfig *cfg, int size) {
 	return 0;
 }
 
-SEConfig* sctrlSEGetConfig(SEConfig *config) {
-	if (!config) return NULL;
-	return sctrlSEGetConfigEx(config, sizeof(SEConfigADR));
+SEConfig* sctrlSEGetConfig(SEConfig *conf) {
+	if (!conf) return (SEConfig*)&config;
+	return sctrlSEGetConfigEx(conf, sizeof(SEConfigADR));
 }
 
-int sctrlSESetConfig(SEConfig *config) {
-	return sctrlSESetConfigEx(config, sizeof(SEConfigADR));
+int sctrlSESetConfig(SEConfig *conf) {
+	return sctrlSESetConfigEx(conf, sizeof(SEConfigADR));
 }
 
 int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
-	if (size == sizeof(SEConfigADR)){
+	if (size == sizeof(SEConfigADR) && conf){
 		memcpy(&config, conf, size);
 		return 0;
 	}
 	return -1;
 }
 
-void sctrlSEApplyConfig(SEConfig *conf) {
-	memcpy(&config, conf, sizeof(SEConfigADR));
+int sctrlSEApplyConfig(SEConfig *conf) {
+	if (conf){
+		memcpy(&config, conf, sizeof(SEConfigADR));
+		return 0;
+	}
+	return -1;
 }

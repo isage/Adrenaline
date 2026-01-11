@@ -28,6 +28,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <libpsardumper.h>
+#include <pspdecrypt.h>
 
 #include "main.h"
 #include "menu.h"
