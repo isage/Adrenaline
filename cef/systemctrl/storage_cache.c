@@ -323,7 +323,7 @@ int storageCacheInit(const char* driver) {
 	int app_type = sceKernelApplicationType();
 
 	// Not needed on POPS
-	if (app_type == SCE_APPTYPE_POPS) {
+	if (app_type == PSP_INIT_KEYCONFIG_POPS) {
 		return 0;
 	}
 

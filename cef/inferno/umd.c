@@ -21,7 +21,7 @@
 #include <pspumd.h>
 #include <psprtc.h>
 #include <psperror.h>
-#include <pspsysmem.h>
+#include <pspsysmem_kernel.h>
 #include <pspkernel.h>
 #include <pspthreadman_kernel.h>
 
@@ -123,7 +123,7 @@ int sceUmdUnRegisterUMDCallBack(int cbid) {
 	int ret = SCE_EINVAL;
 
 	int intr;
-	uidControlBlock *type;
+	SceUidControlBlock *type;
 	if (sceKernelGetUIDcontrolBlock(cbid, &type) == 0) {
 		if (g_umd_cbid == cbid) {
 			intr = sceKernelCpuSuspendIntr();

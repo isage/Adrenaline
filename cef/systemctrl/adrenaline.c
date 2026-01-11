@@ -16,6 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <pspkermit.h>
+
 #include <common.h>
 #include <adrenaline_log.h>
 
@@ -76,7 +78,7 @@ int getSfoTitle(char *title, int n) {
 	memset(title, 0, n);
 
 	int bootfrom = sceKernelBootFrom();
-	if (bootfrom == SCE_BOOT_DISC) {
+	if (bootfrom == PSP_BOOT_DISC) {
         fd = sceIoOpen("disc0:/PSP_GAME/PARAM.SFO", PSP_O_RDONLY, 0);
 		if (fd < 0) {
 			return fd;
@@ -84,7 +86,7 @@ int getSfoTitle(char *title, int n) {
 
 		size = sceIoLseek(fd, 0, PSP_SEEK_END);
 		sceIoLseek(fd, 0, PSP_SEEK_SET);
-	} else if (bootfrom == SCE_BOOT_MS) {
+	} else if (bootfrom == PSP_BOOT_MS) {
 		char *filename = sceKernelInitFileName();
 		if (!filename) {
 			return -1;
@@ -138,9 +140,9 @@ void initAdrenalineInfo() {
 	memset(adrenaline, 0, sizeof(SceAdrenaline));
 
 	int keyconfig = sceKernelApplicationType();
-	if (keyconfig == SCE_APPTYPE_GAME || keyconfig == SCE_APPTYPE_POPS) {
+	if (keyconfig == PSP_INIT_KEYCONFIG_GAME || keyconfig == PSP_INIT_KEYCONFIG_POPS) {
 		getSfoTitle(adrenaline->title, 128);
-	} else if (keyconfig == SCE_APPTYPE_VSH) {
+	} else if (keyconfig == PSP_INIT_KEYCONFIG_VSH) {
 		strcpy(adrenaline->title, "XMB\xE2\x84\xA2");
 	} else {
 		strcpy(adrenaline->title, "Unknown");
@@ -156,7 +158,7 @@ void initAdrenalineInfo() {
 		strcpy(adrenaline->filename, filename);
 	}
 
-	adrenaline->pops_mode = sceKernelApplicationType() == SCE_APPTYPE_POPS;
+	adrenaline->pops_mode = sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS;
 }
 
 int adrenaline_interrupt() {
@@ -218,7 +220,7 @@ int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 			ReInitSasCore();
 
 			if (adrenaline->pops_mode) {
-				int (* sceKermitPeripheralInitPops)() = (void *)FindProc("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
+				int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
 				if (sceKermitPeripheralInitPops) {
 					sceKermitPeripheralInitPops();
 				}
@@ -290,7 +292,7 @@ void PatchLowIODriver2(SceModule* mod) {
 
 	HIJACK_FUNCTION(text_addr + 0x880, SetFlag1Patched, SetFlag1);
 	HIJACK_FUNCTION(text_addr + 0xCD8, SetFlag2Patched, SetFlag2);
-	HIJACK_FUNCTION(FindProc("sceKermit_Driver", "sceKermit_driver", 0xD69C50BB), sceKermitSyncDisplayPatched, sceKermitSyncDisplay);
+	HIJACK_FUNCTION(sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver", 0xD69C50BB), sceKermitSyncDisplayPatched, sceKermitSyncDisplay);
 
 	sctrlFlushCache();
 }

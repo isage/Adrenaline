@@ -1,6 +1,8 @@
 #ifndef __ISOFS_DRIVER_H__
 #define __ISOFS_DRIVER_H__
 
+#include <pspsdk.h>
+#include <pspiofilemgr.h>
 #include "umd9660_driver.h"
 
 #define ISO9660_FILEFLAGS_FILE	1

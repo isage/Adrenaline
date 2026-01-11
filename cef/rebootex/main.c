@@ -16,19 +16,24 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
 #include <psperror.h>
+#include <psploadexec_kernel.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
+#include <pspbtcnf.h>
 #include <extratypes.h>
 
 #include "main.h"
 #include "libc.h"
+#include "rebootexconfig.h"
 #include "../../adrenaline_compat.h"
 
 #define REBOOT_MODULE "/rtm.prx"
 
-int (* sceReboot)(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) = (void *)0x88600000;
+int (* sceReboot)(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) = (void *)0x88600000;
 int (* DcacheClear)(void) = (void *)0x886018AC;
 int (* IcacheClear)(void) = (void *)0x88601E40;
 
@@ -73,7 +78,7 @@ int PatchSysMem(void *a0, void *sysmem_config) {
 int DecryptExecutablePatched(void *buf, int size, int *retSize) {
 	if (*(u16 *)((u32)buf + 0x150) == 0x8B1F) {
 		*retSize = *(u32 *)((u32)buf + 0xB0);
-		_memcpy(buf, (void *)((u32)buf + 0x150), *retSize);
+		memcpy(buf, (void *)((u32)buf + 0x150), *retSize);
 		return 0;
 	}
 
@@ -113,7 +118,7 @@ int InsertModule(void *buf, char *new_module, char *module_after, int flags) {
 
 	int i = 0;
 	for (i = 0; i < header->nmodules; i++) {
-		if (_strcmp(modnamestart + modules[i].stroffset, module_after) == 0) {
+		if (strcmp(modnamestart + modules[i].stroffset, module_after) == 0) {
 			break;
 		}
 	}
@@ -121,13 +126,13 @@ int InsertModule(void *buf, char *new_module, char *module_after, int flags) {
 	if (i == header->nmodules)
 		return -2;
 
-	int len = _strlen(new_module) + 1;
+	int len = strlen(new_module) + 1;
 
 	// Add new_module name at end
-	_memcpy((void *)modnameend, (void *)new_module, len);
+	memcpy((void *)modnameend, (void *)new_module, len);
 
 	// Move module_after forward
-	_memmove(&modules[i + 1], &modules[i], (header->nmodules - i) * sizeof(ModuleEntry) + len + modnameend - modnamestart);
+	memmove(&modules[i + 1], &modules[i], (header->nmodules - i) * sizeof(ModuleEntry) + len + modnameend - modnamestart);
 
 	// Add new_module information
 	modules[i].stroffset = modnameend - modnamestart;
@@ -156,40 +161,40 @@ int sceKernelCheckPspConfigPatched(void *buf, int size, int flag) {
 }
 
 int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, void *t0) {
-	if (_strcmp(file->name, "pspbtcnf.bin") == 0) {
+	if (strcmp(file->name, "pspbtcnf.bin") == 0) {
 		char *name = NULL;
 
 		switch(rebootex_config->bootfileindex) {
-			case BOOT_NORMAL:
+			case MODE_UMD:
 				name = "/kd/pspbtjnf.bin";
 				break;
 
-			case BOOT_INFERNO:
+			case MODE_INFERNO:
 				name = "/kd/pspbtknf.bin";
 				break;
 
-			case BOOT_MARCH33:
+			case MODE_MARCH33:
 				name = "/kd/pspbtlnf.bin";
 				break;
 
-			case BOOT_NP9660:
+			case MODE_NP9660:
 				name = "/kd/pspbtmnf.bin";
 				break;
 
-			case BOOT_RECOVERY:
+			case MODE_RECOVERY:
 				name = "/kd/pspbtrnf.bin";
 				break;
 		}
 
-		if (rebootex_config->bootfileindex == BOOT_RECOVERY) {
-			rebootex_config->bootfileindex = BOOT_NORMAL;
+		if (rebootex_config->bootfileindex == MODE_RECOVERY) {
+			rebootex_config->bootfileindex = MODE_UMD;
 		}
 
 		file->name = name;
-	} else if (_strcmp(file->name, REBOOT_MODULE) == 0) {
+	} else if (strcmp(file->name, REBOOT_MODULE) == 0) {
 		file->buffer = (void *)0x89000000;
 		file->size = rebootex_config->size;
-		_memcpy(file->buffer, rebootex_config->buf, file->size);
+		memcpy(file->buffer, rebootex_config->buf, file->size);
 		return 0;
 	}
 
@@ -198,8 +203,8 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 	return 0; //always return 0 to allow boot with unsuccessfully loaded files
 }
 
-int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) __attribute__((section(".text.start")));
-int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) {
+int _start(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) __attribute__((section(".text.start")));
+int _start(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) {
 	for (u32 i = 0; i < 0x4000; i += 4) {
 		u32 addr = 0x88600000 + i;
 		u32 data = VREAD32(addr);

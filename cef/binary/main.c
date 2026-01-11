@@ -18,6 +18,7 @@
 
 #include <pspsdk.h>
 #include <pspkernel.h>
+#include <pspkermit.h>
 
 #include "../../adrenaline_compat.h"
 
@@ -45,13 +46,13 @@ inline static void pspSync() {
 	asm volatile ("sync\n");
 }
 
-inline static void sceKermitSetRegister(u32 reg, u32 val) {
+inline static void adrenalineKermitSetRegister(u32 reg, u32 val) {
 	u32 old_val = REG32(reg);
 	REG32(reg) = old_val & ~val;
 	REG32(reg) = old_val | val;
 }
 
-__attribute__((noinline)) void sceKermitWait() {
+__attribute__((noinline)) void adrenalineKermitWait() {
 	pspSync();
 
 	REG32(0xBD000004) = 0xF;
@@ -61,7 +62,7 @@ __attribute__((noinline)) void sceKermitWait() {
 	while ((val = REG32(0xBD000000)) != 0xF);
 }
 
-void sceKermitSendRequest(u32 mode, u32 cmd) {
+void adrenalineKermitSendRequest(u32 mode, u32 cmd) {
 	// Kermit request
 	SceKermitRequest *request = (SceKermitRequest *)0xABCC0000;
 	request->cmd = cmd;
@@ -74,10 +75,10 @@ void sceKermitSendRequest(u32 mode, u32 cmd) {
 	command->request = request;
 
 	// Wait
-	sceKermitWait();
+	adrenalineKermitWait();
 
 	// Set register
-	sceKermitSetRegister(0xBC300050, (1 << (4 + 0)));
+	adrenalineKermitSetRegister(0xBC300050, (1 << (4 + 0)));
 }
 
 u64 _main(u32 sp, u32 ra) {
@@ -85,12 +86,12 @@ u64 _main(u32 sp, u32 ra) {
 	adrenaline->ra = ra;
 
 	if (adrenaline->savestate_mode == SAVESTATE_MODE_SAVE) {
-		sceKermitSendRequest(KERMIT_MODE_EXTRA_2, ADRENALINE_VITA_CMD_SAVESTATE);
+		adrenalineKermitSendRequest(KERMIT_MODE_EXTRA_2, ADRENALINE_VITA_CMD_SAVESTATE);
 
 		while (adrenaline->vita_response != ADRENALINE_VITA_RESPONSE_SAVED);
 		adrenaline->vita_response = ADRENALINE_VITA_RESPONSE_NONE;
 	} else if (adrenaline->savestate_mode == SAVESTATE_MODE_LOAD) {
-		sceKermitSendRequest(KERMIT_MODE_EXTRA_2, ADRENALINE_VITA_CMD_LOADSTATE);
+		adrenalineKermitSendRequest(KERMIT_MODE_EXTRA_2, ADRENALINE_VITA_CMD_LOADSTATE);
 
 		while (adrenaline->vita_response != ADRENALINE_VITA_RESPONSE_LOADED);
 		adrenaline->vita_response = ADRENALINE_VITA_RESPONSE_NONE;

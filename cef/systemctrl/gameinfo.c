@@ -18,14 +18,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
-
 #include <adrenaline_log.h>
 
 #include "main.h"
+#include "common.h"
+#include "rebootexconfig.h"
 #include "../../adrenaline_compat.h"
 
 extern SceAdrenaline *adrenaline;
+extern RebootexConfig rebootex_config;
 
 typedef struct LbaParams {
 	int unknown1; // 0
@@ -75,19 +76,19 @@ int readTitleIdFromPBP() {
 // 0 - Not able to get | 1 - Able to get
 int readTitleIdFromISO() {
 	int (*isoGetTitleId)(char title_id[10]) = NULL;
-	int boot_conf = rebootex_config.bootfileindex;
+	int MODE_conf = rebootex_config.bootfileindex;
 
-	switch (boot_conf) {
-		case BOOT_INFERNO:
-			isoGetTitleId = (void*)FindProc("EPI-InfernoDriver", "inferno_driver", 0xD4FAB33F);
+	switch (MODE_conf) {
+		case MODE_INFERNO:
+			isoGetTitleId = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xD4FAB33F);
 			break;
 
-		case BOOT_MARCH33:
-			isoGetTitleId = (void*)FindProc("EPI-March33Driver", "march33_driver", 0xD4FAB33F);
+		case MODE_MARCH33:
+			isoGetTitleId = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xD4FAB33F);
 			break;
 
-		case BOOT_NP9660:
-			isoGetTitleId = (void*)FindProc("EPI-GalaxyController", "galaxy_driver", 0xD4FAB33F);
+		case MODE_NP9660:
+			isoGetTitleId = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xD4FAB33F);
 			break;
 
 		default:
@@ -106,12 +107,12 @@ int readTitleIdFromISO() {
 
 void findAndSetTitleId() {
 	int apitype = sceKernelInitApitype();
-	if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2 || apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2 || apitype >= SCE_APITYPE_VSH_KERNEL) {
+	if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2 || apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
 		return;
 	}
 
 	if (rebootex_config.title_id[0] == '\0') {
-		int is_iso = rebootex_config.bootfileindex == BOOT_INFERNO || rebootex_config.bootfileindex == BOOT_MARCH33 || rebootex_config.bootfileindex == BOOT_NP9660;
+		int is_iso = rebootex_config.bootfileindex == MODE_INFERNO || rebootex_config.bootfileindex == MODE_MARCH33 || rebootex_config.bootfileindex == MODE_NP9660;
 		if (is_iso) {
 			readTitleIdFromISO();
 		} else {
@@ -150,10 +151,6 @@ SceGameInfo* sceKernelGetGameInfoPatched() {
 void PatchGameInfoGetter(SceModule* mod) {
 	// Kernel module
 	if((mod->text_addr & 0x80000000) != 0) {
-		u32 func = sctrlHENFindFunctionInMod(mod, "SysMemForKernel", 0xEF29061C);
-
-		if (func != 0) {
-			REDIRECT_FUNCTION(func, sceKernelGetGameInfoPatched);
-		}
+		sctrlHookImportByNID(mod, "SysMemForKernel", 0xEF29061C, sceKernelGetGameInfoPatched);
 	}
 }

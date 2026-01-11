@@ -129,8 +129,8 @@ enum HidePicsOpt {
 	PICS_OPT_PIC1_ONLY,
 };
 
-#define ADRENALINE_CFG_MAGIC_1 0x192EFC3C
-#define ADRENALINE_CFG_MAGIC_2 0x17BEB6AA
+#define SECONFIG_MAGIC_ADR1 0x192EFC3C
+#define SECONFIG_MAGIC_ADR2 0x17BEB6AA
 
 typedef struct {
 	int magic[2];
@@ -196,11 +196,11 @@ typedef struct {
 	u8 use_me2;
 	/** Hide CFW files from games. 0 - Hide, 1 - Do not hide */
 	u8 no_hide_cfw_files;
-} AdrenalineConfig;
+} SEConfigADR;
 
-typedef AdrenalineConfig SEConfig;
+typedef SEConfigADR SEConfig;
 
-#define IS_EPI_CONFIG(config) ((((AdrenalineConfig*)config)->magic[0] == ADRENALINE_CFG_MAGIC_1) && (((AdrenalineConfig*)config)->magic[1] == ADRENALINE_CFG_MAGIC_2))
+#define IS_ADR_SECONFIG(config) ((((SEConfigADR*)config)->magic[0] == SECONFIG_MAGIC_ADR1) && (((SEConfigADR*)config)->magic[1] == SECONFIG_MAGIC_ADR2))
 
 /**
  * Gets the SE/OE version
@@ -216,38 +216,38 @@ int sctrlSEGetVersion();
  * Avoid using this function, it may corrupt your program.
  * Use sctrlSEGetCongiEx function instead.
  *
- * @param config - pointer to a AdrenalineConfig structure that receives the SE configuration
+ * @param config - pointer to a SEConfigADR structure that receives the SE configuration
  * @returns 0 on success
 */
-int sctrlSEGetConfig(AdrenalineConfig *config);
+int sctrlSEGetConfig(SEConfigADR *config);
 
 /**
  * Gets the SE configuration
  *
- * @param config - pointer to a AdrenalineConfig structure that receives the SE configuration
+ * @param config - pointer to a SEConfigADR structure that receives the SE configuration
  * @param size - The size of the structure
  * @returns 0 on success
 */
-int sctrlSEGetConfigEx(AdrenalineConfig *config, int size);
+int sctrlSEGetConfigEx(SEConfigADR *config, int size);
 
 /**
  * Sets the SE configuration.
  * This function can corrupt the configuration in flash, use
  * sctrlSESetConfigEx instead.
  *
- * @param config - pointer to a AdrenalineConfig structure that has the SE configuration to set
+ * @param config - pointer to a SEConfigADR structure that has the SE configuration to set
  * @returns 0 on success
 */
-int sctrlSESetConfig(AdrenalineConfig *config);
+int sctrlSESetConfig(SEConfigADR *config);
 
 /**
  * Sets the SE configuration.
  *
- * @param config - pointer to a AdrenalineConfig structure that has the SE configuration to set
+ * @param config - pointer to a SEConfigADR structure that has the SE configuration to set
  * @param size - the size of the structure
  * @returns 0 on success
 */
-int sctrlSESetConfigEx(AdrenalineConfig *config, int size);
+int sctrlSESetConfigEx(SEConfigADR *config, int size);
 
 /**
  * Initiates the emulation of a disc from an ISO9660/CSO file.
@@ -267,7 +267,7 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size);
  * @note 3. This function is not available in SE for devhook
  *
  * @example
- * AdrenalineConfig config;
+ * SEConfigADR config;
  *
  * sctrlSEGetConfig(&config);
  *
@@ -364,7 +364,7 @@ void sctrlSESetUmdFileEx(const char *file, char *input);
  *
  * @param config - pointer to a SEConfig structure that has the SE configuration to set
 */
-void sctrlSEApplyConfig(AdrenalineConfig *conf);
+void sctrlSEApplyConfig(SEConfigADR *conf);
 
 /**
  * Immediately sets the SE configuration in memory without saving to flash.
@@ -372,7 +372,7 @@ void sctrlSEApplyConfig(AdrenalineConfig *conf);
  * @param config - pointer to a SEConfig structure that has the SE configuration to set
  * @returns 0 on success, and -1 on error
 */
-int sctrlSEApplyConfigEX(AdrenalineConfig *conf, int size);
+int sctrlSEApplyConfigEX(SEConfigADR *conf, int size);
 
 /**
  * Sets the speed for the cpu and bus.

@@ -26,12 +26,15 @@
 #include <adrenaline_log.h>
 
 #include "plugin.h"
+#include "rebootexconfig.h"
 
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
-extern AdrenalineConfig config;
+extern SEConfigADR config;
 extern RebootexConfig rebootex_config;
+
+void lowerString(char* orig, char* ret, int strSize);
 
 #define MAX_PLUGINS 64
 #define MAX_PLUGIN_PATH 128
@@ -124,7 +127,7 @@ static int isVshRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype >= SCE_APITYPE_VSH_KERNEL) {
+		if (apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
 			cur_runlevel = RUNLEVEL_VSH;
 		}
 	}
@@ -135,7 +138,7 @@ static int isPopsRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_APITYPE_MS5 || apitype == SCE_APITYPE_EF5) {
+		if (apitype == PSP_INIT_APITYPE_MS5 || apitype == PSP_INIT_APITYPE_EF5) {
 			cur_runlevel = RUNLEVEL_POPS;
 		}
 	}
@@ -146,10 +149,10 @@ static int isUmdRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2
-			|| (apitype >= SCE_APITYPE_UMD_EMU_MS1 && apitype <= SCE_APITYPE_UMD_EMU_EF2)
-			|| apitype == SCE_APITYPE_USBWLAN
-			|| (apitype >= SCE_APITYPE_GAME_EBOOT && apitype <= SCE_APITYPE_EMU_BOOT_EF)) {
+		if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2
+			|| (apitype >= PSP_INIT_APITYPE_UMD_EMU_MS1 && apitype <= PSP_INIT_APITYPE_UMD_EMU_EF2)
+			|| apitype == PSP_INIT_APITYPE_USBWLAN
+			|| (apitype >= PSP_INIT_APITYPE_GAME_EBOOT && apitype <= PSP_INIT_APITYPE_EMU_BOOT_EF)) {
 
 			cur_runlevel = RUNLEVEL_UMD;
 		}
@@ -161,7 +164,7 @@ static int isHomebrewRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2) {
+		if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2) {
 			cur_runlevel = RUNLEVEL_HOMEBREW;
 		}
 	}

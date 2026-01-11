@@ -297,8 +297,9 @@ void Installer() {
 		char name[128];
 		int cbExpanded;
 		int pos;
+		int signcheck;
 
-		res = pspPSARGetNextFile(big_buffer, size, sm_buffer1, sm_buffer2, name, &cbExpanded, &pos);
+		res = pspPSARGetNextFile(big_buffer, size, sm_buffer1, sm_buffer2, name, &cbExpanded, &pos, &signcheck);
 
 		if (res < 0) {
 			if (error) {

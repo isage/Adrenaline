@@ -1,12 +1,26 @@
-TARGET = rebootex
-OBJS = main.o libc.o
-
-INCDIR = ../include
-CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -fno-builtin
-CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
-ASFLAGS = $(CFLAGS)
-
-LDFLAGS = -nostartfiles -T linkfile.x -nostdlib
-
 PSPSDK = $(shell psp-config --pspsdk-path)
-include ../lib/build_bin.mak
+PSPDEV = $(shell psp-config --pspdev-path)
+ARKSDK = $(PSPDEV)/share/ark-dev-sdk
+
+TARGET = rebootex.bin
+
+C_OBJS = main.o
+
+CC = psp-gcc
+LD = psp-ld
+STRIP = psp-strip
+OBJCOPY = psp-objcopy
+INCDIR = ../include $(PSPSDK)/include
+CFLAGS = -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
+LINKFILE = $(ARKSDK)/build-tools/bootloadex.l
+LIBS = -L $(PSPSDK)/lib -lansic
+
+$(TARGET): main.elf
+	$(Q)$(STRIP) -s $<
+	$(Q)$(OBJCOPY) -O binary $< $(TARGET)
+	@echo GET $@
+
+clean:
+	$(Q)rm -rf *~ *.s *.o *.elf $(EXTRA_CLEAN)
+
+include $(ARKSDK)/build-tools/beauty_bin.mak

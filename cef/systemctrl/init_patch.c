@@ -19,6 +19,8 @@
 #include <common.h>
 #include <pspmodulemgr.h>
 #include <psploadcore.h>
+#include <psploadexec_kernel.h>
+#include <pspmodulemgr_kernel.h>
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -148,7 +150,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			if(config.startup_program && argsize == 0) {
 				LoadExecForKernel_AA2029EC();
 
-				SceKernelLoadExecVSHParam param;
+				struct SceKernelLoadExecVSHParam param;
 				memset(&param, 0, sizeof(param));
 				param.size = sizeof(param);
 				param.args = sizeof("ms0:/PSP/GAME/BOOT/EBOOT.PBP");
@@ -186,11 +188,11 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 
 			int type = sceKernelApplicationType();
 
-			if (type == SCE_APPTYPE_VSH && !config.no_xmbctrl) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && !config.no_xmbctrl) {
 				loadXmbControl();
 			}
 
-			if (type == SCE_APPTYPE_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
 				goto START_MODULE;
 			}
 

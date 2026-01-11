@@ -15,12 +15,12 @@ static int g_old_vsh_speed;
 void loadSettings() {
 	paf_memset(&g_cfw_config, 0, sizeof(g_cfw_config));
 
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 	g_old_vsh_speed = g_cfw_config.vsh_cpu_speed;
 }
 
 void saveSettings() {
-	sctrlSESetConfig(&g_cfw_config);
+	sctrlSESetConfig((SEConfig*)&g_cfw_config);
 
 	// Apply VSH config change
 	if (g_cfw_config.vsh_cpu_speed != g_old_vsh_speed) {

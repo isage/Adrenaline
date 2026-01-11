@@ -411,7 +411,7 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid);
  * -3 if failed to find import by NID after successful resolve to older firmware version
  * -4 if failed to find syscall table
 */
-int sctrlHENHookImportByNID(SceModule * mod, const char *library, u32 nid, void *func, int dummy);
+int sctrlHookImportByNID(SceModule * mod, const char *library, u32 nid, void *func, int dummy);
 
 /**
  * Replace import function stub in a module with a function or dummy value.
@@ -423,7 +423,7 @@ int sctrlHENHookImportByNID(SceModule * mod, const char *library, u32 nid, void 
  * the `func` syscall; in this case, manually exporting in exports.exp is still
  * required for Syscalls to work.
  *
- * @note ARK CFW compatibility, similar to `sctrlHENHookImportByNID`
+ * @note ARK CFW compatibility, similar to `sctrlHookImportByNID`
  *
  * @param mod - The module where to search the function
  * @param library - The library name

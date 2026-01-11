@@ -24,6 +24,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
+#include "common.h"
 #include "main.h"
 #include "menu.h"
 #include "installer.h"
@@ -40,7 +41,7 @@ static int g_recovery_exit = 0;
 
 u32 g_button_assign_value = 0;
 
-AdrenalineConfig g_cfw_config;
+SEConfigADR g_cfw_config;
 
 void ToggleUSB() {
 	if (!g_usb_status) {
@@ -66,7 +67,7 @@ void RunRecovery() {
 	vshmain_args[1] = 0x20;
 	vshmain_args[16] = 1;
 
-	SceKernelLoadExecVSHParam param;
+	struct SceKernelLoadExecVSHParam param;
 
 	memset(&param, 0, sizeof(param));
 	param.size = sizeof(param);

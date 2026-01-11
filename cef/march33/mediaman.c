@@ -106,7 +106,7 @@ int sceUmdRegisterUMDCallBack(SceUID cbid) {
 int sceUmdUnRegisterUMDCallBack(SceUID cbid) {
 	int k1 = pspSdkSetK1(0);
 	int res = 0;
-	uidControlBlock *block;
+	SceUidControlBlock *block;
 
 	if (sceKernelGetUIDcontrolBlock(cbid, &block) != 0 || cbid != g_umdcallback) {
 		res = SCE_EINVAL;

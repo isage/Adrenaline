@@ -31,6 +31,7 @@
 
 #include <adrenaline_log.h>
 
+#include "common.h"
 #include "virtualpbpmgr.h"
 #include "patch_io.h"
 #include "externs.h"
@@ -81,7 +82,7 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 		u32 t = (u32)curtick;
 		if (t >= (10 * 1000 * 1000)) {
 			g_set = 1;
-			SetSpeed(g_cpu_list[g_cfw_config.vsh_cpu_speed % N_CPU], g_bus_list[g_cfw_config.vsh_cpu_speed % N_CPU]);
+			sctrlHENSetSpeed(g_cpu_list[g_cfw_config.vsh_cpu_speed % N_CPU], g_bus_list[g_cfw_config.vsh_cpu_speed % N_CPU]);
 		}
 	}
 
@@ -163,8 +164,8 @@ int SetDefaultNicknamePatched() {
 int sceUpdateDownloadSetVersionPatched(int version) {
 	int k1 = pspSdkSetK1(0);
 
-	int (* sceUpdateDownloadSetVersion)(int version) = (void *)FindProc("SceUpdateDL_Library", "sceLibUpdateDL", 0xC1AF1076);
-	int (* sceUpdateDownloadSetUrl)(const char *url) = (void *)FindProc("SceUpdateDL_Library", "sceLibUpdateDL", 0xF7E66CB4);
+	int (* sceUpdateDownloadSetVersion)(int version) = (void *)sctrlHENFindFunction("SceUpdateDL_Library", "sceLibUpdateDL", 0xC1AF1076);
+	int (* sceUpdateDownloadSetUrl)(const char *url) = (void *)sctrlHENFindFunction("SceUpdateDL_Library", "sceLibUpdateDL", 0xF7E66CB4);
 
 	sceUpdateDownloadSetUrl("http://adrenaline.sarcasticat.com/psp-updatelist.txt");
 	int res = sceUpdateDownloadSetVersion(sctrlSEGetVersion());
@@ -173,7 +174,7 @@ int sceUpdateDownloadSetVersionPatched(int version) {
 	return res;
 }
 
-int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam *param, int unk2) {
+int LoadExecVSHCommonPatched(int apitype, char *file, struct SceKernelLoadExecVSHParam *param, int unk2) {
 	int k1 = pspSdkSetK1(0);
 
 	VshCtrlSetUmdFile("");
@@ -234,19 +235,19 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		// Set umd_mode
 		if (g_cfw_config.umd_mode == MODE_INFERNO) {
 			logmsg2("[INFO]: Launching with Inferno Driver\n");
-			sctrlSESetBootConfFileIndex(BOOT_INFERNO);
+			sctrlSESetBootConfFileIndex(MODE_INFERNO);
 		} else if (g_cfw_config.umd_mode == MODE_MARCH33) {
 			logmsg2("[INFO]: Launching with March33 Driver\n");
-			sctrlSESetBootConfFileIndex(BOOT_MARCH33);
+			sctrlSESetBootConfFileIndex(MODE_MARCH33);
 		} else if (g_cfw_config.umd_mode == MODE_NP9660) {
 			logmsg2("[INFO]: Launching with NP9660 Driver\n");
-			sctrlSESetBootConfFileIndex(BOOT_NP9660);
+			sctrlSESetBootConfFileIndex(MODE_NP9660);
 		}
 
 		if (has_pboot) {
-			apitype = SCE_APITYPE_UMD_EMU_MS2;
+			apitype = PSP_INIT_APITYPE_UMD_EMU_MS2;
 		} else {
-			apitype = SCE_APITYPE_UMD_EMU_MS1;
+			apitype = PSP_INIT_APITYPE_UMD_EMU_MS1;
 		}
 
 		param->args = strlen(param->argp) + 1; //Update length
@@ -284,8 +285,8 @@ void PatchVshMain(SceModule* mod) {
 	IoPatches();
 
 	SceModule *vsh_bridge_mod = sceKernelFindModuleByName("sceVshBridge_Driver");
-	sctrlHENHookImportByNID(vsh_bridge_mod, "sceCtrl_driver", 0xBE30CED0, sceCtrlReadBufferPositivePatched, 0);
-	sctrlHENPatchSyscall(K_EXTRACT_IMPORT(&sceCtrlReadBufferPositive), sceCtrlReadBufferPositivePatched);
+	sctrlHookImportByNID(vsh_bridge_mod, "sceCtrl_driver", 0xBE30CED0, sceCtrlReadBufferPositivePatched);
+	sctrlHENPatchSyscall((void*)K_EXTRACT_IMPORT(&sceCtrlReadBufferPositive), sceCtrlReadBufferPositivePatched);
 
 	// Dummy usb detection functions
 	// Those break camera, but doesn't seem to affect usb connection
@@ -343,15 +344,15 @@ void PatchSysconfPlugin(SceModule* mod) {
 	MAKE_DUMMY_FUNCTION(text_addr + 0xD2C4, 0);
 
 	// Redirect USB functions
-	REDIRECT_FUNCTION(text_addr + 0xAE9C, sctrlHENMakeSyscallStub(InitUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xAFF4, sctrlHENMakeSyscallStub(ShutdownUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xB4A0, sctrlHENMakeSyscallStub(GetUsbStatusPatched));
+	REDIRECT_SYSCALL(text_addr + 0xAE9C, InitUsbPatched);
+	REDIRECT_SYSCALL(text_addr + 0xAFF4, ShutdownUsbPatched);
+	REDIRECT_SYSCALL(text_addr + 0xB4A0, GetUsbStatusPatched);
 
 	// Ignore wait thread end failure
 	MAKE_NOP(text_addr + 0xB264);
 
 	// Do not set nickname to PXXX on initial setup/reset
-	REDIRECT_FUNCTION(text_addr + 0x1520, sctrlHENMakeSyscallStub(SetDefaultNicknamePatched));
+	REDIRECT_SYSCALL(text_addr + 0x1520, SetDefaultNicknamePatched);
 
 	sctrlFlushCache();
 }
@@ -392,7 +393,7 @@ void PatchGamePlugin(SceModule* mod) {
 void PatchUpdatePlugin(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 
-	MAKE_CALL(text_addr + 0x82A8, sctrlHENMakeSyscallStub(sceUpdateDownloadSetVersionPatched));
+	MAKE_SYSCALL(text_addr + 0x82A8, sceKernelQuerySystemCall(sceUpdateDownloadSetVersionPatched));
 	sctrlFlushCache();
 }
 

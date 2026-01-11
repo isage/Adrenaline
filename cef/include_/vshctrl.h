@@ -60,7 +60,7 @@ int vctrlVSHRegisterVshMenu(int (*ctrl)(SceCtrlData *, int));
  *
  * @returns 0 on success, < 0 on error.
  */
-int vctrlVSHExitVSHMenu(AdrenalineConfig *conf);
+int vctrlVSHExitVSHMenu(SEConfigADR *conf);
 
 /**
  * Obtain the value of a registry variable.

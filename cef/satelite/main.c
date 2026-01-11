@@ -31,7 +31,7 @@ PSP_MODULE_INFO("EPI-VshCtrlSatelite", 0, 1, 0);
 static char *g_cpuspeeds[] = { "Default", "20/10", "75/37", "100/50", "133/66", "222/111", "266/133", "300/150", "333/166" };
 static char *g_umdmodes[] = { "Inferno", "M33 Driver", "Sony NP9660" };
 
-static AdrenalineConfig g_cfw_config;
+static SEConfigADR g_cfw_config;
 
 void SuspendDevice();
 void RecoveryMenu();
@@ -66,7 +66,7 @@ static int ctrl_handler(SceCtrlData *pad_data, int count) {
 }
 
 void RecoveryMenu() {
-	sctrlSESetBootConfFileIndex(BOOT_RECOVERY);
+	sctrlSESetBootConfFileIndex(MODE_RECOVERY);
 	sctrlKernelExitVSH(NULL);
 }
 
@@ -80,7 +80,7 @@ void RestartVSH() {
 
 int VshMenu_Thread(SceSize _args, void *_argp) {
 	sceKernelChangeThreadPriority(0, 8);
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 	vctrlVSHRegisterVshMenu(ctrl_handler);
 
 	int exit_sel = 0, menu_mode = 0;
@@ -116,11 +116,11 @@ int VshMenu_Thread(SceSize _args, void *_argp) {
 		}
 	}
 
-	sctrlSESetConfig(&g_cfw_config);
+	sctrlSESetConfig((SEConfig*)&g_cfw_config);
 
 	MenuExitFunction(g_exit_mode);
 
-	vctrlVSHExitVSHMenu(&g_cfw_config);
+	vctrlVSHExitVSHMenu((SEConfig*)&g_cfw_config, NULL, 0);
 
 	return sceKernelExitDeleteThread(0);
 }

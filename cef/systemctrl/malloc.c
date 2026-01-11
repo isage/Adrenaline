@@ -64,7 +64,7 @@ void* user_memalign(SceSize align, SceSize size) {
 
 int mallocinit() {
 	int keyconfig = sceKernelApplicationType();
-	if ((keyconfig == SCE_APPTYPE_POPS) || (keyconfig == SCE_APPTYPE_GAME && sceKernelInitApitype() == SCE_APITYPE_UMD_EMU_MS1)) {
+	if ((keyconfig == PSP_INIT_KEYCONFIG_POPS) || (keyconfig == PSP_INIT_KEYCONFIG_GAME && sceKernelInitApitype() == PSP_INIT_APITYPE_UMD_EMU_MS1)) {
 		return 0;
 	}
 

@@ -1,4 +1,11 @@
-all: _libs _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+PY = $(shell which python3)
+PSPDEV = $(shell psp-config --pspdev-path)
+ARKSDK = $(PSPDEV)/share/ark-dev-sdk
+PSPGZ = $(ARKSDK)/build-tools/gz/pspgz.py
+KHDR = $(ARKSDK)/build-tools/gz/SystemControl.hdr
+UHDR = $(ARKSDK)/build-tools/gz/UserModule.hdr
+
+all: _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
 KERNEL_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspreg_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel
 
@@ -6,54 +13,7 @@ USER_STUBS = psppower pspreg psppaf pspvsh pspvshcommongui
 
 SYSTEM_STUBS = $(KERNEL_STUBS) $(USER_STUBS)
 
-_cfw_libs:
-	make -C lib/libpspkubridge clean
-	make -C lib/libpspkubridge -j
-	cp "lib/libpspkubridge/libpspkubridge.a" "lib/"
-
-	make -C lib/libpspsystemctrl_kernel clean
-	make -C lib/libpspsystemctrl_kernel -j
-	cp "lib/libpspsystemctrl_kernel/libpspsystemctrl_kernel.a" "lib/"
-
-	make -C lib/libpspsystemctrl_user clean
-	make -C lib/libpspsystemctrl_user -j
-	cp "lib/libpspsystemctrl_user/libpspsystemctrl_user.a" "lib/"
-
-	make -C lib/libpspvshctrl clean
-	make -C lib/libpspvshctrl -j
-	cp "lib/libpspvshctrl/libpspvshctrl.a" "lib/"
-
-	make -C lib/libpspsysc_user clean
-	make -C lib/libpspsysc_user -j
-	cp "lib/libpspsysc_user/libpspsysc_user.a" "lib/"
-
-	make -C lib/libpspgalaxy_driver clean
-	make -C lib/libpspgalaxy_driver -j
-	cp "lib/libpspgalaxy_driver/libpspgalaxy_driver.a" "lib/"
-
-	make -C lib/libpspinferno_driver clean
-	make -C lib/libpspinferno_driver -j
-	cp "lib/libpspinferno_driver/libpspinferno_driver.a" "lib/"
-
-	make -C lib/libpspmarch33_driver clean
-	make -C lib/libpspmarch33_driver -j
-	cp "lib/libpspmarch33_driver/libpspmarch33_driver.a" "lib/"
-
-	make -C lib/libpspisoctrl_driver clean
-	make -C lib/libpspisoctrl_driver -j
-	cp "lib/libpspisoctrl_driver/libpspisoctrl_driver.a" "lib/"
-
-	make -C lib/libpspkubridge clean
-	make -C lib/libpspsystemctrl_kernel clean
-	make -C lib/libpspsystemctrl_user clean
-	make -C lib/libpspvshctrl clean
-	make -C lib/libpspsysc_user clean
-	make -C lib/libpspgalaxy_driver clean
-	make -C lib/libpspinferno_driver clean
-	make -C lib/libpspmarch33_driver clean
-	make -C lib/libpspisoctrl_driver clean
-
-_libs: _cfw_libs
+_libs:
 	make -C lib/system_stubs clean
 	make -C lib/system_stubs -j $(SYSTEM_STUBS:%=.%)
 	cp lib/system_stubs/*.a "lib/"
@@ -104,86 +64,67 @@ _binary:
 	bin2c binary/binary.bin systemctrl/binary.h binary
 	make -C binary clean
 
-_systemctrl: | _libs _rebootex _binary
+_systemctrl: | _rebootex _binary
 	make -C systemctrl clean
 	make -C systemctrl -j
-	psp-packer systemctrl/systemctrl.prx
-	cp "systemctrl/systemctrl.prx" "../user/flash0/kd/systemctrl.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/systemctrl.prx $(KHDR) systemctrl/systemctrl.prx SystemControl 0x3007
 	make -C systemctrl clean
 
-_popcorn: | _libs
+_popcorn:
 	make -C popcorn clean
 	make -C popcorn -j
-	psp-packer popcorn/popcorn.prx
-	cp "popcorn/popcorn.prx" "../user/flash0/kd/popcorn.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/popcorn.prx $(KHDR) popcorn/popcorn.prx PopcornManager 0x3007
 	make -C popcorn clean
 
-_galaxy: | _libs
+_galaxy:
 	make -C galaxy clean
 	make -C galaxy -j
-	psp-packer galaxy/galaxy.prx
-	cp "galaxy/galaxy.prx" "../user/flash0/kd/galaxy.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/galaxy.prx $(KHDR) galaxy/galaxy.prx GalaxyController 0x3007
 	make -C galaxy clean
 
-_march33: | _libs
+_march33:
 	make -C march33 clean
 	make -C march33 -j
-	psp-packer march33/march33.prx
-	cp "march33/march33.prx" "../user/flash0/kd/march33.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/march33.prx $(KHDR) march33/march33.prx March33Driver 0x3007
 	make -C march33 clean
 
-_inferno: | _libs
+_inferno:
 	make -C inferno clean
 	make -C inferno -j
-	psp-packer inferno/inferno.prx
-	cp "inferno/inferno.prx" "../user/flash0/kd/inferno.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/inferno.prx $(KHDR) inferno/inferno.prx InfernoDriver 0x3007
 	make -C inferno clean
 
-_vshctrl: | _libs
+_vshctrl:
 	make -C vshctrl clean
 	make -C vshctrl -j
-	psp-packer vshctrl/vshctrl.prx
-	cp "vshctrl/vshctrl.prx" "../user/flash0/kd/vshctrl.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/vshctrl.prx $(KHDR) vshctrl/vshctrl.prx VshControl 0x3007
 	make -C vshctrl clean
 
-_kermit_idstorage: | _libs
+_kermit_idstorage:
 	make -C kermit_idstorage clean
 	make -C kermit_idstorage -j
-	psp-packer kermit_idstorage/kermit_idstorage.prx
-	cp "kermit_idstorage/kermit_idstorage.prx" "../user/flash0/kd/kermit_idstorage.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/kermit_idstorage.prx $(KHDR) kermit_idstorage/kermit_idstorage.prx Kermit_IdStorage 0x3007
 	make -C kermit_idstorage clean
 
-_xmbctrl: | _libs
+_xmbctrl:
 	make -C xmbctrl clean
 	make -C xmbctrl -j
-	psp-packer xmbctrl/xmbctrl.prx
-	cp "xmbctrl/xmbctrl.prx" "../user/flash0/vsh/module/xmbctrl.prx"
+	$(PY) $(PSPGZ) ../user/flash0/kd/xmbctrl.prx $(UHDR) xmbctrl/xmbctrl.prx XmbControl 0x0000
 	make -C xmbctrl clean
 
-_satelite: | _libs
+_satelite:
 	make -C satelite clean
 	make -C satelite -j
-	psp-packer satelite/satelite.prx
-	cp "satelite/satelite.prx" "../user/flash0/vsh/module/satelite.prx"
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/satelite.prx $(UHDR) satelite/satelite.prx Satelite 0x0000
 	make -C satelite clean
 
-_recovery: | _libs
+_recovery:
 	make -C recovery clean
 	make -C recovery -j
-	psp-packer recovery/recovery.prx
-	cp "recovery/recovery.prx" "../user/flash0/vsh/module/recovery.prx"
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/recovery.prx $(UHDR) recovery/recovery.prx Recovery 0x0000
 	make -C recovery clean
 
 clean:
-	make -C lib/libpspkubridge clean
-	make -C lib/libpspsystemctrl_kernel clean
-	make -C lib/libpspsystemctrl_user clean
-	make -C lib/libpspvshctrl clean
-	make -C lib/libpspsysc_user clean
-	make -C lib/libpspgalaxy_driver clean
-	make -C lib/libpspinferno_driver clean
-	make -C lib/libpspmarch33_driver clean
-	make -C lib/libpspisoctrl_driver clean
 	make -C btcnf/pspbtcnf_inferno clean
 	make -C btcnf/pspbtcnf_march33 clean
 	make -C btcnf/pspbtcnf_normal clean
@@ -201,3 +142,5 @@ clean:
 	make -C xmbctrl clean
 	make -C satelite clean
 	make -C recovery clean
+	rm -f systemctrl/binary.h
+	rm -f systemctrl/rebootex.h

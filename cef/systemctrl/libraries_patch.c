@@ -80,7 +80,7 @@ u32 ResolveOldNIDs(const char *libname, u32 nid) {
 	return 0;
 }
 
-u32 sctrlHENFindFunction(const char *mod_name, const char *library, u32 nid) {
+unsigned int sctrlHENFindFunction(const char *mod_name, const char *library, unsigned int nid) {
 	SceModule *mod = sceKernelFindModuleByName(mod_name);
 	if (!mod) {
 		mod = sceKernelFindModuleByAddress((SceUID)mod_name);
@@ -115,7 +115,7 @@ u32 sctrlHENFindFunction(const char *mod_name, const char *library, u32 nid) {
 	return 0;
 }
 
-u32 sctrlHENFindImport(const char *mod_name, const char *library, u32 nid) {
+unsigned int sctrlHENFindImport(const char *mod_name, const char *library, unsigned int nid) {
 	SceModule *mod = sceKernelFindModuleByName(mod_name);
 	if (!mod) {
 		mod = sceKernelFindModuleByAddress((SceUID)mod_name);
@@ -172,7 +172,7 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 	int is_user_mode = ((u32 *)stub)[0x34/4];
 	u32 stub_addr = stubtable + (count * 8);
 
-	u32 module_sdk_version = FindProc((char *)original_stub, NULL, 0x11B97506);
+	u32 module_sdk_version = sctrlHENFindFunction((char *)original_stub, NULL, 0x11B97506);
 	if (module_sdk_version && (FIRMWARE_TO_FW(*(u32 *)module_sdk_version) == 0x660 || FIRMWARE_TO_FW(*(u32 *)module_sdk_version) == 0x661)) {
 		// Sony module
 	} else {
@@ -223,7 +223,7 @@ SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library) 
 	return NULL;
 }
 
-u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
+unsigned int sctrlHENFindImportInMod(SceModule * mod, const char *library, unsigned int nid) {
 	// Invalid Arguments
 	if (mod == NULL || library == NULL) {
 		return 0;
@@ -252,7 +252,7 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
 	return 0;
 }
 
-u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid) {
+unsigned int sctrlHENFindFunctionInMod(SceModule * mod, const char *library, unsigned int nid) {
 	// Invalid Arguments
 	if(mod == NULL || library == NULL) {
 		return 0;
@@ -391,7 +391,7 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 }
 
 // Replace Import Function Stub
-int sctrlHENHookImportByNID(SceModule * mod, const char * library, u32 nid, void *func, int dummy) {
+int sctrlHookImportByNID(SceModule * mod, const char * library, unsigned int nid, void *func) {
 	// Invalid Arguments
 	if(mod == NULL || library == NULL) {
 		return -1;
@@ -428,11 +428,7 @@ int sctrlHENHookImportByNID(SceModule * mod, const char * library, u32 nid, void
 	unsigned int func_int = (unsigned int)func;
 
 	// Dummy Return
-	if (func == NULL) {
-		// Create Dummy Return
-		MAKE_DUMMY_FUNCTION(stub, dummy);
-		logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, dummy);
-	} else if (func_int <= 0xFFFF) {
+	if (func_int <= 0xFFFF) {
 		// Create Dummy Return
 		MAKE_DUMMY_FUNCTION(stub, func_int);
 		logmsg4("[DEBUG]: %s: %s — %s — 0x%08X: Made a dummy function -> 0x%08X\n", __func__, mod->modname, library, nid, func_int);
@@ -477,10 +473,6 @@ int sctrlHENIsSystemBooted() {
 // COMPAT
 ////////////////////////////////////////////////////////////////////////////////
 
-int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void * func) {
-	return sctrlHENHookImportByNID(mod, library, nid, func, 0);
-}
-
 
 int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
 	int ret = 0;
@@ -523,7 +515,7 @@ int sctrlKernelSetNidResolver(char* libname, u32 enabled) {
 	return SCE_ENOSYS;
 }
 
-u32 sctrlHENMakeSyscallStub(void *function) {
+/*u32 sctrlHENMakeSyscallStub(void *function) {
 	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
 	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
 	s32 syscall_num = sceKernelQuerySystemCall(function);
@@ -538,7 +530,7 @@ u32 sctrlHENMakeSyscallStub(void *function) {
 
 	MAKE_SYSCALL_FUNCTION(stub, syscall_num);
 	return stub;
-}
+}*/
 
 u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_only) {
 	SceUID mod_list[128] = {0};

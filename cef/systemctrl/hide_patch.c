@@ -29,6 +29,8 @@
 
 #include "main.h"
 
+extern void lowerString(char* orig, char* ret, int strSize);
+
 static char *g_blacklist[] = {
 	"iso",
 	"seplugins",
@@ -145,17 +147,17 @@ void PatchHideCfwFolders(SceModule* mod) {
 	int apitype = sceKernelInitApitype();
 
 	// Do not apply patches:
-	// 1. If it is an (unsigned) homebrew running (SCE_APITYPE_MS2 and SCE_APITYPE_EF2)
+	// 1. If it is an (unsigned) homebrew running (PSP_INIT_APITYPE_MS2 and PSP_INIT_APITYPE_EF2)
 	// 2. If it is configured to not hide even on games
-	if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2 || config.no_hide_cfw_files) {
+	if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || config.no_hide_cfw_files) {
 		return;
 	}
 
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, sceIoDreadHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xB8A740F4, sceIoChstatHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, sceIoGetstatHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, sceIoRemoveHidePatched, 0);
-    sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, sceIoRmdirHidePatched, 0);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, sceIoDreadHidePatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xB8A740F4, sceIoChstatHidePatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, sceIoGetstatHidePatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, sceIoRemoveHidePatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, sceIoRmdirHidePatched);
 
 	sctrlFlushCache();
 }

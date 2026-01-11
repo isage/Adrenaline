@@ -18,14 +18,19 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <pspkermit.h>
+
 #include <common.h>
 #include <adrenaline_log.h>
+
+#include <systemctrl_se.h>
+#include <infernoctrl.h>
 
 #include "utils.h"
 #include "main.h"
 
 extern RebootexConfig rebootex_config;
-extern AdrenalineConfig config;
+extern SEConfigADR config;
 
 STMOD_HANDLER game_previous = NULL;
 
@@ -39,14 +44,14 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 
 	// Config in `Auto` mode
 	if (config.umd_seek == 0 && config.umd_speed == 0) {
-		if (rebootex_config.bootfileindex == BOOT_INFERNO) {
+		if (rebootex_config.bootfileindex == MODE_INFERNO) {
 			SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 
 			SetUmdDelay = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
 			CacheInit = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
-		} else if (rebootex_config.bootfileindex == BOOT_MARCH33) {
+		} else if (rebootex_config.bootfileindex == MODE_MARCH33) {
 			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xFAEC97D6);
-		} else if (rebootex_config.bootfileindex == BOOT_NP9660) {
+		} else if (rebootex_config.bootfileindex == MODE_NP9660) {
 			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
 		}
 
@@ -63,7 +68,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 
 static void DisableInfernoCache() {
 	int (*CacheInit)(int, int, int) = NULL;
-	if (rebootex_config.bootfileindex == BOOT_INFERNO) {
+	if (rebootex_config.bootfileindex == MODE_INFERNO) {
 		CacheInit = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0x8CDE7F95);
 
 		if (CacheInit != NULL) {
@@ -111,10 +116,10 @@ int moduleLoaderJackass(char* name, int value) {
 static int wweModuleOnStart(SceModule * mod) {
 	// Boot Complete Action not done yet
 	if (strcmp(mod->modname, "mainPSP") == 0) {
-		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222); // scePowerGetPllClockFrequencyInt
-		sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);   // scePowerSetCpuClockFrequency
-		sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222); // scePowerGetCpuClockFrequencyInt
-		sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111); // scePowerGetBusClockFrequencyInt
+		sctrlHookImportByNID(mod, "scePower", 0x34F9C463, (void*)222); // scePowerGetPllClockFrequencyInt
+		sctrlHookImportByNID(mod, "scePower", 0x843FBF43, (void*)0);   // scePowerSetCpuClockFrequency
+		sctrlHookImportByNID(mod, "scePower", 0xFDB5BFE9, (void*)222); // scePowerGetCpuClockFrequencyInt
+		sctrlHookImportByNID(mod, "scePower", 0xBD681969, (void*)111); // scePowerGetBusClockFrequencyInt
 	}
 
 	// Call Previous Module Start Handler
@@ -168,8 +173,8 @@ void PatchGameByTitleId() {
 
 	if (strcasecmp("ULJM05221", title_id) == 0) {
 		// Fix TwinBee Portable when not using English or Japanese language
-		_utilityGetParam = (void*)FindProc("sceUtility_Driver", "sceUtility", 0xA5DA2406);
-		sctrlHENPatchSyscall((u32)_utilityGetParam, utilityGetParamPatched_ULJM05221);
+		_utilityGetParam = (void*)sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xA5DA2406);
+		sctrlHENPatchSyscall(_utilityGetParam, utilityGetParamPatched_ULJM05221);
 
 	} else if (strcasecmp("ULKS46195", title_id) == 0 || strcasecmp("ULUS10384", title_id) == 0 || strcasecmp("ULES01165", title_id) == 0
 		|| strcasecmp("ULES01339", title_id) == 0 || strcasecmp("ULUS10452", title_id) == 0
@@ -195,19 +200,19 @@ void PatchGamesByMod(SceModule* mod) {
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		// Fix Anti-CFW checks on `DJ Max` games
 		// Stops it trying to find and maybe deleting CFW folders and their contents
-		sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, NULL, 0);
+		sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, (void*)0);
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
 		// Remove "overclock" message in `ATV PRO`
 		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
-		sctrlHENHookImportByNID(mod, "scePower", 0x843FBF43, NULL, 0);
-		sctrlHENHookImportByNID(mod, "scePower", 0xFDB5BFE9, NULL, 222);
-		sctrlHENHookImportByNID(mod, "scePower", 0xBD681969, NULL, 111);
+		sctrlHookImportByNID(mod, "scePower", 0x843FBF43, (void*)0);
+		sctrlHookImportByNID(mod, "scePower", 0xFDB5BFE9, (void*)222);
+		sctrlHookImportByNID(mod, "scePower", 0xBD681969, (void*)111);
 
 	} else if (strcmp(modname, "tekken") == 0) {
 		// Fix back screen on `Tekken 6`
 		// scePowerGetPllClockFrequencyInt
-		sctrlHENHookImportByNID(mod, "scePower", 0x34F9C463, NULL, 222);
+		sctrlHookImportByNID(mod, "scePower", 0x34F9C463, (void*)222);
 
 	} else if (strcmp(modname, "KHBBS_patch") == 0) {
 		MAKE_DUMMY_FUNCTION(mod->entry_addr, 1);
@@ -217,11 +222,11 @@ void PatchGamesByMod(SceModule* mod) {
 		char* title_id = rebootex_config.title_id;
 		if (strcasecmp("ULES00897", title_id) == 0) { // PAL
 			logmsg4("%s: [DEBUG]: Patching Jackass PAL\n", __func__);
-			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, sctrlHENMakeSyscallStub(moduleLoaderJackass));
+			REDIRECT_SYSCALL(mod->text_addr + 0x35A204, moduleLoaderJackass);
 
 		} else if (strcasecmp("ULUS10303", title_id) == 0) { // NTSC
 			logmsg4("%s: [DEBUG]: Patching Jackass NTSC\n", __func__);
-			REDIRECT_FUNCTION(mod->text_addr + 0x357B54, sctrlHENMakeSyscallStub(moduleLoaderJackass));
+			REDIRECT_SYSCALL(mod->text_addr + 0x357B54, moduleLoaderJackass);
 		}
 
 	} else if (strcmp(modname, "projectg_psp") == 0) {
@@ -256,7 +261,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "starwars_psp") == 0) {
 		// Fix `Lego Star Wars 2` WLAN switch state returning `off` due to cache syncronization issues on ePSP implementation.
-		sctrlHENHookImportByNID(mod, "sceWlanDrv", 0xD7763699, sceWlanGetSwitchStatePatched, 0);
+		sctrlHookImportByNID(mod, "sceWlanDrv", 0xD7763699, sceWlanGetSwitchStatePatched);
 	}
 
 	sctrlFlushCache();

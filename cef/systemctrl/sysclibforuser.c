@@ -1,5 +1,8 @@
+#include <string.h>
 #include <psptypes.h>
-#include <sysclib_user.h>
+
+extern char tolower(char);
+extern long strtol(char*, char**, int);
 
 static char *__strtok_context;
 
