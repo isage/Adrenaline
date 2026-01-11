@@ -21,7 +21,7 @@ static SceUID g_mediaman_sema = -1;
 int sceKernelCancelSema(SceUID semaid, int newcount, int *num_wait_threads);
 
 void UmdNotifyCallback(int stat) {
-	logmsg("%s: stat=0x%08X -> ()\n", __func__, stat);
+	logmsg4("[DEBUG]: %s: stat=0x%08X -> ()\n", __func__, stat);
 
 	if (g_umdcallback >= 0) {
 		sceKernelNotifyCallback(g_umdcallback, stat);
@@ -238,20 +238,29 @@ static int WaitDriveStat(int stat, SceUInt timer, int cb) {
 
 	pspSdkSetK1(k1);
 
-	logmsg("%s: stat=0x%08X, timer=%d, cb=0x%08X -> 0x%08X\n", __func__, stat, timer, cb, res);
+	logmsg4("[DEBUG]: %s: stat=0x%08X, timer=%d, cb=0x%08X -> 0x%08X\n", __func__, stat, timer, cb, res);
 	return res;
 }
 
 int sceUmdWaitDriveStat(int stat) {
-	return WaitDriveStat(stat, 0, 0);
+	int res = WaitDriveStat(stat, 0, 0);
+
+	logmsg("%s: stat=0x%08X -> 0x%08X\n", __func__, stat, res);
+	return res;
 }
 
 int sceUmdWaitDriveStatCB(int stat, SceUInt timer) {
-	return WaitDriveStat(stat, timer, 1);
+	int res = WaitDriveStat(stat, timer, 1);
+
+	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timer, res);
+	return res;
 }
 
 int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timer) {
-	return WaitDriveStat(stat, timer, 0);
+	int res = WaitDriveStat(stat, timer, 0);
+
+	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timer, res);
+	return res;
 }
 
 int sceUmdCancelWaitDriveStat() {

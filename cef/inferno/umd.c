@@ -157,6 +157,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	u32 k1 = pspSdkSetK1(0);
 
 	if (info != NULL && sizeof(*info) == info->size) {
+		logmsg4("[DEBUG]: %s: g_disc_type=0x%02X\n", __func__, g_disc_type);
 		info->type = g_disc_type;
 		ret = 0;
 	} else {
@@ -322,41 +323,54 @@ int sceUmd9660_driver_7CB291E3(void) {
 }
 
 int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout) {
+	int ret = SCE_EINVAL;
 	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
-		return SCE_EINVAL;
+		ret = SCE_EINVAL;
+		goto exit;
 	}
 
 	u32 result;
 	u32 k1 = pspSdkSetK1(0);
-	int ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
+	ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
 	pspSdkSetK1(k1);
 
+exit:
+	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, ret);
 	return ret;
 }
 
 int sceUmdWaitDriveStatCB(int stat, SceUInt timeout) {
+	int ret = SCE_EINVAL;
 	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
-		return SCE_EINVAL;
+		ret = SCE_EINVAL;
+		goto exit;
 	}
 
 	u32 result;
 	u32 k1 = pspSdkSetK1(0);
-	int ret = sceKernelWaitEventFlagCB(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
+	ret = sceKernelWaitEventFlagCB(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, timeout == 0 ? NULL : &timeout);
 	pspSdkSetK1(k1);
 
+exit:
+	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, ret);
 	return ret;
 }
 
 int sceUmdWaitDriveStat(int stat) {
+	int ret = 0;
+
 	if (!(stat & (PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY))) {
-		return SCE_EINVAL;
+		ret = SCE_EINVAL;
+		goto exit;
 	}
 
 	u32 result;
 	u32 k1 = pspSdkSetK1(0);
-	int ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, NULL);
+	ret = sceKernelWaitEventFlag(g_drive_status_evf, stat, PSP_EVENT_WAITOR, &result, NULL);
 	pspSdkSetK1(k1);
 
+exit:
+	logmsg("%s: stat=0x%08X -> 0x%08X\n", __func__, stat, ret);
 	return ret;
 }
 
