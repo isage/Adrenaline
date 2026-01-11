@@ -139,11 +139,13 @@ int sceUmdUnRegisterUMDCallBack(int cbid) {
 	return ret;
 }
 
+#define UMD_TYPE_ALL (PSP_UMD_TYPE_GAME | PSP_UMD_TYPE_VIDEO | PSP_UMD_TYPE_AUDIO)
+
 int infernoSetDiscType(int type) {
 	int oldtype = g_disc_type;
 	g_disc_type = type;
 
-	if (type != PSP_UMD_TYPE_GAME || type != PSP_UMD_TYPE_VIDEO || type != PSP_UMD_TYPE_AUDIO) {
+	if (type == 0 || (type & UMD_TYPE_ALL == UMD_TYPE_ALL)) {
 		logmsg("[ERROR]: %s: Invalid UMD kind 0x%02X. Defaulting to UMD game kind (0x%02X)\n", __func__, type, PSP_UMD_TYPE_GAME);
 		g_disc_type = PSP_UMD_TYPE_GAME;
 	}
