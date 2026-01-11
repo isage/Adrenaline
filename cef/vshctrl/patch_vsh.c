@@ -24,6 +24,7 @@
 #include <pspreg.h>
 #include <pspsysmem.h>
 #include <psploadexec.h>
+#include <pspumd.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
@@ -185,6 +186,9 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		int has_pboot = 0;
 		CheckControllerInput();
 		VshCtrlSetUmdFile(virtualpbp_getfilename(index));
+
+		// Set UMD type on ISO
+		sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
 
 		u32 opn_type = virtualpbp_get_isotype(index);
 		SceGameInfo *info = sceKernelGetGameInfo();
