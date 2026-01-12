@@ -44,20 +44,20 @@ int vctrlVSHRegisterVshMenu(int (* ctrl)(SceCtrlData *, int)) {
 	return 0;
 }
 
-int vctrlVSHExitVSHMenu(AdrenalineConfig *conf) {
+int vctrlVSHExitVSHMenu(SEConfigADR *conf) {
 	int k1 = pspSdkSetK1(0);
 	int oldspeed = g_cfw_config.vsh_cpu_speed;
 
 	g_vshmenu_ctrl = NULL;
-	memcpy(&g_cfw_config, conf, sizeof(AdrenalineConfig));
+	memcpy(&g_cfw_config, conf, sizeof(SEConfigADR));
 	sctrlSEApplyConfig(&g_cfw_config);
 
 	if (g_set) {
 		if (g_cfw_config.vsh_cpu_speed != oldspeed) {
 			if (g_cfw_config.vsh_cpu_speed) {
-				SetSpeed(g_cpu_list[g_cfw_config.vsh_cpu_speed % N_CPU], g_bus_list[g_cfw_config.vsh_cpu_speed % N_CPU]);
+				sctrlHENSetSpeed(g_cpu_list[g_cfw_config.vsh_cpu_speed % N_CPU], g_bus_list[g_cfw_config.vsh_cpu_speed % N_CPU]);
 			} else {
-				SetSpeed(222, 111);
+				sctrlHENSetSpeed(222, 111);
 			}
 		}
 	}

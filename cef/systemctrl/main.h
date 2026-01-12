@@ -19,22 +19,18 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <pspkermit.h>
+
 #include <common.h>
 
 #include "utils.h"
 
 extern RebootexConfig rebootex_config;
-extern AdrenalineConfig config;
+extern SEConfigADR config;
 extern STMOD_HANDLER module_handler;
 
-u32 sctrlHENFindImport(const char *szMod, const char *szLib, u32 nid);
 
-
-int sceKermitSendRequest(SceKermitRequest *request, u32 mode, u32 cmd, u32 args, u32 is_callback, u64 *resp);
-int sceKermitRegisterVirtualIntrHandler(int num, int (* handler)());
-
-int sceKermitMemorySetArgument(SceKermitRequest *request, int argc, const void *data, int size, int mode);
-
+void lowerString(char* orig, char* ret, int strSize);
 
 int LoadExecForKernel_AA2029EC();
 

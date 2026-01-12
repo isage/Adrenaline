@@ -83,7 +83,7 @@ typedef struct {
 	float ps1_screen_scale_x;
 	float ps1_screen_scale_y;
 	int usbdevice;
-} AdrenalineConfig717;
+} SEConfigADR717;
 
 typedef struct {
 	int magic[2];
@@ -97,9 +97,9 @@ typedef struct {
 	float psp_screen_scale_y;
 	float ps1_screen_scale_x;
 	float ps1_screen_scale_y;
-} AdrenalineConfig;
+} SEConfigADR;
 
-extern AdrenalineConfig config;
+extern SEConfigADR config;
 extern SceUID usbdevice_modid;
 
 extern int (* ScePspemuDivide)(uint64_t x, uint64_t y);

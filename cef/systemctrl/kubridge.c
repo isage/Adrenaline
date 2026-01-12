@@ -109,7 +109,7 @@ int kuKernelFindModuleByAddress(void *addr, SceModule *mod) {
 	return 0;
 }
 
-int kuKernelCall(void *func_addr, KernelCallArg *args) {
+int kuKernelCall(void *func_addr, struct KernelCallArg *args) {
 	u32 k1, level;
 	u64 ret;
 	u64 (*func)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
@@ -144,13 +144,13 @@ int kuKernelCall(void *func_addr, KernelCallArg *args) {
 }
 
 typedef struct KernelCallArgExtendStack {
-	KernelCallArg args;
+	struct KernelCallArg args;
 	void *func_addr;
 } KernelCallArgExtendStack;
 
 static int kernel_call_stack(KernelCallArgExtendStack *args_stack) {
 	u64 ret;
-	KernelCallArg *args;
+	struct KernelCallArg *args;
 	int (*func)(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32);
 
 	args = &args_stack->args;
@@ -175,7 +175,7 @@ static int kernel_call_stack(KernelCallArgExtendStack *args_stack) {
 	return 0;
 }
 
-int kuKernelCallExtendStack(void *func_addr, KernelCallArg *args, int stack_size) {
+int kuKernelCallExtendStack(void *func_addr, struct KernelCallArg *args, int stack_size) {
 	u32 k1, level;
 	int ret;
 	KernelCallArgExtendStack args_stack;
@@ -200,12 +200,12 @@ void kuKernelGetUmdFile(char *umdfile, int size) {
 }
 
 // Read Dword from Kernel
-u32 kuKernelPeekw(void * addr){
+unsigned int kuKernelPeekw(void * addr){
     return VREAD32((u32)addr);
 }
 
 // Write Dword into Kernel
-void kuKernelPokew(void * addr, u32 value){
+void kuKernelPokew(void * addr, unsigned int value){
 	VWRITE32((u32)addr, value);
 }
 

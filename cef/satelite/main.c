@@ -31,7 +31,7 @@ PSP_MODULE_INFO("EPI-VshCtrlSatelite", 0, 1, 0);
 static char *g_cpuspeeds[] = { "Default", "20/10", "75/37", "100/50", "133/66", "222/111", "266/133", "300/150", "333/166" };
 static char *g_umdmodes[] = { "Inferno", "M33 Driver", "Sony NP9660" };
 
-static AdrenalineConfig g_cfw_config;
+static SEConfigADR g_cfw_config;
 
 void SuspendDevice();
 void RecoveryMenu();

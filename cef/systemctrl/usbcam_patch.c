@@ -229,15 +229,15 @@ int sceUsbCamWaitReadVideoFrameEnd_Patched() {
 }
 
 void PatchUSBCamDriver(SceModule* mod) {
-	REDIRECT_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);
-	REDIRECT_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
-	REDIRECT_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x1D686870), sceUsbCamSetEvLevel_Patched, _sceUsbCamSetEvLevel);
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x99D86281), sceUsbCamReadVideoFrame_Patched, _sceUsbCamReadVideoFrame);
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0xF90B2293), sceUsbCamWaitReadVideoFrameEnd_Patched, _sceUsbCamWaitReadVideoFrameEnd);
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceUsbCam", 0xB048A67D), sceUsbCamWaitReadMicEnd_Patched, _sceUsbCamWaitReadMicEnd);
+	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);
+	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
+	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x1D686870), sceUsbCamSetEvLevel_Patched, _sceUsbCamSetEvLevel);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x99D86281), sceUsbCamReadVideoFrame_Patched, _sceUsbCamReadVideoFrame);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xF90B2293), sceUsbCamWaitReadVideoFrameEnd_Patched, _sceUsbCamWaitReadVideoFrameEnd);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xB048A67D), sceUsbCamWaitReadMicEnd_Patched, _sceUsbCamWaitReadMicEnd);
 	sctrlFlushCache();
 }

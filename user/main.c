@@ -106,7 +106,7 @@ static int lock_power = 0;
 
 SceUID usbdevice_modid = -1;
 
-AdrenalineConfig config;
+SEConfigADR config;
 
 extern int menu_open;
 
@@ -601,7 +601,7 @@ static int ScePspemuGetStartupPngPatched(int num, void *png_buf, int *png_size, 
 	return num_startup_png;
 }
 
-static void migrate_config_717(AdrenalineConfig717* old, AdrenalineConfig* new) {
+static void migrate_config_717(SEConfigADR717* old, SEConfigADR* new) {
 	new->graphics_filtering = old->graphics_filtering;
 	new->no_smooth_graphics = old->no_smooth_graphics;
 	new->flux_mode = old->flux_mode;
@@ -620,10 +620,10 @@ static void migrate_config() {
 	switch (config.magic[1]) {
 		case ADRENALINE717_CFG_MAGIC_2:
 			sceClibPrintf("Adrenaline: [INFO]: Found 7.1.7 configuration\n");
-			AdrenalineConfig717 config_compat = {0};
-			ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config_compat, sizeof(AdrenalineConfig717));
+			SEConfigADR717 config_compat = {0};
+			ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config_compat, sizeof(SEConfigADR717));
 			migrate_config_717(&config_compat, &config);
-			WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+			WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(SEConfigADR));
 			sceClibPrintf("Adrenaline: [INFO]: Migrated 7.1.7 configuration\n");
 			break;
 		default:
@@ -677,8 +677,8 @@ int module_start(SceSize args, void *argp) {
 	mspace_init();
 
 	// Read config
-	memset(&config, 0, sizeof(AdrenalineConfig));
-	ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	memset(&config, 0, sizeof(SEConfigADR));
+	ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(SEConfigADR));
 	migrate_config();
 	if ((uint32_t)config.psp_screen_scale_x == 0) {
 		config.psp_screen_scale_x = 2.0f;

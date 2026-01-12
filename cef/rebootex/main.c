@@ -20,15 +20,17 @@
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
+#include <systemctrl_se.h>
 #include <extratypes.h>
 
 #include "main.h"
 #include "libc.h"
+#include <rebootexconfig.h>
 #include "../../adrenaline_compat.h"
 
 #define REBOOT_MODULE "/rtm.prx"
 
-int (* sceReboot)(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) = (void *)0x88600000;
+int (* sceReboot)(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) = (void *)0x88600000;
 int (* DcacheClear)(void) = (void *)0x886018AC;
 int (* IcacheClear)(void) = (void *)0x88601E40;
 
@@ -160,29 +162,29 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 		char *name = NULL;
 
 		switch(rebootex_config->bootfileindex) {
-			case BOOT_NORMAL:
+			case MODE_UMD:
 				name = "/kd/pspbtjnf.bin";
 				break;
 
-			case BOOT_INFERNO:
+			case MODE_INFERNO:
 				name = "/kd/pspbtknf.bin";
 				break;
 
-			case BOOT_MARCH33:
+			case MODE_MARCH33:
 				name = "/kd/pspbtlnf.bin";
 				break;
 
-			case BOOT_NP9660:
+			case MODE_NP9660:
 				name = "/kd/pspbtmnf.bin";
 				break;
 
-			case BOOT_RECOVERY:
+			case MODE_RECOVERY:
 				name = "/kd/pspbtrnf.bin";
 				break;
 		}
 
-		if (rebootex_config->bootfileindex == BOOT_RECOVERY) {
-			rebootex_config->bootfileindex = BOOT_NORMAL;
+		if (rebootex_config->bootfileindex == MODE_RECOVERY) {
+			rebootex_config->bootfileindex = MODE_UMD;
 		}
 
 		file->name = name;
@@ -198,8 +200,8 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 	return 0; //always return 0 to allow boot with unsuccessfully loaded files
 }
 
-int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) __attribute__((section(".text.start")));
-int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) {
+int _start(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) __attribute__((section(".text.start")));
+int _start(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) {
 	for (u32 i = 0; i < 0x4000; i += 4) {
 		u32 addr = 0x88600000 + i;
 		u32 data = VREAD32(addr);

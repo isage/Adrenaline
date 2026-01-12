@@ -32,7 +32,7 @@ PSP_MODULE_INFO("VshControl", 0x1007, 1, 2);
 
 STMOD_HANDLER previous;
 
-AdrenalineConfig g_cfw_config;
+SEConfigADR g_cfw_config;
 u32 g_firsttick;
 
 int OnModuleStart(SceModule *mod) {

@@ -20,6 +20,8 @@
 
 #include "main.h"
 
+#include "../../adrenaline_compat.h"
+
 PspIoDrv *ms_drv;
 PspIoDrv *flashfat_drv;
 
@@ -149,7 +151,7 @@ int _msIoDevctl(u32 *args) {
 
 	// Fix integer overflow in Outrun
 	if (cmd == 0x02425818) {
-		if (sceKernelBootFrom() == SCE_BOOT_DISC) {
+		if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 			u32 data = *(u32 *)indata;
 			if (data) {
 				ScePspemuIoDevInfo *info = (ScePspemuIoDevInfo *)data;

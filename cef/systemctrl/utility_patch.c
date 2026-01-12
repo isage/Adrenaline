@@ -28,7 +28,7 @@ int (* _kermitUtilityOskGetStatus)();
 int (* _kermitUtilityOskInitStart)(SceUtilityOskParams *params);
 
 __attribute__((noinline)) u32 FindUtilityFunction(u32 nid) {
-	return FindProc("sceUtility_Driver", "sceUtility", nid);
+	return sctrlHENFindFunction("sceUtility_Driver", "sceUtility", nid);
 }
 
 int sceUtilityLoadModulePatched(int id) {
@@ -59,9 +59,9 @@ void PatchUtility() {
 
 	if (!config.use_sony_psposk) {
 		_sceUtilityGetSystemParamInt = (void *)FindUtilityFunction(0xA5DA2406);
-		_kermitUtilityOskGetStatus = (void *)FindProc("sceUtility_Driver", "sceUtility_private", 0xB08B2B48);
+		_kermitUtilityOskGetStatus = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility_private", 0xB08B2B48);
 
-		HIJACK_FUNCTION(FindProc("sceUtility_Driver", "sceUtility_private", 0x3B6D7CED), kermitUtilityOskInitStartPatched, _kermitUtilityOskInitStart);
+		HIJACK_FUNCTION(sctrlHENFindFunction("sceUtility_Driver", "sceUtility_private", 0x3B6D7CED), kermitUtilityOskInitStartPatched, _kermitUtilityOskInitStart);
 	}
 
 	sctrlFlushCache();

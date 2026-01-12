@@ -93,7 +93,7 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 		if (execInfo->is_decrypted) {
 			// Static ELF
 			if (header->e_type == 2) {
-				execInfo->api_type = SCE_APITYPE_UMD;
+				execInfo->api_type = PSP_INIT_APITYPE_UMD;
 
 				// Find module_info_offset
 				if (execInfo->module_info_offset == 0) {
@@ -268,7 +268,7 @@ void PatchLoadCore() {
 
 		// Restore original call
 		if (data == 0xAE2D0048) {
-			MAKE_CALL(addr + 8, FindProc("sceMemlmd", "memlmd", 0xEF73E85B));
+			MAKE_CALL(addr + 8, sctrlHENFindFunction("sceMemlmd", "memlmd", 0xEF73E85B));
 			continue;
 		}
 

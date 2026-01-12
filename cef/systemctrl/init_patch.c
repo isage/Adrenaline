@@ -65,7 +65,7 @@ SceUID sceKernelLoadModuleMs2Init(int apitype, const char *path, int flags, SceK
 }
 
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
-	SceApplicationType app_type = sceKernelApplicationType();
+	PSPKeyConfig app_type = sceKernelApplicationType();
 
 	if (config.use_sony_psposk) {
 		if (strcmp(info->name, "/kd/kermit_utility.prx") == 0) {
@@ -73,7 +73,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		}
 	}
 
-	if (config.use_ge2 && app_type != SCE_APPTYPE_VSH) {
+	if (config.use_ge2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
 		if (strcmp(info->name, "/kd/ge.prx") == 0) {
 			info->name = "/kd/ge_2.prx";
 
@@ -86,7 +86,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		}
 	}
 
-	if (config.use_me2 && app_type != SCE_APPTYPE_VSH) {
+	if (config.use_me2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
 		if (strcmp(info->name, "/kd/kermit_me_wrapper.prx") == 0) {
 			info->name = "/kd/kermit_me_wrapper_2.prx";
 
@@ -150,7 +150,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			if(config.startup_program && argsize == 0) {
 				LoadExecForKernel_AA2029EC();
 
-				SceKernelLoadExecVSHParam param;
+				struct SceKernelLoadExecVSHParam param;
 				memset(&param, 0, sizeof(param));
 				param.size = sizeof(param);
 				param.args = sizeof("ms0:/PSP/GAME/BOOT/EBOOT.PBP");
@@ -188,11 +188,11 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 
 			int type = sceKernelApplicationType();
 
-			if (type == SCE_APPTYPE_VSH && !config.no_xmbctrl) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && !config.no_xmbctrl) {
 				loadXmbControl();
 			}
 
-			if (type == SCE_APPTYPE_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
 				goto START_MODULE;
 			}
 

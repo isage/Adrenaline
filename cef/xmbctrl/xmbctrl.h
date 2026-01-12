@@ -71,7 +71,7 @@ typedef struct {
   char **c;
 } ItemOptions;
 
-extern AdrenalineConfig g_cfw_config;
+extern SEConfigADR g_cfw_config;
 extern GetItem g_menu_items[];
 extern int g_num_items;
 extern ItemOptions g_item_opts[];

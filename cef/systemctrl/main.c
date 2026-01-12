@@ -21,6 +21,8 @@
 #include <pspusbcam.h>
 #include <pspdisplay.h>
 
+#include <cfwmacros.h>
+#include <systemctrl.h>
 #include <infernoctrl.h>
 
 #define _ADRENALINE_LOG_IMPL_
@@ -37,10 +39,12 @@
 #include "utils.h"
 #include "storage_cache.h"
 
+#include "../../adrenaline_compat.h"
+
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
 RebootexConfig rebootex_config;
-AdrenalineConfig config;
+SEConfigADR config;
 
 int idle = 0;
 
@@ -52,6 +56,8 @@ u8 cache_num_list[] = { 0, 1, 2, 4, 8, 16, 32, 64, 128 };
 #define N_CPU (sizeof(cpu_list) / sizeof(int))
 #define N_CACHE_SIZE (sizeof(cache_size_list) / sizeof(u32))
 #define N_CACHE_NUM (sizeof(cache_num_list) / sizeof(u8))
+
+int mallocinit();
 
 static void OnSystemStatusIdle() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
@@ -146,10 +152,10 @@ static void OnSystemStatusIdle() {
 	// Set CPU/BUS speed on apps/games
 	SceBootMediumType medium_type = sceKernelBootFrom();
 	SceApplicationType app_type = sceKernelApplicationType();
-	u8 is_correct_medium = (medium_type == SCE_BOOT_DISC || medium_type == SCE_BOOT_MS || medium_type == SCE_BOOT_EF);
+	u8 is_correct_medium = (medium_type == PSP_BOOT_DISC || medium_type == PSP_BOOT_MS || medium_type == PSP_BOOT_EF);
 
-	if (app_type != SCE_APPTYPE_VSH && is_correct_medium) {
-		SetSpeed(cpu_list[config.app_cpu_speed % N_CPU], bus_list[config.app_cpu_speed % N_CPU]);
+	if (app_type != PSP_INIT_KEYCONFIG_VSH && is_correct_medium) {
+		sctrlHENSetSpeed(cpu_list[config.app_cpu_speed % N_CPU], bus_list[config.app_cpu_speed % N_CPU]);
 	}
 
 	// Set fake framebuffer so that cwcheat can be displayed
@@ -173,7 +179,7 @@ static int OnModuleStart(SceModule *mod) {
 
 	// Game/App module patches
 	if (ready_gamepatch_mod) {
-		if (sceKernelApplicationType() != SCE_APPTYPE_VSH) {
+		if (sceKernelApplicationType() != PSP_INIT_KEYCONFIG_VSH) {
 			logmsg3("[INFO]: Title Module Name: %s\n", modname);
 			PatchDrmGameModule(mod);
 			PatchHideCfwFiles(mod);
@@ -185,12 +191,12 @@ static int OnModuleStart(SceModule *mod) {
 	// Third-party Plugins modules
 	if (isLoadingPlugins()) {
 		// Fix 6.60 plugins on 6.61
-		sctrlHENHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion, 0);
-        sctrlHENHookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion, 0);
+		sctrlHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+        sctrlHookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
 	}
 
 	if (load_file_config) {
-		int res = sctrlSEGetConfig(&config);
+		int res = sctrlSEGetConfig((SEConfig*)&config);
 		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
 		if (res == 0) {
 			load_file_config = 0;
@@ -205,7 +211,7 @@ static int OnModuleStart(SceModule *mod) {
 		}
 
 		// Protect pops memory
-		if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
+		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
 			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
 		}
 
@@ -230,14 +236,13 @@ static int OnModuleStart(SceModule *mod) {
 		#endif // defined(DEBUG) && DEBUG >= 3
 
 		// Hijack all execute calls
-		extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
-		extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, SceKernelLoadExecVSHParam * param);
+		extern int (* _sceLoadExecVSHWithApitype)(int, const char*, struct SceKernelLoadExecVSHParam*, unsigned int);
+		extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, struct SceKernelLoadExecVSHParam * param);
 		u32 _LoadExecVSHWithApitype = findFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
 		HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
 
 		// Hijack exit calls
 		extern int (*_sceKernelExitVSH)(void*);
-		extern int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param);
 		u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
 		HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
 
@@ -248,7 +253,7 @@ static int OnModuleStart(SceModule *mod) {
 		logmsg3("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
 		logmsg3("[INFO]: Filename: %s\n", sceKernelInitFileName());
 
-		if (sceKernelApplicationType() == SCE_APPTYPE_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
+		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
 			if (config.force_high_memory == HIGHMEM_OPT_STABLE) {
 				sctrlHENSetMemory(40, 9);
 			} else if (config.force_high_memory == HIGHMEM_OPT_MAX) {
@@ -322,7 +327,7 @@ static int OnModuleStart(SceModule *mod) {
 
 	} else if (strcmp(modname, "sceMp3_Library") == 0 || (strcmp(modname, "sceVshOSK_Module") == 0 && config.use_sony_psposk)) {
 		// Unlock mp3 variable bitrate and qwerty osk on old games/homebrew
-		sctrlHENHookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion, 0);
+		sctrlHookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
 		sctrlFlushCache();
 
 	} else if (strcmp(modname, "vsh_module") == 0) {
@@ -364,8 +369,8 @@ int module_start(SceSize args, void *argp) {
 	sctrlFlushCache();
 
 	// Restore CFW config from the RAM backup in the start (if it exists)
-	if (IS_EPI_CONFIG(EPI_CONFIG_ADDR)) {
-		memcpy(&config, (void *)EPI_CONFIG_ADDR, sizeof(AdrenalineConfig));
+	if (IS_ADR_SECONFIG(EPI_CONFIG_ADDR)) {
+		memcpy(&config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigADR));
 	}
 
 	sctrlHENSetStartModuleHandler((STMOD_HANDLER)OnModuleStart);

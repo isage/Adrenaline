@@ -19,8 +19,6 @@
 #ifndef __VITA_POPS_H__
 #define __VITA_POPS_H__
 
-#include <psptypes.h>
-
 #define POPS_REGISTER 0x49FE0000
 
 #define POPS_MAX_DISPLAYS 2

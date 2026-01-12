@@ -18,6 +18,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <systemctrl_se.h>
+
 #include <common.h>
 
 #include <adrenaline_log.h>
@@ -78,16 +80,16 @@ int readTitleIdFromISO() {
 	int boot_conf = rebootex_config.bootfileindex;
 
 	switch (boot_conf) {
-		case BOOT_INFERNO:
-			isoGetTitleId = (void*)FindProc("EPI-InfernoDriver", "inferno_driver", 0xD4FAB33F);
+		case MODE_INFERNO:
+			isoGetTitleId = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0xD4FAB33F);
 			break;
 
-		case BOOT_MARCH33:
-			isoGetTitleId = (void*)FindProc("EPI-March33Driver", "march33_driver", 0xD4FAB33F);
+		case MODE_MARCH33:
+			isoGetTitleId = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xD4FAB33F);
 			break;
 
-		case BOOT_NP9660:
-			isoGetTitleId = (void*)FindProc("EPI-GalaxyController", "galaxy_driver", 0xD4FAB33F);
+		case MODE_NP9660:
+			isoGetTitleId = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xD4FAB33F);
 			break;
 
 		default:
@@ -106,12 +108,12 @@ int readTitleIdFromISO() {
 
 void findAndSetTitleId() {
 	int apitype = sceKernelInitApitype();
-	if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2 || apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2 || apitype >= SCE_APITYPE_VSH_KERNEL) {
+	if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2 || apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
 		return;
 	}
 
 	if (rebootex_config.title_id[0] == '\0') {
-		int is_iso = rebootex_config.bootfileindex == BOOT_INFERNO || rebootex_config.bootfileindex == BOOT_MARCH33 || rebootex_config.bootfileindex == BOOT_NP9660;
+		int is_iso = rebootex_config.bootfileindex >= MODE_OE_LEGACY && rebootex_config.bootfileindex <= MODE_ME;
 		if (is_iso) {
 			readTitleIdFromISO();
 		} else {

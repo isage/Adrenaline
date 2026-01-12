@@ -38,7 +38,7 @@ typedef struct {
 	char umdfilename[256];
 	char title_id[10];
 
-	// Maybe make it generic for the whole AdrenalineConfig
+	// Maybe make it generic for the whole SEConfigADR
 	u8 overwrite_use_psposk;
 	u8 overwrite_use_psposk_to;
 } RebootexConfig;

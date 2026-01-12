@@ -149,7 +149,7 @@ static TabEntry tab_entries[] = {
 #define N_TABS (sizeof(tab_entries) / sizeof(TabEntry))
 #define TAB_SIZE (WINDOW_WIDTH / N_TABS)
 
-static AdrenalineConfig old_config;
+static SEConfigADR old_config;
 static int tab_sel = 0;
 static int menu_sel = 0;
 int menu_open = 0;
@@ -181,7 +181,7 @@ static int ExitPspEmuApplication() {
 static int EnterAdrenalineMenu() {
 	initStates();
 
-	memcpy(&old_config, &config, sizeof(AdrenalineConfig));
+	memcpy(&old_config, &config, sizeof(SEConfigADR));
 
 	changed = 0;
 	menu_open = 1;
@@ -199,7 +199,7 @@ int ExitAdrenalineMenu() {
 	if (changed) {
 		config.magic[0] = ADRENALINE_CFG_MAGIC_1;
 		config.magic[1] = ADRENALINE_CFG_MAGIC_2;
-		WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+		WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(SEConfigADR));
 	}
 
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
@@ -224,14 +224,14 @@ int ExitAdrenalineMenu() {
 }
 
 int ResetAdrenalineSettings() {
-	memset(&config, 0, sizeof(AdrenalineConfig));
+	memset(&config, 0, sizeof(SEConfigADR));
 	config.magic[0] = ADRENALINE_CFG_MAGIC_1;
 	config.magic[1] = ADRENALINE_CFG_MAGIC_2;
 	config.psp_screen_scale_x = 2.0f;
 	config.psp_screen_scale_y = 2.0f;
 	config.ps1_screen_scale_x = 1.0f;
 	config.ps1_screen_scale_y = 1.0f;
-	WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(SEConfigADR));
 
 	return 0;
 }

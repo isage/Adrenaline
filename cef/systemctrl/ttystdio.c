@@ -4,6 +4,8 @@
 #include <common.h>
 #include "adrenaline.h"
 
+#include "../../adrenaline_compat.h"
+
 static SceUID g_out_sema = 0;
 
 static int io_init(PspIoDrvArg *arg) {
