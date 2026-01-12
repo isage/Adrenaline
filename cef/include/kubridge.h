@@ -50,14 +50,18 @@ typedef struct KernelCallArg {
  * kernel mode
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /**
  * Load a module using ModuleMgrForKernel.
  *
- * @param path - The path to the module to load.
- * @param flags - Unused, always 0 .
- * @param option  - Pointer to a mod_param_t structure. Can be NULL.
+ * @param[in] path The path to the module to load.
+ * @param flags Unused. Always `0`.
+ * @param[in] option A pointer to a `SceKernelLMOption` structure. It can be `NULL`.
  *
- * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
+ * @return The UID of the loaded module on success, otherwise one of `PspKernelErrorCodes`.
  */
 SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option);
 
@@ -65,141 +69,147 @@ SceUID kuKernelLoadModule(const char *path, int flags, SceKernelLMOption *option
 /**
  * Load a module with a specific apitype
  *
- * @param apìtype - The apitype
- * @param path - The path to the module to load.
- * @param flags - Unused, always 0 .
- * @param option  - Pointer to a mod_param_t structure. Can be NULL.
+ * @param apitype The apitype.
+ * @param[in] path The path to the module to load.
+ * @param flags Unused. Always `0`.
+ * @param[in] option  Pointer to a `SceKernelLMOption` structure. It can be `NULL`.
  *
- * @returns The UID of the loaded module on success, otherwise one of ::PspKernelErrorCodes.
+ * @return The UID of the loaded module on success, otherwise one of `PspKernelErrorCodes`.
  */
 SceUID kuKernelLoadModuleWithApitype2(int apitype, const char *path, int flags, SceKernelLMOption *option);
 
 /**
- * Gets the api type
+ * Gets the API type.
  *
- * @returns the api type in which the system has booted
+ * @return The API type in which the system has booted.
 */
 int kuKernelInitApitype();
 
 /**
- * Gets the filename of the executable to be launched after all modules of the api.
+ * Gets the filename of the executable to be launched after all modules of the API.
  *
- * @param initfilename - String where copy the initfilename
- * @returns 0 on success
+ * @param[out] initfilename The buffer to receive the initfilename.
+ *
+ * @return `0` on success.
 */
 int kuKernelInitFileName(char *initfilename);
 
 /**
- *
  * Gets the device in which the application was launched.
  *
- * @returns the device code, one of PSPBootFrom values.
+ * @return The device code. One of `SceBootMediumType` (or `PSPBootFrom`) values.
 */
 int kuKernelBootFrom();
 
 /**
  * Get the key configuration in which the system has booted.
  *
- * @returns the key configuration code, one of PSPKeyConfig values
+ * @return The key configuration code, one of `SceApplicationType` (or `PSPKeyConfig`) values
 */
 int kuKernelInitKeyConfig();
 
 /**
- * Get the user level of the current thread
+ * Get the user level of the current thread.
  *
- * @return The user level, < 0 on error
+ * @return The user level, `< 0` on error.
  */
 int kuKernelGetUserLevel(void);
 
 /**
- * Set the protection of a block of ddr memory
+ * Set the protection of a block of ddr memory.
  *
- * @param addr - Address to set protection on
- * @param size - Size of block
- * @param prot - Protection bitmask
+ * @param[in] addr The address to set protection on.
+ * @param size The size of the block to protect.
+ * @param prot The protection bitmask.
  *
- * @return < 0 on error
+ * @return `< 0` on error.
  */
 int kuKernelSetDdrMemoryProtection(void *addr, int size, int prot);
 
 /**
  * Gets the model of the PSP from user mode.
+ *
  * This function is available since 3.60 M33.
  * In previous version, use the kernel function sceKernelGetModel
  *
- * @return one of PspModel values
+ * @return One of `PspModel` values
 */
 int kuKernelGetModel(void);
 
 /**
- * Find module by name
+ * Find module by name.
  *
- * @param modname - Name of Module
- * @param mod - module structure for output (actually treated as SceModule)
+ * @param[in] modname The name of the module.
+ * @param[out] mod A pointer to receive the module structure.
  *
- * @return < 0 on error
+ * @return `< 0` on error.
  */
 int kuKernelFindModuleByName(char *modname, SceModule *mod);
 
 /**
- * Find module by arbitrary memory address
+ * Find module by arbitrary memory address.
  *
- * @param modname - Memory address somewhere inside the module
- * @param mod - module structure for output (actually treated as SceModule)
+ * @param[in] addr The memory address somewhere inside the module
+ * @param[out] mod A pointer to receive the module structure.
  *
- * @return < 0 on error
+ * @return `< 0` on error.
  */
 int kuKernelFindModuleByAddress(void *addr, SceModule *mod);
 
 /**
- * Invalidate the entire instruction cache
+ * Invalidate the entire instruction cache.
  */
 void kuKernelIcacheInvalidateAll(void);
 
 /**
- * Read 4 bytes from memory (with kernel memory access)
+ * Read 4 bytes from memory (with kernel memory access).
  *
- * @param addr - Address to read, must have 4 bytes alignment
+ * @param[in] addr The address to read. It must have 4 bytes alignment.
  */
 u32 kuKernelPeekw(void *addr);
 
 /**
- * Write 4 bytes to memory (with kernel memory access)
+ * Write 4 bytes to memory (with kernel memory access).
  *
- * @param addr - Address to write, must have 4 bytes alignment
+ * @param[in] addr The address to write. It must have 4 bytes alignment.
  */
 void kuKernelPokew(void *addr, u32 value);
 
 /**
- * memcpy (with kernel memory access)
+ * memcpy (with kernel memory access).
  *
- * @param dest - Destination address
- * @param src - Source address
- * @param num - copy bytes count
+ * @param dest The destination address.
+ * @param src The source address.
+ * @param num The copy bytes count.
  *
- * @return Destination address
+ * @return The destination address.
  */
 void *kuKernelMemcpy(void *dest, const void *src, size_t num);
 
 /**
- * Call a kernel function with kernel privilege
+ * Call a kernel function with kernel privilege.
  *
- * @param func_addr - kernel function address
- * @param args - kernel arguments and return values
+ * @param[in] func_addr The kernel function address.
+ * @param[inout] args The kernel arguments and return values
  *
- * return < 0 on error
+ * @return `< 0` on error.
  */
 int kuKernelCall(void *func_addr, KernelCallArg *args);
 
 /**
- * Call a kernel function with kernel privilege and extended stack
+ * Call a kernel function with kernel privilege and extended stack.
  *
- * @param func_addr - kernel function address
- * @param args - kernel arguments and return values
+ * @param[in] func_addr The kernel function address.
+ * @param[inout] args The kernel arguments and return values.
+ * @param stack_size The stack size to use.
  *
- * return < 0 on error
+ * @return `< 0` on error.
  */
 int kuKernelCallExtendStack(void *func_addr, KernelCallArg *args, int stack_size);
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* __KULIBRARY__ */
 

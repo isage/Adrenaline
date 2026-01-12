@@ -21,12 +21,16 @@
 
 #include <psptypes.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /**
  * Helper function to allocate memory on P2 (user memory).
  *
  * @param size - amount of bytes to allocate.
  *
- * @returns pointer to allocated buffer, or NULL on error.
+ * @return pointer to allocated buffer, or NULL on error.
  */
 void *user_malloc(SceSize size);
 /**
@@ -35,7 +39,7 @@ void *user_malloc(SceSize size);
  * @param align - The alignment
  * @param size - amount of bytes to allocate.
  *
- * @returns pointer to allocated buffer, or NULL on error.
+ * @return pointer to allocated buffer, or NULL on error.
  */
 void *user_memalign(SceSize align, SceSize size);
 /**
@@ -94,4 +98,9 @@ void atob(const char *a0, int *a1);
 
 int sprintf(char *str, const char *format, ...);
 int snprintf(char *str, SceSize n, const char * format, ... );
-#endif
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* __SYSCLIBFORUSER__ */

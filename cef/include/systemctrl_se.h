@@ -202,10 +202,14 @@ typedef AdrenalineConfig SEConfig;
 
 #define IS_EPI_CONFIG(config) ((((AdrenalineConfig*)config)->magic[0] == ADRENALINE_CFG_MAGIC_1) && (((AdrenalineConfig*)config)->magic[1] == ADRENALINE_CFG_MAGIC_2))
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /**
- * Gets the SE/OE version
+ * Gets the SE/OE version.
  *
- * @returns the SE version
+ * @return The SE version.
  *
  * 3.03 OE-A: 0x00000500
 */
@@ -213,50 +217,56 @@ int sctrlSEGetVersion();
 
 /**
  * Gets the SE configuration.
- * Avoid using this function, it may corrupt your program.
- * Use sctrlSEGetCongiEx function instead.
  *
- * @param config - pointer to a AdrenalineConfig structure that receives the SE configuration
- * @returns 0 on success
+ * Avoid using this function, it may corrupt your program.
+ * Use `sctrlSEGetCongiEx` function instead.
+ *
+ * @param config A pointer to a AdrenalineConfig structure that receives the SE configuration.
+ *
+ * @return `0` on success.
 */
 int sctrlSEGetConfig(AdrenalineConfig *config);
 
 /**
  * Gets the SE configuration
  *
- * @param config - pointer to a AdrenalineConfig structure that receives the SE configuration
- * @param size - The size of the structure
- * @returns 0 on success
+ * @param config A pointer to a `AdrenalineConfig` structure that receives the SE configuration.
+ * @param size The size of the structure.
+ *
+ * @return `0` on success.
 */
 int sctrlSEGetConfigEx(AdrenalineConfig *config, int size);
 
 /**
  * Sets the SE configuration.
- * This function can corrupt the configuration in flash, use
- * sctrlSESetConfigEx instead.
  *
- * @param config - pointer to a AdrenalineConfig structure that has the SE configuration to set
- * @returns 0 on success
+ * This function can corrupt the configuration in flash, use
+ * `sctrlSESetConfigEx` instead.
+ *
+ * @param config A pointer to a `AdrenalineConfig` structure that has the SE configuration to set.
+ *
+ * @return `0` on success.
 */
 int sctrlSESetConfig(AdrenalineConfig *config);
 
 /**
  * Sets the SE configuration.
  *
- * @param config - pointer to a AdrenalineConfig structure that has the SE configuration to set
- * @param size - the size of the structure
- * @returns 0 on success
+ * @param config A pointer to a `AdrenalineConfig` structure that has the SE configuration to set.
+ * @param size The size of the structure.
+ *
+ * @return `0` on success.
 */
 int sctrlSESetConfigEx(AdrenalineConfig *config, int size);
 
 /**
  * Initiates the emulation of a disc from an ISO9660/CSO file.
  *
- * @param file - The path of the
- * @param noumd - Wether use noumd or not
- * @param isofs - Wether use the custom SE isofs driver or not
+ * @param file The path of the
+ * @param noumd Wether use noumd or not
+ * @param isofs Wether use the custom SE isofs driver or not
  *
- * @returns 0 on success
+ * @return 0 on success
  *
  * @note 1. When setting noumd to 1, isofs should also be set to 1,
  * otherwise the umd would be still required.
@@ -282,14 +292,14 @@ int sctrlSEMountUmdFromFile(char *file, int noumd, int isofs);
 /**
  * Umounts an iso.
  *
- * @returns 0 on success
+ * @return `0` on success.
 */
 int sctrlSEUmountUmd(void);
 
 /**
- * Forces the umd disc out state
+ * Forces the umd disc out state.
  *
- * @param out - non-zero for disc out, 0 otherwise
+ * @param out Non-zero for disc out, `0` otherwise.
  *
 */
 void sctrlSESetDiscOut(int out);
@@ -297,130 +307,135 @@ void sctrlSESetDiscOut(int out);
 /**
  * Sets the disctype.
  *
- * @param type - the disctype (0x10=game, 0x20=video, 0x40=audio) or one of `IsoDiscType`
+ * @param type The disctype (0x10=game, 0x20=video, 0x40=audio). One or more of `SceUmdTypes` (or `PspUmdTypes`, `IsoDiscType`).
 */
 void sctrlSESetDiscType(int type);
 
 /**
  * Get the disctype.
  *
- * @returns The ISO disctype - One of `IsoDiscType`
+ * @return The ISO disctype. One or more of `SceUmdTypes` (or `PspUmdTypes`, `IsoDiscType`)
 */
 int sctrlSEGetDiscType(void);
 
 /**
- * Sets the boot config file for next reboot
+ * Sets the boot config file for next reboot.
  *
- * @param index - The index identifying the file (0 -> normal bootconf, 1 -> inferno driver bootconf, 2 -> march33 driver bootconf, 3 -> np9660 bootcnf, 4 -> recovery bootconf)
+ * @param index The index identifying the file (`0` -> normal bootconf, `1` -> inferno driver bootconf, `2` -> march33 driver bootconf, `3` -> np9660 bootcnf, `4` -> recovery bootconf).
 */
 void sctrlSESetBootConfFileIndex(int index);
 
 /**
- * Gets the boot config file for next reboot
+ * Gets the boot config file for next reboot.
  *
- * @returns The index identifying the file (0 -> normal bootconf, 1 -> inferno driver bootconf, 2 -> march33 driver bootconf, 3 -> np9660 bootcnf, 4 -> recovery bootconf)
+ * @return The index identifying the file (`0` -> normal bootconf, `1` -> inferno driver bootconf, `2` -> march33 driver bootconf, `3` -> np9660 bootcnf, `4` -> recovery bootconf).
 */
 int sctrlSEGetBootConfFileIndex(void);
 
 #ifdef __KERNEL__
 
 /**
- * Gets the current umd file (kernel only)
+ * Gets the current UMD file (kernel only).
  *
- * @returns The current umd file
+ * @return The current UMD file.
 */
 char *sctrlSEGetUmdFile();
 char *GetUmdFile();
 
 /**
- * Gets the current umd file
+ * Gets the current UMD file.
  *
- * @param input If not NULL, a umd filename to set
+ * @param input If not `NULL`, a UMD filename to set.
  *
- * @returns The current umd file
+ * @return The current umd file.
 */
 char *sctrlSEGetUmdFileEx(char *input);
 
 /**
- * Sets the current umd file (kernel only)
+ * Sets the current UMD file (kernel only).
  *
- * @param file - The umd file
+ * @param file The UMD file.
 */
 void sctrlSESetUmdFile(const char *file);
 void SetUmdFile(const char *file);
 
 /**
- * Sets the current umd file and copy the previous to `input`
+ * Sets the current UMD file and copy the previous to `input`
  *
- * @param file The umd file
- * @param input The output buffer for the previously set umd file. Or NULL to be ignored
+ * @param file The UMD file
+ * @param input The output buffer for the previously set UMD file. Or NULL to be ignored
 */
 void sctrlSESetUmdFileEx(const char *file, char *input);
 
 /**
  * Immediately sets the SE configuration in memory without saving to flash.
- * This function can corrupt the configuration in memory, use
- * sctrlSEApplyConfigEX instead.
  *
- * @param config - pointer to a SEConfig structure that has the SE configuration to set
+ * This function can corrupt the configuration in memory, use `sctrlSEApplyConfigEX` instead.
+ *
+ * @param config A pointer to a `SEConfig` structure that has the SE configuration to set
 */
 void sctrlSEApplyConfig(AdrenalineConfig *conf);
 
 /**
  * Immediately sets the SE configuration in memory without saving to flash.
  *
- * @param config - pointer to a SEConfig structure that has the SE configuration to set
- * @returns 0 on success, and -1 on error
+ * @param config A pointer to a `SEConfig` structure that has the SE configuration to set
+ *
+ * @return `0` on success, and `-1` on error.
 */
 int sctrlSEApplyConfigEX(AdrenalineConfig *conf, int size);
 
 /**
  * Sets the speed for the cpu and bus.
  *
- * @param cpu - The cpu speed
- * @param bus - The bus speed
+ * @param cpu The cpu speed
+ * @param bus The bus speed
 */
 void SetSpeed(int cpu, int bus);
 
 /**
  * Deallocate memory allocated by oe_malloc.
  *
- * @param ptr - pointer to the allocated memory.
+ * @param ptr A pointer to the allocated memory.
  */
 void oe_free(void *ptr);
 /**
  * Helper function to allocate memory on P1 (kernel memory).
  *
- * @param size - amount of bytes to allocate.
+ * @param size The amount of bytes to allocate.
  *
- * @returns pointer to allocated buffer, or NULL on error.
+ * @return A pointer to allocated buffer, or NULL on error.
  */
 void *oe_malloc(SceSize size);
 /**
  * Deallocate memory allocated by user_malloc.
  *
- * @param ptr - pointer to the allocated memory.
+ * @param ptr A pointer to the allocated memory.
  */
 void user_free(void *ptr);
 /**
  * Helper function to allocate memory on P2 (user memory).
  *
- * @param size - amount of bytes to allocate.
+ * @param size The amount of bytes to allocate.
  *
- * @returns pointer to allocated buffer, or NULL on error.
+ * @return A pointer to allocated buffer, or `NULL` on error.
  */
 void *user_malloc(SceSize size);
 /**
  * Helper function to allocate aligned memory on P2 (user memory).
  *
- * @param align - The alignment
- * @param size - amount of bytes to allocate.
+ * @param align The alignment.
+ * @param size The amount of bytes to allocate.
  *
- * @returns pointer to allocated buffer, or NULL on error.
+ * @return A pointer to allocated buffer, or `NULL` on error.
  */
 void *user_memalign(SceSize align, SceSize size);
 int mallocinit();
 
-#endif // __KERNEL__
+#endif /* __KERNEL__ */
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* __SCTRLLIBRARY_SE_H__ */

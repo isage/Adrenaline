@@ -62,68 +62,79 @@ enum PspModels {
 
 typedef int (* STMOD_HANDLER)(SceModule *);
 
+typedef int (* HEN_REG_HOMEBREW_LOADER_HANDLER)(const char *path, int flags, SceKernelLMOption *option);
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /**
  * Restart the vsh.
  *
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL
  *
- * @returns < 0 on some errors.
- *
+ * @return `< 0` on some errors.
 */
 int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a disc.
+ *
  * It is the function used by the firmware to execute the EBOOT.BIN from a disc.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
  *
- * @returns < 0 on some errors.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
+ *
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHDisc(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a disc.
+ *
  * It is the function used by the firmware to execute an updater from a disc.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHDiscUpdater(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
+ *
  * It is the function used by the firmware to execute an updater from a memory stick.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHMs1(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
+ *
  * It is the function used by the firmware to execute games (and homebrew :P) from a memory stick.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHMs2(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
+ *
  * It is the function used by the firmware to execute ... ?
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param);
 
@@ -131,43 +142,46 @@ int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param
  * Executes a new executable from a memory stick.
  * It is the function used by the firmware to execute application (e.g. Comic Reader) from a memory stick.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHMs4(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a memory stick.
+ *
  * It is the function used by the firmware to execute PS1 games from a memory stick..
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHMs5(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from the internal memory.
+ *
  * It is the function used by the firmware to execute an updater from the internal memory.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHEf1(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from the internal memory.
+ *
  * It is the function used by the firmware to execute games (and homebrew :P) from the internal memory.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHEf2(const char *file, SceKernelLoadExecVSHParam *param);
 
@@ -175,43 +189,45 @@ int sctrlKernelLoadExecVSHEf2(const char *file, SceKernelLoadExecVSHParam *param
  * Executes a new executable from the internal memory.
  * It is the function used by the firmware to execute ... ?
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHEf3(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a internal memory.
+ *
  * It is the function used by the firmware to execute application (e.g. Comic Reader) from the internal memory
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHEf4(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable from a internal memory.
+ *
  * It is the function used by the firmware to execute PS1 games from the internal memory.
  *
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or NULL.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHEf5(const char *file, SceKernelLoadExecVSHParam *param);
 
 /**
  * Executes a new executable with the specified apitype
  *
- * @param apitype - The apitype
- * @param file - The file to execute.
- * @param param - Pointer to a ::SceKernelLoadExecVSHParam structure, or NULL.
+ * @param apitype The apitype
+ * @param file The file to execute.
+ * @param param A pointer to a `SceKernelLoadExecVSHParam` structure, or `NULL`.
  *
- * @returns < 0 on some errors.
+ * @return `< 0` on some errors.
 */
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLoadExecVSHParam *param);
 
@@ -220,34 +236,34 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
  *
  * @param func_addr: absolute address of kernel function.
  *
- * @returns syscall number on success, <0 on error.
+ * @return The syscall number on success, `< 0` on error.
  */
 int sctrlKernelQuerySystemCall(void *func_addr);
 
 /**
- *  Calculate Random Number via KIRK
+ *  Calculate Random Number via KIRK.
  *
- * @returns A random number
+ * @return A random number.
  */
 u32 sctrlKernelRand(void);
 
 /**
- * Sets the user level of the current thread
+ * Sets the user level of the current thread.
  *
- * @param level - The user level
+ * @param level The user level.
  *
- * @return the previous user level on success
+ * @return The previous user level on success.
  */
 int sctrlKernelSetUserLevel(int level);
 
 /**
- * Sets the api type
+ * Sets the API type.
  *
- * @param apitype - The apitype to set. One of `SceFileExecApiType` (or `PSPInitApitype`)
+ * @param apitype The apitype to set. One of `SceFileExecApiType` (or `PSPInitApitype`)
  *
- * @returns the previous apitype
+ * @return The previous apitype
  *
- * @note - this will modify also the value of sceKernelBootFrom, since the value of
+ * @note This will modify also the value of `sceKernelBootFrom`, since the value of
  * bootfrom is calculated from the apitype
  */
 int sctrlKernelSetInitApitype(int apitype);
@@ -255,45 +271,54 @@ int sctrlKernelSetInitApitype(int apitype);
 /**
  * Sets the filename of the launched executable.
  *
- * @param filename - The filename to set
+ * @param filename The filename to set.
  *
- * @returns 0 on success
+ * @return `0` on success.
  */
 int sctrlKernelSetInitFileName(char * filename);
 #define sctrlKernelSetUMDEmuFile sctrlKernelSetInitFileName;
 
 /**
- * Sets the init key config
+ * Sets the application type.
  *
- * @param key - The key code. One of `SceApplicationType` (or `PSPKeyConfig`)
+ * @param key The key code. One of `SceApplicationType` (or `PSPKeyConfig`)
  *
- * @returns the previous Application type
+ * @return the previous Application type.
+ */
+int sctrlKernelSetApplicationType(int key);
+
+/**
+ * Sets the init key config. (Same as `sctrlKernelSetApplicationType()`).
+ *
+ * @param key The key code. One of `SceApplicationType` (or `PSPKeyConfig`)
+ *
+ * @return the previous Application type.
  */
 int sctrlKernelSetInitKeyConfig(int key);
 
 /**
- * Sets the devkit version
+ * Sets the devkit version.
  *
- * @param version - The devkit version to set
+ * @param version The devkit version to set.
  *
- * @return the previous devkit version
+ * @return The previous devkit version.
  */
 int sctrlKernelSetDevkitVersion(int version);
 
 /**
- * Obtain boot device
+ * Obtain the boot device.
  *
- * @returns The boot device.
+ * @return The boot device.
  */
 int sctrlKernelBootFrom(void);
 
 /**
  * Resolves the NID of a library if missing.
  *
- * @param libname The name of the library
- * @param nid The NID to resolve
+ * @param libname The name of the library.
+ * @param nid The NID to resolve.
  *
- * @returns The function pointer to the resolved function, `0` otherwise
+ * @return The function pointer to the resolved function, `0` otherwise.
  *
  * @note Compat with ARK CFW
  */
@@ -308,7 +333,7 @@ u32 sctrlKernelResolveNid(const char *libname, u32 nid);
  * @Example:
  * sctrlKernelSetNidResolver("sceImpose_driver", 0); // disable sceImpose_driver resolving
  *
- * @return previous value if set, < 0 on error
+ * @return previous value if set, `< 0` on error
  *
  * @note Compat with ARK CFW. On Adrenaline returns `SCE_ENOSYS`
  */
@@ -317,9 +342,9 @@ int sctrlKernelSetNidResolver(char* libname, u32 enabled);
 /**
  * Finds a driver
  *
- * @param drvname - The name of the driver (without ":" or numbers)
+ * @param drvname The name of the driver (without ":" or numbers)
  *
- * @returns the driver if found, NULL otherwise
+ * @return The driver if found, `NULL` otherwise.
  *
  */
 PspIoDrv *sctrlHENFindDriver(const char *drvname);
@@ -327,10 +352,10 @@ PspIoDrv *sctrlHENFindDriver(const char *drvname);
 /**
  *  Find a import library stub table.
  *
- * @param mod - The module where to search the function
- * @param library - The library name
+ * @param mod The module where to search the function.
+ * @param library The library name.
  *
- * @returns The reference to the stub table ot NULL if not found.
+ * @return The reference to the stub table ot NULL if not found.
  */
 SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library);
 #define sctrlFindImportLib sctrlHENFindImportLib
@@ -338,27 +363,27 @@ SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library);
 /**
  * Finds an exported function.
  *
- * @param mod_name - The module where to search the function
- * @param library - The library name
- * @param nid - The nid of the function
+ * @param mod_name The module where to search the function.
+ * @param library The library name.
+ * @param nid The NID of the function.
  *
- * @returns - The function address or 0 if not found
+ * @return The function address, or `0` if not found.
  *
 */
 u32 sctrlHENFindFunction(const char* mod_name, const char* library, u32 nid);
 #define FindProc sctrlHENFindFunction
 
 /**
- * Finds an exported function in a ::SceModule.
+ * Finds an exported function in a `SceModule`.
  *
- * Good to optimize when you already have a ::SceModule module and wants to
+ * Good to optimize when you already have a `SceModule` module and wants to
  * find a function in that module.
  *
- * @param mod - The module where to search the function
- * @param library - The library name
- * @param nid - The nid of the function
+ * @param mod The module where to search the function.
+ * @param library The library name.
+ * @param nid The NID of the function.
  *
- * @returns - The function address or 0 if not found
+ * @return The function address, or `0` if not found.
  *
 */
 u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid);
@@ -367,11 +392,11 @@ u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid);
 /**
  * Finds an exported function in the system that matches the specified library name and NID.
  *
- * @param library The library name
- * @param nid The nid of the function
- * @param user_mods_only Set to 1 to only receive UIDs from user mode modules. Set to 0 to receive UIDs from kernel loaded modules.
+ * @param library The library name.
+ * @param nid The NID of the function.
+ * @param user_mods_only Set to `1` to only receive UIDs from user mode modules. Set to `0` to receive UIDs from kernel loaded modules.
  *
- * @returns - The function address or 0 if not found
+ * @return The function address, or `0` if not found.
  */
 u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_only);
 
@@ -381,11 +406,11 @@ u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_onl
  * Good to optimize when you already have a ::SceModule module and wants to
  * find a stub in that module.
  *
- * @param mod - The module where to search the import
- * @param library - The library name
- * @param nid - The nid of the function
+ * @param mod The module where to search the import
+ * @param library The library name
+ * @param nid The nid of the function
  *
- * @returns - The function address or 0 if not found
+ * @return The function address or 0 if not found
  *
 */
 u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid);
@@ -398,18 +423,18 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid);
  * syscall; manually exporting in exports.exp is still required for Syscalls to
  * work.
  *
- * @param mod - The module where to search the function
- * @param library - The library name
- * @param nid - The nid of the function
- * @param func - The function to replace the stub. If NULL, use dummy value
+ * @param mod The module where to search the function
+ * @param library The library name
+ * @param nid The nid of the function
+ * @param func The function to replace the stub. If NULL, use dummy value
  * @param dummy - If `func` is NULL, it is the dummy value to replace the stub.
  *
- * @returns
- * - 0 if successful,
- * -1 if `mod` or `library` are NULL,
- * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
- * -3 if failed to find import by NID after successful resolve to older firmware version
- * -4 if failed to find syscall table
+ * @return
+ * `0` if successful;
+ * `-1` if `mod` or `library` are `NULL`;
+ * `-2` if failed to find import by NID and fail to resolve that NID from older firmware version;
+ * `-3` if failed to find import by NID after successful resolve to older firmware version;
+ * `-4` if failed to find syscall table.
 */
 int sctrlHENHookImportByNID(SceModule * mod, const char *library, u32 nid, void *func, int dummy);
 
@@ -425,17 +450,17 @@ int sctrlHENHookImportByNID(SceModule * mod, const char *library, u32 nid, void 
  *
  * @note ARK CFW compatibility, similar to `sctrlHENHookImportByNID`
  *
- * @param mod - The module where to search the function
- * @param library - The library name
- * @param nid - The nid of the function
- * @param func - The function to replace the stub. If value is below 16bit max
+ * @param mod The module where to search the function
+ * @param library The library name
+ * @param nid The nid of the function
+ * @param func The function to replace the stub. If value is below 16bit max
  * value, this is interpreted as a dummy value
  *
- * @returns
- * - 0 if successful,
- * -1 if `mod` or `library` are NULL,
- * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
- * -3 if failed to find import by NID after successful resolve to older firmware version
+ * @return
+ * `0` if successful;
+ * `-1` if `mod` or `library` are `NULL`;
+ * `-2` if failed to find import by NID and fail to resolve that NID from older firmware version;
+ * `-3` if failed to find import by NID after successful resolve to older firmware version;
  *
  * @note Compat with ARK CFW
  */
@@ -451,17 +476,17 @@ int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void * 
  * the `func` syscall; in this case, manually exporting in exports.exp is still
  * required for Syscalls to work.
  *
- * @param mod - The module where to search the function
- * @param library - The library name
- * @param nid - The nid of the function
- * @param func - The function to replace the stub. If NULL, use dummy value
- * @param dummy/replace_syscall - If `func` is NULL, it is the dummy value to replace the stub.
- * 	If `func` is not NULL, it is interpreted as a boolean on how to handle in
+ * @param mod The module where to search the function
+ * @param library The library name
+ * @param nid The nid of the function
+ * @param func The function to replace the stub. If NULL, use dummy value
+ * @param dummy/replace_syscall If `func` is NULL, it is the dummy value to replace the stub.
+ * 	If `func` is not `NULL`, it is interpreted as a boolean on how to handle in
  * the case of a syscall hook; `0` means new-syscall and redirect the stub, `>0`
  * means replace the syscall in the syscall table (that means that all all usages
  * of the replaced syscall will call `func`).
  *
- * @returns
+ * @return
  * - 0 if successful,
  * -1 if `mod` or `library` are NULL,
  * -2 if failed to find import by NID and fail to resolve that NID from older firmware version
@@ -472,9 +497,9 @@ int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void * 
 int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, void *func, int dummy);
 
 /**
- * Gets the HEN version
+ * Gets the HEN version.
  *
- * @returns - The HEN version
+ * @return The HEN version.
  *
  * HEN D / SE-C :  0x00000400
  * M33 : 0x00000700 | 0x00000800
@@ -484,9 +509,9 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 int sctrlHENGetVersion();
 
 /**
- * Gets the HEN minor version
+ * Gets the HEN minor version.
  *
- * @returns - The HEN minor version
+ * @return The HEN minor version.
  *
  * @note In practice, for Adrenaline, returns value for the release version of the CFW.
  */
@@ -495,30 +520,30 @@ int sctrlHENGetMinorVersion();
 /**
  * Checks if we are in Devhook.
  *
- * @returns 1 if we are in SE-C/HEN-D for devhook  or later, 0 if we are in normal SE-C/HEN-D or later,
- * and < 0 (a kernel error code) in any other case
+ * @return `1` if we are in SE-C/HEN-D for devhook or later, `0` if we are in normal SE-C/HEN-D or later,
+ * and `< 0` (a kernel error code) in any other case
 */
 int	sctrlHENIsDevhook();
 
 /**
  * Checks if we are in SE.
  *
- * @returns 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
- * and < 0 (a kernel error code) in any other case
+ * @return 1 if we are in SE-C or later, 0 if we are in HEN-D or later,
+ * and `< 0` (a kernel error code) in any other case
 */
 int	sctrlHENIsSE();
 
 /**
  * Checks if the system already started.
  *
- * @returns 1 if system has started, 0 otherwise.
+ * @return `1` if system has started, `0` otherwise.
 */
 int sctrlHENIsSystemBooted();
 
 /**
  * Checks if the system is a dev Toolkit.
  *
- * @returns 1 if system is a dev Toolkit, 0 otherwise.
+ * @return `1` if system is a dev Toolkit, `0` otherwise.
  *
  * @note Compat with ARK CFW
 */
@@ -527,10 +552,10 @@ int sctrlHENIsToolKit();
 /**
  * Sets the partition 2 and 11 memory for next loadexec.
  *
- * @param p2 - The size in MB for the user partition. Must be > 0
- * @param p11 - The size in MB for partition 8. Can be 0.
+ * @param p2 The size in MB for the user partition. Must be > 0
+ * @param p11 The size in MB for partition 8. Can be 0.
  *
- * @returns 0 on success, < 0 on error.
+ * @return `0` on success, `< 0` on error.
  * The function will fail if p2+p8 > 52 or p2 == 0
  * The function will fail with -1 if can't unlock (i.e. pops, vsh),
  * -2 if already unlocked, -3 if too late to unlock.
@@ -540,28 +565,28 @@ int sctrlHENSetMemory(u32 p2, u32 p11);
 /**
  * Unlocks extra memory on partition 2 (user RAM).
  *
- * @param p2 - The size in MB for the user partition. The actual value is
+ * @param p2 The size in MB for the user partition. The actual value is
  * ignored but must be > 24.
  *
- * @returns 0 on success, -1 if can't unlock (i.e. pops, vsh, function to unlock
- * not found), -2 if already unlocked, -3 if too late to unlock.
+ * @return `0` on success, `-1` if can't unlock (i.e. pops, vsh, function to unlock
+ * not found), `-2` if already unlocked, `-3` if too late to unlock.
  */
 int sctrlHENApplyMemory(u32 p2);
 
 /**
  * Sets the speed for the cpu and bus.
  *
- * @param cpu - The cpu speed
- * @param bus - The bus speed
+ * @param cpu The cpu speed
+ * @param bus The bus speed
 */
 void sctrlHENSetSpeed(int cpu, int bus);
 
 /**
  * Sets a function to be called just before module_start of a module is gonna be called (useful for patching purposes)
  *
- * @param handler - The function, that will receive the module structure before the module is started.
+ * @param handler The function, that will receive the module structure before the module is started.
  *
- * @returns - The previous set function (NULL if none);
+ * @return The previous set function (`NULL` if none);
  *
  * @note Because only one handler function is handled by HEN, you should
  * call the previous function in your code.
@@ -607,7 +632,7 @@ STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler);
  * @param param_length The SFO parameter length
  * @param param_buf The buffer to write the the found SFO parameter
  *
- * @returns Returns `0` if parameter was found, `<0` on error
+ * @return Returns `0` if parameter was found, `<0` on error
  */
 int sctrlGetSfoPARAM(const char* sfo_path, const char* param_name, u16* param_type, u32* param_length, void* param_buf);
 
@@ -619,45 +644,45 @@ int sctrlGetSfoPARAM(const char* sfo_path, const char* param_name, u16* param_ty
  * @param param_length The SFO parameter length
  * @param param_buf The buffer to write the the found SFO parameter
  *
- * @returns Returns `0` if parameter was found, `<0` on error
+ * @return Returns `0` if parameter was found, `<0` on error
  */
 int sctrlGetInitPARAM(const char* param_name, u16* param_type, u32* param_length, void* param_buf);
 
 /**
- * Patch module by offset
+ * Patch module by offset.
  *
- * @param modname - module name
- * @param inst  - instruction
- * @param offset - module patch offset
+ * @param modname The module name.
+ * @param inst The instruction to overwrite.
+ * @param offset The module patch offset.
  *
- * @return < 0 on error
+ * @return `< 0` on error
  *
  * @note Compat with PRO, ARK
  */
 int sctrlPatchModule(char *modname, u32 inst, u32 offset);
 
 /**
- * Get module text address
+ * Get module text address.
  *
- * @param modname - module name
+ * @param modname The module name.
  *
- * @return text address, or 0 if not found
+ * @return The text address, or `0` if not found.
  *
  * @note Compat with PRO, ARK
  */
 u32 sctrlModuleTextAddr(char *modname);
 
 /**
- * Flush/Cleans Instruction and Data Caches
+ * Flush/Cleans Instruction and Data Caches.
  */
 void sctrlFlushCache(void);
 
 /**
  * Finds the UID of the thread with a given `name`.
  *
- * @param name The name of the thread
+ * @param name The name of the thread.
  *
- * @returns The UID of the thread on success, `< 0` on error or not found.
+ * @return The UID of the thread on success, `< 0` on error or not found.
  */
 SceUID sctrlGetThreadUIDByName(const char* name);
 
@@ -673,19 +698,19 @@ int sctrlRebootDevice();
 /**
  * LZ4 decompress.
  *
- * @param dest out buffer where the decompressed data will be
- * @param src source buffer with the compressed data
- * @param size size of the decompressed data
+ * @param[out] dest The out buffer where the decompressed data will be.
+ * @param[in] src The source buffer with the compressed data.
+ * @param size The size of the decompressed data.
  */
 int sctrlLZ4Decompress(void* dest, const void* src, int size);
 
 /**
  * LZO decompress.
  *
- * @param dest out buffer where the decompressed data will be
- * @param dst_size return size of the decompressed data
- * @param src source buffer with the compressed data
- * @param src_size size of the compressed data
+ * @param[out] dest The out buffer where the decompressed data will be
+ * @param[out] dst_size The return size of the decompressed data
+ * @param[in] src The source buffer with the compressed data
+ * @param src_size The size of the compressed data
  */
 int sctrlLzoDecompress(void* dest, unsigned* dst_size, void* src, unsigned src_size);
 
@@ -737,11 +762,11 @@ u32 sctrlHENFakeDevkitVersion();
 /**
  * Loads a module on next reboot. Only kernel mode.
  *
- * @param module_after - The path of the module which is loaded after the module to be loaded.
+ * @param module_after The path of the module which is loaded after the module to be loaded.
    The module passed to this function will be loaded just before that module.
- * @param buf - The buffer containing the module - Don't deallocate this one. It has to reside in kernel memory.
- * @param size - The size of the module
- * @param flags - The modes in which the module should be loaded, one of BootLoadFlags
+ * @param buf The buffer containing the module - Don't deallocate this one. It has to reside in kernel memory.
+ * @param size The size of the module
+ * @param flags The modes in which the module should be loaded, one of BootLoadFlags
  *
  * @example:
  * sctrlHENLoadModuleOnReboot("/kd/usersystemlib.prx", module_buffer, module_size, BOOTLOAD_GAME | BOOTLOAD_POPS | BOOTLOAD_UMDEMU);
@@ -764,8 +789,8 @@ void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int fla
  * calling the original syscall. This means that every system call to the
  * original function (in any module) will execute the new function instead.
  *
- * @param addr - the address of the original function
- * @param newaddr - the address of the new function
+ * @param addr The address of the original function
+ * @param newaddr The address of the new function
  *
 */
 void sctrlHENPatchSyscall(u32 addr, void *newaddr);
@@ -781,7 +806,7 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr);
  *
  * @param function The function pointer to the function to create the syscall stub
  *
- * @returns The syscall stub of the given function (> 0). Or zero if the function fails to create the stub.
+ * @return The syscall stub of the given function (> 0). Or zero if the function fails to create the stub.
  *
  * @attention Every call to this function allocates 8 bytes of memory in the
  * user RAM, which is also the available memory for the running application. So,
@@ -789,15 +814,14 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr);
  */
 u32 sctrlHENMakeSyscallStub(void *function);
 
-typedef int (* HEN_REG_HOMEBREW_LOADER_HANDLER)(const char *path, int flags, SceKernelLMOption *option);
 int sctrlHENRegisterHomebrewLoader(HEN_REG_HOMEBREW_LOADER_HANDLER handler);
 
 /**
  * Get the rebootex configuration.
  *
- * @param config - A pointer to where the config will be copied, or NULL
+ * @param config A pointer to where the config will be copied, or NULL
  *
- * @returns A pointer to the global rebootex configuration.
+ * @return A pointer to the global rebootex configuration.
  *
  * @note Compat with ARK
  */
@@ -812,7 +836,7 @@ RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config);
  *
  * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note - Compat with PRO and ARK
+ * @note Compat with PRO and ARK
  */
 void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
 
@@ -823,22 +847,22 @@ void sctrlSetCustomStartModule(int (*func)(int modid, SceSize argsize, void *arg
  *
  * @param func function pointer to register as custom start module handler
  *
- * @returns The previously set module handler, if any.
+ * @return The previously set module handler, if any.
  *
  * @note - `func` returns -1 to ignore the module and load the original module. Or new modid if replace is done.
  *
- * @note - Compat with ME and ARK
+ * @note Compat with ME and ARK
  */
 void* sctrlSetStartModuleExtra(int (*func)(int modid, SceSize argsize, void *argp, int *modstatus, SceKernelSMOption *opt));
 
 /**
- * Get `sceInit` module text address
+ * Get `sceInit` module text address.
  *
- * @note - Only useful before `sceInit` exits
+ * @note Only useful before `sceInit` exits.
  *
- * @return text address, or 0 if not found
+ * @return The `sceInit` text address, or `0` if not found.
  *
- * @note - Compat with PRO and ARK
+ * @note Compat with PRO and ARK
  */
 u32 sctrlGetInitTextAddr(void);
 
@@ -850,6 +874,10 @@ char *strncat(char *dest, const char *src, SceSize count);
 SceSize strncat_s(char *dest, SceSize numberOfElements, const char *src, SceSize count);
 SceSize strncpy_s(char *dest, SceSize numberOfElements, const char *src, SceSize count);
 
-#endif // __KERNEL__
+#endif /* __KERNEL__ */
 
-#endif // __SCTRLLIBRARY_H__
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+#endif /* __SCTRLLIBRARY_H__ */
