@@ -225,6 +225,8 @@ int kuCopyFiles(const char* dev_name, const char* rel_src, const char* rel_dest)
 	ENTER_SYSCALL(state);
 	int res = -1;
 
+	ksceKernelPrintf("[DEBUG]: 1\n");
+
 	if (my_mallocinit() != 0) {
 		goto exit;
 	}
@@ -234,10 +236,15 @@ int kuCopyFiles(const char* dev_name, const char* rel_src, const char* rel_dest)
 	SceUInt32 num_mounts = 0;
 	int mount_res = vfsGetMntList(mounts, 24, &num_mounts);
 
+	ksceKernelPrintf("[DEBUG]: 2\n");
+
 	if (mount_res < 0) {
 		res = mount_res;
 		goto exit;
 	}
+
+
+	ksceKernelPrintf("[DEBUG]: 3\n");
 
 
 	SceIoMountInfo mount_info = {0};
@@ -248,10 +255,13 @@ int kuCopyFiles(const char* dev_name, const char* rel_src, const char* rel_dest)
 		}
 	}
 
+	ksceKernelPrintf("[DEBUG]: 4\n");
+
 	char dest[64] = {0};
 	char src[64] = {0};
 	snprintf(dest, 64, "%s%s", mount_info.assign_name, rel_dest);
 	snprintf(src, 64, "%s%s", mount_info.assign_name, rel_src);
+	ksceKernelPrintf("Dest: %s | SRC: %s \n", dest, src);
 	copyPath(src, dest);
 
 exit:
