@@ -193,4 +193,14 @@ typedef enum SceApplicationType {
 	SCE_APPTYPE_APP		= 0x400,
 } SceApplicationType;
 
+/**
+ * This structure represents a boot callback belonging to a module.
+ */
+typedef struct SceBootCallback {
+	/** The boot callback function. */
+	void *boot_callback_func;
+	/** Global pointer value of the module. */
+	u32 gp;
+} SceBootCallback;
+
 #endif /* PSPKERNELTYPES_H */

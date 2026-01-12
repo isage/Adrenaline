@@ -44,28 +44,33 @@ add_custom_target(updater
 
 add_custom_target(cfw-libs
   COMMAND make -C ${CMAKE_SOURCE_DIR}/cef _cfw_libs
-  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspkubridge.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsystemctrl_kernel.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsystemctrl_user.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsysc_user.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspvshctrl.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspisoctrl_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspinferno_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspmarch33_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspgalaxy_driver.a ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/build.mak ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/build_prx.mak ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/lib/
-  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/kubridge.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl_se.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/sysclib_user.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/vshctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/isoctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/infernoctrl.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/rebootexconfig.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/cfwmacros.h ${CMAKE_CURRENT_BINARY_DIR}/hb-dev-setup/include/
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspkubridge.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsystemctrl_kernel.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsystemctrl_user.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspsysc_user.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspvshctrl.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspisoctrl_driver.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspinferno_driver.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspmarch33_driver.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libpspgalaxy_driver.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libvlfgu.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libvlfgui.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libvlflibc.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/libvlfutils.a ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/build.mak ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/lib/build_prx.mak ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/lib/
+  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/kubridge.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/systemctrl_se.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/sysclib_user.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/vshctrl.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/isoctrl.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/infernoctrl.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/rebootexconfig.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/cfwmacros.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/include/vlf.h ${CMAKE_CURRENT_BINARY_DIR}/cfw-dev-sdk/include/
 )
 
 #add_dependencies(updater "kernel_all")

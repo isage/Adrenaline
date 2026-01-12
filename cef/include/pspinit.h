@@ -1,6 +1,10 @@
 #ifndef __PSPINIT_H__
 #define __PSPINIT_H__
 
+#include <psptypes.h>
+#include <pspkerneltypes.h>
+#include <psploadexec.h>
+
 enum PSPBootFrom {
 	PSP_BOOT_FLASH = 0, /* ? */
 	PSP_BOOT_DISC = 0x20,

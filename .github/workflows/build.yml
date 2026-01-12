@@ -135,14 +135,14 @@ jobs:
       - name: Build CFW libs
         run: |
           cmake --build build --target cfw-libs
-          zip -r 'build/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip' build/hb-dev-setup/
+          zip -r 'build/epi-cfw-dev-sdk-${{ steps.vars.outputs.sha_short }}.zip' build/cfw-dev-sdk/
 
       - name: Upload CFW libs
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v6
         with:
           name: epi-cfw-libs
-          path: 'build/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip'
+          path: 'build/epi-cfw-dev-sdk-${{ steps.vars.outputs.sha_short }}.zip'
           compression-level: 0
 
 
@@ -228,4 +228,4 @@ jobs:
               build/epi-vpk/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
               build/epi-vpk-debug/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
               build/epi-updater/updater-${{ steps.vars.outputs.sha_short }}.zip
-              build/epi-cfw-libs/epi-hb-dev-setup-${{ steps.vars.outputs.sha_short }}.zip
+              build/epi-cfw-libs/epi-cfw-dev-sdk-${{ steps.vars.outputs.sha_short }}.zip

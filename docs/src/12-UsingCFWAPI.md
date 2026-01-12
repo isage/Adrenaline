@@ -29,7 +29,7 @@ cmake -S . -B build
 ```sh
 cmake --build build --target cfw-libs
 ```
-5. Grab the `include` directory and the `lib` directory from the `build/hb-dev-setup/` directory and add them to your project source
+5. Grab the `include` directory and the `lib` directory from the `build/cfw-dev-sdk/` directory and add them to your project source
 
 
 After that, you should include the `lib` directory in the library directory list. If you are using `Makefile`, it is as simple as defining the `LIBDIR` variable to the path.
