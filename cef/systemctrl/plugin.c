@@ -32,7 +32,7 @@
 #define LINE_TOKEN_DELIMITER ','
 
 extern SEConfigADR config;
-extern RebootexConfig rebootex_config;
+extern RebootexConfigADR rebootex_config;
 
 #define MAX_PLUGINS 64
 #define MAX_PLUGIN_PATH 128

@@ -39,24 +39,7 @@
 #define PSP_SCREEN_HEIGHT 272
 #define PSP_SCREEN_LINE 512
 
-#define EPI_REBOOTEX_CFG_ADDR 0x88FB0000
-#define EPI_REBOOTEX_MOD_ADDR 0x88FC0000
 #define EPI_CONFIG_ADDR 0x08800010
-
-typedef struct {
-	SceSize size;
-	char shortFileName[13];
-	char __padding__[3];
-	char longFileName[1024];
-} SceFatMsDirent;
-
-typedef struct {
-	unsigned int max_clusters;
-	unsigned int free_clusters;
-	unsigned int max_sectors;
-	unsigned int sector_size;
-	unsigned int sector_count;
-} ScePspemuIoDevInfo;
 
 enum SaveStateModes {
 	SAVESTATE_MODE_NONE,

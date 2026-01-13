@@ -22,6 +22,7 @@
  */
 
 #include <common.h>
+#include <bootloadex.h>
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -367,8 +368,8 @@ int RunRebootPatched(u32 *params) {
 }
 
 int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
-	memcpy((void *)EPI_REBOOTEX_MOD_ADDR, rebootex, size_rebootex);
-	memcpy((void *)EPI_REBOOTEX_CFG_ADDR, &rebootex_config, sizeof(RebootexConfig));
+	memcpy((void *)REBOOTEX_TEXT, rebootex, size_rebootex);
+	memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootexConfigADR));
 	// Backup the CFW config across reboot
 	memcpy((void *)EPI_CONFIG_ADDR, &config, sizeof(SEConfigADR));
 	return DecodeKL4E(dest, size_dest, src, size_src);

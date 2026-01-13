@@ -26,7 +26,7 @@
 #include "utils.h"
 #include "main.h"
 
-extern RebootexConfig rebootex_config;
+extern RebootexConfigADR rebootex_config;
 extern SEConfigADR config;
 
 STMOD_HANDLER game_previous = NULL;

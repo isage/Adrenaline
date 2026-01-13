@@ -154,11 +154,11 @@ int _msIoDevctl(u32 *args) {
 		if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 			u32 data = *(u32 *)indata;
 			if (data) {
-				ScePspemuIoDevInfo *info = (ScePspemuIoDevInfo *)data;
+				SceDevInf *info = (SceDevInf *)data;
 
-				u64 size = (u64)info->free_clusters * (u64)info->sector_size * (u64)info->sector_count;
+				u64 size = (u64)info->freeClusters * (u64)info->sectorSize * (u64)info->sectorCount;
 				if (size >= 0x7FFFFFFF) {
-					info->free_clusters = 0x7FFFFFFF / info->sector_size / info->sector_count;
+					info->freeClusters = 0x7FFFFFFF / info->sectorSize / info->sectorCount;
 				}
 			}
 		}

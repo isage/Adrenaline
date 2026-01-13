@@ -43,7 +43,7 @@
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
-RebootexConfig rebootex_config;
+RebootexConfigADR rebootex_config;
 SEConfigADR config;
 
 int idle = 0;
@@ -379,7 +379,7 @@ int module_start(SceSize args, void *argp) {
 
 	initAdrenaline();
 
-	memcpy(&rebootex_config, (void *)EPI_REBOOTEX_CFG_ADDR, sizeof(RebootexConfig));
+	memcpy(&rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigADR));
 
 	tty_init();
 

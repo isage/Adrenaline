@@ -90,11 +90,4 @@ typedef struct ModuleEntry {
 	u8  hash[0x10]; // 16
 } __attribute__((packed)) ModuleEntry; // 32
 
-typedef struct {
-	char *name;
-	void *buffer;
-	u32 size;
-} BootFile;
-
-
 #endif // _EPI_EXTRA_TYPES_H

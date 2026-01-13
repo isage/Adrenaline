@@ -1,12 +1,37 @@
-TARGET = rebootex
-OBJS = main.o libc.o
-
-INCDIR = ../include
-CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -fno-builtin
-CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
-ASFLAGS = $(CFLAGS)
-
-LDFLAGS = -nostartfiles -T linkfile.x -nostdlib
-
 PSPSDK = $(shell psp-config --pspsdk-path)
-include ../lib/build_bin.mak
+PSPDEV = $(shell psp-config --pspdev-path)
+PYTHON = $(shell which python3)
+ARKSDK = $(PSPDEV)/share/ark-dev-sdk
+
+TARGET = rebootex.bin
+
+all: $(TARGET)
+
+C_OBJS = main.o
+
+CC = psp-gcc
+LD = psp-ld
+STRIP = psp-strip
+OBJCOPY = psp-objcopy
+LINKFILE = $(ARKSDK)/build-tools/bootloadex.l
+INCDIR = $(PSPSDK)/include $(PSPSDK)/include/iplsdk
+CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
+LIBS = -L $(PSPSDK)/lib -lbootloadex -lansic
+
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+LIBS += -lcolordebugger
+endif
+
+main.elf: $(C_OBJS)
+
+$(TARGET): main.elf
+	$(Q)$(STRIP) -s $<
+	$(Q)$(OBJCOPY) -O binary $< $@
+	@echo GET $@
+
+clean:
+	$(Q)rm -rf *~ *.s *.o *.elf *.lzo $(TARGET) payload.h $(EXTRA_CLEAN)
+
+include $(ARKSDK)/build-tools/beauty_bin.mak

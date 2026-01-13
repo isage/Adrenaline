@@ -1,5 +1,11 @@
-#ifndef KERMIT_H
-#define KERMIT_H
+#ifndef ADRENALINE_VITA_H
+#define ADRENALINE_VITA_H
+
+// NOTE: these definitions already exist in PSPSDK, but not on VITASDK
+// since they are needed by Vita-side, but not anymore by PSP-side, I've moved them to this file
+
+#define REBOOTEX_CONFIG 0x88FB0000
+#define REBOOTEX_TEXT 0x88FC0000
 
 enum KermitModes {
 	KERMIT_MODE_NONE, // 0x0
@@ -70,5 +76,20 @@ typedef struct {
 	int32_t unk_0; //0x0
 	int32_t unk_4; //0x4
 } SceKermitInterrupt; //0x8
+
+typedef struct {
+	SceSize size;
+	char shortFileName[13];
+	char __padding__[3];
+	char longFileName[1024];
+} SceFatMsDirent;
+
+typedef struct {
+	unsigned int max_clusters;
+	unsigned int free_clusters;
+	unsigned int max_sectors;
+	unsigned int sector_size;
+	unsigned int sector_count;
+} ScePspemuIoDevInfo;
 
 #endif

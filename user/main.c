@@ -525,11 +525,11 @@ static int sceCompatWaitSpecialRequestPatched(int mode) {
 	void *payloadex = (void *)&_binary_flash0_payloadex_bin_start;
 	int size_payloadex = (int)&_binary_flash0_payloadex_bin_size;
 
-	uint32_t *m = (uint32_t *)ScePspemuConvertAddress(EPI_REBOOTEX_MOD_ADDR, KERMIT_OUTPUT_MODE, size_payloadex);
+	uint32_t *m = (uint32_t *)ScePspemuConvertAddress(REBOOTEX_TEXT, KERMIT_OUTPUT_MODE, size_payloadex);
 	memcpy(m, payloadex, size_payloadex);
 	ScePspemuWritebackCache(m, size_payloadex);
 
-	void *n = (void *)ScePspemuConvertAddress(EPI_REBOOTEX_CFG_ADDR, KERMIT_OUTPUT_MODE, 0x100);
+	void *n = (void *)ScePspemuConvertAddress(REBOOTEX_CONFIG, KERMIT_OUTPUT_MODE, 0x100);
 	memset(n, 0, 0x100);
 
 	SceCtrlData pad;
