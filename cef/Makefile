@@ -102,7 +102,7 @@ _kermit_idstorage:
 _xmbctrl:
 	make -C xmbctrl clean
 	make -C xmbctrl -j
-	$(PY) $(PSPGZ) ../user/flash0/kd/xmbctrl.prx $(UHDR) xmbctrl/xmbctrl.prx XmbControl 0x0000
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/xmbctrl.prx $(UHDR) xmbctrl/xmbctrl.prx XmbControl 0x0000
 	make -C xmbctrl clean
 
 _satelite:

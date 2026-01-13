@@ -59,6 +59,7 @@
 
 #include "startdat.h"
 
+
 INCLUDE_EXTERN_RESOURCE(payloadex_bin);
 
 int (* ScePspemuDivide)(uint64_t x, uint64_t y);
