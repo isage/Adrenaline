@@ -30,6 +30,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
+#include <common.h>
 #include <adrenaline_log.h>
 
 #include "virtualpbpmgr.h"
@@ -176,7 +177,7 @@ int sceUpdateDownloadSetVersionPatched(int version) {
 	return res;
 }
 
-int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam *param, int unk2) {
+int LoadExecVSHCommonPatched(int apitype, char *file, struct SceKernelLoadExecVSHParam *param, int unk2) {
 	int k1 = pspSdkSetK1(0);
 
 	VshCtrlSetUmdFile("");
@@ -240,13 +241,13 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		// Set umd_mode
 		if (g_cfw_config.umd_mode == MODE_INFERNO) {
 			logmsg2("[INFO]: Launching with Inferno Driver\n");
-			sctrlSESetBootConfFileIndex(BOOT_INFERNO);
+			sctrlSESetBootConfFileIndex(MODE_INFERNO);
 		} else if (g_cfw_config.umd_mode == MODE_MARCH33) {
 			logmsg2("[INFO]: Launching with March33 Driver\n");
-			sctrlSESetBootConfFileIndex(BOOT_MARCH33);
+			sctrlSESetBootConfFileIndex(MODE_MARCH33);
 		} else if (g_cfw_config.umd_mode == MODE_NP9660) {
 			logmsg2("[INFO]: Launching with NP9660 Driver\n");
-			sctrlSESetBootConfFileIndex(BOOT_NP9660);
+			sctrlSESetBootConfFileIndex(MODE_NP9660);
 		}
 
 		if (has_pboot) {
@@ -290,8 +291,8 @@ void PatchVshMain(SceModule* mod) {
 	IoPatches();
 
 	SceModule *vsh_bridge_mod = sceKernelFindModuleByName("sceVshBridge_Driver");
-	sctrlHookImportByNID(vsh_bridge_mod, "sceCtrl_driver", 0xBE30CED0, sceCtrlReadBufferPositivePatched, 0);
-	sctrlHENPatchSyscall(K_EXTRACT_IMPORT(&sceCtrlReadBufferPositive), sceCtrlReadBufferPositivePatched);
+	sctrlHookImportByNID(vsh_bridge_mod, "sceCtrl_driver", 0xBE30CED0, sceCtrlReadBufferPositivePatched);
+	sctrlHENPatchSyscall((void*)K_EXTRACT_IMPORT(&sceCtrlReadBufferPositive), sceCtrlReadBufferPositivePatched);
 
 	// Dummy usb detection functions
 	// Those break camera, but doesn't seem to affect usb connection

@@ -138,7 +138,7 @@ int module_start(SceSize args, void *argp) {
 
 	g_psp_model = kuKernelGetModel();
 
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 
 	// Sanity check
 	// `g_item_opts` always should have num of `g_menu_items` + 2

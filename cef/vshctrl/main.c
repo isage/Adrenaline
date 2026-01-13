@@ -60,7 +60,7 @@ int module_start(SceSize args, void *argp) {
 
 	PatchLoadExec();
 
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 
 	if (g_cfw_config.vsh_cpu_speed != 0) {
 		g_firsttick = sceKernelGetSystemTimeLow();

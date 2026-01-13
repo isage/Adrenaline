@@ -24,6 +24,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
+#include <common.h>
 #include "main.h"
 #include "menu.h"
 #include "installer.h"
@@ -57,7 +58,7 @@ void ToggleUSB() {
 void RunRecovery() {
 	sctrlStopUsb();
 
-	sctrlSESetConfig(&g_cfw_config);
+	sctrlSESetConfig((SEConfig*)&g_cfw_config);
 
 	static u32 vshmain_args[0x100];
 	memset(vshmain_args, 0, sizeof(vshmain_args));
@@ -66,7 +67,7 @@ void RunRecovery() {
 	vshmain_args[1] = 0x20;
 	vshmain_args[16] = 1;
 
-	SceKernelLoadExecVSHParam param;
+	struct SceKernelLoadExecVSHParam param;
 
 	memset(&param, 0, sizeof(param));
 	param.size = sizeof(param);
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	VGraphInit(1);
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 	Setrecovery_color(g_cfw_config.recovery_color);
 
 	RegistryHacks();
@@ -143,7 +144,7 @@ int main(int argc, char *argv[]) {
 
 	sctrlStopUsb();
 
-	sctrlSESetConfig(&g_cfw_config);
+	sctrlSESetConfig((SEConfig*)&g_cfw_config);
 
 	sctrlKernelExitVSH(NULL);
 

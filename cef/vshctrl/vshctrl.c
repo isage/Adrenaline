@@ -23,8 +23,10 @@
 #include <pspumd.h>
 #include <pspreg.h>
 #include <psperror.h>
+#include <pspiofilemgr.h>
 
 #include <vshctrl.h>
+#include <systemctrl.h>
 
 #include "isofs_driver/isofs_driver.h"
 
@@ -44,13 +46,13 @@ int vctrlVSHRegisterVshMenu(int (* ctrl)(SceCtrlData *, int)) {
 	return 0;
 }
 
-int vctrlVSHExitVSHMenu(SEConfigADR *conf) {
+int vctrlVSHExitVSHMenu(SEConfig *conf, char *videoiso, int disctype) {
 	int k1 = pspSdkSetK1(0);
 	int oldspeed = g_cfw_config.vsh_cpu_speed;
 
 	g_vshmenu_ctrl = NULL;
 	memcpy(&g_cfw_config, conf, sizeof(SEConfigADR));
-	sctrlSEApplyConfig(&g_cfw_config);
+	sctrlSEApplyConfig((SEConfig*)&g_cfw_config);
 
 	if (g_set) {
 		if (g_cfw_config.vsh_cpu_speed != oldspeed) {
