@@ -21,6 +21,7 @@
 #include <psptypes.h>
 #include <psputilsforkernel.h>
 #include <psperror.h>
+#include <pspsysmem_kernel.h>
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
@@ -337,14 +338,14 @@ static void decompress_ciso(void* src, u32 src_len, void* dst, u32 dst_len, u32 
 // Decompress ZISO
 static void decompress_ziso(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
 	if (topbit) memcpy(dst, src, dst_len); // check for NC area
-	else sctrlLZ4Decompress(dst, src, dst_len);
+	else sctrlLz4Decompress(dst, src, dst_len);
 }
 
 // Decompress CISO v2
 static void decompress_cso2(void* src, u32 src_len, void* dst, u32 dst_len, u32 topbit){
 	// in CSOv2, top bit represents compression method instead of NCarea
 	if (src_len >= dst_len) memcpy(dst, src, dst_len); // check for NC area (JSO-like, but considering padding, thus >=)
-	else if (topbit) sctrlLZ4Decompress(dst, src, dst_len);
+	else if (topbit) sctrlLz4Decompress(dst, src, dst_len);
 	else sceKernelDeflateDecompress(dst, dst_len, src, 0);
 }
 
