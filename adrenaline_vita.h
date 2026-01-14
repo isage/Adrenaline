@@ -7,6 +7,20 @@
 #define REBOOTEX_CONFIG 0x88FB0000
 #define REBOOTEX_TEXT 0x88FC0000
 
+enum SEUmdModes
+{
+    MODE_UMD = 0,
+    MODE_OE_LEGACY, // not available anymore, will default to inferno
+    MODE_MARCH33,
+    MODE_NP9660, // (Galaxy) if not available, will default to inferno for iso/cso or np9660 for PBP
+    MODE_INFERNO,
+    MODE_ME,
+    MODE_VSHUMD,
+    MODE_UPDATERUMD,
+    MODE_RECOVERY,
+};
+
+
 enum KermitModes {
 	KERMIT_MODE_NONE, // 0x0
 	KERMIT_MODE_UNK_1, // 0x1

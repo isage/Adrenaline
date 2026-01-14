@@ -52,8 +52,8 @@
 #include "states.h"
 #include "usb.h"
 #include "utils.h"
-
 #include "msfs.h"
+#include "../adrenaline_vita.h"
 
 #include "lz4/lz4.h"
 
@@ -537,13 +537,13 @@ static int sceCompatWaitSpecialRequestPatched(int mode) {
 	kuCtrlPeekBufferPositive(0, &pad, 1);
 
 	if (pad.buttons & SCE_CTRL_RTRIGGER) {
-		((uint32_t *)n)[0] = 4; // Recovery mode
+		((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
 	}
 
 	SceIoStat stat;
 	memset(&stat, 0, sizeof(SceIoStat));
 	if (sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/flash0", &stat) < 0) {
-		((uint32_t *)n)[0] = 4; // Recovery mode
+		((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
 	}
 
 	ScePspemuWritebackCache(n, 0x100);
