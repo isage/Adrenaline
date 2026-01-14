@@ -37,6 +37,10 @@
 #define ADRENALINE_CFG_MAGIC_2 0x8451860B
 #define ADRENALINE717_CFG_MAGIC_2 0x334F4E33
 
+#define FLASH0_ARK_PATH "ux0:pspemu/PSP/SAVEDATA/ARK_01234/FLASH0.ARK"
+#define FLASH0_ARK_ADDR 0x8BA00000
+#define FLASH0_ARK_SIZE 0x40000
+
 enum MemoryStickLocations {
 	MEMORY_STICK_LOCATION_UX0,
 	MEMORY_STICK_LOCATION_UR0,
@@ -84,7 +88,7 @@ typedef struct {
 	float ps1_screen_scale_x;
 	float ps1_screen_scale_y;
 	int usbdevice;
-} SEConfigADR717;
+} AdrenalineConfig717;
 
 typedef struct {
 	int magic[2];
@@ -98,9 +102,10 @@ typedef struct {
 	float psp_screen_scale_y;
 	float ps1_screen_scale_x;
 	float ps1_screen_scale_y;
-} SEConfigADR;
+	uint8_t cfw_type;
+} AdrenalineConfig;
 
-extern SEConfigADR config;
+extern AdrenalineConfig config;
 extern SceUID usbdevice_modid;
 
 extern int (* ScePspemuDivide)(uint64_t x, uint64_t y);

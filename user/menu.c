@@ -96,6 +96,7 @@ static char *no_yes_options[] = { "No", "Yes" };
 static char *yes_no_options[] = { "Yes", "No" };
 static char *ms_location_options[] = { "ux0:pspemu", "ur0:pspemu", "imc0:pspemu", "xmc0:pspemu", "uma0:pspemu" };
 static char *usbdevice_options[] = { "Memory Card", "Internal Storage", "sd2vita", "psvsd" };
+static char *cfwtype_options[] = { "TN", "ARK" };
 
 static MenuEntry main_entries[] = {
 	{ "Enter Standby Mode",        MENU_ENTRY_TYPE_CALLBACK, 0, EnterStandbyMode, NULL, NULL, 0 },
@@ -105,6 +106,7 @@ static MenuEntry main_entries[] = {
 };
 
 static MenuEntry settings_entries[] = {
+	{ "PSP Custom Firmware",       MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.cfw_type, cfwtype_options, sizeof(cfwtype_options)/sizeof(char*) },
 	{ "Graphics Filtering",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.graphics_filtering, graphics_options, sizeof(graphics_options) / sizeof(char **) },
 	{ "Smooth Graphics",           MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.no_smooth_graphics, yes_no_options, sizeof(yes_no_options) / sizeof(char **) },
 	{ "f.lux Filter Color",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.flux_mode, flux_mode_options, sizeof(flux_mode_options) / sizeof(char **) },
@@ -149,7 +151,7 @@ static TabEntry tab_entries[] = {
 #define N_TABS (sizeof(tab_entries) / sizeof(TabEntry))
 #define TAB_SIZE (WINDOW_WIDTH / N_TABS)
 
-static SEConfigADR old_config;
+static AdrenalineConfig old_config;
 static int tab_sel = 0;
 static int menu_sel = 0;
 int menu_open = 0;
@@ -181,7 +183,7 @@ static int ExitPspEmuApplication() {
 static int EnterAdrenalineMenu() {
 	initStates();
 
-	memcpy(&old_config, &config, sizeof(SEConfigADR));
+	memcpy(&old_config, &config, sizeof(AdrenalineConfig));
 
 	changed = 0;
 	menu_open = 1;
@@ -192,6 +194,16 @@ static int EnterAdrenalineMenu() {
 		ScePspemuPausePops(1);
 	}
 
+	// Check if ARK installed
+	SceIoStat stat;
+	if (sceIoGetstat(FLASH0_ARK_PATH, &stat) < 0){
+		settings_entries[0].n_options = 1;
+		config.cfw_type = 0;
+	}
+	else {
+		settings_entries[0].n_options = sizeof(cfwtype_options)/sizeof(char*);
+	}
+
 	return 0;
 }
 
@@ -199,7 +211,7 @@ int ExitAdrenalineMenu() {
 	if (changed) {
 		config.magic[0] = ADRENALINE_CFG_MAGIC_1;
 		config.magic[1] = ADRENALINE_CFG_MAGIC_2;
-		WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(SEConfigADR));
+		WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
 	}
 
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
@@ -224,14 +236,14 @@ int ExitAdrenalineMenu() {
 }
 
 int ResetAdrenalineSettings() {
-	memset(&config, 0, sizeof(SEConfigADR));
+	memset(&config, 0, sizeof(AdrenalineConfig));
 	config.magic[0] = ADRENALINE_CFG_MAGIC_1;
 	config.magic[1] = ADRENALINE_CFG_MAGIC_2;
 	config.psp_screen_scale_x = 2.0f;
 	config.psp_screen_scale_y = 2.0f;
 	config.ps1_screen_scale_x = 1.0f;
 	config.ps1_screen_scale_y = 1.0f;
-	WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(SEConfigADR));
+	WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
 
 	return 0;
 }
@@ -317,9 +329,13 @@ void drawMenu() {
 				}
 			}
 		}
-
+		// Info about PSP CFW change
+		if (tab_sel == 2 && menu_sel == 0){
+			char *title = "Changing Custom Firmware takes effect after closing and reopening Adrenaline.";
+			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17), WHITE, FONT_SIZE, title);
+		}
 		// Info about Original filter
-		if (tab_sel == 2 && menu_sel == 0 && config.graphics_filtering == 0) {
+		if (tab_sel == 2 && menu_sel == 1 && config.graphics_filtering == 0) {
 			char *title = "All graphics related options are not taking effect with the Original rendering mode.";
 			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17), WHITE, FONT_SIZE, title);
 		}

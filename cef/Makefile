@@ -5,7 +5,7 @@ PSPGZ = $(ARKSDK)/build-tools/gz/pspgz.py
 KHDR = $(ARKSDK)/build-tools/gz/SystemControl.hdr
 UHDR = $(ARKSDK)/build-tools/gz/UserModule.hdr
 
-all: _payloadex _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
 KERNEL_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspreg_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel
 
@@ -44,6 +44,12 @@ _payloadex:
 	make -C payloadex -j
 	cp "payloadex/payloadex.bin" "../user/flash0/payloadex.bin"
 	make -C payloadex clean
+
+_payloadex_ark:
+	make -C payloadex_ark clean
+	make -C payloadex_ark -j
+	cp "payloadex_ark/payloadex_ark.bin" "../user/flash0/payloadex_ark.bin"
+	make -C payloadex_ark clean
 
 _rebootex:
 	make -C rebootex clean
@@ -125,6 +131,7 @@ clean:
 	make -C btcnf/pspbtcnf_recovery clean
 	make -C payloadex clean
 	make -C rebootex clean
+	make -C payloadex_ark clean
 	make -C binary clean
 	make -C systemctrl clean
 	make -C popcorn clean
@@ -135,4 +142,4 @@ clean:
 	make -C xmbctrl clean
 	make -C satelite clean
 	make -C recovery clean
-	
+	rm -f systemctrl/binary.h systemctrl/rebootex.h
