@@ -502,7 +502,7 @@ u32 sctrlModuleTextAddr(char *modname) {
 	return text_addr;
 }
 
-u32 sctrlKernelResolveNid(const char *libname, u32 nid) {
+unsigned int sctrlKernelResolveNid(const char *libname, unsigned int nid) {
 	return (u32)ResolveMissingNIDs(libname, nid);
 }
 
