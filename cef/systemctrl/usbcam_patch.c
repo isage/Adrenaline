@@ -1,4 +1,4 @@
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <pspusbcam.h>
 
 void sceUsb_driver_ED8C8695();

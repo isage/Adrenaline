@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <pspmodulemgr.h>
 #include <psploadcore.h>
 #include <adrenaline_log.h>

@@ -24,7 +24,7 @@
 #include <pspctrl.h>
 #include <pspiofilemgr.h>
 
-#include <extratypes.h>
+#include <pspextratypes.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <libpsardumper.h>

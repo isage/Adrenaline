@@ -26,7 +26,7 @@
 #include <pspiofilemgr_kernel.h>
 
 #include <systemctrl_se.h>
-#include <extratypes.h>
+#include <pspextratypes.h>
 
 #include <adrenaline_log.h>
 

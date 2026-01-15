@@ -30,7 +30,7 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 
-#include <extratypes.h>
+#include <pspextratypes.h>
 #include <adrenaline_log.h>
 
 #include "popcorn.h"

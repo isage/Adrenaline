@@ -18,7 +18,7 @@
 
 #include <pspkermit.h>
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <adrenaline_log.h>
 
 #include "main.h"

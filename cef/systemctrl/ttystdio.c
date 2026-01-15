@@ -1,7 +1,7 @@
 #include <pspkernel.h>
 #include <pspdebug.h>
 #include <unistd.h>
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include "adrenaline.h"
 
 #include "../../adrenaline_compat.h"

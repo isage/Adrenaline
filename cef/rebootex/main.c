@@ -21,7 +21,7 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <extratypes.h>
+#include <pspextratypes.h>
 
 #include "libc.h"
 #include <rebootexconfig.h>

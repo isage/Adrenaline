@@ -21,7 +21,7 @@
  * Module patches for system modules
  */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <bootloadex.h>
 #include <adrenaline_log.h>
 

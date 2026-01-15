@@ -24,7 +24,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include "main.h"
 #include "menu.h"
 #include "installer.h"

@@ -21,7 +21,7 @@
 
 #include <pspkermit.h>
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 
 #include "utils.h"
 
