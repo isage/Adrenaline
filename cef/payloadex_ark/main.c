@@ -15,6 +15,47 @@ ARKConfig arkconf = {
     .recovery = 0,
 };
 
+
+int findArkFlashFile(BootFile* file, const char* path){
+    u32 nfiles = *(u32*)(VITA_FLASH_ARK);
+    ArkFlashFile* cur = (ArkFlashFile*)((size_t)(VITA_FLASH_ARK)+4);
+
+    for (int i=0; i<nfiles; i++){
+        size_t filesize = (cur->filesize[0]) + (cur->filesize[1]<<8) + (cur->filesize[2]<<16) + (cur->filesize[3]<<24);
+        if (strncmp(path, cur->name, cur->namelen) == 0){
+            file->buffer = (void*)((size_t)(&(cur->name[0])) + cur->namelen);
+            file->size = filesize;
+            return 0;
+        }
+        cur = (ArkFlashFile*)((size_t)(cur)+filesize+cur->namelen+5);
+    }
+    return -1;
+}
+
+int pspemuLfatOpenArkVPSP(BootFile* file){
+    
+    int ret = -1;
+    char* p = file->name;
+    
+    if (strcmp(p, "pspbtcnf.bin") == 0){
+        p[2] = 'v'; // custom btcnf for PS Vita
+        p[5] = 'k'; // use np9660 ISO mode (psvbtknf.bin)
+        ret = findArkFlashFile(file, p);
+        if (ret == 0){
+            relocateFlashFile(file);
+        }
+    }
+    else if (strncmp(p, "/kd/ark_", 8) == 0){ // ARK module
+        ret = findArkFlashFile(file, p);
+        if (ret == 0){
+            relocateFlashFile(file);
+        }
+    }
+
+    return ret;
+}
+
+
 BootLoadExConfig bleconf = {
     .boot_type = TYPE_PAYLOADEX,
     .boot_storage = FLASH_BOOT,

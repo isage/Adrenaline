@@ -157,36 +157,15 @@ int sceKernelCheckPspConfigPatched(void *buf, int size, int flag) {
 }
 
 int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, void *t0) {
+
 	if (_strcmp(file->name, "pspbtcnf.bin") == 0) {
-		char *name = NULL;
-
-		switch(rebootex_config->bootfileindex) {
-			case MODE_UMD:
-				name = "/kd/pspbtjnf.bin";
-				break;
-
-			case MODE_INFERNO:
-				name = "/kd/pspbtknf.bin";
-				break;
-
-			case MODE_MARCH33:
-				name = "/kd/pspbtlnf.bin";
-				break;
-
-			case MODE_NP9660:
-				name = "/kd/pspbtmnf.bin";
-				break;
-
-			case MODE_RECOVERY:
-				name = "/kd/pspbtrnf.bin";
-				break;
-		}
+		file->name = (rebootex_config->bootfileindex == MODE_RECOVERY)?
+			"/kd/pspbtrnf.bin" : "/kd/pspbtjnf.bin";
 
 		if (rebootex_config->bootfileindex == MODE_RECOVERY) {
 			rebootex_config->bootfileindex = MODE_UMD;
 		}
 
-		file->name = name;
 	} else if (_strcmp(file->name, REBOOT_MODULE) == 0) {
 		file->buffer = (void *)0x89000000;
 		file->size = rebootex_config->size;
