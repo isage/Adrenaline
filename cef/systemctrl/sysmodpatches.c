@@ -151,7 +151,7 @@ static int exit_callback(int arg1, int arg2, void *common) {
 	vshmain_args[1] = 0x20;
 	vshmain_args[16] = 1;
 
-	struct SceKernelLoadExecVSHParam param;
+	SceKernelLoadExecVSHParam param;
 
 	memset(&param, 0, sizeof(param));
 	param.size = sizeof(param);

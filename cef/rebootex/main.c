@@ -30,7 +30,7 @@
 
 #define REBOOT_MODULE "/rtm.prx"
 
-int (* sceReboot)(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) = (void *)0x88600000;
+int (* sceReboot)(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) = (void *)0x88600000;
 int (* DcacheClear)(void) = (void *)0x886018AC;
 int (* IcacheClear)(void) = (void *)0x88601E40;
 
@@ -200,8 +200,8 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 	return 0; //always return 0 to allow boot with unsuccessfully loaded files
 }
 
-int _start(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) __attribute__((section(".text.start")));
-int _start(void *reboot_param, struct SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) {
+int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) __attribute__((section(".text.start")));
+int _start(void *reboot_param, SceKernelLoadExecVSHParam *vsh_param, int api, int initial_rnd) {
 	for (u32 i = 0; i < 0x4000; i += 4) {
 		u32 addr = 0x88600000 + i;
 		u32 data = VREAD32(addr);

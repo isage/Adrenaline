@@ -177,7 +177,7 @@ int sceUpdateDownloadSetVersionPatched(int version) {
 	return res;
 }
 
-int LoadExecVSHCommonPatched(int apitype, char *file, struct SceKernelLoadExecVSHParam *param, int unk2) {
+int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam *param, int unk2) {
 	int k1 = pspSdkSetK1(0);
 
 	VshCtrlSetUmdFile("");

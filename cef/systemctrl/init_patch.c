@@ -150,7 +150,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			if(config.startup_program && argsize == 0) {
 				LoadExecForKernel_AA2029EC();
 
-				struct SceKernelLoadExecVSHParam param;
+				SceKernelLoadExecVSHParam param;
 				memset(&param, 0, sizeof(param));
 				param.size = sizeof(param);
 				param.args = sizeof("ms0:/PSP/GAME/BOOT/EBOOT.PBP");
