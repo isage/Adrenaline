@@ -1,9 +1,9 @@
 PY = $(shell which python3)
 PSPDEV = $(shell psp-config --pspdev-path)
-ARKSDK = $(PSPDEV)/share/ark-dev-sdk
-PSPGZ = $(ARKSDK)/build-tools/gz/pspgz.py
-KHDR = $(ARKSDK)/build-tools/gz/SystemControl.hdr
-UHDR = $(ARKSDK)/build-tools/gz/UserModule.hdr
+CFWSDK = $(PSPDEV)/share/psp-cfw-sdk
+PSPGZ = $(CFWSDK)/build-tools/gz/pspgz.py
+KHDR = $(CFWSDK)/build-tools/gz/SystemControl.hdr
+UHDR = $(CFWSDK)/build-tools/gz/UserModule.hdr
 
 all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 

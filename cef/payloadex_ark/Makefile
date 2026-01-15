@@ -1,7 +1,7 @@
 PSPSDK = $(shell psp-config --pspsdk-path)
 PSPDEV = $(shell psp-config --pspdev-path)
 PYTHON = $(shell which python3)
-ARKSDK = $(PSPDEV)/share/ark-dev-sdk
+CFWSDK = $(PSPDEV)/share/psp-cfw-sdk
 
 TARGET = payloadex_ark.bin
 
@@ -13,7 +13,7 @@ CC = psp-gcc
 LD = psp-ld
 STRIP = psp-strip
 OBJCOPY = psp-objcopy
-LINKFILE = $(ARKSDK)/build-tools/bootloadex.l
+LINKFILE = $(CFWSDK)/build-tools/bootloadex.l
 INCDIR = $(PSPSDK)/include
 CFLAGS = -std=c99 -Wall -Os -G0 -fno-pic $(addprefix -I, $(INCDIR))
 LIBS = -L $(PSPSDK)/lib -lbootloadex -lansic
@@ -34,4 +34,4 @@ $(TARGET): main.elf
 clean:
 	$(Q)rm -rf *~ *.s *.o *.elf *.bin $(EXTRA_CLEAN)
 
-include $(ARKSDK)/build-tools/beauty_bin.mak
+include $(CFWSDK)/build-tools/beauty_bin.mak
