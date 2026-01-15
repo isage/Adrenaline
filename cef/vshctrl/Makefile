@@ -14,7 +14,7 @@ USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_kernel -lpsppower_driver -lpsprtc_driver -lpspusb_driver -lpspreg_driver -lpspsysclib_kernel -lpspsysmem_kernel -lpspinit_kernel
+LIBS = -lpspsystemctrl_kernel -ladrenalinectrl -lpsppower_driver -lpsprtc_driver -lpspusb_driver -lpspreg_driver -lpspsysclib_kernel -lpspsysmem_kernel -lpspinit_kernel
 
 ifdef VSHCTRL_DEBUG
 CFLAGS += -DDEBUG=$(VSHCTRL_DEBUG)

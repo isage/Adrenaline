@@ -152,8 +152,6 @@ extern int sctrlSEMountUmdFromFile;
 extern int sctrlSESetConfig;
 extern int sctrlSESetConfigEx;
 extern int sctrlSESetDiscType;
-extern int sctrlStartUsb;
-extern int sctrlStopUsb;
 extern int sctrlSEGetBootConfFileIndex;
 extern int sctrlSESetBootConfFileIndex;
 extern int sctrlSESetBootConfFileIndex;
@@ -163,7 +161,6 @@ extern int sctrlFlushCache;
 extern int sctrlGetInitPARAM;
 extern int sctrlGetSfoPARAM;
 extern int sctrlGetThreadUIDByName;
-extern int sctrlGetUsbState;
 extern int sctrlHookImportByNID;
 extern int sctrlRebootDevice;
 extern int sctrlDeflateDecompress;
@@ -173,7 +170,7 @@ extern int lzo1x_decompress;
 extern int sctrlPatchModule;
 extern int sctrlModuleTextAddr;
 extern int sctrlHENFindImportLib;
-static const unsigned int __SystemCtrlForUser_exports[152] __attribute__((section(".rodata.sceResident"))) = {
+static const unsigned int __SystemCtrlForUser_exports[146] __attribute__((section(".rodata.sceResident"))) = {
 	0x8B2D99E4,
 	0x78E46415,
 	0x159AF5CC,
@@ -229,8 +226,6 @@ static const unsigned int __SystemCtrlForUser_exports[152] __attribute__((sectio
 	0x1DDDAD0C,
 	0xAD4D5EA5,
 	0x31C6160D,
-	0x80C0ED7B,
-	0x5FC12767,
 	0x70B92B45,
 	0xBC939DC1,
 	0x5CB025F0,
@@ -240,7 +235,6 @@ static const unsigned int __SystemCtrlForUser_exports[152] __attribute__((sectio
 	0xFCE44FB8,
 	0x0796385F,
 	0x23833651,
-	0x05D8E209,
 	0x72F47790,
 	0x053172F8,
 	0xF462EE55,
@@ -305,8 +299,6 @@ static const unsigned int __SystemCtrlForUser_exports[152] __attribute__((sectio
 	(unsigned int) &sctrlSESetConfig,
 	(unsigned int) &sctrlSESetConfigEx,
 	(unsigned int) &sctrlSESetDiscType,
-	(unsigned int) &sctrlStartUsb,
-	(unsigned int) &sctrlStopUsb,
 	(unsigned int) &sctrlSEGetBootConfFileIndex,
 	(unsigned int) &sctrlSESetBootConfFileIndex,
 	(unsigned int) &sctrlSESetBootConfFileIndex,
@@ -316,7 +308,6 @@ static const unsigned int __SystemCtrlForUser_exports[152] __attribute__((sectio
 	(unsigned int) &sctrlGetInitPARAM,
 	(unsigned int) &sctrlGetSfoPARAM,
 	(unsigned int) &sctrlGetThreadUIDByName,
-	(unsigned int) &sctrlGetUsbState,
 	(unsigned int) &sctrlHookImportByNID,
 	(unsigned int) &sctrlRebootDevice,
 	(unsigned int) &sctrlDeflateDecompress,
@@ -408,11 +399,8 @@ extern int sctrlFlushCache;
 extern int sctrlGetInitPARAM;
 extern int sctrlGetSfoPARAM;
 extern int sctrlGetThreadUIDByName;
-extern int sctrlGetUsbState;
 extern int sctrlHookImportByNID;
 extern int sctrlRebootDevice;
-extern int sctrlStartUsb;
-extern int sctrlStopUsb;
 extern int ApplyMemory;
 extern int lowerString;
 extern int oe_free;
@@ -434,7 +422,7 @@ extern int sctrlSetCustomStartModule;
 extern int sctrlSetStartModuleExtra;
 extern int sctrlGetInitTextAddr;
 extern int sctrlGetInitTextAddr;
-static const unsigned int __SystemCtrlForKernel_exports[212] __attribute__((section(".rodata.sceResident"))) = {
+static const unsigned int __SystemCtrlForKernel_exports[206] __attribute__((section(".rodata.sceResident"))) = {
 	0x8B2D99E4,
 	0x78E46415,
 	0x159AF5CC,
@@ -515,11 +503,8 @@ static const unsigned int __SystemCtrlForKernel_exports[212] __attribute__((sect
 	0xFCE44FB8,
 	0x0796385F,
 	0x23833651,
-	0x05D8E209,
 	0x72F47790,
 	0x053172F8,
-	0x80C0ED7B,
-	0x5FC12767,
 	0xB86E36D1,
 	0x983B00FB,
 	0xA65E8BC4,
@@ -621,11 +606,8 @@ static const unsigned int __SystemCtrlForKernel_exports[212] __attribute__((sect
 	(unsigned int) &sctrlGetInitPARAM,
 	(unsigned int) &sctrlGetSfoPARAM,
 	(unsigned int) &sctrlGetThreadUIDByName,
-	(unsigned int) &sctrlGetUsbState,
 	(unsigned int) &sctrlHookImportByNID,
 	(unsigned int) &sctrlRebootDevice,
-	(unsigned int) &sctrlStartUsb,
-	(unsigned int) &sctrlStopUsb,
 	(unsigned int) &ApplyMemory,
 	(unsigned int) &lowerString,
 	(unsigned int) &oe_free,
@@ -680,6 +662,18 @@ static const unsigned int __SystemCtrlPrivate_exports[20] __attribute__((section
 	(unsigned int) &sceIoGetstatHidePatched,
 	(unsigned int) &sceIoRemoveHidePatched,
 	(unsigned int) &sceIoRmdirHidePatched,
+};
+
+extern int sctrlStartUsb;
+extern int sctrlStopUsb;
+extern int sctrlGetUsbState;
+static const unsigned int __AdrenalineCtrl_exports[6] __attribute__((section(".rodata.sceResident"))) = {
+	0x80C0ED7B,
+	0x5FC12767,
+	0x05D8E209,
+	(unsigned int) &sctrlStartUsb,
+	(unsigned int) &sctrlStopUsb,
+	(unsigned int) &sctrlGetUsbState,
 };
 
 extern int user_malloc;
@@ -826,7 +820,7 @@ static const unsigned int __SysclibForUser_exports[94] __attribute__((section(".
 	(unsigned int) &__udivmoddi4,
 };
 
-const struct _PspLibraryEntry __library_exports[14] __attribute__((section(".lib.ent"), used)) = {
+const struct _PspLibraryEntry __library_exports[15] __attribute__((section(".lib.ent"), used)) = {
 	{ NULL, 0x0000, 0x8000, 4, 1, 1, (unsigned int *) &__syslib_exports },
 	{ "LflashFatfmt", 0x0011, 0x0001, 4, 0, 1, (unsigned int *) &__LflashFatfmt_exports },
 	{ "sceLFatFs_driver", 0x0011, 0x0001, 4, 0, 0, (unsigned int *) &__sceLFatFs_driver_exports },
@@ -837,8 +831,9 @@ const struct _PspLibraryEntry __library_exports[14] __attribute__((section(".lib
 	{ "sceNand_driver", 0x0011, 0x0001, 4, 0, 0, (unsigned int *) &__sceNand_driver_exports },
 	{ "sceSyscon_driver", 0x0011, 0x0001, 4, 0, 0, (unsigned int *) &__sceSyscon_driver_exports },
 	{ "KUBridge", 0x0000, 0x4001, 4, 0, 19, (unsigned int *) &__KUBridge_exports },
-	{ "SystemCtrlForUser", 0x0000, 0x4001, 4, 0, 76, (unsigned int *) &__SystemCtrlForUser_exports },
-	{ "SystemCtrlForKernel", 0x0000, 0x0001, 4, 0, 106, (unsigned int *) &__SystemCtrlForKernel_exports },
+	{ "SystemCtrlForUser", 0x0000, 0x4001, 4, 0, 73, (unsigned int *) &__SystemCtrlForUser_exports },
+	{ "SystemCtrlForKernel", 0x0000, 0x0001, 4, 0, 103, (unsigned int *) &__SystemCtrlForKernel_exports },
 	{ "SystemCtrlPrivate", 0x0000, 0x4001, 4, 0, 10, (unsigned int *) &__SystemCtrlPrivate_exports },
+	{ "AdrenalineCtrl", 0x0000, 0x4001, 4, 0, 3, (unsigned int *) &__AdrenalineCtrl_exports },
 	{ "SysclibForUser", 0x0000, 0x4001, 4, 0, 47, (unsigned int *) &__SysclibForUser_exports },
 };

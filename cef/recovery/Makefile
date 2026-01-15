@@ -1,5 +1,5 @@
 TARGET = recovery
-OBJS = main.o menu.o installer.o plugins.o utils.o pspPSAR.o imports.o vgraph.o
+OBJS = main.o menu.o installer.o plugins.o utils.o pspPSAR.o vgraph.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -Wno-unused-variable -Wno-incompatible-pointer-types
@@ -13,7 +13,7 @@ USE_PSPSDK_LIBC = 1
 USE_PSPSDK_LIBS = 1
 
 LIBDIR = ../lib
-LIBS = -lz -lpspreg -lpspsystemctrl_user -lpspkubridge -lpspsysc_user
+LIBS = -lz -lpspreg -lpspsystemctrl_user -lpspkubridge -ladrenalinectrl -lpspsysc_user
 
 
 ifdef RECOVERY_DEBUG
