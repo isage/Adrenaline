@@ -49,12 +49,16 @@ jobs:
           ./bootstrap-vitasdk.sh
           vdpm henkaku taihen libpng libjpeg-turbo freetype
 
-        # ./install-all.sh
-
       - name: Setup PSPSDK
         run: |
           wget -q https://github.com/pspdev/pspdev/releases/latest/download/pspdev-ubuntu-latest-x86_64.tar.gz
           sudo tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz -C /usr/local/
+
+      - name: Setup CFW SDK
+        run: |
+          git clone https://github.com/pspdev/psp-cfw-sdk.git
+          make -C psp-cfw-sdk
+          make -C psp-cfw-sdk install
 
       - name: Setup psp-packer
         run: |
