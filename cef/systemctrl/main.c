@@ -150,8 +150,8 @@ static void OnSystemStatusIdle() {
 	}
 
 	// Set CPU/BUS speed on apps/games
-	SceBootMediumType medium_type = sceKernelBootFrom();
-	SceApplicationType app_type = sceKernelApplicationType();
+	int medium_type = sceKernelBootFrom();
+	int app_type = sceKernelApplicationType();
 	u8 is_correct_medium = (medium_type == PSP_BOOT_DISC || medium_type == PSP_BOOT_MS || medium_type == PSP_BOOT_EF);
 
 	if (app_type != PSP_INIT_KEYCONFIG_VSH && is_correct_medium) {

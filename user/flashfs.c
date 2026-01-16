@@ -186,7 +186,7 @@ int ScePspemuBuildFlash0() {
 	return 0;
 }
 
-int ScePspemuLoadFlash0Ark(){
+int ScePspemuLoadFlash0Ark() {
 	void *flash0_data = NULL;
 
 	// Allocate flash0 memory
@@ -203,7 +203,7 @@ int ScePspemuLoadFlash0Ark(){
 	// read flash0 ark package
 	SceUID fd = sceIoOpen(FLASH0_ARK_PATH, SCE_O_RDONLY, 0777);
 	if (fd < 0) return fd;
-	
+
 	sceIoRead(fd, flash0_data, FLASH0_ARK_SIZE);
 	sceIoClose(fd);
 
