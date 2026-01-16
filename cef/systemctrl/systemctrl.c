@@ -207,6 +207,9 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	rebootex_config.overwrite_use_psposk = 0;
 	rebootex_config.overwrite_use_psposk_to = 0;
 
+	// set boot mode to normal
+	sctrlSESetBootConfFileIndex(MODE_UMD);
+
 	int res = _sceKernelExitVSH(param);
 
 	pspSdkSetK1(k1);
