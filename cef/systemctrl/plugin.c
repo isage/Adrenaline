@@ -191,6 +191,14 @@ static int isTitleId(char* runlevel) {
 static int matchingRunlevel(char * runlevel) {
 	lowerString(runlevel, runlevel, strlen(runlevel)+1);
 
+	char* cfw_type = strstr(runlevel, "cfw=");
+    if (cfw_type){ // plugin is for specific CFW only
+        if (strncmp(cfw_type+4, "adr", 3) != 0){
+            return 0; // not for adrenaline, treat as disabled
+        }
+    }
+
+
 	if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) {
 		// always on
 		return 1;
