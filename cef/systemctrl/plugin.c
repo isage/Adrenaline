@@ -452,7 +452,7 @@ void loadPlugins() {
 	plugins = oe_malloc(sizeof(Plugins));
 	plugins->count = 0; // initialize plugins table
 
-	ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/EPIplugins.txt", addPlugin, removePlugin);
+	ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
 
 	// start all loaded plugins
 	startPlugins();
