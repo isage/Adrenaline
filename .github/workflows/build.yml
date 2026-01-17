@@ -137,19 +137,6 @@ jobs:
           path: build/updater-${{ steps.vars.outputs.sha_short }}.zip
           compression-level: 0
 
-      - name: Build CFW libs
-        run: |
-          cmake --build build --target cfw-libs
-          zip -r 'build/epi-cfw-dev-sdk-${{ steps.vars.outputs.sha_short }}.zip' build/cfw-dev-sdk/
-
-      - name: Upload CFW libs
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v6
-        with:
-          name: epi-cfw-libs
-          path: 'build/epi-cfw-dev-sdk-${{ steps.vars.outputs.sha_short }}.zip'
-          compression-level: 0
-
 
   build-debug:
     name: Build Adrenaline with DEBUG
