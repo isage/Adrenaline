@@ -24,7 +24,7 @@ BUILD_PRX = 1
 USE_UPDATER_LIBS = 1
 
 #LIBDIR = ../lib
-LIBS = ../lib/libpspsystemctrl_user.a
+LIBS = -ladrenalinectrl -lpspsystemctrl_user
 EXTRA_TARGETS = version psp-updatelist.txt adrenaline_kernel.h adrenaline_user.h adrenaline_vsh.h frame_xml.h template_xml.h
 
 include ../lib/build.mak
