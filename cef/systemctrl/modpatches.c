@@ -24,7 +24,7 @@
  * Mostly third-party modules
  */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -81,17 +81,17 @@ int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchVolatileMemBug() {
-	if (sceKernelBootFrom() == SCE_BOOT_DISC) {
-		_sceKernelVolatileMemTryLock = (void *)FindProc("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
-		sctrlHENPatchSyscall((u32)_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
+	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
+		_sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
+		sctrlHENPatchSyscall(_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
 		sctrlFlushCache();
 	}
 }
 
 void PatchCwCheatPlugin(SceModule* mod) {
-	if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
-		sctrlHENHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched, 0);
-		sctrlHENHookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched, 0);
+	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+		sctrlHookImportByNID(mod, "ThreadManForKernel", 0x9944F31F, sceKernelSuspendThreadPatched);
+		sctrlHookImportByNID(mod, "ThreadManForKernel", 0x75156E8F, sceKernelResumeThreadPatched);
 		sctrlFlushCache();
 	}
 }
@@ -100,7 +100,7 @@ void PatchVlfLib(SceModule* mod) {
 	static u32 nids[] = { 0x2A245FE6, 0x7B08EAAB, 0x22050FC0, 0x158BE61A, 0xD495179F };
 
 	for (int i = 0; i < (sizeof(nids) / sizeof(u32)); i++) {
-		sctrlHENHookImportByNID(mod, "VlfGui", nids[i], NULL, 0);
+		sctrlHookImportByNID(mod, "VlfGui", nids[i], NULL);
 	}
 
 	sctrlFlushCache();

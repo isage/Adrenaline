@@ -185,3 +185,33 @@ int ScePspemuBuildFlash0() {
 
 	return 0;
 }
+
+int ScePspemuLoadFlash0Ark() {
+	void *flash0_data = NULL;
+
+	// Allocate flash0 memory
+	SceUID flash0_blockid = sceKernelAllocMemBlock("ScePspemuFlash0", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW_UNCACHE, FLASH0_ARK_SIZE, NULL);
+	if (flash0_blockid < 0) {
+		return flash0_blockid;
+	}
+
+	// Get base address
+	sceKernelGetMemBlockBase(flash0_blockid, (void **)&flash0_data);
+
+	memset(flash0_data, 0, FLASH0_ARK_SIZE);
+
+	// read flash0 ark package
+	SceUID fd = sceIoOpen(FLASH0_ARK_PATH, SCE_O_RDONLY, 0777);
+	if (fd < 0) return fd;
+
+	sceIoRead(fd, flash0_data, FLASH0_ARK_SIZE);
+	sceIoClose(fd);
+
+	uint32_t *m = (uint32_t *)ScePspemuConvertAddress(FLASH0_ARK_ADDR, KERMIT_OUTPUT_MODE, FLASH0_ARK_SIZE);
+	memcpy(m, flash0_data, FLASH0_ARK_SIZE);
+	ScePspemuWritebackCache(m, FLASH0_ARK_SIZE);
+
+	sceKernelFreeMemBlock(flash0_blockid);
+
+	return 0;
+}

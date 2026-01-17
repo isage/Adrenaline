@@ -23,7 +23,7 @@
 
 //#define printf rDebugScreenPrintf
 
-extern AdrenalineConfig g_cfw_config;
+extern SEConfigADR g_cfw_config;
 extern u32 select_color;
 extern u8 g_theme;
 extern u32 g_button_assign_value;

@@ -52,14 +52,16 @@
 #include "states.h"
 #include "usb.h"
 #include "utils.h"
-
 #include "msfs.h"
+#include "../adrenaline_vita.h"
 
 #include "lz4/lz4.h"
 
 #include "startdat.h"
 
+
 INCLUDE_EXTERN_RESOURCE(payloadex_bin);
+INCLUDE_EXTERN_RESOURCE(payloadex_ark_bin);
 
 int (* ScePspemuDivide)(uint64_t x, uint64_t y);
 int (* ScePspemuErrorExit)(int error);
@@ -522,30 +524,41 @@ static int sceCompatWriteSharedCtrlPatched(SceCtrlDataPsp *pad_data) {
 static int sceCompatWaitSpecialRequestPatched(int mode) {
 	ScePspemuBuildFlash0();
 
+	int allow_ark = 0;
+
 	void *payloadex = (void *)&_binary_flash0_payloadex_bin_start;
 	int size_payloadex = (int)&_binary_flash0_payloadex_bin_size;
 
-	uint32_t *m = (uint32_t *)ScePspemuConvertAddress(EPI_REBOOTEX_MOD_ADDR, KERMIT_OUTPUT_MODE, size_payloadex);
-	memcpy(m, payloadex, size_payloadex);
-	ScePspemuWritebackCache(m, size_payloadex);
-
-	void *n = (void *)ScePspemuConvertAddress(EPI_REBOOTEX_CFG_ADDR, KERMIT_OUTPUT_MODE, 0x100);
+	void *n = (void *)ScePspemuConvertAddress(REBOOTEX_CONFIG, KERMIT_OUTPUT_MODE, 0x100);
 	memset(n, 0, 0x100);
 
 	SceCtrlData pad;
 	kuCtrlPeekBufferPositive(0, &pad, 1);
 
+	SceIoStat stat;
+	allow_ark = sceIoGetstat(FLASH0_ARK_PATH, &stat) >= 0;
+
 	if (pad.buttons & SCE_CTRL_RTRIGGER) {
-		((uint32_t *)n)[0] = 4; // Recovery mode
+		((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
 	}
 
-	SceIoStat stat;
-	memset(&stat, 0, sizeof(SceIoStat));
 	if (sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/flash0", &stat) < 0) {
-		((uint32_t *)n)[0] = 4; // Recovery mode
+		((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
+		allow_ark = 0;
 	}
 
 	ScePspemuWritebackCache(n, 0x100);
+
+	if (allow_ark && config.cfw_type){
+		if (ScePspemuLoadFlash0Ark() == 0){
+			payloadex = (void *)&_binary_flash0_payloadex_ark_bin_start;
+			size_payloadex = (int)&_binary_flash0_payloadex_ark_bin_size;
+		}
+	}
+
+	uint32_t *m = (uint32_t *)ScePspemuConvertAddress(REBOOTEX_TEXT, KERMIT_OUTPUT_MODE, size_payloadex);
+	memcpy(m, payloadex, size_payloadex);
+	ScePspemuWritebackCache(m, size_payloadex);
 
 	// Init Adrenaline
 	InitAdrenaline();

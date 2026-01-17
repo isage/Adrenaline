@@ -30,7 +30,7 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 
-#include <extratypes.h>
+#include <pspextratypes.h>
 #include <adrenaline_log.h>
 
 #include "popcorn.h"
@@ -429,14 +429,14 @@ void PatchScePopsMgr(void) {
 
 	// Patch permission issues with audio function
 	_sceMeAudio_2AB4FE43 = (void*)sctrlHENFindFunctionInMod(mod, "sceMeAudio", 0x2AB4FE43);
-	sctrlHENHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched, 1);
+	sctrlHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched);//, 1); // why 1?
 
-	sctrlHENHookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadPatched, 0);
+	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadPatched);
 
 	if (!g_is_official) {
 		// Fake dnas drm
-		sctrlHENHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched, 0);
-		sctrlHENHookImportByNID(mod, "IoFileMgrForKernel", 0x63632449, sceIoIoctlPatched, 0);
+		sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched);
+		sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x63632449, sceIoIoctlPatched);
 
 		// Dummying amctrl decryption functions
 		MAKE_DUMMY_FUNCTION(text_addr + 0xA90, 1);
@@ -460,7 +460,7 @@ void PatchPops(SceModule *mod) {
 	if (!g_is_official) {
 		// Patch syscall to use it as deflate decompress
 		_scePopsManExitVSHKernel = (void *)sctrlHENFindImportInMod(mod, "scePopsMan", 0x0090B2C8);
-		sctrlHENHookImportByNID(mod, "scePopsMan", 0x0090B2C8, scePopsManExitVSHKernelPatched, 0);
+		sctrlHookImportByNID(mod, "scePopsMan", 0x0090B2C8, scePopsManExitVSHKernelPatched);
 
 		// Use our decompression function
 		MAKE_CALL(mod->text_addr + 0xC99C, _scePopsManExitVSHKernel);

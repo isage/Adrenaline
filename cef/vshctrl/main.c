@@ -32,7 +32,7 @@ PSP_MODULE_INFO("VshControl", 0x1007, 1, 2);
 
 STMOD_HANDLER previous;
 
-AdrenalineConfig g_cfw_config;
+SEConfigADR g_cfw_config;
 u32 g_firsttick;
 
 int OnModuleStart(SceModule *mod) {
@@ -60,7 +60,7 @@ int module_start(SceSize args, void *argp) {
 
 	PatchLoadExec();
 
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 
 	if (g_cfw_config.vsh_cpu_speed != 0) {
 		g_firsttick = sceKernelGetSystemTimeLow();

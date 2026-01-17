@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <pspmodulemgr.h>
 
 #include "main.h"
@@ -200,12 +200,12 @@ void kuKernelGetUmdFile(char *umdfile, int size) {
 }
 
 // Read Dword from Kernel
-u32 kuKernelPeekw(void * addr){
+unsigned int kuKernelPeekw(void * addr){
     return VREAD32((u32)addr);
 }
 
 // Write Dword into Kernel
-void kuKernelPokew(void * addr, u32 value){
+void kuKernelPokew(void * addr, unsigned int value){
 	VWRITE32((u32)addr, value);
 }
 

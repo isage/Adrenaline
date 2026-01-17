@@ -24,6 +24,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
+#include <systemctrl_adrenaline.h>
 #include "main.h"
 #include "menu.h"
 #include "installer.h"
@@ -40,7 +41,7 @@ static int g_recovery_exit = 0;
 
 u32 g_button_assign_value = 0;
 
-AdrenalineConfig g_cfw_config;
+SEConfigADR g_cfw_config;
 
 void ToggleUSB() {
 	if (!g_usb_status) {
@@ -57,7 +58,7 @@ void ToggleUSB() {
 void RunRecovery() {
 	sctrlStopUsb();
 
-	sctrlSESetConfig(&g_cfw_config);
+	sctrlSESetConfig((SEConfig*)&g_cfw_config);
 
 	static u32 vshmain_args[0x100];
 	memset(vshmain_args, 0, sizeof(vshmain_args));
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	VGraphInit(1);
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 	Setrecovery_color(g_cfw_config.recovery_color);
 
 	RegistryHacks();
@@ -143,7 +144,7 @@ int main(int argc, char *argv[]) {
 
 	sctrlStopUsb();
 
-	sctrlSESetConfig(&g_cfw_config);
+	sctrlSESetConfig((SEConfig*)&g_cfw_config);
 
 	sctrlKernelExitVSH(NULL);
 

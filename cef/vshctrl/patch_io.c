@@ -652,6 +652,6 @@ ImportPatch import_patch[] = {
 
 void IoPatches() {
 	for (int i = 0; i < (sizeof(import_patch) / sizeof(ImportPatch)); i++) {
-		sctrlHENPatchSyscall(K_EXTRACT_IMPORT(import_patch[i].import), import_patch[i].patched);
+		sctrlHENPatchSyscall((void*)K_EXTRACT_IMPORT(import_patch[i].import), import_patch[i].patched);
 	}
 }

@@ -374,7 +374,7 @@ int iso_cache_read(IoReadArg *arg) {
 int infernoCacheInit(int cache_size, int cache_num, int partition) {
 	// prevent ISO cache in homebrew
 	int apitype = sceKernelInitApitype();
-	if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2) {
+	if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2) {
 		return 0;
 	}
 

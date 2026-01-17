@@ -24,6 +24,7 @@
 #include <psp2/io/stat.h>
 #include <taihen.h>
 #include "../adrenaline_compat.h"
+#include "../adrenaline_vita.h"
 
 #define INCLUDE_EXTERN_RESOURCE(name) extern unsigned char _binary_flash0_##name##_start; extern unsigned char _binary_flash0_##name##_size;
 
@@ -35,6 +36,10 @@
 #define ADRENALINE_CFG_MAGIC_1 0x31483943
 #define ADRENALINE_CFG_MAGIC_2 0x8451860B
 #define ADRENALINE717_CFG_MAGIC_2 0x334F4E33
+
+#define FLASH0_ARK_PATH "ux0:pspemu/PSP/SAVEDATA/ARK_01234/FLASH0.ARK"
+#define FLASH0_ARK_ADDR 0x8BA00000
+#define FLASH0_ARK_SIZE 0x40000
 
 enum MemoryStickLocations {
 	MEMORY_STICK_LOCATION_UX0,
@@ -97,6 +102,7 @@ typedef struct {
 	float psp_screen_scale_y;
 	float ps1_screen_scale_x;
 	float ps1_screen_scale_y;
+	uint8_t cfw_type;
 } AdrenalineConfig;
 
 extern AdrenalineConfig config;

@@ -26,6 +26,7 @@
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <systemctrl_adrenaline.h>
 
 #include "frame_xml.h"
 #include "template_xml.h"

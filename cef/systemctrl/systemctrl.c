@@ -17,7 +17,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <pspintrman.h>
 
 #include <adrenaline_log.h>
@@ -27,8 +27,9 @@
 #include "adrenaline.h"
 #include "gameinfo.h"
 
-int lzo1x_decompress(void* source, unsigned src_len, void* dest, unsigned* dst_len, void*);
-int LZ4_decompress_fast(const char* source, char* dest, int outputSize);
+#include "../../adrenaline_compat.h"
+
+SceSize strncpy_s(char *strDest, SceSize numberOfElements, const char *strSource, SceSize count);
 
 void sctrlFlushCache() {
 	sceKernelIcacheInvalidateAll();
@@ -206,7 +207,11 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	rebootex_config.overwrite_use_psposk = 0;
 	rebootex_config.overwrite_use_psposk_to = 0;
 
+	// set boot mode to normal
+	sctrlSESetBootConfFileIndex(MODE_UMD);
+
 	int res = _sceKernelExitVSH(param);
+
 	pspSdkSetK1(k1);
 
 	logmsg3("[DEBUG]: %s: param=0x%p -> 0x%08X\n", __func__, param, res);
@@ -251,7 +256,7 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 	// obtain game id
     u32 gameid_size = sizeof(rebootex_config.title_id);
     memset(rebootex_config.title_id, 0, gameid_size);
-    if (apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2){
+    if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2){
         readTitleIdFromDisc();
     } else {
         sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, rebootex_config.title_id);
@@ -267,51 +272,51 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 }
 
 int sctrlKernelLoadExecVSHMs1(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS1, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS1, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs2(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS2, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS2, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs3(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS3, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS3, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs4(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS4, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS4, file, param);
 }
 
 int sctrlKernelLoadExecVSHMs5(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_MS5, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_MS5, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf1(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF1, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF1, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf2(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF2, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF2, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf3(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF3, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF3, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf4(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF4, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF4, file, param);
 }
 
 int sctrlKernelLoadExecVSHEf5(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_EF5, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_EF5, file, param);
 }
 
 int sctrlKernelLoadExecVSHDisc(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_UMD, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_UMD, file, param);
 }
 
 int sctrlKernelLoadExecVSHDiscUpdater(const char *file, SceKernelLoadExecVSHParam *param) {
-	return sctrlKernelLoadExecVSHWithApitype(SCE_APITYPE_UMD_UPDATER, file, param);
+	return sctrlKernelLoadExecVSHWithApitype(PSP_INIT_APITYPE_UMD_UPDATER, file, param);
 }
 
 int sctrlKernelQuerySystemCall(void *function) {
@@ -321,7 +326,7 @@ int sctrlKernelQuerySystemCall(void *function) {
 	return res;
 }
 
-void sctrlHENPatchSyscall(u32 addr, void *newaddr) {
+void sctrlHENPatchSyscall(void* addr, void *newaddr) {
 	void *ptr = NULL;
 	asm("cfc0 %0, $12\n" : "=r"(ptr));
 
@@ -332,7 +337,7 @@ void sctrlHENPatchSyscall(u32 addr, void *newaddr) {
 	u32 *syscalls = (u32 *)(ptr + 0x10);
 
 	for (int i = 0; i < 0x1000; i++) {
-		if ((syscalls[i] & 0x0FFFFFFF) == (addr & 0x0FFFFFFF)) {
+		if ((syscalls[i] & 0x0FFFFFFF) == ((u32)addr & 0x0FFFFFFF)) {
 			syscalls[i] = (u32)newaddr;
 		}
 	}
@@ -389,7 +394,7 @@ void sctrlSESetBootConfFileIndex(int index) {
 	rebootex_config.bootfileindex = index;
 }
 
-int sctrlSEGetBootConfFileIndex() {
+unsigned int sctrlSEGetBootConfFileIndex() {
 	return rebootex_config.bootfileindex;
 }
 
@@ -427,7 +432,7 @@ int sctrlRebootDevice() {
 	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT, 0);
 }
 
-u32 sctrlKernelRand(void) {
+unsigned int sctrlKernelRand(void) {
 	u32 k1 = pspSdkSetK1(0);
 
 	unsigned char * alloc = oe_malloc(20 + 4);
@@ -446,7 +451,7 @@ u32 sctrlKernelRand(void) {
 	// Create 20 Random Bytes
 	sceUtilsBufferCopyWithRange(buffer, 20, NULL, 0, KIRK_PRNG_CMD);
 
-	u32 random = *(u32 *)buffer;
+	unsigned int random = *(unsigned int *)buffer;
 
 	oe_free(alloc);
 	pspSdkSetK1(k1);
@@ -467,14 +472,6 @@ int sctrlGzipDecompress(void* dest, void* src, int size){
 	int ret = sceKernelGzipDecompress(dest, size, src, 0);
 	pspSdkSetK1(k1);
 	return ret;
-}
-
-int sctrlLZ4Decompress(void* dest, const void* src, int size) {
-	return LZ4_decompress_fast(src, dest, size);
-}
-
-int sctrlLzoDecompress(void* dest, unsigned* dst_size, void* src, unsigned src_size) {
-	return lzo1x_decompress(src, src_size, dest, dst_size, 0);
 }
 
 // init.prx Custom sceKernelStartModule Handler
@@ -686,8 +683,8 @@ u32 sctrlHENFakeDevkitVersion() {
 
 RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config) {
 	if (config != NULL) {
-		memcpy(config, &rebootex_config, sizeof(RebootexConfig));
+		memcpy(config, &rebootex_config, sizeof(RebootexConfigADR));
 	}
 
-	return &rebootex_config;
+	return (RebootexConfig*)&rebootex_config;
 }

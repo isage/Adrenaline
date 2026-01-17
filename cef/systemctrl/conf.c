@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
@@ -46,7 +46,7 @@ typedef struct {
 	int force_high_memory;
 	int execute_boot_bin;
 	int recovery_color;
-} AdrenalineConfig717;
+} SEConfigADR717;
 
 typedef struct {
 	int magic[2];
@@ -65,7 +65,7 @@ static int getMagicsFromFile(SceUID fd, AdrenalineMagics* magic) {
 	return read;
 }
 
-static void migrate_config717(AdrenalineConfig717* old, AdrenalineConfig* new){
+static void migrate_config717(SEConfigADR717* old, SEConfigADR* new){
 	new->hide_corrupt = old->hide_corrupt;
 	new->skip_logo = old->skip_logo;
 	new->startup_program = old->startup_program;
@@ -88,7 +88,7 @@ static void migrate_config717(AdrenalineConfig717* old, AdrenalineConfig* new){
 	new->recovery_color = old->recovery_color;
 }
 
-static void config_overwrite(AdrenalineConfig *config) {
+static void config_overwrite(SEConfigADR *config) {
 	if (rebootex_config.overwrite_use_psposk) {
 		// Overwrite the config
 		g_og_use_psposk_value = config->use_sony_psposk;
@@ -96,13 +96,13 @@ static void config_overwrite(AdrenalineConfig *config) {
 	}
 }
 
-static inline void restore_overwrite(AdrenalineConfig *config) {
+static inline void restore_overwrite(SEConfigADR *config) {
 	if (rebootex_config.overwrite_use_psposk) {
 		config->use_sony_psposk = g_og_use_psposk_value;
 	}
 }
 
-int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
+int sctrlSEGetConfigEx(SEConfig *config, int size) {
 	int k1 = pspSdkSetK1(0);
 	int read = SCE_ERR_ININDEX;
 	int res = 0;
@@ -118,18 +118,18 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 	sceIoLseek(fd, 0, PSP_SEEK_SET);
 
 	// Needs migration
-	if (file_size != sizeof(AdrenalineConfig)) {
+	if (file_size != sizeof(SEConfigADR)) {
 		AdrenalineMagics magics = {0};
 		getMagicsFromFile(fd, &magics);
 
 		switch (magics.magic[1]) {
 			case ADRENALINE717_CFG_MAGIC_2:
 				logmsg("[INFO]: Adrenaline CFW 7.1.7 config found\n");
-				AdrenalineConfig717 old_conf;
-				read = sceIoRead(fd, &old_conf, sizeof(AdrenalineConfig717));
-				migrate_config717(&old_conf, config);
+				SEConfigADR717 old_conf;
+				read = sceIoRead(fd, &old_conf, sizeof(SEConfigADR717));
+				migrate_config717(&old_conf, (SEConfigADR*)config);
 
-				if (read < sizeof(AdrenalineConfig717)) {
+				if (read < sizeof(SEConfigADR717)) {
 					res = SCE_EIO;
 					goto exit;
 				}
@@ -157,7 +157,7 @@ int sctrlSEGetConfigEx(AdrenalineConfig *config, int size) {
 		}
 	}
 
-	config_overwrite(config);
+	config_overwrite((SEConfigADR*)config);
 
 exit:
 	if (fd >= 0) {
@@ -167,7 +167,7 @@ exit:
 	return res;
 }
 
-int sctrlSESetConfigEx(AdrenalineConfig *config, int size) {
+int sctrlSESetConfigEx(SEConfig *cnf, int size) {
 	int k1 = pspSdkSetK1(0);
 
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
@@ -176,16 +176,18 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size) {
 		return fd;
 	}
 
-	config->magic[0] = ADRENALINE_CFG_MAGIC_1;
-	config->magic[1] = ADRENALINE_CFG_MAGIC_2;
+	SEConfigADR* config = (SEConfigADR*)cnf;
+
+	config->magic[0] = SECONFIG_MAGIC_ADR1;
+	config->magic[1] = SECONFIG_MAGIC_ADR2;
 
 	// Restore the overwrite before saving to file
-	restore_overwrite(config);
+	restore_overwrite((SEConfigADR*)config);
 
 	int written = sceIoWrite(fd, config, size);
 
 	// Overwrite again in the memory
-	config_overwrite(config);
+	config_overwrite((SEConfigADR*)config);
 
 	if (written < size) {
 		sceIoClose(fd);
@@ -199,22 +201,26 @@ int sctrlSESetConfigEx(AdrenalineConfig *config, int size) {
 	return 0;
 }
 
-int sctrlSEGetConfig(AdrenalineConfig *config) {
-	return sctrlSEGetConfigEx(config, sizeof(AdrenalineConfig));
+int sctrlSEGetConfig(SEConfig *config) {
+	return sctrlSEGetConfigEx(config, sizeof(SEConfigADR));
 }
 
-int sctrlSESetConfig(AdrenalineConfig *config) {
-	return sctrlSESetConfigEx(config, sizeof(AdrenalineConfig));
+int sctrlSESetConfig(SEConfig *config) {
+	return sctrlSESetConfigEx(config, sizeof(SEConfigADR));
 }
 
-int sctrlSEApplyConfigEX(AdrenalineConfig *conf, int size) {
-	if (size == sizeof(AdrenalineConfig)){
+int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
+	if (size == sizeof(SEConfigADR)){
 		memcpy(&config, conf, size);
 		return 0;
 	}
 	return -1;
 }
 
-void sctrlSEApplyConfig(AdrenalineConfig *conf) {
-	memcpy(&config, conf, sizeof(AdrenalineConfig));
+void sctrlSEApplyConfig(SEConfig *conf) {
+	memcpy(&config, conf, sizeof(SEConfigADR));
+}
+
+SEConfig* sctrlSEGetConfigInternal(){
+    return (SEConfig*)&config;
 }

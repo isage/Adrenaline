@@ -16,9 +16,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 
 #include "main.h"
+
+#include "../../adrenaline_compat.h"
 
 PspIoDrv *ms_drv;
 PspIoDrv *flashfat_drv;
@@ -149,14 +151,14 @@ int _msIoDevctl(u32 *args) {
 
 	// Fix integer overflow in Outrun
 	if (cmd == 0x02425818) {
-		if (sceKernelBootFrom() == SCE_BOOT_DISC) {
+		if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 			u32 data = *(u32 *)indata;
 			if (data) {
-				ScePspemuIoDevInfo *info = (ScePspemuIoDevInfo *)data;
+				SceDevInf *info = (SceDevInf *)data;
 
-				u64 size = (u64)info->free_clusters * (u64)info->sector_size * (u64)info->sector_count;
+				u64 size = (u64)info->freeClusters * (u64)info->sectorSize * (u64)info->sectorCount;
 				if (size >= 0x7FFFFFFF) {
-					info->free_clusters = 0x7FFFFFFF / info->sector_size / info->sector_count;
+					info->freeClusters = 0x7FFFFFFF / info->sectorSize / info->sectorCount;
 				}
 			}
 		}

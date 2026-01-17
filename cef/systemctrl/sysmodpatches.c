@@ -21,7 +21,8 @@
  * Module patches for system modules
  */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
+#include <bootloadex.h>
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -67,7 +68,7 @@ typedef struct SysMemPartition {
 ////////////////////////////////////////////////////////////////////////////////
 
 static u32 FindPowerFunction(u32 nid) {
-	return FindProc("scePower_Service", "scePower", nid);
+	return sctrlHENFindFunction("scePower_Service", "scePower", nid);
 }
 
 static int protect_pspemu_mem() {
@@ -171,7 +172,7 @@ static int CallbackThread(SceSize args, void *argp) {
 		return cbid;
 	}
 
-	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)FindProc("sceLoadExec", "LoadExecForUser", 0x4AC57943);
+	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x4AC57943);
 	sceKernelRegisterExitCallback(cbid);
 
 	sceKernelSleepThreadCB();
@@ -205,7 +206,7 @@ static int exitToVsh(SceSize args, void *argp) {
 
     // reset some flags
     SetUmdFile("");
-    sctrlSESetBootConfFileIndex(BOOT_NORMAL);
+    sctrlSESetBootConfFileIndex(MODE_UMD);
 
     int res = sctrlKernelExitVSH(NULL);
 
@@ -254,7 +255,7 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 	// Do not allow in pops and vsh
 	int apitype = sceKernelInitApitype();
-	if (apitype == SCE_APITYPE_MS5 || apitype == SCE_APITYPE_EF5 || apitype >= SCE_APITYPE_VSH_KERNEL) {
+	if (apitype == PSP_INIT_APITYPE_MS5 || apitype == PSP_INIT_APITYPE_EF5 || apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
 		return -1;
 	}
 
@@ -301,12 +302,13 @@ int sctrlHENApplyMemory(u32 p2) {
 	return res;
 }
 
-void SetSpeed(int cpu, int bus) {
+void sctrlHENSetSpeed(int cpu, int bus) {
+	int k1 = pspSdkSetK1(0);
 	if (cpu == 20 || cpu == 75 || cpu == 100 || cpu == 133 || cpu == 333 || cpu == 300 || cpu == 266 || cpu == 222) {
 		_scePowerSetClockFrequency_k = (void *)FindPowerFunction(0x737486F2);
 		_scePowerSetClockFrequency_k(cpu, cpu, bus);
 
-		if (sceKernelApplicationType() != SCE_APPTYPE_VSH) {
+		if (sceKernelApplicationType() != PSP_INIT_KEYCONFIG_VSH) {
 			MAKE_DUMMY_FUNCTION((u32)_scePowerSetClockFrequency_k, 0);
 			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0x545A7F3C), 0);
 			MAKE_DUMMY_FUNCTION((u32)FindPowerFunction(0xB8D7B3FB), 0);
@@ -315,11 +317,6 @@ void SetSpeed(int cpu, int bus) {
 			sctrlFlushCache();
 		}
 	}
-}
-
-void sctrlHENSetSpeed(int cpu, int bus) {
-	int k1 = pspSdkSetK1(0);
-	SetSpeed(cpu, bus);
 	pspSdkSetK1(k1);
 }
 
@@ -361,8 +358,8 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 
 int RunRebootPatched(u32 *params) {
 	if ((char *)params[2] == NULL) {
-		if (rebootex_config.bootfileindex != BOOT_RECOVERY) {
-			rebootex_config.bootfileindex = BOOT_NORMAL;
+		if (rebootex_config.bootfileindex != MODE_RECOVERY) {
+			rebootex_config.bootfileindex = MODE_UMD;
 		}
 		memset(rebootex_config.umdfilename, 0, 256);
 	}
@@ -371,10 +368,10 @@ int RunRebootPatched(u32 *params) {
 }
 
 int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
-	memcpy((void *)EPI_REBOOTEX_MOD_ADDR, rebootex, size_rebootex);
-	memcpy((void *)EPI_REBOOTEX_CFG_ADDR, &rebootex_config, sizeof(RebootexConfig));
+	memcpy((void *)REBOOTEX_TEXT, rebootex, size_rebootex);
+	memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootexConfigADR));
 	// Backup the CFW config across reboot
-	memcpy((void *)EPI_CONFIG_ADDR, &config, sizeof(AdrenalineConfig));
+	memcpy((void *)EPI_CONFIG_ADDR, &config, sizeof(SEConfigADR));
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 
@@ -623,9 +620,9 @@ void PatchImposeDriver(SceModule* mod) {
 
 	HIJACK_FUNCTION(text_addr + 0x381C, SetIdleCallbackPatched, SetIdleCallback);
 
-	if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
+	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
 		SetupCallbacks();
-		MAKE_DUMMY_FUNCTION(text_addr + 0x91C8, SCE_APPTYPE_GAME);
+		MAKE_DUMMY_FUNCTION(text_addr + 0x91C8, PSP_INIT_KEYCONFIG_GAME);
 	}
 
 	REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
@@ -688,13 +685,13 @@ void PatchSysmem() {
 
 	SceModule *mod = sceKernelFindModuleByName("sceSystemMemoryManager");
 	for (int i = 0; i < sizeof(nids) / sizeof(u32); i++) {
-		u32 addr = FindFirstBEQ(FindProcInMod(mod, "SysMemUserForUser", nids[i]));
+		u32 addr = FindFirstBEQ(sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", nids[i]));
 		if (addr) {
 			VWRITE16(addr + 2, 0x1000);
 		}
 	}
 
-	u32 power_tick_addr = FindProcInMod(mod, "sceSuspendForKernel", 0x090CCB3F);
+	u32 power_tick_addr = sctrlHENFindFunctionInMod(mod, "sceSuspendForKernel", 0x090CCB3F);
 	HIJACK_FUNCTION(power_tick_addr, sceKernelPowerTickPatched, _sceKernelPowerTick);
 }
 
@@ -706,11 +703,11 @@ void PatchUmdDriver(SceModule* mod) {
 }
 
 void PatchMeCodecWrapper(SceModule* mod) {
-	HIJACK_FUNCTION(FindProcInMod(mod, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, _sceMeAudio_driver_C300D466);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, _sceMeAudio_driver_C300D466);
 	sctrlFlushCache();
 }
 
 void PatchMesgLed(SceModule* mod) {
-	REDIRECT_FUNCTION(FindProcInMod(mod, "sceResmgr_driver", 0x9DC14891), sceResmgrDecryptIndexPatched);
+	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceResmgr_driver", 0x9DC14891), sceResmgrDecryptIndexPatched);
 	sctrlFlushCache();
 }

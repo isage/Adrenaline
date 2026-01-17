@@ -40,7 +40,7 @@
 PSP_MODULE_INFO("EPI-XmbControl", 0x0007, 1, 0);
 
 int g_psp_model;
-AdrenalineConfig g_cfw_config;
+SEConfigADR g_cfw_config;
 
 GetItem g_menu_items[] = {
 	{2, 0, "CPU/BUS clock speed in XMB", 0, 0, &g_cfw_config.vsh_cpu_speed},
@@ -138,7 +138,7 @@ int module_start(SceSize args, void *argp) {
 
 	g_psp_model = kuKernelGetModel();
 
-	sctrlSEGetConfig(&g_cfw_config);
+	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 
 	// Sanity check
 	// `g_item_opts` always should have num of `g_menu_items` + 2

@@ -1,7 +1,10 @@
+#include <string.h>
 #include <psptypes.h>
-#include <sysclib_user.h>
 
 static char *__strtok_context;
+
+char tolower(char);
+int strtol(const char*, char**, int);
 
 char *strtok_r(char *string, const char *seps, char **context) {
 	char *head;  // start of word

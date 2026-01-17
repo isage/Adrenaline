@@ -20,5 +20,6 @@
 #define __FLASHFS_H__
 
 int ScePspemuBuildFlash0();
+int ScePspemuLoadFlash0Ark();
 
 #endif

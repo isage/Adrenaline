@@ -21,7 +21,7 @@
 #include <pspumd.h>
 #include <psprtc.h>
 #include <psperror.h>
-#include <pspsysmem.h>
+#include <pspsysmem_kernel.h>
 #include <pspkernel.h>
 #include <pspthreadman_kernel.h>
 

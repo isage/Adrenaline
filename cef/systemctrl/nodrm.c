@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -273,7 +273,7 @@ void PatchNp9660Driver(SceModule* mod) {
 	g_np9660_mod = mod;
 
 	// Do not patch in pops mode
-	if (sceKernelApplicationType() == SCE_APPTYPE_POPS) {
+	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
 		return;
 	}
 
@@ -307,7 +307,7 @@ void PatchNpDrmDriver(SceModule* mod) {
 	}
 
 	u32 text_addr = mod->text_addr;
-	if (sceKernelBootFrom() == SCE_BOOT_DISC) {
+	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 		SceModule *mod = sceKernelFindModuleByName("sceIOFileManager");
 
 		for (int i = 0; i < mod->text_size; i += 4) {
@@ -329,7 +329,7 @@ void PatchNpDrmDriver(SceModule* mod) {
 		HIJACK_FUNCTION(text_addr + 0x1714, sceNpDrmEdataSetupKeyPatched, _sceNpDrmEdataSetupKey);
 		HIJACK_FUNCTION(text_addr + 0x1514, sceNpDrmEdataGetDataSizePatched, _sceNpDrmEdataGetDataSize);
 
-		HIJACK_FUNCTION(FindProc("sceModuleManager", "ModuleMgrForUser", 0xF2D8D1B4), sceKernelLoadModuleNpDrmPatched, _sceKernelLoadModuleNpDrm);
+		HIJACK_FUNCTION(sctrlHENFindFunction("sceModuleManager", "ModuleMgrForUser", 0xF2D8D1B4), sceKernelLoadModuleNpDrmPatched, _sceKernelLoadModuleNpDrm);
 
 		sctrlFlushCache();
 	}
@@ -413,7 +413,7 @@ void PatchSysconfForDrm(SceModule *mod) {
 
 	// Only patch on VSH
 	int app_type = sceKernelApplicationType();
-	if (app_type != SCE_APPTYPE_VSH) {
+	if (app_type != PSP_INIT_KEYCONFIG_VSH) {
 		return;
 	}
 
@@ -460,7 +460,7 @@ void PatchDrmGameModule(SceModule* mod) {
 
 	// Do not patch on POPS
 	int app_type = sceKernelApplicationType();
-	if (app_type == SCE_APPTYPE_POPS) {
+	if (app_type == PSP_INIT_KEYCONFIG_POPS) {
 		return;
 	}
 
@@ -469,8 +469,8 @@ void PatchDrmGameModule(SceModule* mod) {
 	}
 
 
-	sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, sceIoOpenDrmPatched,0);
-	sctrlHENHookImportByNID(mod, "IoFileMgrForUser", 0x89AA9906, sceIoOpenAsyncDrmPatched,0);
+	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, sceIoOpenDrmPatched);
+	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x89AA9906, sceIoOpenAsyncDrmPatched);
 
 	sctrlFlushCache();
 }

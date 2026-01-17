@@ -17,7 +17,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <string.h>
 #include <pspinit.h>
 #include <pspmodulemgr.h>
@@ -26,12 +26,13 @@
 #include <adrenaline_log.h>
 
 #include "plugin.h"
+#include "main.h"
 
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
-extern AdrenalineConfig config;
-extern RebootexConfig rebootex_config;
+extern SEConfigADR config;
+extern RebootexConfigADR rebootex_config;
 
 #define MAX_PLUGINS 64
 #define MAX_PLUGIN_PATH 128
@@ -124,7 +125,7 @@ static int isVshRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype >= SCE_APITYPE_VSH_KERNEL) {
+		if (apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
 			cur_runlevel = RUNLEVEL_VSH;
 		}
 	}
@@ -135,7 +136,7 @@ static int isPopsRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_APITYPE_MS5 || apitype == SCE_APITYPE_EF5) {
+		if (apitype == PSP_INIT_APITYPE_MS5 || apitype == PSP_INIT_APITYPE_EF5) {
 			cur_runlevel = RUNLEVEL_POPS;
 		}
 	}
@@ -146,10 +147,10 @@ static int isUmdRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_APITYPE_UMD || apitype == SCE_APITYPE_UMD2
-			|| (apitype >= SCE_APITYPE_UMD_EMU_MS1 && apitype <= SCE_APITYPE_UMD_EMU_EF2)
-			|| apitype == SCE_APITYPE_USBWLAN
-			|| (apitype >= SCE_APITYPE_GAME_EBOOT && apitype <= SCE_APITYPE_EMU_BOOT_EF)) {
+		if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2
+			|| (apitype >= PSP_INIT_APITYPE_UMD_EMU_MS1 && apitype <= PSP_INIT_APITYPE_UMD_EMU_EF2)
+			|| apitype == PSP_INIT_APITYPE_USBWLAN
+			|| (apitype >= PSP_INIT_APITYPE_GAME_EBOOT && apitype <= PSP_INIT_APITYPE_EMU_BOOT_EF)) {
 
 			cur_runlevel = RUNLEVEL_UMD;
 		}
@@ -161,7 +162,7 @@ static int isHomebrewRunlevel() {
 	if (!cur_runlevel) {
 		// Fetch Apitype
 		int apitype = sceKernelInitApitype();
-		if (apitype == SCE_APITYPE_MS2 || apitype == SCE_APITYPE_EF2) {
+		if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2) {
 			cur_runlevel = RUNLEVEL_HOMEBREW;
 		}
 	}
@@ -189,6 +190,14 @@ static int isTitleId(char* runlevel) {
 // Runlevel Check
 static int matchingRunlevel(char * runlevel) {
 	lowerString(runlevel, runlevel, strlen(runlevel)+1);
+
+	char* cfw_type = strstr(runlevel, "cfw=");
+    if (cfw_type){ // plugin is for specific CFW only
+        if (strncmp(cfw_type+4, "adr", 3) != 0){
+            return 0; // not for adrenaline, treat as disabled
+        }
+    }
+
 
 	if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) {
 		// always on
@@ -443,7 +452,7 @@ void loadPlugins() {
 	plugins = oe_malloc(sizeof(Plugins));
 	plugins->count = 0; // initialize plugins table
 
-	ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/EPIplugins.txt", addPlugin, removePlugin);
+	ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
 
 	// start all loaded plugins
 	startPlugins();

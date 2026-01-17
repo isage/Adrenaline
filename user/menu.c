@@ -96,6 +96,7 @@ static char *no_yes_options[] = { "No", "Yes" };
 static char *yes_no_options[] = { "Yes", "No" };
 static char *ms_location_options[] = { "ux0:pspemu", "ur0:pspemu", "imc0:pspemu", "xmc0:pspemu", "uma0:pspemu" };
 static char *usbdevice_options[] = { "Memory Card", "Internal Storage", "sd2vita", "psvsd" };
+static char *cfwtype_options[] = { "TN", "ARK" };
 
 static MenuEntry main_entries[] = {
 	{ "Enter Standby Mode",        MENU_ENTRY_TYPE_CALLBACK, 0, EnterStandbyMode, NULL, NULL, 0 },
@@ -105,6 +106,7 @@ static MenuEntry main_entries[] = {
 };
 
 static MenuEntry settings_entries[] = {
+	{ "PSP Custom Firmware",       MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.cfw_type, cfwtype_options, sizeof(cfwtype_options)/sizeof(char*) },
 	{ "Graphics Filtering",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.graphics_filtering, graphics_options, sizeof(graphics_options) / sizeof(char **) },
 	{ "Smooth Graphics",           MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.no_smooth_graphics, yes_no_options, sizeof(yes_no_options) / sizeof(char **) },
 	{ "f.lux Filter Color",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.flux_mode, flux_mode_options, sizeof(flux_mode_options) / sizeof(char **) },
@@ -190,6 +192,16 @@ static int EnterAdrenalineMenu() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
 	if (adrenaline->pops_mode) {
 		ScePspemuPausePops(1);
+	}
+
+	// Check if ARK installed
+	SceIoStat stat;
+	if (sceIoGetstat(FLASH0_ARK_PATH, &stat) < 0){
+		settings_entries[0].n_options = 1;
+		config.cfw_type = 0;
+	}
+	else {
+		settings_entries[0].n_options = sizeof(cfwtype_options)/sizeof(char*);
 	}
 
 	return 0;
@@ -317,9 +329,13 @@ void drawMenu() {
 				}
 			}
 		}
-
+		// Info about PSP CFW change
+		if (tab_sel == 2 && menu_sel == 0){
+			char *title = "Changing Custom Firmware takes effect after closing and reopening Adrenaline.";
+			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17), WHITE, FONT_SIZE, title);
+		}
 		// Info about Original filter
-		if (tab_sel == 2 && menu_sel == 0 && config.graphics_filtering == 0) {
+		if (tab_sel == 2 && menu_sel == 1 && config.graphics_filtering == 0) {
 			char *title = "All graphics related options are not taking effect with the Original rendering mode.";
 			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17), WHITE, FONT_SIZE, title);
 		}

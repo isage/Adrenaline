@@ -1,4 +1,4 @@
-#include <common.h>
+#include <systemctrl_adrenaline.h>
 #include <psperror.h>
 
 #include "umd9660_driver.h"

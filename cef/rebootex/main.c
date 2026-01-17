@@ -20,10 +20,12 @@
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
-#include <extratypes.h>
+#include <systemctrl_se.h>
+#include <pspextratypes.h>
 
-#include "main.h"
 #include "libc.h"
+#include <rebootexconfig.h>
+#include <bootloadex.h>
 #include "../../adrenaline_compat.h"
 
 #define REBOOT_MODULE "/rtm.prx"
@@ -37,7 +39,7 @@ int (* DecryptExecutable)(void *buf, int size, int *retSize);
 void (* SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table);
 int (* sceKernelBootLoadFile)(BootFile *file, void *a1, void *a2, void *a3, void *t0);
 
-RebootexConfig *rebootex_config = (RebootexConfig *)EPI_REBOOTEX_CFG_ADDR;
+RebootexConfigADR *rebootex_config = (RebootexConfigADR *)REBOOTEX_CONFIG;
 
 void ClearCaches() {
 	DcacheClear();
@@ -160,29 +162,29 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 		char *name = NULL;
 
 		switch(rebootex_config->bootfileindex) {
-			case BOOT_NORMAL:
+			case MODE_UMD:
 				name = "/kd/pspbtjnf.bin";
 				break;
 
-			case BOOT_INFERNO:
+			case MODE_INFERNO:
 				name = "/kd/pspbtknf.bin";
 				break;
 
-			case BOOT_MARCH33:
+			case MODE_MARCH33:
 				name = "/kd/pspbtlnf.bin";
 				break;
 
-			case BOOT_NP9660:
+			case MODE_NP9660:
 				name = "/kd/pspbtmnf.bin";
 				break;
 
-			case BOOT_RECOVERY:
+			case MODE_RECOVERY:
 				name = "/kd/pspbtrnf.bin";
 				break;
 		}
 
-		if (rebootex_config->bootfileindex == BOOT_RECOVERY) {
-			rebootex_config->bootfileindex = BOOT_NORMAL;
+		if (rebootex_config->bootfileindex == MODE_RECOVERY) {
+			rebootex_config->bootfileindex = MODE_UMD;
 		}
 
 		file->name = name;
