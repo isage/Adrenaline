@@ -51,7 +51,7 @@ jobs:
 
       - name: Setup PSPSDK
         run: |
-          wget -q https://github.com/pspdev/pspdev/releases/latest/download/pspdev-ubuntu-latest-x86_64.tar.gz
+          wget -q https://github.com/pspdev/pspdev/releases/download/latest/pspdev-ubuntu-latest-x86_64.tar.gz
           sudo tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz -C /usr/local/
           sudo chmod -R 755 /usr/local/pspdev
 
