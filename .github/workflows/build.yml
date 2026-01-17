@@ -220,4 +220,3 @@ jobs:
               build/epi-vpk/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
               build/epi-vpk-debug/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
               build/epi-updater/updater-${{ steps.vars.outputs.sha_short }}.zip
-              build/epi-cfw-libs/epi-cfw-dev-sdk-${{ steps.vars.outputs.sha_short }}.zip
