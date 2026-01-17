@@ -97,7 +97,7 @@ unsigned int sctrlHENFindFunction(const char *mod_name, const char *library, uns
 	while (i < mod->ent_size) {
 		SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
 
-        if (!library || (entry->libname && strcmp(entry->libname, library) == 0)) {
+		if (!library || (entry->libname && strcmp(entry->libname, library) == 0)) {
 			u32 *table = entry->entrytable;
 			int total = entry->stubcount + entry->vstubcount;
 
@@ -267,7 +267,7 @@ unsigned int sctrlHENFindFunctionInMod(SceModule * mod, const char *library, uns
 	while (i < mod->ent_size) {
 		SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
 
-        if (!library || (entry->libname && strcmp(entry->libname, library) == 0)) {
+		if (!library || (entry->libname && strcmp(entry->libname, library) == 0)) {
 			u32 *table = entry->entrytable;
 			int total = entry->stubcount + entry->vstubcount;
 
@@ -466,7 +466,7 @@ int sctrlHookImportByNID(SceModule * mod, const char * library, unsigned int nid
 int sctrlHENIsSystemBooted() {
 	int res = sceKernelGetSystemStatus();
 
-    return (res == 0x20000) ? 1 : 0;
+	return (res == 0x20000) ? 1 : 0;
 }
 
 int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
@@ -554,4 +554,37 @@ u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_onl
 	// Not Found
 	logmsg4("[DEBUG]: %s: %s — 0x%08lx not found\n", __func__, libname, nid);
 	return 0;
+}
+
+void sctrlHENHijackFunction(FunctionPatchData* patch_data, void* func_addr, void* patch_func, void** orig_func) {
+
+	void* ptr = patch_data;
+
+	int is_kernel_patch = IS_KERNEL_ADDR(func_addr);
+	if (is_kernel_patch){
+		patch_func = (void*)KERNELIFY(patch_func);
+		ptr = (void*)KERNELIFY(ptr);
+	}
+
+	// do hijack
+	int intc = pspSdkDisableInterrupts();
+	{
+		u32 _pb_ = (u32)patch_data;
+		u32 a = (u32)func_addr;
+		u32 f = (u32)patch_func;
+
+		MAKE_INSTRUCTION(_pb_, VREAD32(a));
+		MAKE_INSTRUCTION(_pb_ + 4, VREAD32(a + 4));
+		MAKE_NOP(_pb_ + 8);
+		MAKE_NOP(_pb_ + 16);
+		MAKE_JUMP_PATCH(_pb_ + 12, a + 8);
+		REDIRECT_FUNCTION(a, f);
+	}
+	pspSdkEnableInterrupts(intc);
+
+	*orig_func = ptr;
+
+	sctrlFlushCache();
+
+	logmsg3("[INFO]: %s: Hijacked function 0x%p -> 0x%p\n", __func__, func_addr, patch_func);
 }
