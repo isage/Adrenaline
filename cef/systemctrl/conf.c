@@ -178,8 +178,8 @@ int sctrlSESetConfigEx(SEConfig *cnf, int size) {
 
 	SEConfigADR* config = (SEConfigADR*)cnf;
 
-	config->magic[0] = SECONFIG_MAGIC_ADR1;
-	config->magic[1] = SECONFIG_MAGIC_ADR2;
+	config->magic[0] = SECONFIG_MAGIC_EPI1;
+	config->magic[1] = SECONFIG_MAGIC_EPI2;
 
 	// Restore the overwrite before saving to file
 	restore_overwrite((SEConfigADR*)config);
