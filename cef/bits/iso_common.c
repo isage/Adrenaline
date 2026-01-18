@@ -27,6 +27,10 @@
 #include <systemctrl_se.h>
 #include <cfwmacros.h>
 
+#ifdef __USE_USER_ALLOC
+#include <vshctrl.h>
+#endif
+
 #include <adrenaline_log.h>
 #include "iso_common.h"
 
