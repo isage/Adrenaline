@@ -14,7 +14,7 @@ USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
 LIBDIR = ../lib
-LIBS = -lpspsysmem_kernel  -lpspsystemctrl_kernel -lpspthreadman_kernel -lpspinit_kernel
+LIBS = -lcisoread -lpspsysmem_kernel  -lpspsystemctrl_kernel -lpspthreadman_kernel -lpspinit_kernel
 
 ifdef MARCH33_DEBUG
 CFLAGS += -DDEBUG=$(MARCH33_DEBUG)

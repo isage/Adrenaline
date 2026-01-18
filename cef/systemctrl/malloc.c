@@ -51,8 +51,8 @@ void* user_malloc(SceSize size) {
 	return malloc_impl(PSP_MEMORY_PARTITION_USER, size);
 }
 
-void* user_memalign(SceSize align, SceSize size) {
-	SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", 1, size+sizeof(SceUID)+align, NULL);
+static void* generic_memalign(int pid, SceSize align, SceSize size) {
+	SceUID uid = sceKernelAllocPartitionMemory(pid, "", 1, size+sizeof(SceUID)+align, NULL);
 	int* ptr = sceKernelGetBlockHeadAddr(uid);
 	if (ptr){
 		ptr = (void*)(((u32)ptr & (~(align-1))) + 64);
@@ -60,6 +60,14 @@ void* user_memalign(SceSize align, SceSize size) {
 		return ptr;
 	}
 	return NULL;
+} 
+
+void* user_memalign(SceSize align, SceSize size) {
+	return generic_memalign(PSP_MEMORY_PARTITION_USER, align, size);
+}
+
+void* oe_memalign(SceSize align, SceSize size) {
+	return generic_memalign(PSP_MEMORY_PARTITION_KERNEL, align, size);
 }
 
 int mallocinit() {
