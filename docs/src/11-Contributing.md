@@ -47,13 +47,15 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 ## Setting up the development environment
 ---
 
-To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depend on four thing: **VITASDK**, **PSPSDK**, **Python3** and **psp-packer**.
+To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depend on four thing: **VITASDK**, **PSPSDK**, **PSP CFW SDK**, **Python3** and **psp-packer**.
 
 For the [VITASDK](https://vitasdk.org/) and [PSPSDK](https://pspdev.github.io/), follow their instructions to install it in your system.
 
+For the [PSP CFW SDK](https://github.com/pspdev/psp-cfw-sdk), prefer to install from source, as CFW development and updates to the CFW SDK move hand-in-hand.
+
 [Python3](https://www.python.org/downloads/) installation will depend on your system and setup. Google is your friend on this one.
 
-For psp-packer, there are two tested implementations that works with Adrenaline, the [Davee's implementation](https://bitbucket.org/DaveeFTW/psp-packer/src/master/) and [GrayJack's implementation](https://github.com/VitaArchive/psp-packer).
+For [psp-packer](https://github.com/VitaArchive/psp-packer), either install via `cargo` or install from source.
 
 Once everything is installed, you can build the project.
 

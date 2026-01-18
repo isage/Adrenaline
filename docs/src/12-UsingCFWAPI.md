@@ -14,50 +14,22 @@ The `VshCtrlLib` extends the API available on the VSH/XMB runlevel; this also me
 ## How to use them in your project
 ---
 
-<!-- TODO: LINK -->
-To start using these APIs, you can download from here the stubs and headers of these libraries. Or alternatively, produce the stubs from the source, as it will be explained below.
+To start using these APIs, you can install the [PSP CFW SDK](https://github.com/pspdev/psp-cfw-sdk) to obtain the headers and the stubs for the CFW API.
 
-**Producing the CFW API stubs:**
+The easiest way is to use `psp-pacman`:
 
-1. Clone the Adrenaline repository
-2. Enter the project folder
-3. Prepare to build with:
 ```sh
-cmake -S . -B build
+psp-pacman -Syy psp-cfw-sdk
 ```
-4. Generate the stubs and headers
+
+You can also install it from source, by cloning the git repo linked above, and executing
+
 ```sh
-cmake --build build --target cfw-libs
+make install
 ```
-5. Grab the `include` directory and the `lib` directory from the `build/cfw-dev-sdk/` directory and add them to your project source
 
-
-After that, you should include the `lib` directory in the library directory list. If you are using `Makefile`, it is as simple as defining the `LIBDIR` variable to the path.
-
-> [!EXAMPLE]
-> ```makefile
-> LIBDIR = ../lib
-> ```
-
-Then, to link to the stub, you should pass the `-l` argument to your compilation flags. If you are using `Makefile`, you can use the `LIBS` variable.
-
-> [!EXAMPLE]
-> ```makefile
-> LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspkubridge
-> ```
-
-### System Control Headers
-
-The `SystemControl` headers (`systemctrl.h` and `systemctrl_se.h`) limit the visualization of some function definitions because some functions are exclusive to user-space and some are exclusive to kernel-space. To make them appear, it uses macro definitions to make them available. If your project is a user plugin, or a homebrew app, pass the `-D__USER__` flag into your `CFLAGS`; if your project is a kernel plugin, pass the `-D__KERNEL__` flag into your `CFLAGS`.
-
-Alternatively, to facilitate things, you can import the `mak` (`build.mak` and `build_prx.mak`) files at the generated `libs` folder in your project `Makefile`. With those, the setup of the macros are automatic.
-
-> [!EXAMPLE]
-> ```makefile
-> # At the end of your Makefile
->
-> include ../lib/build.mak
-> ```
+> [!WARNING]
+> `PSPDEV` toolchain must be properly set for it to work.
 
 
 ## My homebrew already uses CFW APIs
