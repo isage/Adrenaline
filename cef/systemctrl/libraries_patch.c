@@ -223,6 +223,22 @@ SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library) 
 	return NULL;
 }
 
+u32 sctrlFindImportByNID(SceModule * pMod, const char * library, u32 nid) {
+    SceLibraryStubTable * pImp = sctrlFindImportLib(pMod, library);
+
+    if(pImp != NULL) {
+        int i = 0; for(; i < pImp->stubcount; i++) {
+            // Matching Function NID
+            if(pImp->nidtable[i] == nid) {
+                // Return Function Stub Address
+                return (u32)(pImp->stubtable + 8 * i);
+            }
+        }
+    }
+
+    return 0;
+}
+
 u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
 	// Invalid Arguments
 	if (mod == NULL || library == NULL) {
