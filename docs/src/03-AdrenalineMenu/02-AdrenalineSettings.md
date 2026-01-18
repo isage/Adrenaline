@@ -7,6 +7,21 @@ A tab in the [Adrenaline Menu](../04-AdrenalineMenu.md) that allows adjusting va
 <img src="../assets/03-epi-menu-settings.png" width="70%" />
 </p>
 
+## vPSP Custom Firmware
+
+Chooses the PSP Custom Firmware that is going to be loaded by the Adrenaline Application into the vPSP environment.
+
+The available options are:
+
+- **EPI**: Uses the CFW that comes with Adrenaline.
+- **ARK**: Uses the [ARK CFW](https://github.com/PSP-Arkfive/ARK-5).
+
+> [!NOTE]
+> The `ARK` options is only available if you have ARK savedata files properly installed. Otherwise, only the `EPI` will be available.
+
+> [!IMPORTANT]
+> Changing vPSP Custom Firmware requires to close and reopen the Adrenaline Application to take effect.
+
 ## Graphics Filtering
 
 Applies graphical filters in the Vita/PSTV screen while the Adrenaline App is open.
