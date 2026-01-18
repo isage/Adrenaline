@@ -43,8 +43,8 @@
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
-RebootexConfigADR rebootex_config;
-SEConfigADR config;
+RebootexConfigEPI rebootex_config;
+SEConfigEPI config;
 
 int idle = 0;
 
@@ -370,7 +370,7 @@ int module_start(SceSize args, void *argp) {
 
 	// Restore CFW config from the RAM backup in the start (if it exists)
 	if (IS_ADR_SECONFIG(EPI_CONFIG_ADDR)) {
-		memcpy(&config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigADR));
+		memcpy(&config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigEPI));
 	}
 
 	sctrlHENSetStartModuleHandler((STMOD_HANDLER)OnModuleStart);
@@ -379,7 +379,7 @@ int module_start(SceSize args, void *argp) {
 
 	initAdrenaline();
 
-	memcpy(&rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigADR));
+	memcpy(&rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
 
 	tty_init();
 

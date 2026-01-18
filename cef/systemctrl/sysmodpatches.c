@@ -369,9 +369,9 @@ int RunRebootPatched(u32 *params) {
 
 int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
 	memcpy((void *)REBOOTEX_TEXT, rebootex, size_rebootex);
-	memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootexConfigADR));
+	memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootexConfigEPI));
 	// Backup the CFW config across reboot
-	memcpy((void *)EPI_CONFIG_ADDR, &config, sizeof(SEConfigADR));
+	memcpy((void *)EPI_CONFIG_ADDR, &config, sizeof(SEConfigEPI));
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 

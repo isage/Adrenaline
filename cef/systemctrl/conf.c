@@ -46,7 +46,7 @@ typedef struct {
 	int force_high_memory;
 	int execute_boot_bin;
 	int recovery_color;
-} SEConfigADR717;
+} SEConfigEPI717;
 
 typedef struct {
 	int magic[2];
@@ -65,7 +65,7 @@ static int getMagicsFromFile(SceUID fd, AdrenalineMagics* magic) {
 	return read;
 }
 
-static void migrate_config717(SEConfigADR717* old, SEConfigADR* new){
+static void migrate_config717(SEConfigEPI717* old, SEConfigEPI* new){
 	new->hide_corrupt = old->hide_corrupt;
 	new->skip_logo = old->skip_logo;
 	new->startup_program = old->startup_program;
@@ -88,7 +88,7 @@ static void migrate_config717(SEConfigADR717* old, SEConfigADR* new){
 	new->recovery_color = old->recovery_color;
 }
 
-static void config_overwrite(SEConfigADR *config) {
+static void config_overwrite(SEConfigEPI *config) {
 	if (rebootex_config.overwrite_use_psposk) {
 		// Overwrite the config
 		g_og_use_psposk_value = config->use_sony_psposk;
@@ -96,7 +96,7 @@ static void config_overwrite(SEConfigADR *config) {
 	}
 }
 
-static inline void restore_overwrite(SEConfigADR *config) {
+static inline void restore_overwrite(SEConfigEPI *config) {
 	if (rebootex_config.overwrite_use_psposk) {
 		config->use_sony_psposk = g_og_use_psposk_value;
 	}
@@ -118,18 +118,18 @@ int sctrlSEGetConfigEx(SEConfig *config, int size) {
 	sceIoLseek(fd, 0, PSP_SEEK_SET);
 
 	// Needs migration
-	if (file_size != sizeof(SEConfigADR)) {
+	if (file_size != sizeof(SEConfigEPI)) {
 		AdrenalineMagics magics = {0};
 		getMagicsFromFile(fd, &magics);
 
 		switch (magics.magic[1]) {
 			case ADRENALINE717_CFG_MAGIC_2:
 				logmsg("[INFO]: Adrenaline CFW 7.1.7 config found\n");
-				SEConfigADR717 old_conf;
-				read = sceIoRead(fd, &old_conf, sizeof(SEConfigADR717));
-				migrate_config717(&old_conf, (SEConfigADR*)config);
+				SEConfigEPI717 old_conf;
+				read = sceIoRead(fd, &old_conf, sizeof(SEConfigEPI717));
+				migrate_config717(&old_conf, (SEConfigEPI*)config);
 
-				if (read < sizeof(SEConfigADR717)) {
+				if (read < sizeof(SEConfigEPI717)) {
 					res = SCE_EIO;
 					goto exit;
 				}
@@ -157,7 +157,7 @@ int sctrlSEGetConfigEx(SEConfig *config, int size) {
 		}
 	}
 
-	config_overwrite((SEConfigADR*)config);
+	config_overwrite((SEConfigEPI*)config);
 
 exit:
 	if (fd >= 0) {
@@ -176,18 +176,18 @@ int sctrlSESetConfigEx(SEConfig *cnf, int size) {
 		return fd;
 	}
 
-	SEConfigADR* config = (SEConfigADR*)cnf;
+	SEConfigEPI* config = (SEConfigEPI*)cnf;
 
 	config->magic[0] = SECONFIG_MAGIC_EPI1;
 	config->magic[1] = SECONFIG_MAGIC_EPI2;
 
 	// Restore the overwrite before saving to file
-	restore_overwrite((SEConfigADR*)config);
+	restore_overwrite((SEConfigEPI*)config);
 
 	int written = sceIoWrite(fd, config, size);
 
 	// Overwrite again in the memory
-	config_overwrite((SEConfigADR*)config);
+	config_overwrite((SEConfigEPI*)config);
 
 	if (written < size) {
 		sceIoClose(fd);
@@ -202,15 +202,15 @@ int sctrlSESetConfigEx(SEConfig *cnf, int size) {
 }
 
 int sctrlSEGetConfig(SEConfig *config) {
-	return sctrlSEGetConfigEx(config, sizeof(SEConfigADR));
+	return sctrlSEGetConfigEx(config, sizeof(SEConfigEPI));
 }
 
 int sctrlSESetConfig(SEConfig *config) {
-	return sctrlSESetConfigEx(config, sizeof(SEConfigADR));
+	return sctrlSESetConfigEx(config, sizeof(SEConfigEPI));
 }
 
 int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
-	if (size == sizeof(SEConfigADR)){
+	if (size == sizeof(SEConfigEPI)){
 		memcpy(&config, conf, size);
 		return 0;
 	}
@@ -218,7 +218,7 @@ int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
 }
 
 void sctrlSEApplyConfig(SEConfig *conf) {
-	memcpy(&config, conf, sizeof(SEConfigADR));
+	memcpy(&config, conf, sizeof(SEConfigEPI));
 }
 
 SEConfig* sctrlSEGetConfigInternal(){

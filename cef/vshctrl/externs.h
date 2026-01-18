@@ -5,7 +5,7 @@
 
 #include <systemctrl_se.h>
 
-extern SEConfigADR g_cfw_config;
+extern SEConfigEPI g_cfw_config;
 
 extern int (* g_vshmenu_ctrl)(SceCtrlData *pad_data, int count);
 

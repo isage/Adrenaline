@@ -31,8 +31,8 @@
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
 
-extern SEConfigADR config;
-extern RebootexConfigADR rebootex_config;
+extern SEConfigEPI config;
+extern RebootexConfigEPI rebootex_config;
 
 #define MAX_PLUGINS 64
 #define MAX_PLUGIN_PATH 128

@@ -683,7 +683,7 @@ u32 sctrlHENFakeDevkitVersion() {
 
 RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config) {
 	if (config != NULL) {
-		memcpy(config, &rebootex_config, sizeof(RebootexConfigADR));
+		memcpy(config, &rebootex_config, sizeof(RebootexConfigEPI));
 	}
 
 	return (RebootexConfig*)&rebootex_config;

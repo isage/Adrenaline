@@ -33,10 +33,10 @@ int findArkFlashFile(BootFile* file, const char* path){
 }
 
 int pspemuLfatOpenArkVPSP(BootFile* file){
-    
+
     int ret = -1;
     char* p = file->name;
-    
+
     if (strcmp(p, "pspbtcnf.bin") == 0){
         p[2] = 'v'; // custom btcnf for PS Vita
         p[5] = 'k'; // use np9660 ISO mode (psvbtknf.bin)
@@ -76,7 +76,7 @@ int cfwBoot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7
     colorDebug(0xFF00);
     #endif
 
-    RebootexConfigADR *rebootex_config_adr = (RebootexConfigADR *)REBOOTEX_CONFIG;
+    RebootexConfigEPI *rebootex_config_adr = (RebootexConfigEPI *)REBOOTEX_CONFIG;
     if (rebootex_config_adr->bootfileindex == MODE_RECOVERY) arkconf.recovery = 1;
 
     memcpy(ark_config, &arkconf, sizeof(ARKConfig));
@@ -86,10 +86,10 @@ int cfwBoot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7
 
     // scan for reboot functions
     findBootFunctions();
-    
+
     // patch reboot buffer
     patchBootVita();
-    
+
     // Forward Call
     return sceBoot(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }

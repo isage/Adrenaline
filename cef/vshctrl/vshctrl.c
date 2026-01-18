@@ -51,7 +51,7 @@ int vctrlVSHExitVSHMenu(SEConfig *conf, char *videoiso, int disctype) {
 	int oldspeed = g_cfw_config.vsh_cpu_speed;
 
 	g_vshmenu_ctrl = NULL;
-	memcpy(&g_cfw_config, conf, sizeof(SEConfigADR));
+	memcpy(&g_cfw_config, conf, sizeof(SEConfigEPI));
 	sctrlSEApplyConfig((SEConfig*)&g_cfw_config);
 
 	if (g_set) {

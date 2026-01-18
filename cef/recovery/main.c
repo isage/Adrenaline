@@ -41,7 +41,7 @@ static int g_recovery_exit = 0;
 
 u32 g_button_assign_value = 0;
 
-SEConfigADR g_cfw_config;
+SEConfigEPI g_cfw_config;
 
 void ToggleUSB() {
 	if (!g_usb_status) {

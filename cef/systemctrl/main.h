@@ -25,8 +25,8 @@
 
 #include "utils.h"
 
-extern RebootexConfigADR rebootex_config;
-extern SEConfigADR config;
+extern RebootexConfigEPI rebootex_config;
+extern SEConfigEPI config;
 extern STMOD_HANDLER module_handler;
 
 
