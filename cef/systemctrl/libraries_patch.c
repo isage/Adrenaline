@@ -80,7 +80,7 @@ u32 ResolveOldNIDs(const char *libname, u32 nid) {
 	return 0;
 }
 
-unsigned int sctrlHENFindFunction(const char *mod_name, const char *library, unsigned int nid) {
+u32 sctrlHENFindFunction(const char *mod_name, const char *library, u32 nid) {
 	SceModule *mod = sceKernelFindModuleByName(mod_name);
 	if (!mod) {
 		mod = sceKernelFindModuleByAddress((SceUID)mod_name);
@@ -115,7 +115,7 @@ unsigned int sctrlHENFindFunction(const char *mod_name, const char *library, uns
 	return 0;
 }
 
-unsigned int sctrlHENFindImport(const char *mod_name, const char *library, unsigned int nid) {
+u32 sctrlHENFindImport(const char *mod_name, const char *library, u32 nid) {
 	SceModule *mod = sceKernelFindModuleByName(mod_name);
 	if (!mod) {
 		mod = sceKernelFindModuleByAddress((SceUID)mod_name);
@@ -223,7 +223,7 @@ SceLibraryStubTable* sctrlHENFindImportLib(SceModule* mod, const char* library) 
 	return NULL;
 }
 
-unsigned int sctrlHENFindImportInMod(SceModule * mod, const char *library, unsigned int nid) {
+u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
 	// Invalid Arguments
 	if (mod == NULL || library == NULL) {
 		return 0;
@@ -252,7 +252,7 @@ unsigned int sctrlHENFindImportInMod(SceModule * mod, const char *library, unsig
 	return 0;
 }
 
-unsigned int sctrlHENFindFunctionInMod(SceModule * mod, const char *library, unsigned int nid) {
+u32 sctrlHENFindFunctionInMod(SceModule * mod, const char *library, u32 nid) {
 	// Invalid Arguments
 	if(mod == NULL || library == NULL) {
 		return 0;
@@ -320,8 +320,8 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 		logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Function found\n", __func__, mod->modname, library, nid);
 	}
 
-	// Function as 32-Bit Unsigned Integer
-	unsigned int func_int = (unsigned int)func;
+	// Function as 32-Bit u32eger
+	u32 func_int = (u32)func;
 
 	// Dummy Return
 	if (func == NULL) {
@@ -391,7 +391,7 @@ int sctrlHENHookFunctionByNID(SceModule * mod, const char * library, u32 nid, vo
 }
 
 // Replace Import Function Stub
-int sctrlHookImportByNID(SceModule * mod, const char * library, unsigned int nid, void *func) {
+int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void *func) {
 	// Invalid Arguments
 	if(mod == NULL || library == NULL) {
 		return -1;
@@ -424,8 +424,8 @@ int sctrlHookImportByNID(SceModule * mod, const char * library, unsigned int nid
 		logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
 	}
 
-	// Function as 32-Bit Unsigned Integer
-	unsigned int func_int = (unsigned int)func;
+	// Function as 32-Bit unsigned integer
+	u32 func_int = (u32)func;
 
 	// Dummy Return
 	if (func_int <= 0xFFFF) {
@@ -502,7 +502,7 @@ u32 sctrlModuleTextAddr(char *modname) {
 	return text_addr;
 }
 
-unsigned int sctrlKernelResolveNid(const char *libname, unsigned int nid) {
+u32 sctrlKernelResolveNid(const char *libname, u32 nid) {
 	return (u32)ResolveMissingNIDs(libname, nid);
 }
 
@@ -510,7 +510,7 @@ int sctrlKernelSetNidResolver(char* libname, u32 enabled) {
 	return SCE_ENOSYS;
 }
 
-unsigned int sctrlHENMakeSyscallStub(void *function) {
+u32 sctrlHENMakeSyscallStub(void *function) {
 	SceUID block_id = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_USER, "", PSP_SMEM_High, 2 * sizeof(u32), NULL);
 	u32 stub = (u32)sceKernelGetBlockHeadAddr(block_id);
 	s32 syscall_num = sceKernelQuerySystemCall(function);
