@@ -454,7 +454,15 @@ void loadPlugins() {
 	plugins = oe_malloc(sizeof(Plugins));
 	plugins->count = 0; // initialize plugins table
 
-	ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
+	SceIoStat stat;
+	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
+
+	if (epiplugins_exists) {
+		ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/EPIplugins.txt", addPlugin, removePlugin);
+	} else {
+		ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
+	}
+
 
 	// start all loaded plugins
 	startPlugins();

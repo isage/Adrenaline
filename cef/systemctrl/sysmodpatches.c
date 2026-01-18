@@ -685,7 +685,7 @@ void PatchSysmem() {
 
 	SceModule *mod = sceKernelFindModuleByName("sceSystemMemoryManager");
 	for (int i = 0; i < sizeof(nids) / sizeof(u32); i++) {
-		u32 addr = FindFirstBEQ(sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", nids[i]));
+		u32 addr = sctrlHENFindFirstBEQ(sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", nids[i]));
 		if (addr) {
 			VWRITE16(addr + 2, 0x1000);
 		}

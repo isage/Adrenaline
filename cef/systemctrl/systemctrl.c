@@ -688,3 +688,39 @@ RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config) {
 
 	return (RebootexConfig*)&rebootex_config;
 }
+
+u32 sctrlHENFindJALGeneric(u32 addr, int reversed, int skip) {
+	int found_addr = _findJALaddr(addr, reversed, skip);
+
+	if (found_addr == 0) {
+		return found_addr;
+	}
+
+	return (((VREAD32(found_addr) & 0x03FFFFFF) << 2) | 0x80000000);
+}
+
+u32 sctrlHENFindFirstBEQ(u32 addr) {
+	for (;; addr += 4){
+		u32 data = VREAD32(addr);
+		if ((data & 0xFC000000) == 0x10000000) {
+			return addr;
+		}
+	}
+
+	return 0;
+}
+
+u32 sctrlHENFindRefInGlobals(char* libname, u32 addr, u32 ptr){
+    while (strcmp(libname, (char*)addr)) {
+        addr++;
+	}
+
+    if (addr % 4) {
+		// Align to 4 bytes
+        addr &= -0x4;
+	}
+
+    while (VREAD32(addr += 4) != ptr);
+
+    return addr;
+}

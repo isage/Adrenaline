@@ -47,40 +47,6 @@ int WriteFile(char *file, void *buf, int size) {
 	return written;
 }
 
-// Taken from ARK-3
-u32 FindFirstBEQ(u32 addr) {
-	for (;; addr += 4){
-		u32 data = VREAD32(addr);
-		if ((data & 0xFC000000) == 0x10000000) {
-			return addr;
-		}
-	}
-
-	return 0;
-}
-
-// Taken from ARK CFW
-// TODO: Rewrite using `_findJALaddr`
-u32 _findJAL(u32 addr, int reversed, int skip) {
-	if (addr != 0) {
-		int add = 4;
-		if (reversed) {
-			add = -4;
-		}
-		for(;;addr += add) {
-			if ((VREAD32(addr) >= 0x0C000000) && (VREAD32(addr) < 0x10000000)){
-				if (skip == 0) {
-					return (((VREAD32(addr) & 0x03FFFFFF) << 2) | 0x80000000);
-				} else {
-					skip--;
-				}
-			}
-		}
-	}
-
-	return 0;
-}
-
 u32 _findJALaddr(u32 addr, int reversed, int skip) {
 	if (addr != 0) {
 		int add = 4;
