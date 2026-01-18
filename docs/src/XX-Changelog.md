@@ -10,6 +10,7 @@
     - Support for plugins in specific games
     - Support for plugin only on homebrew apps
 	- **Migration instructions below**
+- Add option to select the vPSP Custom Firmware to use **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#vpsp-custom-firmware)\]**
 - Add `Scale2x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add `Scale3x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver. **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
