@@ -101,6 +101,7 @@ jobs:
           echo "$(pwd)/local/vitasdk/bin" >> $GITHUB_PATH
           echo "PSPDEV=$(pwd)/local/pspdev" >> $GITHUB_ENV
           echo "$(pwd)/local/pspdev/bin" >> $GITHUB_PATH
+          echo "USE_PSP_PACKER=1" >> $GITHUB_ENV
 
       - name: Set Nightly Version
         run: |
@@ -161,6 +162,7 @@ jobs:
           echo "$(pwd)/local/vitasdk/bin" >> $GITHUB_PATH
           echo "PSPDEV=$(pwd)/local/pspdev" >> $GITHUB_ENV
           echo "$(pwd)/local/pspdev/bin" >> $GITHUB_PATH
+          echo "USE_PSP_PACKER=1" >> $GITHUB_ENV
 
       - name: Set Nightly Version
         run: |
