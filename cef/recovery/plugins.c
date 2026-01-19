@@ -324,7 +324,7 @@ void ImportClassicPlugins(int sel) {
 	SceUID game_fd = sceIoOpen("ms0:/seplugins/game.txt", PSP_O_RDONLY, 0777);
 	SceUID vsh_fd = sceIoOpen("ms0:/seplugins/vsh.txt", PSP_O_RDONLY, 0777);
 	SceUID pops_fd = sceIoOpen("ms0:/seplugins/pops.txt", PSP_O_RDONLY, 0777);
-	SceUID plugins_fd = sceIoOpen("ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	SceUID plugins_fd = sceIoOpen("ms0:/seplugins/plugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 
 	// XMB/VSH
 	memset(buf, 0, CHUNK_SIZE);
