@@ -42,10 +42,15 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 
 	// Config in `Auto` mode
 	if (config.umd_seek == 0 && config.umd_speed == 0) {
-		SetUmdDelay = (void *)sctrlHENFindFunctionOnSystem("isoCtrl_driver", 0xFAEC97D6, 0);
-
 		if (rebootex_config.bootfileindex == MODE_INFERNO) {
-			CacheInit = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0x8CDE7F95);
+			SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+
+			SetUmdDelay = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
+			CacheInit = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+		} else if (rebootex_config.bootfileindex == MODE_MARCH33) {
+			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xFAEC97D6);
+		} else if (rebootex_config.bootfileindex == MODE_NP9660) {
+			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
 		}
 
 		if (SetUmdDelay != NULL) {
