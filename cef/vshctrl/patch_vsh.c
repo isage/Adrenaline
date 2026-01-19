@@ -239,13 +239,13 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		param->key = "umdemu";
 
 		// Set umd_mode
-		if (g_cfw_config.umd_mode == 0) {
+		if (g_cfw_config.umd_mode == ISO_MODE_INFERNO) {
 			logmsg2("[INFO]: Launching with Inferno Driver\n");
 			sctrlSESetBootConfFileIndex(MODE_INFERNO);
-		} else if (g_cfw_config.umd_mode == 1) {
+		} else if (g_cfw_config.umd_mode == ISO_MODE_MARCH33) {
 			logmsg2("[INFO]: Launching with March33 Driver\n");
 			sctrlSESetBootConfFileIndex(MODE_MARCH33);
-		} else if (g_cfw_config.umd_mode == 2) {
+		} else if (g_cfw_config.umd_mode == ISO_MODE_NP9660) {
 			logmsg2("[INFO]: Launching with NP9660 Driver\n");
 			sctrlSESetBootConfFileIndex(MODE_NP9660);
 		}
