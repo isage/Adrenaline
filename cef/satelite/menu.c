@@ -113,7 +113,7 @@ int MenuDisplay() {
 		return -1;
 	}
 
-	blit_string(CENTER(19), 6 * 8, 0x00FFFFFF, 0x8000FF00, "ADRENALINE VSH MENU");
+	blit_string(CENTER(20), 6 * 8, 0x00FFFFFF, 0x8000FF00, "EPINEPHRINE VSH MENU");
 
 	for (int i = 0; i < g_menu_struct.n_entries; i++) {
 		u32 bc = (i == g_selection) ? 0x00FF8080 : 0xC00000FF;

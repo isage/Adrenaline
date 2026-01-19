@@ -380,7 +380,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 		}
 
 		if (paf_strcmp(name, "msgtop_sysconf_cfwconfig") == 0) {
-			paf_sprintf(g_buf, "%s Adrenaline CFW Settings", STAR);
+			paf_sprintf(g_buf, "%s Epinephrine CFW Settings", STAR);
 			utf8_to_unicode((wchar_t *)g_user_buffer, g_buf);
 			return (wchar_t *)g_user_buffer;
 		} else if (paf_strcmp(name, "msgtop_sysconf_pluginsmgr") == 0) {

@@ -439,12 +439,12 @@ void DrawFooter() {
 
 	VGraphClearLine(g_themes[g_theme].panel_bg);
 	VGraphSetTextColor(g_themes[g_theme].accent_color, g_themes[g_theme].panel_bg);
-	VGraphPrintf("A");
+	VGraphPrintf("E");
 	VGraphSetTextColor(g_themes[g_theme].panel_text, g_themes[g_theme].panel_bg);
 	#if defined(NIGHTLY) && NIGHTLY == 1
-	VGraphPrintf("drenaline Recovery Menu v%d.%d.%d-%s", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO, EPI_NIGHTLY_VER);
+	VGraphPrintf("pinephrine Recovery Menu v%d.%d.%d-%s", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO, EPI_NIGHTLY_VER);
 	#else
-	VGraphPrintf("drenaline Recovery Menu v%d.%d.%d", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO);
+	VGraphPrintf("pinephrine Recovery Menu v%d.%d.%d", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO);
 	#endif
 }
 
