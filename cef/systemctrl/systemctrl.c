@@ -207,8 +207,10 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	rebootex_config.overwrite_use_psposk = 0;
 	rebootex_config.overwrite_use_psposk_to = 0;
 
-	// set boot mode to normal
-	sctrlSESetBootConfFileIndex(MODE_UMD);
+	// Set boot mode to normal on not recovery
+	if (rebootex_config.bootfileindex != MODE_RECOVERY) {
+		sctrlSESetBootConfFileIndex(MODE_UMD);
+	}
 
 	int res = _sceKernelExitVSH(param);
 
