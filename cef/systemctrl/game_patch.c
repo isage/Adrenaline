@@ -195,6 +195,12 @@ void PatchGamesByMod(SceModule* mod) {
 		// Stops it trying to find and maybe deleting CFW folders and their contents
 		sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, (void*)0);
 
+		// Fix sync issues
+		SetUmdEmuSpeed(2, 2);
+
+		// Disable ms cache as well.
+		storageCacheInit(NULL);
+
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
 		// Remove "overclock" message in `ATV PRO`
 		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
