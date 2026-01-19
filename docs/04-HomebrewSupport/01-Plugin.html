@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0ad69a5f.js";
+            window.path_to_searchindex_js = "../searchindex-d644f00e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f62a0e12.js"></script>
+        <script src="../toc-f070d2aa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -415,7 +415,7 @@
 <h1 id="psp-plugin"><a class="header" href="#psp-plugin">PSP Plugin</a></h1>
 <hr>
 <p>PSP plugins are small programs (usually <code>.prx</code> files) that add new features or modify the behavior of the PSP system or games.</p>
-<p>Adrenaline should be compatible with most of the plugins made for classic PSP CFW, but incompatibilities may happen. Plugins that replace the VSH Menu (i.e. System Menu, Ultimate VSH Menu, etc) are not supported.</p>
+<p>Epinephrine should be compatible with most of the plugins made for classic PSP CFW, but incompatibilities may happen. Plugins that replace the VSH Menu (i.e. System Menu, Ultimate VSH Menu, etc) are not supported.</p>
 <div class="mdbook-callouts mdbook-callouts-tip">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -428,17 +428,19 @@
 
 <h2 id="launch-without-plugins"><a class="header" href="#launch-without-plugins">Launch without plugins</a></h2>
 <hr>
-<p>Adrenaline allows launching software without plugins by holding the <code>L</code> trigger while launching apps/games/XMB.</p>
+<p>Epinephrine allows launching software without plugins by holding the <code>L</code> trigger while launching apps/games/XMB.</p>
 <p>This feature can be useful for quickly checking whether issues with a software are related to broken/bugged plugins or to plugins that don’t interact well with the software.</p>
 <h2 id="adding-a-plugin"><a class="header" href="#adding-a-plugin">Adding a plugin</a></h2>
 <hr>
 <ol>
-<li>
-<p>Put the <code>.prx</code> file somewhere on <code>???0:/pspemu/seplugins/</code> directory (create if it doesn’t exist)</p>
-</li>
-<li>
-<p>Open the <code>???0:/pspemu/seplugins/EPIplugins.txt</code> (create if it doesn’t exist)</p>
-</li>
+<li>Put the <code>.prx</code> file somewhere on <code>???0:/pspemu/seplugins/</code> directory (create if it doesn’t exist)</li>
+<li>Open the <code>???0:/pspemu/seplugins/plugins.txt</code> (create if it doesn’t exist)</li>
+</ol>
+<ul>
+<li>This is the same file as ARK CFW uses, that will be shared with both CFWs</li>
+<li>Optionally, you can create and use <code>???0:/pspemu/seplugins/EPIplugins.txt</code> to have a separate plugin configuration file from ARK</li>
+</ul>
+<ol start="3">
 <li>
 <p>Add to the configuration line in the general format: <code>⟨RUNLEVELS⟩, ⟨PLUGIN PATH⟩, ⟨on/off⟩</code></p>
 <ul>
@@ -454,8 +456,8 @@
   important
 </p>
 
-<p>Before version 8.0.0, Adrenaline used another format and files for the plugins</p>
-<p>If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:</p>
+<p>Before version 8.0.0, EPI used another format and files for the plugins</p>
+<p>If you just updated from the previous version, EPI provides an easy way to import the old style to the new:</p>
 <ol>
 <li>Open Recovery Menu</li>
 <li>Go to the <code>Advanced</code> section</li>
@@ -467,7 +469,7 @@
 
 <h2 id="managing-plugins"><a class="header" href="#managing-plugins">Managing Plugins</a></h2>
 <hr>
-<p>Adrenaline offers two ways to manage plugins already added.</p>
+<p>Epinephrine offers two ways to manage plugins already added.</p>
 <h3 id="first-method-xmb-settings"><a class="header" href="#first-method-xmb-settings">First method: XMB Settings</a></h3>
 <ol>
 <li>

@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-0ad69a5f.js";
+            window.path_to_searchindex_js = "searchindex-d644f00e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f62a0e12.js"></script>
+        <script src="toc-f070d2aa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -414,14 +414,14 @@
 </style>
 <h1 id="psp-homebrew-support"><a class="header" href="#psp-homebrew-support">PSP Homebrew Support</a></h1>
 <hr>
-<p>Adrenaline support launching unsigned homebrew applications directly from the XMB/VSH, and loading plugins with a powerful configuration format.</p>
-<p>All user-mode PSP homebrew since PSP Firmware (FW) 3.71 onwards should work fine. Kernel-mode PSP homebrew, on the other hand, may require a build specifically targeted to PSP firmware 6.60 or 6.61 to work on Adrenaline.</p>
+<p>Epinephrine support launching unsigned homebrew applications directly from the XMB/VSH, and loading plugins with a powerful configuration format.</p>
+<p>All user-mode PSP homebrew since PSP Firmware (FW) 3.71 onwards should work fine. Kernel-mode PSP homebrew, on the other hand, may require a build specifically targeted to PSP firmware 6.60 or 6.61 to work on Epinephrine.</p>
 <h2 id="homebrew-apps"><a class="header" href="#homebrew-apps">Homebrew Apps</a></h2>
 <p>PSP homebrew applications are custom software created by the community that can run on the PSP hardware, ranging from games, emulators, and utilities (like media players and file managers).</p>
 <p>Homebrew applications must be live on <code>???0:/pspemu/PSP/GAME/</code> directory to appear in the XMB/VSH.</p>
 <h2 id="homebrew-plugins"><a class="header" href="#homebrew-plugins">Homebrew plugins</a></h2>
 <p>Homebrew plugins are programs in the form of <code>PRX</code> files that can add extra features and/or modify the behavior of the PSP system and games.</p>
-<p>Homebrew plugins <code>.prx</code> files must be put in the <code>???0:/pspemu/seplugins/</code> folder and be added to the configuration file <code>???0:/pspemu/seplugins/EPIplugins.txt</code>.</p>
+<p>Homebrew plugins <code>.prx</code> files must be put in the <code>???0:/pspemu/seplugins/</code> folder and be added to the configuration file <code>???0:/pspemu/seplugins/plugins.txt</code> or <code>???0:/pspemu/seplugins/EPIplugins.txt</code>.</p>
 <div class="mdbook-callouts mdbook-callouts-info">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -429,7 +429,7 @@
 </p>
 
 <p>PSP filepaths are case insensitive. For that reason, files and directories inside the Vita/PSTV <code>???0:/pspemu/</code> directory can be all uppercase letters, lowercase letters, or a mix, and it will work normally.</p>
-<p>So don’t worry if you find variations in paths like <code>/SEPLUGINS/epiplugins.txt</code>, or even crazy paths like <code>/SePlUgInS/EpIpLuGiNs.TxT</code>.</p>
+<p>So don’t worry if you find variations in paths like <code>/SEPLUGINS/plugins.txt</code>, or even crazy paths like <code>/SePlUgInS/pLuGiNs.TxT</code>.</p>
 </div>
 
 <p>The following pages provide more detailed information on plugins.</p>

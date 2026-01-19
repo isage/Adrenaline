@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0ad69a5f.js";
+            window.path_to_searchindex_js = "../searchindex-d644f00e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f62a0e12.js"></script>
+        <script src="../toc-f070d2aa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -419,6 +419,31 @@
 <img src="../assets/03-epi-menu-settings.png" width="70%" />
 </p>
 
+<h2 id="vpsp-custom-firmware"><a class="header" href="#vpsp-custom-firmware">vPSP Custom Firmware</a></h2>
+<p>Chooses the PSP Custom Firmware that is going to be loaded by the Adrenaline Application into the vPSP environment.</p>
+<p>The available options are:</p>
+<ul>
+<li><strong>EPI</strong>: Uses the CFW that comes with Adrenaline.</li>
+<li><strong>ARK</strong>: Uses the <a href="https://github.com/PSP-Arkfive/ARK-5">ARK CFW</a>.</li>
+</ul>
+<div class="mdbook-callouts mdbook-callouts-note">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  note
+</p>
+
+<p>The <code>ARK</code> options is only available if you have ARK savedata files properly installed. Otherwise, only the <code>EPI</code> will be available.</p>
+</div>
+
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+
+<p>Changing vPSP Custom Firmware requires to close and reopen the Adrenaline Application to take effect.</p>
+</div>
+
 <h2 id="graphics-filtering"><a class="header" href="#graphics-filtering">Graphics Filtering</a></h2>
 <p>Applies graphical filters in the Vita/PSTV screen while the Adrenaline App is open.</p>
 <p>It offers these options:</p>
@@ -429,7 +454,8 @@
 <li><strong>Advanced AA</strong>: Advanced Anti-Aliasing. Reduces jagged edges, making graphics less blocky.</li>
 <li><strong>LCD3x</strong>: Simulates the look of an LCD screen, with subtle scanline effect.</li>
 <li><strong>Sharp Bilinear without Scanlines</strong>: Like Sharp Bilinear, but without the scanline effect.</li>
-<li><strong>Scale2x</strong>: Increases the size by 2x of small bitmaps by guessing the missing pixels without blurring the images., making graphics less blocky.</li>
+<li><strong>Scale2x</strong>: Increases the size by 2x of small bitmaps by guessing the missing pixels without blurring the images, making graphics less blocky.</li>
+<li><strong>Scale2x Plus</strong>: Improvement of the <code>Scale2x</code>, by using pixel interpolation to decide the color of the pixels.</li>
 <li><strong>Scale3x</strong>: Same as <code>Scale2x</code>, but increases the size by 3x instead of 2x.</li>
 </ul>
 <!-- TODO: Add Scale2x Plus if we keep it -->
@@ -467,7 +493,7 @@
 </div>
 
 <h2 id="memory-stick-location"><a class="header" href="#memory-stick-location">Memory Stick Location</a></h2>
-<p>Chooses the drive Adrenaline App shows up for the Adrenaline CFW as the Memory Stick drive (<code>ms0:</code>).</p>
+<p>Chooses the drive Adrenaline App shows up for the chosen CFW as the Memory Stick drive (<code>ms0:</code>).</p>
 <p>The options are:</p>
 <ul>
 <li><code>ux0:pspemu</code></li>

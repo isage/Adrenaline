@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-0ad69a5f.js";
+            window.path_to_searchindex_js = "searchindex-d644f00e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f62a0e12.js"></script>
+        <script src="toc-f070d2aa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -414,7 +414,7 @@
 </style>
 <h1 id="ps1-playback"><a class="header" href="#ps1-playback">PS1 Playback</a></h1>
 <hr>
-<p>Adrenaline allows the user to execute official PS1 games and custom PS1 games/applications on PlayStation Vita or PSTV.</p>
+<p>Epinephrine allows the user to execute official PS1 games and custom PS1 games/applications on PlayStation Vita or PSTV.</p>
 <p>A custom PS1 game/app needs to be in the PSP <code>EBOOT.PBP</code> format and be stored on <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code> directory. Once added, the game/app can be launched from the XMB without any further configuration.</p>
 <div class="mdbook-callouts mdbook-callouts-tip">
 <p class="mdbook-callouts-title">
@@ -434,7 +434,7 @@
 <p>An older alternative to <code>pop-fe</code> is <code>PSX2PSP</code>, it is an unmaintained project and has lower compatibility than <code>pop-fe</code>, more so in the case of VITA/PSTV. A game converted with <code>PSX2PSP</code> will show up in Adrenaline, and most likely run, but will be unable to use custom POPS configuration, as the tool doesn’t add a required section in the outputted <code>PBP</code> file to do custom POPS configuration injection.</p>
 </div>
 
-<p>Adrenaline comes with a set of added features tailored for better game experience and better support of custom PS1 games/apps.</p>
+<p>Adrenaline and Epinephrine comes with a set of added features tailored for better game experience and better support of custom PS1 games/apps.</p>
 <h2 id="fast-forward"><a class="header" href="#fast-forward">Fast-forward</a></h2>
 <hr>
 <p>Adrenaline can increase the speed of a running PS1 app/game. You can toggle this feature by pressing <code>L+Select</code> while a PS1 app/game is running.</p>
@@ -483,11 +483,11 @@ Games that use CDDA are usually separated into different tracks, with the first 
 <p>The PS1 emulator was originally coded to use CD audio tracks packaged into the EBOOT itself, however on later firmware revisions, Sony decided to replace those CDDA tracks with equivalent tracks encoded (and compressed) in AT3 format, which the PSP could also decode and play, this was done to drastically reduce the size of some PS1 games that used a lot of the disc space for CDDA.</p>
 <p>Though Sony replaced CDDA with AT3, they didn’t really remove the ability to play CDDA-encoded games; they just disabled it.
 A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> was released to re-enable CDDA functionality in the PS1 emulator, allowing games encoded with the older format to be playable with full working sound (whereas before they would produce no sound).</p>
-<p>The patch to re-enable CDDA has been added to Adrenaline’s <code>PopCorn</code> module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the <code>cdda_enabler</code> plugin on Adrenaline.</p>
+<p>The patch to re-enable CDDA has been added to Epinephrine’s <code>PopCorn</code> module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the <code>cdda_enabler</code> plugin on Epinephrine.</p>
 <h2 id="custom-pops-configuration"><a class="header" href="#custom-pops-configuration">Custom POPS Configuration</a></h2>
 <hr>
 <p>The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.</p>
-<p>With Adrenaline, you can implement these custom patches in a single external file <code>CONFIG.BIN</code>, stored alongside the <code>EBOOT.PBP</code> of the custom PS1 game/app (i.e. <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code>), without the need to be injected into the <code>EBOOT.PBP</code> file; as the CFW will do that for you on-the-fly.</p>
+<p>With Epinephrine, you can implement these custom patches in a single external file <code>CONFIG.BIN</code>, stored alongside the <code>EBOOT.PBP</code> of the custom PS1 game/app (i.e. <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code>), without the need to be injected into the <code>EBOOT.PBP</code> file; as the CFW will do that for you on-the-fly.</p>
 <div class="mdbook-callouts mdbook-callouts-tip">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -500,7 +500,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h2 id="anti-libcrypt-patch"><a class="header" href="#anti-libcrypt-patch">Anti-LibCrypt patch</a></h2>
 <hr>
-<p>Adrenaline contains a patch to defeat <code>libcrypt</code> protection for known games without requiring rebuilding the custom PS1 game/app <code>PBP</code> file.</p>
+<p>Epinephrine contains a patch to defeat <code>libcrypt</code> protection for known games without requiring rebuilding the custom PS1 game/app <code>PBP</code> file.</p>
 <p>This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.</p>
 
                     </main>

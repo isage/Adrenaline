@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-0ad69a5f.js";
+            window.path_to_searchindex_js = "searchindex-d644f00e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f62a0e12.js"></script>
+        <script src="toc-f070d2aa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -423,7 +423,7 @@
 <p>This is the gist of it, but you will need to be able to compile the project to test before sending a PR.</p>
 <h2 id="project-parts-overview"><a class="header" href="#project-parts-overview">Project parts overview</a></h2>
 <hr>
-<h3 id="vita-side"><a class="header" href="#vita-side">VITA-side</a></h3>
+<h3 id="adrenaline-application-aka-vita-side"><a class="header" href="#adrenaline-application-aka-vita-side">Adrenaline Application (a.k.a. VITA-side)</a></h3>
 <ul>
 <li><code>bubble</code>: The bubble launcher for Adrenaline</li>
 <li><code>user</code>: The userspace plugin that patches the PSPemu and allows extra communication between the VITA-side with the PSP-side</li>
@@ -431,8 +431,8 @@
 <li><code>usbdevice</code>: The USB mass storage plugin</li>
 <li><code>vsh</code>: The plugin that patches VITA VSH for Adrenaline</li>
 </ul>
-<h3 id="ecfw-aka-epsp-side"><a class="header" href="#ecfw-aka-epsp-side">eCFW (a.k.a. ePSP-side)</a></h3>
-<p>The eCFW part can be separated in two parts: The <code>core</code> parts and the <code>extra</code> parts.</p>
+<h3 id="epinephrine-ecfw-aka-epsp-side"><a class="header" href="#epinephrine-ecfw-aka-epsp-side">Epinephrine eCFW (a.k.a. ePSP-side)</a></h3>
+<p>The Epinephrine eCFW part can be separated in two parts: The <code>core</code> parts and the <code>extra</code> parts.</p>
 <p>The <code>core</code> parts are essential to support the most basic functionality of a CFW. The <code>extra</code> parts are not necessary for the CFW, but might provide quality of life features for end-users.</p>
 <p><strong>Core parts:</strong></p>
 <ul>
@@ -453,10 +453,11 @@
 </ul>
 <h2 id="setting-up-the-development-environment"><a class="header" href="#setting-up-the-development-environment">Setting up the development environment</a></h2>
 <hr>
-<p>To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depend on four thing: <strong>VITASDK</strong>, <strong>PSPSDK</strong>, <strong>Python3</strong> and <strong>psp-packer</strong>.</p>
+<p>To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depends on four thing: <strong>VITASDK</strong>, <strong>PSPSDK</strong>, <strong>PSP CFW SDK</strong>, <strong>Python3</strong> and <strong>psp-packer</strong>.</p>
 <p>For the <a href="https://vitasdk.org/">VITASDK</a> and <a href="https://pspdev.github.io/">PSPSDK</a>, follow their instructions to install it in your system.</p>
+<p>For the <a href="https://github.com/pspdev/psp-cfw-sdk">PSP CFW SDK</a>, prefer to install from source, as CFW development and updates to the CFW SDK move hand-in-hand.</p>
 <p><a href="https://www.python.org/downloads/">Python3</a> installation will depend on your system and setup. Google is your friend on this one.</p>
-<p>For psp-packer, there are two tested implementations that works with Adrenaline, the <a href="https://bitbucket.org/DaveeFTW/psp-packer/src/master/">Davee’s implementation</a> and <a href="https://github.com/VitaArchive/psp-packer">GrayJack’s implementation</a>.</p>
+<p>For <a href="https://github.com/VitaArchive/psp-packer">psp-packer</a>, either install via <code>cargo</code> or install from source.</p>
 <p>Once everything is installed, you can build the project.</p>
 <h2 id="building-the-project"><a class="header" href="#building-the-project">Building the project</a></h2>
 <hr>
@@ -484,7 +485,7 @@ cmake --build build
   tip
 </p>
 
-<p>If you <strong>did not</strong> change a thing on the <code>cef</code> directory, you <strong>don’t</strong> need to recompile the eCFW.</p>
+<p>If you <strong>did not</strong> change a thing on the <code>cef</code> directory, you <strong>don’t</strong> need to recompile the Epinephrine eCFW.</p>
 </div>
 
 <h2 id="manually-testing-the-project"><a class="header" href="#manually-testing-the-project">Manually testing the project</a></h2>

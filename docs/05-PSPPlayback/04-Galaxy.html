@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-0ad69a5f.js";
+            window.path_to_searchindex_js = "../searchindex-d644f00e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-f62a0e12.js"></script>
+        <script src="../toc-f070d2aa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -424,13 +424,13 @@
 </div>
 
 <p>The <code>Galaxy Controller</code> is the software that tricks Sony’s <code>NP9660</code> Driver into executing <code>ISO</code> and <code>Compressed ISO</code> image files.</p>
-<p>The Adrenaline <code>Galaxy Controller</code> is a mix of the Galaxy Controller of ARK-3 and M33 CFW since version <code>8.0.0</code>. On previous versions of Adrenaline, it came with a binary source of M33 Galaxy Controller.</p>
+<p>The Epinephrine <code>Galaxy Controller</code> is a mix of the Galaxy Controller of ARK-3 and M33 CFW since version <code>8.0.0</code>. On previous versions of Adrenaline, it came with a binary source of M33 Galaxy Controller.</p>
 <p>Historically, there were many versions of <code>Galaxy Controller</code> created. Most of them seem to have come into existence in their own way, except for the ARK-1/2/3 version, which was a direct continuation from the PRO CFW version. That doesn’t matter much for this plugin, though, since all of them do pretty much the same thing, and the performance differences came down to the reading speed of PSP image formats being dependent more on the image-reading implementation of each project than on the patches to the <code>NP9660</code> Driver.</p>
-<p>The current Adrenaline version reuses the image-reading code for all ISO drivers (and also to show the images on XMB/VSH); for that reason, it contains all the improvements related to reading PSP image files in the <code>NP9660</code> Driver once <code>Galaxy Controller</code> patches it.</p>
+<p>The current Epinephrine version reuses the image-reading code for all ISO drivers (and also to show the images on XMB/VSH); for that reason, it contains all the improvements related to reading PSP image files in the <code>NP9660</code> Driver once <code>Galaxy Controller</code> patches it.</p>
 <ul>
 <li><strong><code>Support for other compressed formats</code></strong>: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only <code>CSO</code> and <code>ZSO</code>, but also adds support for <code>DAX</code> as seen on ME’s March33 update, as well as the rarely seen before <code>JSO</code> and <code>CSOv2</code> formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.</li>
 <li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks.</li>
-<li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games</li>
+<li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.</li>
 </ul>
 
                     </main>

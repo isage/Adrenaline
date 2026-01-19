@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-0ad69a5f.js";
+            window.path_to_searchindex_js = "searchindex-d644f00e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f62a0e12.js"></script>
+        <script src="toc-f070d2aa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -414,74 +414,36 @@
 </style>
 <h1 id="using-cfw-api-in-your-homebrew"><a class="header" href="#using-cfw-api-in-your-homebrew">Using CFW API in your homebrew</a></h1>
 <hr>
-<p>Adrenaline CFW offers five libraries that can be used by homebrew software: <code>SystemCtrlForKernel</code>, <code>SystemCtrlForUser</code>, <code>KUBridge</code>, <code>SysclibForUser</code>, and <code>VshCtrlLib</code>.</p>
+<p>Epinephrine CFW offers five libraries that can be used by homebrew software: <code>SystemCtrlForKernel</code>, <code>SystemCtrlForUser</code>, <code>KUBridge</code>, <code>SysclibForUser</code>, and <code>VshCtrlLib</code>.</p>
 <p>The <code>SystemCtrlForKernel</code> and <code>SystemCtrlForUser</code> contain API that allows the user to launch/execute homebrew and games, get and set system information, live patching utilities, and more. It is available in all possible runlevels, but, as the names suggest, <code>SystemCtrlForKernel</code> is only available for kernel plugins, while <code>SystemCtrlForUser</code> is available for user plugins and homebrew applications.</p>
 <p>The <code>KUBridge</code> provides APIs to execute functions with kernel access from the user-space. It is also available in all possible runlevels, and as <code>SystemCtrlForUser</code>, it is available for user plugins and homebrew applications.</p>
 <p>The <code>SysclibForUser</code> provides many basic C library API to the user-space. With it, you can avoid linking to the newlibc implementation of those functions, making your executable smaller. It is available in all possible runlevels for user plugins and homebrew applications.</p>
 <p>The <code>VshCtrlLib</code> extends the API available on the VSH/XMB runlevel; this also means it is only available on that runlevel. It is available for user plugins.</p>
 <h2 id="how-to-use-them-in-your-project"><a class="header" href="#how-to-use-them-in-your-project">How to use them in your project</a></h2>
-<hr><!-- TODO: LINK -->
-<p>To start using these APIs, you can download from here the stubs and headers of these libraries. Or alternatively, produce the stubs from the source, as it will be explained below.</p>
-<p><strong>Producing the CFW API stubs:</strong></p>
-<ol>
-<li>Clone the Adrenaline repository</li>
-<li>Enter the project folder</li>
-<li>Prepare to build with:</li>
-</ol>
-<pre><code class="language-sh">cmake -S . -B build
+<hr>
+<p>To start using these APIs, you can install the <a href="https://github.com/pspdev/psp-cfw-sdk">PSP CFW SDK</a> to obtain the headers and the stubs for the CFW API.</p>
+<p>The easiest way is to use <code>psp-pacman</code>:</p>
+<pre><code class="language-sh">psp-pacman -Syy psp-cfw-sdk
 </code></pre>
-<ol start="4">
-<li>Generate the stubs and headers</li>
-</ol>
-<pre><code class="language-sh">cmake --build build --target cfw-libs
+<p>You can also install it from source, by cloning the git repo linked above, and executing</p>
+<pre><code class="language-sh">make install
 </code></pre>
-<ol start="5">
-<li>Grab the <code>include</code> directory and the <code>lib</code> directory from the <code>build/cfw-dev-sdk/</code> directory and add them to your project source</li>
-</ol>
-<p>After that, you should include the <code>lib</code> directory in the library directory list. If you are using <code>Makefile</code>, it is as simple as defining the <code>LIBDIR</code> variable to the path.</p>
-<div class="mdbook-callouts mdbook-callouts-example">
+<div class="mdbook-callouts mdbook-callouts-warning">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
-  example
+  warning
 </p>
 
-<pre><code class="language-makefile">LIBDIR = ../lib
-</code></pre>
-</div>
-
-<p>Then, to link to the stub, you should pass the <code>-l</code> argument to your compilation flags. If you are using <code>Makefile</code>, you can use the <code>LIBS</code> variable.</p>
-<div class="mdbook-callouts mdbook-callouts-example">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  example
-</p>
-
-<pre><code class="language-makefile">LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspkubridge
-</code></pre>
-</div>
-
-<h3 id="system-control-headers"><a class="header" href="#system-control-headers">System Control Headers</a></h3>
-<p>The <code>SystemControl</code> headers (<code>systemctrl.h</code> and <code>systemctrl_se.h</code>) limit the visualization of some function definitions because some functions are exclusive to user-space and some are exclusive to kernel-space. To make them appear, it uses macro definitions to make them available. If your project is a user plugin, or a homebrew app, pass the <code>-D__USER__</code> flag into your <code>CFLAGS</code>; if your project is a kernel plugin, pass the <code>-D__KERNEL__</code> flag into your <code>CFLAGS</code>.</p>
-<p>Alternatively, to facilitate things, you can import the <code>mak</code> (<code>build.mak</code> and <code>build_prx.mak</code>) files at the generated <code>libs</code> folder in your project <code>Makefile</code>. With those, the setup of the macros are automatic.</p>
-<div class="mdbook-callouts mdbook-callouts-example">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  example
-</p>
-
-<pre><code class="language-makefile"># At the end of your Makefile
-
-include ../lib/build.mak
-</code></pre>
+<p><code>PSPDEV</code> toolchain must be properly set for it to work.</p>
 </div>
 
 <h2 id="my-homebrew-already-uses-cfw-apis"><a class="header" href="#my-homebrew-already-uses-cfw-apis">My homebrew already uses CFW APIs</a></h2>
 <hr>
-<p>In the case of your homebrew already using CFW APIs, there is a very good chance that you won’t need to modify a thing to support Adrenaline.</p>
-<p>The Adrenaline’s <code>SystemCtrlForUser</code> and <code>KUBridge</code> have 100% API compatibility with the same libraries of M33, ME, PRO, and ARK custom firmwares. That means that if the API provided by the original targeted CFW is sufficient for your project, you won’t need to change the stubs and header and create a build only targeted to Adrenaline. You will only need to change if you desire to access newly added APIs.</p>
-<p>The Adrenaline’s <code>SystemCtrlForKernel</code> is mostly compatible with M33, ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Adrenaline. If you couldn’t find any, at worst, you will need to rebuild your kernel plugin project for the 6.61 PSP firmware version to support Adrenaline.</p>
-<p>The Adrenaline’s <code>SysclibForUser</code> only exists on Adrenaline and ARK, and they have total parity. If you already use it, you don’t need to change.</p>
-<p>The Adrenaline’s <code>VshCtrlLib</code> is 100% compatible with M33, and mostly compatible with ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Adrenaline. If you couldn’t find any, you don’t need to change a thing to support Adrenaline.</p>
+<p>In the case of your homebrew already using CFW APIs, there is a very good chance that you won’t need to modify a thing to support Epinephrine.</p>
+<p>The Epinephrine’s <code>SystemCtrlForUser</code> and <code>KUBridge</code> have 100% API compatibility with the same libraries of M33, ME, PRO, and ARK custom firmwares. That means that if the API provided by the original targeted CFW is sufficient for your project, you won’t need to change the stubs and header and create a build only targeted to Epinephrine. You will only need to change if you desire to access newly added APIs.</p>
+<p>The Epinephrine’s <code>SystemCtrlForKernel</code> is mostly compatible with M33, ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Epinephrine. If you couldn’t find any, at worst, you will need to rebuild your kernel plugin project for the 6.61 PSP firmware version to support Epinephrine.</p>
+<p>The Epinephrine’s <code>SysclibForUser</code> only exists on Epinephrine and ARK, and they have total parity. If you already use it, you don’t need to change.</p>
+<p>The Epinephrine’s <code>VshCtrlLib</code> is 100% compatible with M33, and mostly compatible with ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Epinephrine. If you couldn’t find any, you don’t need to change a thing to support Epinephrine.</p>
 
                     </main>
 
