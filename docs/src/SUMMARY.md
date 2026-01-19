@@ -2,12 +2,14 @@
 
 - [Adrenaline](./01-Intro.md)
 
-# User Manual
+# Adrenaline Application
 
 - [Installation and Update](./02-Install.md)
 - [Adrenaline Menu](./03-AdrenalineMenu.md)
 	- [Save State](./03-AdrenalineMenu/01-SaveState.md)
 	- [Adrenaline App Settings](./03-AdrenalineMenu/02-AdrenalineSettings.md)
+
+# Epinephrine Custom Firmware
 - [PSP Homebrew Support](./04-HomebrewSupport.md)
 	- [PSP Plugins](./04-HomebrewSupport/01-Plugin.md)
 	- [Plugin Configuration Format](./04-HomebrewSupport/02-PluginConfigFormat.md)
@@ -23,10 +25,9 @@
 - [Recovery Menu](./09-RecoveryMenu.md)
 - [XMB CFW Menus](./10-XmbCfwMenus.md)
 
-# Developer Manual
+# Developers Manual
 - [Contributing](./11-Contributing.md)
 - [Using CFW APIs](./12-UsingCFWAPI.md)
-
 
 [Glossary](./XX-Glossary.md)
 [Compatibility Issues](./XX-CompatIssues.md)

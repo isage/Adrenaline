@@ -1,7 +1,7 @@
 # PS1 Playback
 ---
 
-Adrenaline allows the user to execute official PS1 games and custom PS1 games/applications on PlayStation Vita or PSTV.
+Epinephrine allows the user to execute official PS1 games and custom PS1 games/applications on PlayStation Vita or PSTV.
 
 
 A custom PS1 game/app needs to be in the PSP `EBOOT.PBP` format and be stored on `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/` directory. Once added, the game/app can be launched from the XMB without any further configuration.
@@ -13,7 +13,7 @@ A custom PS1 game/app needs to be in the PSP `EBOOT.PBP` format and be stored on
 > An older alternative to `pop-fe` is `PSX2PSP`, it is an unmaintained project and has lower compatibility than `pop-fe`, more so in the case of VITA/PSTV. A game converted with `PSX2PSP` will show up in Adrenaline, and most likely run, but will be unable to use custom POPS configuration, as the tool doesn't add a required section in the outputted `PBP` file to do custom POPS configuration injection.
 
 
-Adrenaline comes with a set of added features tailored for better game experience and better support of custom PS1 games/apps.
+Adrenaline and Epinephrine comes with a set of added features tailored for better game experience and better support of custom PS1 games/apps.
 
 ## Fast-forward
 ---
@@ -56,14 +56,14 @@ The PS1 emulator was originally coded to use CD audio tracks packaged into the E
 Though Sony replaced CDDA with AT3, they didn't really remove the ability to play CDDA-encoded games; they just disabled it.
 A plugin known as `cdda_enabler` developed by `theFl0w` was released to re-enable CDDA functionality in the PS1 emulator, allowing games encoded with the older format to be playable with full working sound (whereas before they would produce no sound).
 
-The patch to re-enable CDDA has been added to Adrenaline's `PopCorn` module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the `cdda_enabler` plugin on Adrenaline.
+The patch to re-enable CDDA has been added to Epinephrine's `PopCorn` module (the custom PS1 driver) from the start of the project, meaning that it is not necessary to use the `cdda_enabler` plugin on Epinephrine.
 
 ## Custom POPS Configuration
 ---
 
 The PS1 emulator for PSP/Vita (POPS) allows for custom configuration to be injected in the structure of the PBP, allowing per-game fixes. This is used by some titles officially released on the PSN version.
 
-With Adrenaline, you can implement these custom patches in a single external file `CONFIG.BIN`, stored alongside the `EBOOT.PBP` of the custom PS1 game/app (i.e. `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/`), without the need to be injected into the `EBOOT.PBP` file; as the CFW will do that for you on-the-fly.
+With Epinephrine, you can implement these custom patches in a single external file `CONFIG.BIN`, stored alongside the `EBOOT.PBP` of the custom PS1 game/app (i.e. `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/`), without the need to be injected into the `EBOOT.PBP` file; as the CFW will do that for you on-the-fly.
 
 > [!TIP]
 > Getting the `TITLE_ID` is simple: launch the app/game and opening the `Adrenaline Menu` in the `Main` tab.
@@ -73,6 +73,6 @@ With Adrenaline, you can implement these custom patches in a single external fil
 ## Anti-LibCrypt patch
 ---
 
-Adrenaline contains a patch to defeat `libcrypt` protection for known games without requiring rebuilding the custom PS1 game/app `PBP` file.
+Epinephrine contains a patch to defeat `libcrypt` protection for known games without requiring rebuilding the custom PS1 game/app `PBP` file.
 
 This patch is applied automatically to games that are detected to need it and does not require any configuration from the user.

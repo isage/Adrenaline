@@ -1,7 +1,7 @@
-# Adrenaline VSH Menu
+# Epinephrine VSH Menu
 ---
 
-VSH Menu is a menu that can be accessed while on XMB/VSH. It contains the most common CFW configurations that users of Adrenaline change with more frequency and quick commands.
+VSH Menu is a menu that can be accessed while on XMB/VSH. It contains the most common CFW configurations that users of Epinephrine change with more frequency and quick commands.
 
 To access this menu, click the `Select` button while on XMB/VSH.
 

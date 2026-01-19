@@ -318,9 +318,9 @@ void PatchSysconfPlugin(SceModule* mod) {
 
 	char verinfo[50] = {0};
 	#ifdef NIGHTLY
-	sprintf(verinfo, "6.61 Adrenaline-%d.%d.%d-%s", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO, EPI_NIGHTLY_VER );
+	sprintf(verinfo, "6.61 Epinephrine-%d.%d.%d-%s", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO, EPI_NIGHTLY_VER );
 	#else
-	sprintf(verinfo, "6.61 Adrenaline-%d.%d.%d", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO );
+	sprintf(verinfo, "6.61 Epinephrine-%d.%d.%d", ADRENALINE_VERSION_MAJOR, ADRENALINE_VERSION_MINOR, ADRENALINE_VERSION_MICRO );
 	#endif
 
 	ascii2utf16( (char*)((void *)text_addr + 0x2A62C), verinfo);

@@ -1,13 +1,13 @@
 # PSP Playback
 ---
 
-Adrenaline allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having three available drivers: `Inferno 2`, `March33 2`, and `Sony's NP9660`
+Epinephrine allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having three available drivers: `Inferno 2`, `March33 2`, and `Sony's NP9660`
 
 There are three formats of PSP game images: `PBP`, `ISO`, and `Compressed ISO`.
 
-The `PBP` image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Adrenaline always uses the original `Sony's NP9660` driver. Usually, `PBP` files live on `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/` directory.
+The `PBP` image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Epinephrine CFW always uses the original `Sony's NP9660` driver. Usually, `PBP` files live on `???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/` directory.
 
-The `ISO` image format is a 1:1 copy of a Universal Media Disc (UMD), while `Compressed ISO` is an `ISO` image compressed in some way to reduce space usage. There are a few competing formats for `Compressed ISO`: `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`, each with different tradeoffs. Adrenaline supports all of those formats and allows you to choose between the three UMDemu drivers available. All of those image options should go in `??0:/pspemu/ISO/` directory.
+The `ISO` image format is a 1:1 copy of a Universal Media Disc (UMD), while `Compressed ISO` is an `ISO` image compressed in some way to reduce space usage. There are a few competing formats for `Compressed ISO`: `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`, each with different tradeoffs. Epinephrine CFW supports all of those formats and allows you to choose between the three UMDemu drivers available. All of those image options should go in `??0:/pspemu/ISO/` directory.
 
 > [!INFO]
 > There is a [page](./05-PSPPlayback/01-CompressedIsoFormats.md) explaining the different compressed image formats and their tradeoffs.
@@ -15,11 +15,11 @@ The `ISO` image format is a 1:1 copy of a Universal Media Disc (UMD), while `Com
 ## UMDemu ISO Drivers
 ---
 
-This is a brief overview of the features of each driver in the versions that come with Adrenaline.
+This is a brief overview of the features of each driver in the versions that come with Epinephrine CFW.
 
 ### Inferno 2
 
-This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on `ARK CFW`, with minor modifications for better code reuse with other drivers and integration with the Adrenaline CFW.
+This is the default UMDemu ISO driver and the one with the most person-hours put into development over the years. This is a small adaptation of the latest work done hosted on `ARK CFW`, with minor modifications for better code reuse with other drivers and integration with the Epinephrine CFW.
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`
 - **Emulation of empty UMD drive**: Several bugs existed that caused malfunction when the driver was used without an ISO file specified on other drivers and older versions of this driver.
@@ -33,7 +33,7 @@ This is the default UMDemu ISO driver and the one with the most person-hours put
 
 ### March 33 2
 
-March33 driver was originally developed for the March33 CFW by the M33 Team. Adrenaline comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.
+March33 driver was originally developed for the March33 CFW by the M33 Team. Epinephrine comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.
 
 This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than `NP9660` and `Inferno`. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.
 
@@ -50,27 +50,27 @@ This driver is made available for ISO mostly for compatibility reasons, as histo
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`.
 - **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.
-- **Configurable seek and read speed delays**: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+- **Configurable seek and read speed delays**: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games, and some games with synchronization issues due to faster read times of ISO.
     - By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.
 
 ## Other ISO features
 ---
 
-Adrenaline offers a few other functionalities related to `ISO` and `Compressed ISO` that are worth mentioning.
+Epinephrine offers a few other functionalities related to `ISO` and `Compressed ISO` that are worth mentioning.
 
 ### Support for game update and DLC
 
-Adrenaline supports launching ISO games with updates and DLC when installed in their usual place (`???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/PBOOT.PBP`). But, as a downside, having this file without `EBOOT.PBP` in the same folder causes the XMB/VSH to show duplicated items; to solve that, you can enable the [Hide DLCs in game menu](./08-CfwConfiguration.md#hide-dlcs-in-game-menu) CFW setting.
+Epinephrine supports launching ISO games with updates and DLC when installed in their usual place (`???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/PBOOT.PBP`). But, as a downside, having this file without `EBOOT.PBP` in the same folder causes the XMB/VSH to show duplicated items; to solve that, you can enable the [Hide DLCs in game menu](./08-CfwConfiguration.md#hide-dlcs-in-game-menu) CFW setting.
 
 ### Support for manuals
 
-Adrenaline also supports manuals for ISO games. For it to work, the `.DAT` file must be in the `???0:/pspemu/ISO/` directory with the same name as the `ISO` game file.
+Epinephrine also supports manuals for ISO games. For it to work, the `.DAT` file must be in the `???0:/pspemu/ISO/` directory with the same name as the `ISO` game file.
 
 > [!EXAMPLE]
 > For the ISO file in `???0:/pspemu/ISO/my_game.cso`, the `DAT` file should be at `???0:/pspemu/ISO/my_game.DAT`
 
 ### Execute BOOT.BIN instead of EBOOT.BIN
 
-Adrenaline supports launching ISO games/apps executing the `BOOT.BIN` inside the ISO instead of the `EBOOT.BIN` by holding `R` while launching the game/app.
+Epinephrine supports launching ISO games/apps executing the `BOOT.BIN` inside the ISO instead of the `EBOOT.BIN` by holding `R` while launching the game/app.
 
 This feature can be used in the few games that requires usage of the `BOOT.BIN` to work properly, as it is the case for ISO of demos, prototypes, decrypted and modded games.

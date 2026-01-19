@@ -12,7 +12,7 @@ This is the gist of it, but you will need to be able to compile the project to t
 ## Project parts overview
 ---
 
-### VITA-side
+### Adrenaline Application (a.k.a. VITA-side)
 
 - `bubble`: The bubble launcher for Adrenaline
 - `user`: The userspace plugin that patches the PSPemu and allows extra communication between the VITA-side with the PSP-side
@@ -20,9 +20,9 @@ This is the gist of it, but you will need to be able to compile the project to t
 - `usbdevice`: The USB mass storage plugin
 - `vsh`: The plugin that patches VITA VSH for Adrenaline
 
-### eCFW (a.k.a. ePSP-side)
+### Epinephrine eCFW (a.k.a. ePSP-side)
 
-The eCFW part can be separated in two parts: The `core` parts and the `extra` parts.
+The Epinephrine eCFW part can be separated in two parts: The `core` parts and the `extra` parts.
 
 The `core` parts are essential to support the most basic functionality of a CFW. The `extra` parts are not necessary for the CFW, but might provide quality of life features for end-users.
 
@@ -47,7 +47,7 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 ## Setting up the development environment
 ---
 
-To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depend on four thing: **VITASDK**, **PSPSDK**, **PSP CFW SDK**, **Python3** and **psp-packer**.
+To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depends on four thing: **VITASDK**, **PSPSDK**, **PSP CFW SDK**, **Python3** and **psp-packer**.
 
 For the [VITASDK](https://vitasdk.org/) and [PSPSDK](https://pspdev.github.io/), follow their instructions to install it in your system.
 
@@ -84,7 +84,7 @@ For every change, you must recompile the project for the changes to take effect.
 > That being said, over 10 years ago, I started with baremetal software on the 3DS. I had many frustrations as a novice, but I end up just fine. So if you absolutely want to start with Adrenaline, who am I to stop you.
 
 > [!TIP]
-> If you **did not** change a thing on the `cef` directory, you **don't** need to recompile the eCFW.
+> If you **did not** change a thing on the `cef` directory, you **don't** need to recompile the Epinephrine eCFW.
 
 ## Manually testing the project
 ---

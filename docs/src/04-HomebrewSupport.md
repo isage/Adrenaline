@@ -1,9 +1,9 @@
 # PSP Homebrew Support
 ---
 
-Adrenaline support launching unsigned homebrew applications directly from the XMB/VSH, and loading plugins with a powerful configuration format.
+Epinephrine support launching unsigned homebrew applications directly from the XMB/VSH, and loading plugins with a powerful configuration format.
 
-All user-mode PSP homebrew since PSP Firmware (FW) 3.71 onwards should work fine. Kernel-mode PSP homebrew, on the other hand, may require a build specifically targeted to PSP firmware 6.60 or 6.61 to work on Adrenaline.
+All user-mode PSP homebrew since PSP Firmware (FW) 3.71 onwards should work fine. Kernel-mode PSP homebrew, on the other hand, may require a build specifically targeted to PSP firmware 6.60 or 6.61 to work on Epinephrine.
 
 ## Homebrew Apps
 
@@ -15,12 +15,12 @@ Homebrew applications must be live on `???0:/pspemu/PSP/GAME/` directory to appe
 
 Homebrew plugins are programs in the form of `PRX` files that can add extra features and/or modify the behavior of the PSP system and games.
 
-Homebrew plugins `.prx` files must be put in the `???0:/pspemu/seplugins/` folder and be added to the configuration file `???0:/pspemu/seplugins/EPIplugins.txt`.
+Homebrew plugins `.prx` files must be put in the `???0:/pspemu/seplugins/` folder and be added to the configuration file `???0:/pspemu/seplugins/plugins.txt` or `???0:/pspemu/seplugins/EPIplugins.txt`.
 
 > [!INFO]
 > PSP filepaths are case insensitive. For that reason, files and directories inside the Vita/PSTV `???0:/pspemu/` directory can be all uppercase letters, lowercase letters, or a mix, and it will work normally.
 >
-> So don't worry if you find variations in paths like `/SEPLUGINS/epiplugins.txt`, or even crazy paths like `/SePlUgInS/EpIpLuGiNs.TxT`.
+> So don't worry if you find variations in paths like `/SEPLUGINS/plugins.txt`, or even crazy paths like `/SePlUgInS/pLuGiNs.TxT`.
 
 The following pages provide more detailed information on plugins.
 

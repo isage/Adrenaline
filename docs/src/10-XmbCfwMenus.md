@@ -1,12 +1,12 @@
 # XMB CFW Menus
 ---
 
-Adrenaline adds extra menus to the XMB that allow the user to change CFW settings and work as a plugin manager.
+Epinephrine adds extra menus to the XMB that allow the user to change CFW settings and work as a plugin manager.
 
-## ★ Adrenaline CFW settings
+## ★ Epinephrine CFW settings
 ---
 
-This menu can be found in the `Settings` section of the XMB. It allows modifying the [Adrenaline CFW Settings](./08-CfwConfiguration.md).
+This menu can be found in the `Settings` section of the XMB. It allows modifying the [Epinephrine CFW Settings](./08-CfwConfiguration.md).
 
 Some options may require that the system be restarted before taking effect. This will be informed in the menu (third image).
 

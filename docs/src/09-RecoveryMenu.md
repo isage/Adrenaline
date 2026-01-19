@@ -1,7 +1,7 @@
-# Adrenaline Recovery Menu
+# Epinephrine Recovery Menu
 ---
 
-The Adrenaline Recover Menu allows the user to modify the Adrenaline CFW Settings, work as a plugin manager and extra features.
+The Epinephrine Recover Menu allows the user to modify the Epinephrine CFW Settings, work as a plugin manager and extra features.
 
 There are two ways to enter in the Recovery Menu. Either on XMB, by opening the [VSH Menu](./07-VSHMenu.md) and selecting the `RECOVERY MENU` option, or opening the Adrenaline Application while holding the `R` button.
 
@@ -51,10 +51,10 @@ Configures what button is used for confirmation/enter system-wide.
 
 ### Import classic plugins
 
-Imports the classic plugin configuration (`/seplugins/vsh.txt`, `/seplugins/game.txt`, `/seplugins/pops.txt`) to the new format at `???0:/pspemu/seplugins/EPIplugins.txt`.
+Imports the classic plugin configuration (`/seplugins/vsh.txt`, `/seplugins/game.txt`, `/seplugins/pops.txt`) to the new format at `???0:/pspemu/seplugins/plugins.txt`.
 
 > [!WARNING]
-> If you already have a `???0:/pspemu/seplugins/EPIplugins.txt` file, it will be overwritten by this action.
+> If you already have a `???0:/pspemu/seplugins/plugins.txt` file, it will be overwritten by this action.
 
 ### Activate WMA
 

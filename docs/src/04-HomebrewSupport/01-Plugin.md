@@ -3,7 +3,7 @@
 
 PSP plugins are small programs (usually `.prx` files) that add new features or modify the behavior of the PSP system or games.
 
-Adrenaline should be compatible with most of the plugins made for classic PSP CFW, but incompatibilities may happen. Plugins that replace the VSH Menu (i.e. System Menu, Ultimate VSH Menu, etc) are not supported.
+Epinephrine should be compatible with most of the plugins made for classic PSP CFW, but incompatibilities may happen. Plugins that replace the VSH Menu (i.e. System Menu, Ultimate VSH Menu, etc) are not supported.
 
 > [!TIP]
 > If you find a plugin that is not working, first open an issue on the plugin project issue tracker before opening an issue on the Adrenaline issue tracker.
@@ -13,7 +13,7 @@ Adrenaline should be compatible with most of the plugins made for classic PSP CF
 ## Launch without plugins
 ---
 
-Adrenaline allows launching software without plugins by holding the `L` trigger while launching apps/games/XMB.
+Epinephrine allows launching software without plugins by holding the `L` trigger while launching apps/games/XMB.
 
 This feature can be useful for quickly checking whether issues with a software are related to broken/bugged plugins or to plugins that don't interact well with the software.
 
@@ -21,7 +21,9 @@ This feature can be useful for quickly checking whether issues with a software a
 ---
 
 1. Put the `.prx` file somewhere on `???0:/pspemu/seplugins/` directory (create if it doesn't exist)
-2. Open the `???0:/pspemu/seplugins/EPIplugins.txt` (create if it doesn't exist)
+2. Open the `???0:/pspemu/seplugins/plugins.txt` (create if it doesn't exist)
+  - This is the same file as ARK CFW uses, that will be shared with both CFWs
+  - Optionally, you can create and use `???0:/pspemu/seplugins/EPIplugins.txt` to have a separate plugin configuration file from ARK
 3. Add to the configuration line in the general format: `⟨RUNLEVELS⟩, ⟨PLUGIN PATH⟩, ⟨on/off⟩`
 
     - Example: `psp, ms0:/seplugins/my_plugin.prx, on`
@@ -29,9 +31,9 @@ This feature can be useful for quickly checking whether issues with a software a
     - You can find a configuration example [here](./02-PluginConfigFormat.md#example)
 
 > [!IMPORTANT]
-> Before version 8.0.0, Adrenaline used another format and files for the plugins
+> Before version 8.0.0, EPI used another format and files for the plugins
 >
-> If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:
+> If you just updated from the previous version, EPI provides an easy way to import the old style to the new:
 >
 > 1. Open Recovery Menu
 > 2. Go to the `Advanced` section
@@ -42,7 +44,7 @@ This feature can be useful for quickly checking whether issues with a software a
 ## Managing Plugins
 ---
 
-Adrenaline offers two ways to manage plugins already added.
+Epinephrine offers two ways to manage plugins already added.
 
 ### First method: XMB Settings
 

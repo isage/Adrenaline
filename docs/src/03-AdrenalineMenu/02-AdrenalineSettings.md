@@ -34,7 +34,8 @@ It offers these options:
 - **Advanced AA**: Advanced Anti-Aliasing. Reduces jagged edges, making graphics less blocky.
 - **LCD3x**: Simulates the look of an LCD screen, with subtle scanline effect.
 - **Sharp Bilinear without Scanlines**: Like Sharp Bilinear, but without the scanline effect.
-- **Scale2x**: Increases the size by 2x of small bitmaps by guessing the missing pixels without blurring the images., making graphics less blocky.
+- **Scale2x**: Increases the size by 2x of small bitmaps by guessing the missing pixels without blurring the images, making graphics less blocky.
+- **Scale2x Plus**: Improvement of the `Scale2x`, by using pixel interpolation to decide the color of the pixels.
 - **Scale3x**: Same as `Scale2x`, but increases the size by 3x instead of 2x.
 <!-- TODO: Add Scale2x Plus if we keep it -->
 
@@ -69,7 +70,7 @@ Same as [Screen Scale X/Y (PSP)](#screen-scale-xy-psp), but exclusively on PS1 g
 
 ## Memory Stick Location
 
-Chooses the drive Adrenaline App shows up for the Adrenaline CFW as the Memory Stick drive (`ms0:`).
+Chooses the drive Adrenaline App shows up for the chosen CFW as the Memory Stick drive (`ms0:`).
 
 The options are:
 

@@ -1,7 +1,7 @@
 # Plugin Configuration Format
 ---
 
-The configuration format for the plugins on Adrenaline is composed of three sections per line: **runlevel**(s), **plugin path**, and **switch state** (on/off), separated by a comma.
+The configuration format for the plugins on EPI is composed of three sections per line: **runlevel**(s), **plugin path**, and **switch state** (on/off), separated by a comma.
 
 It also accepts line comments with `//` and `#`.
 
@@ -18,6 +18,7 @@ The available runlevels are:
 - `always`/`all`: All runlevels — Plugins configuration for all runlevels
 - `⟨TITLE ID⟩`: Application/Game specific runlevel — Plugins configuration for a specific application that has the specified ID
 - `⟨PATH⟩`: Path-specific runlevel — Plugins configuration for an application or game in the specified path. **This is more advanced**
+- `cfw=??`: Custom Firmware runlevel — Plugins configuration to only run in the specified vPSP Custom Firmware
 
 You can specify more than one runlevel for a specific plugin by separating with a space character, more on [example](#example).
 
@@ -55,6 +56,9 @@ The switch state defines whether the plugin is enabled or not. The accepted "On"
 > # Always
 > always, ms0:/seplugins/example.prx, off
 >
+> # CFW
+> always cfw=ark, ms0:/seplugins/example.prx, off
+>
 > # Title ID example
 > ULES00151, ms0:/seplugins/gta_remastered.prx, on
 >
@@ -77,7 +81,7 @@ The switch state defines whether the plugin is enabled or not. The accepted "On"
 
 
 > [!IMPORTANT]
-> Before version 8.0.0, Adrenaline used another format and files for the plugins
+> Before version 8.0.0, EPI used another format and files for the plugins
 >
 > Homebrew plugins used to be put in one of three files:
 >
@@ -87,7 +91,7 @@ The switch state defines whether the plugin is enabled or not. The accepted "On"
 >
 > And following the format of `⟨PLUGIN PATH⟩ ⟨0 or 1⟩` per plugin.
 >
-> If you just updated from the previous version, Adrenaline provides an easy way to import the old style to the new:
+> If you just updated from the previous version, EPI provides an easy way to import the old style to the new:
 >
 > 1. Open [**Recovery Menu**](../09-RecoveryMenu.md)
 > 2. Go to the `Advanced` section

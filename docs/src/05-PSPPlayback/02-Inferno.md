@@ -1,7 +1,7 @@
 # Inferno Driver
 ---
 
-The Adrenaline version of the **Inferno 2** driver is an adaptation from the ARK version of the driver. The ARK version is an evolution of the Inferno Driver found, among others, in the PRO CFW, for which ARK itself is an evolution of.
+The Epinephrine version of the **Inferno 2** driver is an adaptation from the ARK version of the driver. The ARK version is an evolution of the Inferno Driver found, among others, in the PRO CFW, for which ARK itself is an evolution of.
 
 
 ## Evolution of the driver
@@ -23,4 +23,4 @@ Now that we've covered the evolution of the `Inferno` Driver over the years, we 
 - **`Improved Compressed ISO Read Speeds`**: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks seen on `Inferno 1.5`.
 - **`Support for other compressed formats`**: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only `CSO` and `ZSO` as seen on `Inferno 1.5`, but also adds support for `DAX` as seen on ME's Inferno update as well as early SE/OE CFW, as well as the rarely seen before `JSO` and `CSOv2` formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.
 - **`Improved Inferno Cache compatibility`**: Issues between Inferno Cache and Force Extra RAM have been resolved, including being able to use it with PRO Online, as well as allowing the use of Inferno Cache on PS Vita and PSP 1K.
-- **`Physical UMD seek and read time simulation`**: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games
+- **`Physical UMD seek and read time simulation`**: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.

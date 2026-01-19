@@ -1,7 +1,7 @@
-# Adrenaline Custom Firmware Settings
+# Epinephrine Custom Firmware Settings
 ---
 
-Adrenaline CFW has several settings options that modify the behavior of the system. The settings can be split in two categories: `General Settings` and `Advanced Settings`.
+Epinephrine CFW has several settings options that modify the behavior of the system. The settings can be split in two categories: `General Settings` and `Advanced Settings`.
 
 You can use the [XMB](./10-XmbCfwMenus.md#-adrenaline-cfw-settings) or the [Recovery Menu](./09-RecoveryMenu.md) to easily modify the CFW settings.
 
@@ -185,7 +185,7 @@ Controls whether to force the unlock extra RAM space for the user-space RAM part
 
 
 > [!WARNING] Max Option Warning
-> Some important stuff for the VITA's PSPemu are put in this region of memory. Although Adrenaline protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.
+> Some important stuff for the VITA's PSPemu are put in this region of memory. Although Epinephrine protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.
 
 ### Use Graphic Engine 2
 
@@ -284,11 +284,11 @@ Any option other than `Auto` will always use that value for all ISO games and ap
 
 ### UMDemu ISO seek time delay factor
 
-Adrenaline's UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.
+Epinephrine's UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.
 
 This setting allows to control a factor of how much **slower** is that seek time simulation.
 
-This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to `Auto`, of course).
+This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to `Auto`, of course).
 
 #### Option:
 
@@ -303,11 +303,11 @@ This can be used to bypass the anti-CFW checks in some games. Adrenaline automat
 
 ### UMDemu ISO read speed delay factor
 
-Adrenaline's UMDemu drivers have the ability to simulate the **slower** read speed of a physical UMD.
+Epinephrine's UMDemu drivers have the ability to simulate the **slower** read speed of a physical UMD.
 
 This setting allows to control a factor of how much **slower** is that read speed simulation.
 
-This can be used to bypass the anti-CFW checks in some games. Adrenaline automatically sets for games known to have those checks (when set to `Auto`, of course).
+This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to `Auto`, of course).
 
 #### Option:
 

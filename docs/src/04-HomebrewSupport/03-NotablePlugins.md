@@ -14,7 +14,7 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 [Download CXMB Here](https://wololo.net/talk/download/file.php?id=3995&sid=e959a08b2f9096913455fac40e7ef84c)
 
 > [!EXAMPLE]
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >
 > ```
 > xmb, ms0:/seplugins/cxmb/cxmb.prx, on
@@ -28,7 +28,7 @@ This plugin lets you organize your games in subfolders where you can more easily
 This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 
 > [!EXAMPLE]
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >
 > ```
 > vsh, ms0:/seplugins/category_lite.prx, on
@@ -50,7 +50,7 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 [Convert MP3 Here](https://the-sauna.icu/vshbgm/)
 
 > [!EXAMPLE]
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >
 > ```
 > vsh, ms0:/seplugins/vshbgm.prx, on
@@ -61,7 +61,7 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 
 An important plugin that brings back Online functionality to the PSP on many games.
 
-On Adrenaline this plugin is compatible with the "Inferno Cache" settings.
+On Epinephrine this plugin is compatible with the "Inferno Cache" settings.
 
 > [!IMPORTANT]
 > This plugin should be enabled for `TITLE ID`, or limited testing of `GAME` mode **ONLY**
@@ -71,7 +71,7 @@ On Adrenaline this plugin is compatible with the "Inferno Cache" settings.
 > [!EXAMPLE]
 > Note that this example if for **Motorstorm Artic Edge** US version, change or add `TITLE ID`s according to the games you want that it enabled.
 >
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >
 > ```
 > UCES01250, ms0:/seplugins/atpro.prx, on
@@ -80,7 +80,7 @@ On Adrenaline this plugin is compatible with the "Inferno Cache" settings.
 ## GePatch
 ---
 
-An experimental plugin for Adrenaline that allows to run a few games in native resolution.
+An experimental plugin for Epinephrine that allows to run a few games in native resolution.
 
 > [!IMPORTANT]
 > This plugin should be enabled for `TITLE ID`, or limited testing of `GAME` mode **ONLY**.
@@ -94,7 +94,7 @@ An experimental plugin for Adrenaline that allows to run a few games in native r
 > [!EXAMPLE]
 > Note that this example if for **Final Fantasy III** US version, change or add `TITLE ID`s according to the games you want that it enabled.
 >
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >
 > ```
 > NPUH10125, ms0:/seplugins/ge_patch.prx, on
@@ -103,7 +103,7 @@ An experimental plugin for Adrenaline that allows to run a few games in native r
 ## Remastered Controls Collection
 ---
 
-A collection of plugins for Adrenaline and ARK (on PSVita/PSTV) that enhance the controls of various PSP titles to better use the PSVita/PSTV controller inputs (like the right joystick).
+A collection of plugins for Epinephrine and ARK (on PSVita/PSTV) that enhance the controls of various PSP titles to better use the PSVita/PSTV controller inputs (like the right joystick).
 
 It includes plugins for:
 
@@ -125,7 +125,7 @@ It includes plugins for:
 > [!EXAMPLE]
 > Note that this example if for **Kingdom Hearts: Birth By Sleep** US version, change or add `TITLE ID`s and plugin path according to the games you want that it enabled.
 >
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following line:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >
 > ```
 > ULUS10505, ms0:/seplugins/khbbs_remastered.prx, on
@@ -139,7 +139,7 @@ TempAR is a complete rewrite of the popular PSP cheat device NitePR/MKULTRA, wit
 [Download TempAR PSP Here](https://github.com/raing3/tempar/releases/latest)
 
 > [!EXAMPLE]
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following lines:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following lines:
 >
 > **For PSP games:**
 > ```
@@ -163,7 +163,7 @@ It can be enabled on every game, but should be disabled for GTA games where thei
 [Download latest cheat database Here](https://github.com/Saramagrean/CWCheat-Database-Plus-)
 
 > [!EXAMPLE]
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following lines:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following lines:
 >
 > **For PSP games:**
 > ```
@@ -190,7 +190,7 @@ It is recommended to enable these plugins only on the specific GTA games where y
 > [!EXAMPLE]
 > Note that this example is for the US version of those games. Change them according to your region.
 >
-> On `???0:/pspemu/seplugins/EPIplugins.txt`, add the following lines:
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following lines:
 >
 > ```
 > ULUS10041 ULUS10160, ms0:seplugins/cheatdevice_remastered.prx, on
