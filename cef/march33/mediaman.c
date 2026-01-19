@@ -163,7 +163,7 @@ int sceUmdGetDriveStat() {
 	int res = g_drivestat;
 
 	pspSdkSetK1(k1);
-	logmsg("%s: () -> 0x%08X\n", __func__, res);
+	logmsg2("%s: () -> 0x%08X\n", __func__, res);
 	return res;
 }
 

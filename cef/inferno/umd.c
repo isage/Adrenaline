@@ -197,7 +197,7 @@ void sceUmdSetErrorStatus(u32 status) {
 }
 
 int sceUmdGetDriveStat(void) {
-	logmsg("%s: () -> 0x%08X\n", __func__, g_drive_status);
+	logmsg2("%s: () -> 0x%08X\n", __func__, g_drive_status);
 	return g_drive_status;
 }
 
