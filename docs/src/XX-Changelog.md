@@ -55,6 +55,7 @@
 	- Fix `Pangya Fantasy Golf` by bypassing anti-CFW check
 	- Fix freeze on `Bust-A-Move` by bypassing anti-CFW check
 	- Fix `Lego Star Wars II` WLAN switch state wrongly returning "off"
+	- Fix `Megpoid the Music#` audio and synchronization issues when run as ISO/CISO
 	- Patch to remove the "overclocked" message on `ATV Pro`
 
 
