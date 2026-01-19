@@ -234,7 +234,15 @@ static void processPlugin(char* runlevel, char* path, char* enabled) {
 void loadPlugins(){
 	clear_list(&g_plugins, &list_cleaner);
 
-	ProcessPluginFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
+	SceIoStat stat;
+	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
+
+	if (epiplugins_exists) {
+		ProcessPluginFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
+	} else {
+		ProcessPluginFile("ms0:/seplugins/plugins.txt", &processPlugin, &processCustomLine);
+	}
+
 
 	if (g_plugins.count == 0){
 		// Add example plugin

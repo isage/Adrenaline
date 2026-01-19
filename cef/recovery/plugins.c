@@ -285,7 +285,14 @@ void savePlugins() {
 void readPlugins() {
 	memset(g_plugins, 0, MAX_PLUGINS*sizeof(Plugin));
 
-	ProcessConfigFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
+	SceIoStat stat;
+	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
+
+	if (epiplugins_exists) {
+		ProcessConfigFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
+	} else {
+		ProcessConfigFile("ms0:/seplugins/plugins.txt", &processPlugin, &processCustomLine);
+	}
 }
 
 void SetPlugins(int sel) {
