@@ -269,7 +269,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "Megpoid") == 0) {
 		// Fix sync and sync issues on `Megpoid the Music#`
-		SetUmdEmuSpeed(2, 2);
+		SetUmdEmuSpeed(1, 1);
 
 		// Disable ms cache as well.
 		storageCacheInit(NULL);
