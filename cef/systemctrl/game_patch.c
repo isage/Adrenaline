@@ -181,11 +181,11 @@ void PatchGameByTitleId() {
 		game_previous = sctrlHENSetStartModuleHandler(wweModuleOnStart);
 
 	} else if (strcasecmp("ULES00590", title_id) == 0 || strcasecmp("ULJM05075", title_id) == 0) {
-		// Patch Aces of War anti-CFW check (UMD speed)
+		// Patch `Aces of War` anti-CFW check (UMD speed)
 		SetUmdEmuSpeed(1, 1);
 
 	} else if (strcasecmp("ULUS10201", title_id) == 0 || strcasecmp("ULUS10328", title_id) == 0 || strcasecmp("ULES00968", title_id) == 0) {
-		// Patch Luxor - The Wrath of Set and Flat-Out Head On (US/EU) as they
+		// Patch `Luxor - The Wrath of Set` and `Flat-Out Head On` (US/EU) as they
 		// don't play well with Inferno cache
 		DisableInfernoCache();
 
@@ -201,7 +201,7 @@ void PatchGamesByMod(SceModule* mod) {
 		sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, (void*)0);
 
 		// Fix sync issues
-		SetUmdEmuSpeed(2, 2);
+		SetUmdEmuSpeed(1, 1);
 
 		// Disable ms cache as well.
 		storageCacheInit(NULL);
@@ -269,7 +269,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "Megpoid") == 0) {
 		// Fix sync and sync issues on `Megpoid the Music#`
-		SetUmdEmuSpeed(1, 1);
+		SetUmdEmuSpeed(0, 1);
 
 		// Disable ms cache as well.
 		storageCacheInit(NULL);
