@@ -17,10 +17,19 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+
+#include <pspinit.h>
+#include <pspcrypt.h>
+#include <psperror.h>
 #include <pspintrman.h>
 #include <pspintrman_kernel.h>
+#include <psputilsforkernel.h>
+#include <pspiofilemgr_kernel.h>
 
-#include <systemctrl_adrenaline.h>
+#include <cfwmacros.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 
 #include <adrenaline_log.h>
 

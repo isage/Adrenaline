@@ -18,8 +18,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_se.h>
+#include <string.h>
 
+#include <pspinit.h>
+#include <pspiofilemgr.h>
+#include <pspsysmem_kernel.h>
+
+#include <cfwmacros.h>
+#include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>

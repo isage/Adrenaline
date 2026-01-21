@@ -16,9 +16,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <pspintrman_kernel.h>
+#include <string.h>
 
-#include <systemctrl_adrenaline.h>
+#include <pspinit.h>
+#include <pspintrman_kernel.h>
+#include <pspextratypes.h>
+
+#include <cfwmacros.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"

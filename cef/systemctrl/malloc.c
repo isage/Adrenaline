@@ -16,7 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_adrenaline.h>
+#include <pspinit.h>
 
 #include "main.h"
 
@@ -60,7 +60,7 @@ static void* generic_memalign(int pid, SceSize align, SceSize size) {
 		return ptr;
 	}
 	return NULL;
-} 
+}
 
 void* user_memalign(SceSize align, SceSize size) {
 	return generic_memalign(PSP_MEMORY_PARTITION_USER, align, size);

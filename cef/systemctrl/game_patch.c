@@ -18,9 +18,14 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <pspkermit.h>
+#include <string.h>
 
+#include <pspkermit.h>
+#include <psputility.h>
+
+#include <cfwmacros.h>
 #include <systemctrl_adrenaline.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"

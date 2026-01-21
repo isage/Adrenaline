@@ -16,6 +16,12 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+
+#include <psperror.h>
+#include <pspiofilemgr.h>
+
+#include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>

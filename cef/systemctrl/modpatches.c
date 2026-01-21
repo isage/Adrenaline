@@ -24,7 +24,10 @@
  * Mostly third-party modules
  */
 
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
+#include <pspinit.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"

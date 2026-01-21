@@ -1,9 +1,13 @@
-#include <pspkernel.h>
-#include <pspdebug.h>
+#include <string.h>
 #include <unistd.h>
-#include <systemctrl_adrenaline.h>
-#include "adrenaline.h"
 
+#include <psperror.h>
+#include <pspdebug.h>
+#include <pspkernel.h>
+
+#include <systemctrl_adrenaline.h>
+
+#include "adrenaline.h"
 #include "../../adrenaline_compat.h"
 
 static SceUID g_out_sema = 0;

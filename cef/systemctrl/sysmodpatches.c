@@ -21,8 +21,17 @@
  * Module patches for system modules
  */
 
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
+#include <pspumd.h>
+#include <pspctrl.h>
+#include <psperror.h>
+#include <pspextratypes.h>
+
 #include <bootloadex.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"

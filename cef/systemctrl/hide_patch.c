@@ -19,12 +19,15 @@
 */
 
 #include <string.h>
+
 #include <pspsdk.h>
 #include <psploadcore.h>
 #include <pspiofilemgr.h>
-#include <systemctrl.h>
+
 #include <psperror.h>
 #include <cfwmacros.h>
+#include <systemctrl.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"

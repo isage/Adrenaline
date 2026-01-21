@@ -16,8 +16,16 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
+#include <pspinit.h>
+#include <pspiofilemgr.h>
+#include <psputilsforkernel.h>
+
 #include <pspelf.h>
+#include <cfwmacros.h>
+#include <pspextratypes.h>
+#include <systemctrl_adrenaline.h>
 
 #include "main.h"
 #include "init_patch.h"
@@ -112,7 +120,7 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 			AdjustExecInfoProbe(buf, execInfo);
 		}
 	}
-	
+
 	// NOTE: probe won't pass mod_info_attribute with privelege level for unencrypted elf
 	int ret = _sceKernelProbeExecutableObject(buf, execInfo);
 

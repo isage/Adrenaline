@@ -18,7 +18,17 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_adrenaline.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <pspinit.h>
+#include <psperror.h>
+#include <pspsysmem.h>
+#include <pspiofilemgr_kernel.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
+
 #include <adrenaline_log.h>
 
 //#define CHECK_MODE

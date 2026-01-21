@@ -21,7 +21,9 @@
 
 #include <pspkermit.h>
 
-#include <systemctrl_adrenaline.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
+#include <rebootexconfig.h>
 
 #include "utils.h"
 

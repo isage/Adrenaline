@@ -16,7 +16,10 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_adrenaline.h>
+#include <psputility.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
 
 #include "main.h"
 

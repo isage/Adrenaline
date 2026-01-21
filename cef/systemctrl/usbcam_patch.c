@@ -1,5 +1,10 @@
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
 #include <pspusbcam.h>
+#include <psploadcore.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
 
 void sceUsb_driver_ED8C8695();
 void sceUsb_driver_63E55EBE();
