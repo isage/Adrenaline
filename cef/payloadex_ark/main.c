@@ -16,22 +16,6 @@ ARKConfig arkconf = {
 };
 
 
-int findArkFlashFile(BootFile* file, const char* path){
-    u32 nfiles = *(u32*)(VITA_FLASH_ARK);
-    ArkFlashFile* cur = (ArkFlashFile*)((size_t)(VITA_FLASH_ARK)+4);
-
-    for (int i=0; i<nfiles; i++){
-        size_t filesize = (cur->filesize[0]) + (cur->filesize[1]<<8) + (cur->filesize[2]<<16) + (cur->filesize[3]<<24);
-        if (strncmp(path, cur->name, cur->namelen) == 0){
-            file->buffer = (void*)((size_t)(&(cur->name[0])) + cur->namelen);
-            file->size = filesize;
-            return 0;
-        }
-        cur = (ArkFlashFile*)((size_t)(cur)+filesize+cur->namelen+5);
-    }
-    return -1;
-}
-
 int pspemuLfatOpenArkVPSP(BootFile* file){
 
     int ret = -1;
@@ -69,10 +53,6 @@ BootLoadExConfig bleconf = {
 // Entry Point
 int cfwBoot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
 {
-    #ifdef DEBUG
-    _sw(0x44000000, 0xBC800100);
-    colorDebug(0xFF00);
-    #endif
 
     RebootexConfigEPI *rebootex_config_adr = (RebootexConfigEPI *)REBOOTEX_CONFIG;
     if (rebootex_config_adr->bootfileindex == MODE_RECOVERY) arkconf.recovery = 1;
