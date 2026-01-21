@@ -23,7 +23,7 @@ static u32 read_missed = 0;
 static u32 cache_on = 0;
 
 static SceUID cache_ctrl = -1;
-static SceUID cache_mem = -1;
+static SceUID g_cache_mem = -1;
 
 #define NR_CACHE_REQ 8
 #define CACHE_MINIMUM_THRESHOLD (16 * 1024)
@@ -380,9 +380,9 @@ int infernoCacheInit(int cache_size, int cache_num, int partition) {
 
 	if (cache_size == 0){ // disable cache
 		sceKernelFreePartitionMemory(cache_ctrl);
-		sceKernelFreePartitionMemory(cache_mem);
+		sceKernelFreePartitionMemory(g_cache_mem);
 		cache_ctrl = -1;
-		cache_mem = -1;
+		g_cache_mem = -1;
 		cache_on = 0;
 		return 0;
 	}
@@ -424,7 +424,7 @@ int infernoCacheInit(int cache_size, int cache_num, int partition) {
 	}
 
 	memid = sceKernelAllocPartitionMemory(partition, "infernoCache", PSP_SMEM_High, g_caches_cap * g_caches_num + 64, NULL);
-	cache_mem = memid;
+	g_cache_mem = memid;
 
 	if (memid < 0) {
 		logmsg("%s: sctrlKernelAllocPartitionMemory -> 0x%08X\n", __func__, memid);
