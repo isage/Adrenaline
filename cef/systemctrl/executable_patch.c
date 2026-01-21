@@ -16,18 +16,26 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
+#include <pspinit.h>
+#include <pspiofilemgr.h>
+#include <psputilsforkernel.h>
+
 #include <pspelf.h>
+#include <cfwmacros.h>
+#include <pspextratypes.h>
+#include <systemctrl_adrenaline.h>
 
 #include "main.h"
 #include "init_patch.h"
 #include "libraries_patch.h"
 
-int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
-int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
-int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize);
-int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
-int (* PrologueModule)(void *modmgr_param, SceModule *mod) = NULL;
+static int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
+static int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
+static int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize);
+static int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
+static int (* PrologueModule)(void *modmgr_param, SceModule *mod) = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -112,7 +120,7 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 			AdjustExecInfoProbe(buf, execInfo);
 		}
 	}
-	
+
 	// NOTE: probe won't pass mod_info_attribute with privelege level for unencrypted elf
 	int ret = _sceKernelProbeExecutableObject(buf, execInfo);
 
@@ -179,8 +187,8 @@ int PartitionCheckPatched(u32 *param, SceLoadCoreExecFileInfo *execInfo) {
 int PrologueModulePatched(void *modmgr_param, SceModule *mod) {
 	int res = PrologueModule(modmgr_param, mod);
 
-	if (res >= 0 && module_handler)
-		module_handler(mod);
+	if (res >= 0 && g_module_handler)
+		g_module_handler(mod);
 
 	return res;
 }

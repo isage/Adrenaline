@@ -21,8 +21,17 @@
  * Module patches for system modules
  */
 
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
+#include <pspumd.h>
+#include <pspctrl.h>
+#include <psperror.h>
+#include <pspextratypes.h>
+
 #include <bootloadex.h>
+#include <systemctrl.h>
+#include <systemctrl_se.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -35,20 +44,20 @@
 #define EXIT_TO_VSH_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_SELECT | PSP_CTRL_DOWN)
 #define EXIT_TO_VSH2_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
-STMOD_HANDLER module_handler = NULL;
+STMOD_HANDLER g_module_handler = NULL;
 
 
-int (* RunReboot)(u32 *params) = NULL;
-int (* DecodeKL4E)(void *dest, u32 size_dest, void *src, u32 size_src) = NULL;
-int (* SetIdleCallback)(int flags) = NULL;
+static int (* RunReboot)(u32 *params) = NULL;
+static int (* DecodeKL4E)(void *dest, u32 size_dest, void *src, u32 size_src) = NULL;
+static int (* SetIdleCallback)(int flags) = NULL;
 
-int (* _sceChkregGetPsCode)(u8 *pscode) = NULL;
-int (* _sceSystemFileGetIndex)(void *sfo, void *a1, void *a2) = NULL;
-int (*_sceCtrlPeekBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
-int (*_sceCtrlPeekBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
-int (*_sceCtrlReadBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
-int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
-int (* _scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq) = NULL;
+static int (* _sceChkregGetPsCode)(u8 *pscode) = NULL;
+static int (* _sceSystemFileGetIndex)(void *sfo, void *a1, void *a2) = NULL;
+static int (*_sceCtrlPeekBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
+static int (*_sceCtrlPeekBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
+static int (*_sceCtrlReadBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
+static int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
+static int (* _scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq) = NULL;
 
 typedef struct PartitionData {
 	u32 unk[5];
@@ -72,8 +81,8 @@ static u32 FindPowerFunction(u32 nid) {
 }
 
 static int protect_pspemu_mem() {
-	u32 ram2 = rebootex_config.ram2;
-	u32 ram11 = rebootex_config.ram11;
+	u32 ram2 = g_rebootex_config.ram2;
+	u32 ram11 = g_rebootex_config.ram11;
 
 	// Needs to protect FLASH0 VRAM
 	if (ram2 + ram11 >= 49) {
@@ -89,7 +98,7 @@ static int protect_pspemu_mem() {
 }
 
 int ApplyMemory() {
-	if (rebootex_config.ram2 != 0 && (rebootex_config.ram2 + rebootex_config.ram11) <= 52) {
+	if (g_rebootex_config.ram2 != 0 && (g_rebootex_config.ram2 + g_rebootex_config.ram11) <= 52) {
 		SysMemPartition *(* GetPartition)(int partition) = NULL;
 		SysMemPartition *partition;
 		u32 user_size;
@@ -108,13 +117,13 @@ int ApplyMemory() {
 			return SCE_KERR_ILLEGAL_ADDR;
 		}
 
-		user_size = (rebootex_config.ram2 * 1024 * 1024);
+		user_size = (g_rebootex_config.ram2 * 1024 * 1024);
 		partition = GetPartition(PSP_MEMORY_PARTITION_USER);
 		partition->size = user_size;
 		partition->data->size = (((user_size >> 8) << 9) | 0xFC);
 
 		partition = GetPartition(11);
-		partition->size = (rebootex_config.ram11 * 1024 * 1024);
+		partition->size = (g_rebootex_config.ram11 * 1024 * 1024);
 		partition->address = 0x88800000 + user_size;
 		partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
 
@@ -127,7 +136,7 @@ int ApplyMemory() {
 
 void ApplyAndResetMemory() {
 	ApplyMemory();
-	rebootex_config.ram2 = 0;
+	g_rebootex_config.ram2 = 0;
 }
 
 void UnprotectExtraMemory() {
@@ -140,8 +149,8 @@ void UnprotectExtraMemory() {
 
 static int exit_callback(int arg1, int arg2, void *common) {
 	sceKernelSuspendAllUserThreads();
-	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
-	adrenaline->pops_mode = 0;
+
+	g_adrenaline->pops_mode = 0;
 	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 
 	static u32 vshmain_args[0x100];
@@ -234,7 +243,7 @@ void CheckControllerInput() {
 	SceCtrlData pad_data;
 	_sceCtrlPeekBufferPositive(&pad_data, 1);
 	if ((pad_data.Buttons & PSP_CTRL_LTRIGGER) == PSP_CTRL_LTRIGGER) {
-		disable_plugins = 1;
+		g_disable_plugins = 1;
 		logmsg2("[INFO]: Plugins disabled by holding `L` at the application start\n");
 	}
 }
@@ -262,20 +271,20 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 	// Checks for unlock state
 	if (p2 > 24) {
 		// already enabled
-		if (rebootex_config.ram2 > 24) {
+		if (g_rebootex_config.ram2 > 24) {
 			return -2;
 		}
 	} else if (p2 == 24) { // Checks for default state
 		// already enabled
-		if (rebootex_config.ram2 == 24) {
+		if (g_rebootex_config.ram2 == 24) {
 			return -2;
 		}
 	}
 
 	int k1 = pspSdkSetK1(0);
 
-	rebootex_config.ram2 = p2;
-	rebootex_config.ram11 = p11;
+	g_rebootex_config.ram2 = p2;
+	g_rebootex_config.ram11 = p11;
 
 	pspSdkSetK1(k1);
 	return 0;
@@ -327,7 +336,7 @@ void sctrlHENSetSpeed(int cpu, int bus) {
 int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 	int largememory = 0;
 
-	if (rebootex_config.ram2 == 0) {
+	if (g_rebootex_config.ram2 == 0) {
 		SFOHeader *header = (SFOHeader *)sfo;
 		SFODir *entries = (SFODir *)(sfo + sizeof(SFOHeader));
 
@@ -358,10 +367,10 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 
 int RunRebootPatched(u32 *params) {
 	if ((char *)params[2] == NULL) {
-		if (rebootex_config.bootfileindex != MODE_RECOVERY) {
-			rebootex_config.bootfileindex = MODE_UMD;
+		if (g_rebootex_config.bootfileindex != MODE_RECOVERY) {
+			g_rebootex_config.bootfileindex = MODE_UMD;
 		}
-		memset(rebootex_config.umdfilename, 0, 256);
+		memset(g_rebootex_config.umdfilename, 0, 256);
 	}
 
 	return RunReboot(params);
@@ -369,9 +378,9 @@ int RunRebootPatched(u32 *params) {
 
 int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
 	memcpy((void *)REBOOTEX_TEXT, rebootex, size_rebootex);
-	memcpy((void *)REBOOTEX_CONFIG, &rebootex_config, sizeof(RebootexConfigEPI));
+	memcpy((void *)REBOOTEX_CONFIG, &g_rebootex_config, sizeof(RebootexConfigEPI));
 	// Backup the CFW config across reboot
-	memcpy((void *)EPI_CONFIG_ADDR, &config, sizeof(SEConfigEPI));
+	memcpy((void *)EPI_CONFIG_ADDR, &g_cfw_config, sizeof(SEConfigEPI));
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 
@@ -388,8 +397,8 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 	pscode[0] = 0x01;
 	pscode[1] = 0x00;
 
-	if (config.fake_region) {
-		pscode[2] = config.fake_region < 12 ? config.fake_region + 2 : config.fake_region - 11;
+	if (g_cfw_config.fake_region) {
+		pscode[2] = g_cfw_config.fake_region < 12 ? g_cfw_config.fake_region + 2 : g_cfw_config.fake_region - 11;
 		if (pscode[2] == 2) {
 			pscode[2] = 3;
 		}

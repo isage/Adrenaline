@@ -22,8 +22,8 @@
  * SystemControl private utility functions
  */
 
-#include <pspiofilemgr.h>
 #include <cfwmacros.h>
+#include <pspiofilemgr.h>
 
 int ReadFile(char *file, void *buf, int size) {
 	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);

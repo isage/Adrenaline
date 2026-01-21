@@ -43,29 +43,27 @@
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
-RebootexConfigEPI rebootex_config;
-SEConfigEPI config;
+RebootexConfigEPI g_rebootex_config;
+SEConfigEPI g_cfw_config;
 
-int idle = 0;
+static int g_idle = 0;
 
-int cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
-int bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
-u32 cache_size_list[] = { 0, 1024, 2*1024, 4*1024, 8*1024, 16*1024, 32*1024, 64*1024 };
-u8 cache_num_list[] = { 0, 1, 2, 4, 8, 16, 32, 64, 128 };
+static int g_cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
+static int g_bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
+static u32 g_cache_size_list[] = { 0, 1024, 2*1024, 4*1024, 8*1024, 16*1024, 32*1024, 64*1024 };
+static u8 g_cache_num_list[] = { 0, 1, 2, 4, 8, 16, 32, 64, 128 };
 
-#define N_CPU (sizeof(cpu_list) / sizeof(int))
-#define N_CACHE_SIZE (sizeof(cache_size_list) / sizeof(u32))
-#define N_CACHE_NUM (sizeof(cache_num_list) / sizeof(u8))
+#define N_CPU (sizeof(g_cpu_list) / sizeof(int))
+#define N_CACHE_SIZE (sizeof(g_cache_size_list) / sizeof(u32))
+#define N_CACHE_NUM (sizeof(g_cache_num_list) / sizeof(u8))
 
 int mallocinit();
 
 static void OnSystemStatusIdle() {
-	SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
-
 	initAdrenalineInfo();
 	PatchVolatileMemBug();
 
-	if (config.no_ms_cache == 0) {
+	if (g_cfw_config.no_ms_cache == 0) {
 		storageCacheInit("ms");
 	}
 
@@ -74,14 +72,14 @@ static void OnSystemStatusIdle() {
 
 	if (march33_mod != NULL) {
 		// Handle March33's UMD seek and UMD speed setting
-		if (config.umd_seek > 0 || config.umd_speed > 0) {
-			config.iso_cache = CACHE_CONFIG_OFF;
+		if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
+			g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
 
 			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(march33_mod, "march33_driver", 0xFAEC97D6);
 
 			if (SetUmdDelay != NULL) {
-				SetUmdDelay(config.umd_seek, config.umd_speed);
-				logmsg3("[INFO]: March33 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", config.umd_seek, config.umd_speed);
+				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed);
+				logmsg3("[INFO]: March33 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
 			}
 		}
 	}
@@ -91,14 +89,14 @@ static void OnSystemStatusIdle() {
 
 	if (galaxy_mod != NULL) {
 		// Handle March33's UMD seek and UMD speed setting
-		if (config.umd_seek > 0 || config.umd_speed > 0) {
-			config.iso_cache = CACHE_CONFIG_OFF;
+		if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
+			g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
 
 			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(galaxy_mod, "galaxy_driver", 0xFAEC97D6);
 
 			if (SetUmdDelay != NULL) {
-				SetUmdDelay(config.umd_seek, config.umd_speed);
-				logmsg3("[INFO]: NP9660 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", config.umd_seek, config.umd_speed);
+				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed);
+				logmsg3("[INFO]: NP9660 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
 			}
 		}
 	}
@@ -109,39 +107,39 @@ static void OnSystemStatusIdle() {
 	// Inferno driver is loaded
 	if (inferno_mod != NULL) {
 		// Handle Inferno's UMD seek and UMD speed setting
-		if (config.umd_seek > 0 || config.umd_speed > 0) {
-			config.iso_cache = CACHE_CONFIG_OFF;
+		if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
+			g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
 
 			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
 
 			if (SetUmdDelay != NULL) {
-				SetUmdDelay(config.umd_seek, config.umd_speed);
-				logmsg3("[INFO]: Inferno ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", config.umd_seek, config.umd_speed);
+				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed);
+				logmsg3("[INFO]: Inferno ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
 			}
 		}
 
 		// Handle Inferno Iso cache
-		if (config.iso_cache != CACHE_CONFIG_OFF) {
-			if (rebootex_config.ram2 > 24 || config.force_high_memory != HIGHMEM_OPT_OFF) {
-				config.iso_cache_partition = 2;
+		if (g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
+			if (g_rebootex_config.ram2 > 24 || g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) {
+				g_cfw_config.iso_cache_partition = 2;
 			} else {
-				config.iso_cache_partition = 11;
+				g_cfw_config.iso_cache_partition = 11;
 			}
 
 			int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
 			if (CacheInit != NULL) {
-				u32 cache_size = (config.iso_cache_size == ISO_CACHE_SIZE_AUTO) ? 32*1024 : cache_size_list[config.iso_cache_size%N_CACHE_SIZE];
-				u8 cache_num = (config.iso_cache_num == ISO_CACHE_NUM_AUTO) ? 32 : cache_num_list[config.iso_cache_num%N_CACHE_NUM];
-				CacheInit(cache_size, cache_num, config.iso_cache_partition);
-				logmsg3("[INFO]: Inferno ISO cache: %d caches of %ld KiB in partition %d — Total: %ld KiB\n", cache_num, cache_size/1024, config.iso_cache_partition, (cache_num*cache_size)/1024);
+				u32 cache_size = (g_cfw_config.iso_cache_size == ISO_CACHE_SIZE_AUTO) ? 32*1024 : g_cache_size_list[g_cfw_config.iso_cache_size%N_CACHE_SIZE];
+				u8 cache_num = (g_cfw_config.iso_cache_num == ISO_CACHE_NUM_AUTO) ? 32 : g_cache_num_list[g_cfw_config.iso_cache_num%N_CACHE_NUM];
+				CacheInit(cache_size, cache_num, g_cfw_config.iso_cache_partition);
+				logmsg3("[INFO]: Inferno ISO cache: %d caches of %ld KiB in partition %d — Total: %ld KiB\n", cache_num, cache_size/1024, g_cfw_config.iso_cache_partition, (cache_num*cache_size)/1024);
 			}
 
 			int (*CacheSetPolicy)(int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xC0736FD6);
 			if (CacheSetPolicy != NULL) {
-				if (config.iso_cache == CACHE_CONFIG_LRU) {
+				if (g_cfw_config.iso_cache == CACHE_CONFIG_LRU) {
 					CacheSetPolicy(INFERNO_CACHE_LRU);
 					logmsg3("[INFO]: Inferno ISO cache policy: LRU\n");
-				} else if (config.iso_cache == CACHE_CONFIG_RR) {
+				} else if (g_cfw_config.iso_cache == CACHE_CONFIG_RR) {
 					CacheSetPolicy(INFERNO_CACHE_RR);
 					logmsg3("[INFO]: Inferno ISO cache policy: RR\n");
 				}
@@ -155,11 +153,11 @@ static void OnSystemStatusIdle() {
 	u8 is_correct_medium = (medium_type == PSP_BOOT_DISC || medium_type == PSP_BOOT_MS || medium_type == PSP_BOOT_EF);
 
 	if (app_type != PSP_INIT_KEYCONFIG_VSH && is_correct_medium) {
-		sctrlHENSetSpeed(cpu_list[config.app_cpu_speed % N_CPU], bus_list[config.app_cpu_speed % N_CPU]);
+		sctrlHENSetSpeed(g_cpu_list[g_cfw_config.app_cpu_speed % N_CPU], g_bus_list[g_cfw_config.app_cpu_speed % N_CPU]);
 	}
 
 	// Set fake framebuffer so that cwcheat can be displayed
-	if (adrenaline->pops_mode) {
+	if (g_adrenaline->pops_mode) {
 		sceDisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 	} else {
@@ -196,7 +194,7 @@ static int OnModuleStart(SceModule *mod) {
 	}
 
 	if (load_file_config) {
-		int res = sctrlSEGetConfig((SEConfig*)&config);
+		int res = sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
 		if (res == 0) {
 			load_file_config = 0;
@@ -253,10 +251,10 @@ static int OnModuleStart(SceModule *mod) {
 		logmsg3("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
 		logmsg3("[INFO]: Filename: %s\n", sceKernelInitFileName());
 
-		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
-			if (config.force_high_memory == HIGHMEM_OPT_STABLE) {
-				sctrlHENSetMemory(40, 0);
-			} else if (config.force_high_memory == HIGHMEM_OPT_MAX) {
+		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) {
+			if (g_cfw_config.force_high_memory == HIGHMEM_OPT_STABLE) {
+				sctrlHENSetMemory(43, 0);
+			} else if (g_cfw_config.force_high_memory == HIGHMEM_OPT_MAX) {
 				sctrlHENSetMemory(52, 0);
 			}
 			ApplyMemory();
@@ -292,7 +290,7 @@ static int OnModuleStart(SceModule *mod) {
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
 		findAndSetTitleId();
-		logmsg3("[INFO]: Title ID: %s\n", rebootex_config.title_id);
+		logmsg3("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
 		CheckControllerInput();
 
 	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
@@ -325,7 +323,7 @@ static int OnModuleStart(SceModule *mod) {
 		ready_gamepatch_mod = 1;
 		PatchGameByTitleId();
 
-	} else if (strcmp(modname, "sceMp3_Library") == 0 || (strcmp(modname, "sceVshOSK_Module") == 0 && config.use_sony_psposk)) {
+	} else if (strcmp(modname, "sceMp3_Library") == 0 || (strcmp(modname, "sceVshOSK_Module") == 0 && g_cfw_config.use_sony_psposk)) {
 		// Unlock mp3 variable bitrate and qwerty osk on old games/homebrew
 		sctrlHookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
 		sctrlFlushCache();
@@ -344,9 +342,9 @@ static int OnModuleStart(SceModule *mod) {
 		PatchCwCheatPlugin(mod);
 	}
 
-	if (!idle) {
+	if (!g_idle) {
 		if (sctrlHENIsSystemBooted()) {
-			idle = 1;
+			g_idle = 1;
 			OnSystemStatusIdle();
 		}
 	}
@@ -370,7 +368,7 @@ int module_start(SceSize args, void *argp) {
 
 	// Restore CFW config from the RAM backup in the start (if it exists)
 	if (IS_ADR_SECONFIG(EPI_CONFIG_ADDR)) {
-		memcpy(&config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigEPI));
+		memcpy(&g_cfw_config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigEPI));
 	}
 
 	sctrlHENSetStartModuleHandler((STMOD_HANDLER)OnModuleStart);
@@ -379,7 +377,7 @@ int module_start(SceSize args, void *argp) {
 
 	initAdrenaline();
 
-	memcpy(&rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
+	memcpy(&g_rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
 
 	tty_init();
 

@@ -18,16 +18,20 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_se.h>
+#include <string.h>
 
+#include <pspinit.h>
+#include <pspiofilemgr.h>
+#include <pspsysmem_kernel.h>
+
+#include <cfwmacros.h>
+#include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
 #include "main.h"
 #include "../../adrenaline_compat.h"
-
-extern SceAdrenaline *adrenaline;
 
 typedef struct LbaParams {
 	int unknown1; // 0
@@ -40,7 +44,7 @@ typedef struct LbaParams {
 	int byte_size_last;  // 28
 } LbaParams;
 
-SceGameInfo default_gameinfo = {
+static SceGameInfo g_default_gameinfo = {
 	.title_id = "HOME0000\0\0\0\0\0\0\0\0",
 };
 
@@ -53,11 +57,11 @@ int readTitleIdFromDisc() {
 	}
 
 	// Country code
-	sceIoRead(disc_fd, rebootex_config.title_id, 4);
+	sceIoRead(disc_fd, g_rebootex_config.title_id, 4);
 	// Delimiter skip
 	sceIoLseek(disc_fd, 1, PSP_SEEK_CUR);
 	// Title ID
-	sceIoRead(disc_fd, rebootex_config.title_id + 4, 5);
+	sceIoRead(disc_fd, g_rebootex_config.title_id + 4, 5);
 
 	sceIoClose(disc_fd);
 	return 1;
@@ -65,8 +69,8 @@ int readTitleIdFromDisc() {
 
 // 0 - Not able to get | 1 - Able to get
 int readTitleIdFromPBP() {
-	u32 size = sizeof(rebootex_config.title_id);
-	int res = sctrlGetInitPARAM("DISC_ID", NULL, &size, rebootex_config.title_id);
+	u32 size = sizeof(g_rebootex_config.title_id);
+	int res = sctrlGetInitPARAM("DISC_ID", NULL, &size, g_rebootex_config.title_id);
 
 	if (res < 0) {
 		return 0;
@@ -77,7 +81,7 @@ int readTitleIdFromPBP() {
 // 0 - Not able to get | 1 - Able to get
 int readTitleIdFromISO() {
 	int (*isoGetTitleId)(char title_id[10]) = NULL;
-	int boot_conf = rebootex_config.bootfileindex;
+	int boot_conf = g_rebootex_config.bootfileindex;
 
 	switch (boot_conf) {
 		case MODE_INFERNO:
@@ -103,7 +107,7 @@ int readTitleIdFromISO() {
 
 	logmsg4("%s: [DEBUG]: Found `isoGetTitleId`\n", __func__);
 
-	return isoGetTitleId(rebootex_config.title_id);
+	return isoGetTitleId(g_rebootex_config.title_id);
 }
 
 void findAndSetTitleId() {
@@ -112,8 +116,8 @@ void findAndSetTitleId() {
 		return;
 	}
 
-	if (rebootex_config.title_id[0] == '\0') {
-		int is_iso = rebootex_config.bootfileindex >= MODE_OE_LEGACY && rebootex_config.bootfileindex <= MODE_ME;
+	if (g_rebootex_config.title_id[0] == '\0') {
+		int is_iso = g_rebootex_config.bootfileindex >= MODE_OE_LEGACY && g_rebootex_config.bootfileindex <= MODE_ME;
 		if (is_iso) {
 			readTitleIdFromISO();
 		} else {
@@ -123,15 +127,15 @@ void findAndSetTitleId() {
 
 	SceGameInfo* gameinfo = sceKernelGetGameInfo();
 	if (gameinfo != NULL) {
-		memcpy(gameinfo->title_id, rebootex_config.title_id, 9);
+		memcpy(gameinfo->title_id, g_rebootex_config.title_id, 9);
 	}
 
-	if (rebootex_config.title_id[0] == '\0') {
-		memcpy(default_gameinfo.title_id, rebootex_config.title_id, 9);
+	if (g_rebootex_config.title_id[0] == '\0') {
+		memcpy(g_default_gameinfo.title_id, g_rebootex_config.title_id, 9);
 	}
 
-	if (rebootex_config.title_id[0] == '\0' && adrenaline != NULL) {
-		memcpy(adrenaline->titleid, rebootex_config.title_id, 9);
+	if (g_rebootex_config.title_id[0] == '\0' && g_adrenaline != NULL) {
+		memcpy(g_adrenaline->titleid, g_rebootex_config.title_id, 9);
 	}
 }
 
@@ -142,8 +146,8 @@ SceGameInfo* sceKernelGetGameInfoPatched() {
 		return gameinfo;
 	}
 
-	if (rebootex_config.title_id[0] != 0) {
-		memcpy(gameinfo->title_id, rebootex_config.title_id, 9);
+	if (g_rebootex_config.title_id[0] != 0) {
+		memcpy(gameinfo->title_id, g_rebootex_config.title_id, 9);
 	}
 
 	return gameinfo;

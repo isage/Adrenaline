@@ -19,12 +19,15 @@
 */
 
 #include <string.h>
+
 #include <pspsdk.h>
 #include <psploadcore.h>
 #include <pspiofilemgr.h>
-#include <systemctrl.h>
+
 #include <psperror.h>
 #include <cfwmacros.h>
+#include <systemctrl.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -56,7 +59,7 @@ static inline int is_in_blacklist(const char *dname) {
 			// and ".iso" or "/iso", we should consider another word that contains "iso" inside it.
 			//
 			// Example: God of War - Ghost of Sparta: it tries to find and open `SPA_050_PRISON.BIN`
-			if (i == 0 && (int)found > (int)temp && (found-1) != '.' && (found-1) != '/') {
+			if (i == 0 && (int)found > (int)temp && (int)(found-1) != '.' && (int)(found-1) != '/') {
 				return 0;
 			}
         	return 1;
@@ -180,14 +183,14 @@ void PatchHideCfwFiles(SceModule* mod) {
 	// 1. Sanity check: Not VSH or UPDATE
 	// 2. If it is an (unsigned) homebrew running (PSP_INIT_APITYPE_MS2 and PSP_INIT_APITYPE_EF2)
 	// 3. If it is configured to not hide even on games
-	if (apptype == PSP_INIT_KEYCONFIG_VSH || apptype == PSP_INIT_KEYCONFIG_UPDATER || apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || config.no_hide_cfw_files) {
+	if (apptype == PSP_INIT_KEYCONFIG_VSH || apptype == PSP_INIT_KEYCONFIG_UPDATER || apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || g_cfw_config.no_hide_cfw_files) {
 		return;
 	}
 
 	// The hide CFW files overwrite the hook to `sceIoOpen` made by the DRM
 	// patch if both are active. So we use the `sceIoOpenDrmPatched` if that
 	// option is enabled
-	if (!config.no_nodrm_engine) {
+	if (!g_cfw_config.no_nodrm_engine) {
 		_sceIoOpen = sceIoOpenDrmPatched;
 	}
 

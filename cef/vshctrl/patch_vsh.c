@@ -21,10 +21,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <pspumd.h>
 #include <pspreg.h>
 #include <pspsysmem.h>
 #include <psploadexec.h>
-#include <pspumd.h>
+#include <pspsysmem_kernel.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>

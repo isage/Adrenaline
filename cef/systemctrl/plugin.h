@@ -20,7 +20,7 @@
 #ifndef _PLUGIN_H_
 #define _PLUGIN_H_
 
-extern int disable_plugins;
+extern int g_disable_plugins;
 
 // Load Plugins
 void loadPlugins(void);

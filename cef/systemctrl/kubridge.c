@@ -16,8 +16,12 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
 #include <pspmodulemgr.h>
+
+#include <kubridge.h>
+#include <cfwmacros.h>
 
 #include "main.h"
 

@@ -18,19 +18,21 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <pspkermit.h>
+#include <string.h>
 
+#include <pspkermit.h>
+#include <psputility.h>
+
+#include <cfwmacros.h>
 #include <systemctrl_adrenaline.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"
 #include "utils.h"
 #include "storage_cache.h"
 
-extern RebootexConfigEPI rebootex_config;
-extern SEConfigEPI config;
-
-STMOD_HANDLER game_previous = NULL;
+static STMOD_HANDLER game_previous = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -41,15 +43,15 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 	int (*CacheInit)(int, int, int) = NULL;
 
 	// Config in `Auto` mode
-	if (config.umd_seek == 0 && config.umd_speed == 0) {
-		if (rebootex_config.bootfileindex == MODE_INFERNO) {
+	if (g_cfw_config.umd_seek == 0 && g_cfw_config.umd_speed == 0) {
+		if (g_rebootex_config.bootfileindex == MODE_INFERNO) {
 			SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 
 			SetUmdDelay = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
 			CacheInit = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
-		} else if (rebootex_config.bootfileindex == MODE_MARCH33) {
+		} else if (g_rebootex_config.bootfileindex == MODE_MARCH33) {
 			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xFAEC97D6);
-		} else if (rebootex_config.bootfileindex == MODE_NP9660) {
+		} else if (g_rebootex_config.bootfileindex == MODE_NP9660) {
 			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
 		}
 
@@ -57,7 +59,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 			SetUmdDelay(seek, read);
 		}
 
-		if (CacheInit != NULL && config.iso_cache != CACHE_CONFIG_OFF) {
+		if (CacheInit != NULL && g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
 			// Disable Inferno cache
 			CacheInit(0, 0, 0);
 		}
@@ -66,7 +68,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 
 static void DisableInfernoCache() {
 	int (*CacheInit)(int, int, int) = NULL;
-	if (rebootex_config.bootfileindex == MODE_INFERNO) {
+	if (g_rebootex_config.bootfileindex == MODE_INFERNO) {
 		CacheInit = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0x8CDE7F95);
 
 		if (CacheInit != NULL) {
@@ -75,7 +77,7 @@ static void DisableInfernoCache() {
 
 		// Modify the CFW setting at runtime without saving.
 		// Avoids the CFW to try to re-enable the cache once again
-		config.iso_cache = CACHE_CONFIG_OFF;
+		g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
 	}
 }
 
@@ -156,18 +158,18 @@ int sceWlanGetSwitchStatePatched() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchGameByTitleIdOnLoadExec() {
-	char* title_id = rebootex_config.title_id;
+	char* title_id = g_rebootex_config.title_id;
 
 	if (strcasecmp("ULUS10295", title_id) == 0 || strcasecmp("ULES00975", title_id) == 0 || strcasecmp("ULAS42115", title_id) == 0) {
 		// Fix The Simpsons Game
-		config.use_sony_psposk = 1;
-		rebootex_config.overwrite_use_psposk = 1;
-		rebootex_config.overwrite_use_psposk_to = 1;
+		g_cfw_config.use_sony_psposk = 1;
+		g_rebootex_config.overwrite_use_psposk = 1;
+		g_rebootex_config.overwrite_use_psposk_to = 1;
 	}
 }
 
 void PatchGameByTitleId() {
-	char* title_id = rebootex_config.title_id;
+	char* title_id = g_rebootex_config.title_id;
 
 	if (strcasecmp("ULJM05221", title_id) == 0) {
 		// Fix TwinBee Portable when not using English or Japanese language
@@ -223,7 +225,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "Jackass") == 0) {
 		// Fix infinite loading screen on `Jackass: The Game`
-		char* title_id = rebootex_config.title_id;
+		char* title_id = g_rebootex_config.title_id;
 		if (strcasecmp("ULES00897", title_id) == 0) { // PAL
 			logmsg4("%s: [DEBUG]: Patching Jackass PAL\n", __func__);
 			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, sctrlHENMakeSyscallStub(moduleLoaderJackass));
@@ -235,7 +237,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "projectg_psp") == 0) {
 		// Fix black screen on `Pangya Golf Fantasy`
-		char* title_id = rebootex_config.title_id;
+		char* title_id = g_rebootex_config.title_id;
 		u32 addrs[4] = {0};
 		if (strcasecmp("ULUS10438", title_id) == 0) { // USA
 			addrs[0] = mod->text_addr + 0x35fd88;

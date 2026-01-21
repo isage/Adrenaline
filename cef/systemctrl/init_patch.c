@@ -16,9 +16,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <systemctrl_adrenaline.h>
-#include <pspmodulemgr.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <pspinit.h>
 #include <psploadcore.h>
+#include <pspmodulemgr.h>
+
+#include <cfwmacros.h>
+
 #include <adrenaline_log.h>
 
 #include "main.h"
@@ -27,13 +33,13 @@
 // init.prx Custom sceKernelStartModule Handler
 int (* custom_start_module_handler)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
 
-SceUID (* sceKernelLoadModuleMs2Handler)(const char *path, int flags, SceKernelLMOption *option);
-SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
+static SceUID (* sceKernelLoadModuleMs2Handler)(const char *path, int flags, SceKernelLMOption *option);
+static SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 
-u32 init_addr = 0;
-int leda_apitype;
+u32 g_init_addr = 0;
 
-int plugindone = 0;
+static int g_leda_apitype;
+static int g_plugindone = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -56,24 +62,24 @@ static void loadXmbControl(){
 ////////////////////////////////////////////////////////////////////////////////
 
 SceUID sceKernelLoadModuleMs2Leda(const char *path, int flags, SceKernelLMOption *option) {
-	return sceKernelLoadModuleMs2(leda_apitype, path, flags, option);
+	return sceKernelLoadModuleMs2(g_leda_apitype, path, flags, option);
 }
 
 SceUID sceKernelLoadModuleMs2Init(int apitype, const char *path, int flags, SceKernelLMOption *option) {
-	leda_apitype = apitype;
+	g_leda_apitype = apitype;
 	return sceKernelLoadModuleMs2Handler(path, flags, option);
 }
 
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
 	PSPKeyConfig app_type = sceKernelApplicationType();
 
-	if (config.use_sony_psposk) {
+	if (g_cfw_config.use_sony_psposk) {
 		if (strcmp(info->name, "/kd/kermit_utility.prx") == 0) {
 			info->name = "/kd/utility.prx";
 		}
 	}
 
-	if (config.use_ge2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+	if (g_cfw_config.use_ge2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
 		if (strcmp(info->name, "/kd/ge.prx") == 0) {
 			info->name = "/kd/ge_2.prx";
 
@@ -86,7 +92,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		}
 	}
 
-	if (config.use_me2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+	if (g_cfw_config.use_me2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
 		if (strcmp(info->name, "/kd/kermit_me_wrapper.prx") == 0) {
 			info->name = "/kd/kermit_me_wrapper_2.prx";
 
@@ -134,7 +140,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 	}
 
 	if (strcmp(mod->modname, "vsh_module") == 0) {
-		if (config.skip_logo || config.startup_program) {
+		if (g_cfw_config.skip_logo || g_cfw_config.startup_program) {
 			static u32 vshmain_args[0x100];
 			memset(vshmain_args, 0, sizeof(vshmain_args));
 
@@ -147,7 +153,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			vshmain_args[1] = 0x20;
 			vshmain_args[16] = 1;
 
-			if(config.startup_program && argsize == 0) {
+			if(g_cfw_config.startup_program && argsize == 0) {
 				LoadExecForKernel_AA2029EC();
 
 				SceKernelLoadExecVSHParam param;
@@ -174,7 +180,7 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 		}
 	}
 
-	if (!plugindone) {
+	if (!g_plugindone) {
 		char *waitmodule;
 
 		if (sceKernelFindModuleByName("sceNp9660_driver")) {
@@ -184,11 +190,11 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 		}
 
 		if (sceKernelFindModuleByName(waitmodule) != NULL) {
-			plugindone = 1;
+			g_plugindone = 1;
 
 			int type = sceKernelApplicationType();
 
-			if (type == PSP_INIT_KEYCONFIG_VSH && !config.no_xmbctrl) {
+			if (type == PSP_INIT_KEYCONFIG_VSH && !g_cfw_config.no_xmbctrl) {
 				loadXmbControl();
 			}
 
@@ -216,20 +222,20 @@ START_MODULE:
 ////////////////////////////////////////////////////////////////////////////////
 
 int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
-	init_addr = ((u32)module_bootstart) - 0x1A54;
+	g_init_addr = ((u32)module_bootstart) - 0x1A54;
 
 	// Ignore StopInit
-	MAKE_NOP(init_addr + 0x18EC);
+	MAKE_NOP(g_init_addr + 0x18EC);
 
 	// Redirect load functions to load from MS
-	LoadModuleBufferAnchorInBtcnf = (void *)init_addr + 0x1038;
-	MAKE_CALL(init_addr + 0x17E4, LoadModuleBufferAnchorInBtcnfPatched);
-	MAKE_INSTRUCTION(init_addr + 0x17E8, 0x02402821); // move $a1, $s2
+	LoadModuleBufferAnchorInBtcnf = (void *)g_init_addr + 0x1038;
+	MAKE_CALL(g_init_addr + 0x17E4, LoadModuleBufferAnchorInBtcnfPatched);
+	MAKE_INSTRUCTION(g_init_addr + 0x17E8, 0x02402821); // move $a1, $s2
 
-	MAKE_INSTRUCTION(init_addr + 0x1868, 0x02402021); // move $a0, $s2
-	MAKE_CALL(init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
+	MAKE_INSTRUCTION(g_init_addr + 0x1868, 0x02402021); // move $a0, $s2
+	MAKE_CALL(g_init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
 
-	MAKE_JUMP(init_addr + 0x1C5C, sceKernelStartModulePatched);
+	MAKE_JUMP(g_init_addr + 0x1C5C, sceKernelStartModulePatched);
 
 	sctrlFlushCache();
 
@@ -252,7 +258,7 @@ int sctrlHENRegisterHomebrewLoader(int (* handler)(const char *path, int flags, 
 
 	// Fix sceKernelLoadModuleMs2 call
 	MAKE_JUMP(text_addr + 0x2E28, sceKernelLoadModuleMs2Leda);
-	MAKE_JUMP(init_addr + 0x1C84, sceKernelLoadModuleMs2Init);
+	MAKE_JUMP(g_init_addr + 0x1C84, sceKernelLoadModuleMs2Init);
 
 	sctrlFlushCache();
 

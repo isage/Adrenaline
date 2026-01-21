@@ -1,10 +1,15 @@
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
 #include <pspusbcam.h>
+#include <psploadcore.h>
+
+#include <cfwmacros.h>
+#include <systemctrl.h>
 
 void sceUsb_driver_ED8C8695();
 void sceUsb_driver_63E55EBE();
 
-int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
+static int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
 int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int ret = _sceUsbCamStillInput(buf, size);
@@ -131,7 +136,7 @@ static int mute_mic = 0;
 static void* mic_buf = NULL;
 static SceSize mic_size = 0;
 
-int (* _sceUsbCamReadMic)(void *buf, SceSize size);
+static int (* _sceUsbCamReadMic)(void *buf, SceSize size);
 int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int res = _sceUsbCamReadMic(buf, size);
@@ -141,7 +146,7 @@ int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
 	return res;
 }
 
-int (* _sceUsbCamWaitReadMicEnd)(void);
+static int (* _sceUsbCamWaitReadMicEnd)(void);
 int sceUsbCamWaitReadMicEnd_Patched() {
 	int k1 = pspSdkSetK1(0);
 	int res = _sceUsbCamWaitReadMicEnd();
@@ -153,7 +158,7 @@ int sceUsbCamWaitReadMicEnd_Patched() {
 }
 
 
-int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
+static int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
 int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize) {
 	int res = 0;
 	int k1 = pspSdkSetK1(0);
@@ -185,27 +190,27 @@ int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workare
 	return res;
 }
 
-static int dummy_read_cam = 0;
+static int g_dummy_read_cam = 0;
 
-int (* _sceUsbCamSetEvLevel)(int level);
+static int (* _sceUsbCamSetEvLevel)(int level);
 int sceUsbCamSetEvLevel_Patched(int level) {
 	int res = 0;
 	int k1 = pspSdkSetK1(0);
-	dummy_read_cam = 1;
+	g_dummy_read_cam = 1;
 	sceKernelDelayThread(100000);
 	res = _sceUsbCamSetEvLevel(level);
 	sceKernelDelayThread(100000);
-	dummy_read_cam = 0;
+	g_dummy_read_cam = 0;
 	sceKernelDelayThread(100000);
 	pspSdkSetK1(k1);
 	return res;
 }
 
-int (* _sceUsbCamReadVideoFrame)(u8 *buf, SceSize size);
+static int (* _sceUsbCamReadVideoFrame)(u8 *buf, SceSize size);
 int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 
-	if (dummy_read_cam) {
+	if (g_dummy_read_cam) {
 		sceKernelDelayThread(300000);
 		pspSdkSetK1(k1);
 		return 0;
@@ -215,10 +220,10 @@ int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size) {
 	return res;
 }
 
-int (* _sceUsbCamWaitReadVideoFrameEnd)(void);
+static int (* _sceUsbCamWaitReadVideoFrameEnd)(void);
 int sceUsbCamWaitReadVideoFrameEnd_Patched() {
 	int k1 = pspSdkSetK1(0);
-	if (dummy_read_cam) {
+	if (g_dummy_read_cam) {
 		sceKernelDelayThread(300000);
 		pspSdkSetK1(k1);
 		return 0x8000;
