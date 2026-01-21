@@ -1,11 +1,15 @@
-#include <systemctrl_adrenaline.h>
+#include <string.h>
+
 #include <psperror.h>
+#include <pspiofilemgr.h>
+
+#include <systemctrl_se.h>
 
 #include "umd9660_driver.h"
 #include "../bits/iso_common.h"
 
 void VshCtrlSetUmdFile(const char *file) {
-	SetUmdFile(file);
+	sctrlSESetUmdFile(file);
 	iso_close();
 	strncpy(g_iso_fn, file, sizeof(g_iso_fn)-1);
 }

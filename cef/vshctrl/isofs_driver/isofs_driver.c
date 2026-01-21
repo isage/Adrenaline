@@ -1,5 +1,10 @@
-#include <systemctrl_adrenaline.h>
-#include "psperror.h"
+#include <string.h>
+#include <stdlib.h>
+
+#include <psperror.h>
+#include <pspiofilemgr.h>
+
+#include <systemctrl_se.h>
 
 #include "isofs_driver.h"
 
