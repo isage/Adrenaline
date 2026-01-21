@@ -200,11 +200,17 @@ void PatchGamesByMod(SceModule* mod) {
 		// Stops it trying to find and maybe deleting CFW folders and their contents
 		sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, (void*)0);
 
-		// Fix sync issues
-		SetUmdEmuSpeed(1, 1);
+		char* title_id = rebootex_config.title_id;
 
-		// Disable ms cache as well.
-		storageCacheInit(NULL);
+		if (strcasecmp("ULKS46190", title_id) == 0) {
+			// Attempt to improve the `Clazziquai Edition`
+
+			// Reduce sync issues
+			SetUmdEmuSpeed(1, 1);
+
+			// Disable ms cache as well.
+			storageCacheInit(NULL);
+		}
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
 		// Remove "overclock" message in `ATV PRO`
