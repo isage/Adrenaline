@@ -50,7 +50,7 @@ void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *tab
 
 	// Add partition 11
 	table->extVshell.addr = PSP_EXTRA_RAM;
-	table->extVshell.size = 20 * 1024 * 1024;
+	table->extVshell.size = 16 * 1024 * 1024;
 }
 
 int PatchSysMem(void *a0, void *sysmem_config) {

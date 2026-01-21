@@ -255,7 +255,7 @@ static int OnModuleStart(SceModule *mod) {
 
 		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && config.force_high_memory != HIGHMEM_OPT_OFF) {
 			if (config.force_high_memory == HIGHMEM_OPT_STABLE) {
-				sctrlHENSetMemory(40, 9);
+				sctrlHENSetMemory(40, 0);
 			} else if (config.force_high_memory == HIGHMEM_OPT_MAX) {
 				sctrlHENSetMemory(52, 0);
 			}
