@@ -288,18 +288,18 @@ Epinephrine's UMDemu drivers have the ability to simulate the seek time for the 
 
 This setting allows to control a factor of how much **slower** is that seek time simulation.
 
-This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to `Auto`, of course).
+This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desync issues when both seek and [read](./08-CfwConfiguration.md#umdemu-iso-read-speed-delay-factor) time are set to `Auto`.
 
 #### Option:
 
-- `Auto`: Disabled by default, but also can change based on automatic game patches and fixes.
+- `Auto`: Disabled by default, but also can change based on automatic game patches and fixes. If `UMDemu ISO read speed delay factor` is different than `Auto`, it is interpreted as `0x` (i.e. no seek time delays).
 - `1x`
 - `2x`
 - `3x`
 - `4x`
 
 > [!WARNING]
-> Do not forget to re-set to `Auto` before launching a ISO game/app that do not need this configured to avoid performance issues.
+> Do not forget to re-set to `Auto` before launching a ISO game/app that do not need this configured to avoid performance penalties on games that do not need it.
 
 ### UMDemu ISO read speed delay factor
 
@@ -307,11 +307,11 @@ Epinephrine's UMDemu drivers have the ability to simulate the **slower** read sp
 
 This setting allows to control a factor of how much **slower** is that read speed simulation.
 
-This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to `Auto`, of course).
+This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desyc issues when both [seek](./08-CfwConfiguration.md#umdemu-iso-seek-time-delay-factor) and read time are set to `Auto`.
 
 #### Option:
 
-- `Auto`: Disabled by default, but also can change based on automatic game patches and fixes.
+- `Auto`: Disabled by default, but also can change based on automatic game patches and fixes. If `UMDemu ISO seek speed delay factor` is different than `Auto`, it is interpreted as `0x` (i.e. no read time delays).
 - `1x`
 - `2x`
 - `3x`
