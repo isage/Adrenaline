@@ -63,7 +63,7 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
-int (* _sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size) = NULL;
+static int (* _sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size) = NULL;
 int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
 

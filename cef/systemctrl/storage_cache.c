@@ -48,25 +48,25 @@ typedef struct MsCache {
 	int age;
 } MsCache;
 
-static PspIoDrv* hooked_drv = NULL;
-static SceUID cache_mem = -1;
+static PspIoDrv* g_hooked_drv = NULL;
+static SceUID g_cache_mem = -1;
 
 static MsCache g_cache;
-int g_cacheSize = 0;
+static int g_cacheSize = 0;
 
 #ifdef DEBUG
 // Cache Statistic
-unsigned int cacheReadTimes = 0;
-unsigned int cacheHit = 0;
-unsigned int cacheMissed = 0;
-unsigned int cacheUncacheable = 0;
+static u32 g_cache_read_times = 0;
+static u32 g_cache_hit = 0;
+static u32 g_cache_missed = 0;
+static u32 g_cache_uncacheable = 0;
 #endif
 
 // Original Function Pointer
-int (* storageRead)(PspIoDrvFileArg * arg, char * data, int len) = NULL;
-int (* storageWrite)(PspIoDrvFileArg * arg, const char * data, int len) = NULL;
-SceOff (* storageLseek)(PspIoDrvFileArg * arg, SceOff ofs, int whence) = NULL;
-int(* storageOpen)(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) = NULL;
+static int (* storageRead)(PspIoDrvFileArg * arg, char * data, int len) = NULL;
+static int (* storageWrite)(PspIoDrvFileArg * arg, const char * data, int len) = NULL;
+static SceOff (* storageLseek)(PspIoDrvFileArg * arg, SceOff ofs, int whence) = NULL;
+static int(* storageOpen)(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) = NULL;
 
 // Check Range Overlapping
 static inline int isCacheWithinRange(SceOff pos, SceOff start, int len) {
@@ -137,7 +137,7 @@ static int storageReadCache(PspIoDrvFileArg * arg, char * data, int len) {
 		#endif
 
 		#ifdef DEBUG
-		cacheHit += len;
+		g_cache_hit += len;
 		#endif
 
 
@@ -167,7 +167,7 @@ static int storageReadCache(PspIoDrvFileArg * arg, char * data, int len) {
 			}
 
 			#ifdef DEBUG
-			cacheMissed += len;
+			g_cache_missed += len;
 			#endif
 
 		// Too big to cache...
@@ -175,13 +175,13 @@ static int storageReadCache(PspIoDrvFileArg * arg, char * data, int len) {
 			result = storageRead(arg, data, len);
 
 			#ifdef DEBUG
-			cacheUncacheable += len;
+			g_cache_uncacheable += len;
 			#endif
 		}
 	}
 
 	#ifdef DEBUG
-	cacheReadTimes += len;
+	g_cache_read_times += len;
 	#endif
 
 	return result;
@@ -297,29 +297,29 @@ static int storageIoUnk21Cache(PspIoDrvFileArg *arg) {
 // Initialize "ms" Driver Cache
 int storageCacheInit(const char* driver) {
 	if (driver == NULL){
-		if (hooked_drv){
+		if (g_hooked_drv){
 			// Unhook Driver Functions
-			hooked_drv->funcs->IoRead = storageRead;
-			hooked_drv->funcs->IoWrite = storageWrite;
-			hooked_drv->funcs->IoOpen= storageOpen;
-			hooked_drv->funcs->IoIoctl = storageIoIoctl;
-			hooked_drv->funcs->IoRemove = storageIoRemove;
-			hooked_drv->funcs->IoMkdir = storageIoMkdir;
-			hooked_drv->funcs->IoRmdir = storageIoRmdir;
-			hooked_drv->funcs->IoDopen = storageIoDopen;
-			hooked_drv->funcs->IoDclose = storageIoDclose;
-			hooked_drv->funcs->IoDread = storageIoDread;
-			hooked_drv->funcs->IoGetstat = storageIoGetstat;
-			hooked_drv->funcs->IoChstat = storageIoChstat;
-			hooked_drv->funcs->IoRename = storageIoRename;
-			hooked_drv->funcs->IoChdir = storageIoChdir;
-			hooked_drv->funcs->IoMount = storageIoMount;
-			hooked_drv->funcs->IoUmount = storageIoUmount;
-			hooked_drv->funcs->IoDevctl = storageIoDevctl;
-			hooked_drv->funcs->IoUnk21 = storageIoUnk21;
+			g_hooked_drv->funcs->IoRead = storageRead;
+			g_hooked_drv->funcs->IoWrite = storageWrite;
+			g_hooked_drv->funcs->IoOpen= storageOpen;
+			g_hooked_drv->funcs->IoIoctl = storageIoIoctl;
+			g_hooked_drv->funcs->IoRemove = storageIoRemove;
+			g_hooked_drv->funcs->IoMkdir = storageIoMkdir;
+			g_hooked_drv->funcs->IoRmdir = storageIoRmdir;
+			g_hooked_drv->funcs->IoDopen = storageIoDopen;
+			g_hooked_drv->funcs->IoDclose = storageIoDclose;
+			g_hooked_drv->funcs->IoDread = storageIoDread;
+			g_hooked_drv->funcs->IoGetstat = storageIoGetstat;
+			g_hooked_drv->funcs->IoChstat = storageIoChstat;
+			g_hooked_drv->funcs->IoRename = storageIoRename;
+			g_hooked_drv->funcs->IoChdir = storageIoChdir;
+			g_hooked_drv->funcs->IoMount = storageIoMount;
+			g_hooked_drv->funcs->IoUmount = storageIoUmount;
+			g_hooked_drv->funcs->IoDevctl = storageIoDevctl;
+			g_hooked_drv->funcs->IoUnk21 = storageIoUnk21;
 		}
-		sceKernelFreePartitionMemory(cache_mem);
-		cache_mem = -1;
+		sceKernelFreePartitionMemory(g_cache_mem);
+		g_cache_mem = -1;
 		g_cache.buf = NULL;
 		g_cache.bufSize = 0;
 		return 0;
@@ -346,7 +346,7 @@ int storageCacheInit(const char* driver) {
 
 	// Allocate Memory
 	SceUID memid = sceKernelAllocPartitionMemory(1, "storageCache", PSP_SMEM_High, MSCACHE_SIZE + 64, NULL);
-	cache_mem = memid;
+	g_cache_mem = memid;
 
 	if (memid < 0) {
 		return SCE_ENOMEM;
@@ -369,7 +369,7 @@ int storageCacheInit(const char* driver) {
 	disableCache(&g_cache);
 
 	// Fetch Driver Functions
-	hooked_drv = pdrv;
+	g_hooked_drv = pdrv;
 	storageRead = pdrv->funcs->IoRead;
 	storageWrite = pdrv->funcs->IoWrite;
 	storageLseek = pdrv->funcs->IoLseek;
@@ -420,14 +420,14 @@ void storageCacheStat(int reset) {
 	char buf[256];
 
 	// Statistic available
-	if (cacheReadTimes != 0) {
+	if (g_cache_read_times != 0) {
 		sprintf(buf, "Mstor cache size: %dKB\n", g_cacheSize / 1024);
 		sceIoWrite(1, buf, strlen(buf));
 		sprintf(buf, "hit percent: %02d%%/%02d%%/%02d%%, [%d/%d/%d/%d]\n",
-				(int)(100 * cacheHit / cacheReadTimes),
-				(int)(100 * cacheMissed / cacheReadTimes),
-				(int)(100 * cacheUncacheable / cacheReadTimes),
-				(int)cacheHit, (int)cacheMissed, (int)cacheUncacheable, (int)cacheReadTimes);
+				(int)(100 * g_cache_hit / g_cache_read_times),
+				(int)(100 * g_cache_missed / g_cache_read_times),
+				(int)(100 * g_cache_uncacheable / g_cache_read_times),
+				(int)g_cache_hit, (int)g_cache_missed, (int)g_cache_uncacheable, (int)g_cache_read_times);
 		sceIoWrite(1, buf, strlen(buf));
 		sprintf(buf, "caches stat:\n");
 		sceIoWrite(1, buf, strlen(buf));
@@ -442,7 +442,7 @@ void storageCacheStat(int reset) {
 	}
 
 	if (reset) {
-		cacheReadTimes = cacheHit = cacheMissed = cacheUncacheable = 0;
+		g_cache_read_times = g_cache_hit = g_cache_missed = g_cache_uncacheable = 0;
 	}
 	#endif
 }

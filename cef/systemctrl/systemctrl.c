@@ -98,7 +98,7 @@ int sctrlKernelSetInitApitype(int apitype) {
 	return prev_value;
 }
 
-char g_init_filename[255] = {0};
+static char g_init_filename[255] = {0};
 // The same as sctrlKernelSetUMDEmuFile
 int sctrlKernelSetInitFileName(char * filename) {
 	if(filename == NULL) {
@@ -204,8 +204,8 @@ PspIoDrv *sctrlHENFindDriver(const char *drvname) {
 }
 
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler) {
-	STMOD_HANDLER prev = module_handler;
-	module_handler = (STMOD_HANDLER)((u32)handler | 0x80000000);
+	STMOD_HANDLER prev = g_module_handler;
+	g_module_handler = (STMOD_HANDLER)((u32)handler | 0x80000000);
 	return prev;
 }
 
@@ -214,12 +214,12 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
 
 	// Reset rebootex stuff that is per title basis before exiting an app.
-	memset(rebootex_config.title_id, 0, 10);
-	rebootex_config.overwrite_use_psposk = 0;
-	rebootex_config.overwrite_use_psposk_to = 0;
+	memset(g_rebootex_config.title_id, 0, 10);
+	g_rebootex_config.overwrite_use_psposk = 0;
+	g_rebootex_config.overwrite_use_psposk_to = 0;
 
 	// Set boot mode to normal on not recovery
-	if (rebootex_config.bootfileindex != MODE_RECOVERY) {
+	if (g_rebootex_config.bootfileindex != MODE_RECOVERY) {
 		sctrlSESetBootConfFileIndex(MODE_UMD);
 	}
 
@@ -267,12 +267,12 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 	}
 
 	// obtain game id
-    u32 gameid_size = sizeof(rebootex_config.title_id);
-    memset(rebootex_config.title_id, 0, gameid_size);
+    u32 gameid_size = sizeof(g_rebootex_config.title_id);
+    memset(g_rebootex_config.title_id, 0, gameid_size);
     if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2){
         readTitleIdFromDisc();
     } else {
-        sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, rebootex_config.title_id);
+        sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, g_rebootex_config.title_id);
     }
 
 	PatchGameByTitleIdOnLoadExec();
@@ -358,12 +358,12 @@ void sctrlHENPatchSyscall(void* addr, void *newaddr) {
 
 void SetUmdFile(const char *file) __attribute__((alias("sctrlSESetUmdFile")));
 void sctrlSESetUmdFile(const char *file) {
-	strncpy(rebootex_config.umdfilename, file, 255);
+	strncpy(g_rebootex_config.umdfilename, file, 255);
 }
 
 void sctrlSESetUmdFileEx(const char *file, char *input) {
 	if (input != NULL) {
-		strncpy(input, rebootex_config.umdfilename, 255);
+		strncpy(input, g_rebootex_config.umdfilename, 255);
 	}
 	sctrlSESetUmdFile(file);
 }
@@ -371,7 +371,7 @@ void sctrlSESetUmdFileEx(const char *file, char *input) {
 
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
 char *sctrlSEGetUmdFile() {
-	return rebootex_config.umdfilename;
+	return g_rebootex_config.umdfilename;
 }
 
 char *sctrlSEGetUmdFileEx(char *input) {
@@ -400,30 +400,30 @@ void sctrlSESetDiscOut(int out){
 }
 
 int sctrlSEGetBootConfBootFileIndex() {
-	return rebootex_config.bootfileindex;
+	return g_rebootex_config.bootfileindex;
 }
 
 void sctrlSESetBootConfFileIndex(int index) {
-	rebootex_config.bootfileindex = index;
+	g_rebootex_config.bootfileindex = index;
 }
 
 unsigned int sctrlSEGetBootConfFileIndex() {
-	return rebootex_config.bootfileindex;
+	return g_rebootex_config.bootfileindex;
 }
 
 void sctrlSESetDiscType(int type) {
-	rebootex_config.iso_disc_type = type;
+	g_rebootex_config.iso_disc_type = type;
 }
 
 int sctrlSEGetDiscType(void) {
-	return rebootex_config.iso_disc_type;
+	return g_rebootex_config.iso_disc_type;
 }
 
 void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int flags) {
-	rebootex_config.module_after = module_after;
-	rebootex_config.buf = buf;
-	rebootex_config.size = size;
-	rebootex_config.flags = flags;
+	g_rebootex_config.module_after = module_after;
+	g_rebootex_config.buf = buf;
+	g_rebootex_config.size = size;
+	g_rebootex_config.flags = flags;
 }
 
 int sctrlGetUsbState() {
@@ -500,9 +500,9 @@ void* sctrlSetStartModuleExtra(int (* func)(int modid, SceSize argsize, void * a
 	return ret;
 }
 
-extern u32 init_addr;
+extern u32 g_init_addr;
 u32 sctrlGetInitTextAddr() {
-	return init_addr;
+	return g_init_addr;
 }
 
 void* sctrlHENGetInitControl() {
@@ -696,10 +696,10 @@ u32 sctrlHENFakeDevkitVersion() {
 
 RebootexConfig* sctrlHENGetRebootexConfig(RebootexConfig* config) {
 	if (config != NULL) {
-		memcpy(config, &rebootex_config, sizeof(RebootexConfigEPI));
+		memcpy(config, &g_rebootex_config, sizeof(RebootexConfigEPI));
 	}
 
-	return (RebootexConfig*)&rebootex_config;
+	return (RebootexConfig*)&g_rebootex_config;
 }
 
 u32 sctrlHENFindJALGeneric(u32 addr, int reversed, int skip) {

@@ -36,7 +36,6 @@
 
 #include "../../adrenaline_compat.h"
 
-
 typedef struct {
 	void *sasCore;
 	int grainSamples;
@@ -45,26 +44,27 @@ typedef struct {
 	int sampleRate;
 } SasInitArguments;
 
-SasInitArguments sas_args;
-int sas_inited = 0;
+static SasInitArguments g_sas_args;
+static int g_sas_inited = 0;
 
-SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
-SceUID adrenaline_semaid = -1;
+static SceUID adrenaline_semaid = -1;
 
-int (* _scePowerSuspendOperation)(int a1);
+static int (* _scePowerSuspendOperation)(int a1);
 
-int (* SetFlag1)();
-int (* SetFlag2)();
-int (* sceKermitSyncDisplay)();
+static int (* SetFlag1)();
+static int (* SetFlag2)();
+static int (* sceKermitSyncDisplay)();
 
-int (* uiResumePoint)(u32 *data);
-void (* VitaSync)();
+static int (* uiResumePoint)(u32 *data);
+static void (* VitaSync)();
 
-int (* sceSasCoreInit)();
-int (* sceSasCoreExit)();
+static int (* sceSasCoreInit)();
+static int (* sceSasCoreExit)();
 
-int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate);
+static int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate);
+
+SceAdrenaline *g_adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 int SendAdrenalineCmd(int cmd, u32 args) {
 	int k1 = pspSdkSetK1(0);
@@ -147,28 +147,28 @@ int getSfoTitle(char *title, int n) {
 }
 
 void initAdrenalineInfo() {
-	memset(adrenaline, 0, sizeof(SceAdrenaline));
+	memset(g_adrenaline, 0, sizeof(SceAdrenaline));
 
 	int keyconfig = sceKernelApplicationType();
 	if (keyconfig == PSP_INIT_KEYCONFIG_GAME || keyconfig == PSP_INIT_KEYCONFIG_POPS) {
-		getSfoTitle(adrenaline->title, 128);
+		getSfoTitle(g_adrenaline->title, 128);
 	} else if (keyconfig == PSP_INIT_KEYCONFIG_VSH) {
-		strcpy(adrenaline->title, "XMB\xE2\x84\xA2");
+		strcpy(g_adrenaline->title, "XMB\xE2\x84\xA2");
 	} else {
-		strcpy(adrenaline->title, "Unknown");
+		strcpy(g_adrenaline->title, "Unknown");
 	}
 
 	SceGameInfo *game_info = sceKernelGetGameInfo();
 	if (game_info) {
-		strcpy(adrenaline->titleid, game_info->title_id);
+		strcpy(g_adrenaline->titleid, game_info->title_id);
 	}
 
 	char *filename = sceKernelInitFileName();
 	if (filename) {
-		strcpy(adrenaline->filename, filename);
+		strcpy(g_adrenaline->filename, filename);
 	}
 
-	adrenaline->pops_mode = sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS;
+	g_adrenaline->pops_mode = sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS;
 }
 
 int adrenaline_interrupt() {
@@ -182,18 +182,18 @@ int adrenaline_thread(SceSize args, void *argp) {
 		// Wait for semaphore signal
 		sceKernelWaitSema(adrenaline_semaid, 1, NULL);
 
-		switch (adrenaline->psp_cmd) {
+		switch (g_adrenaline->psp_cmd) {
 			case ADRENALINE_PSP_CMD_REINSERT_MS:
 				sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
 				break;
 
 			case ADRENALINE_PSP_CMD_SAVESTATE:
-				adrenaline->savestate_mode = SAVESTATE_MODE_SAVE;
+				g_adrenaline->savestate_mode = SAVESTATE_MODE_SAVE;
 				_scePowerSuspendOperation(0x202);
 				break;
 
 			case ADRENALINE_PSP_CMD_LOADSTATE:
-				adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
+				g_adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
 				_scePowerSuspendOperation(0x202);
 				break;
 		}
@@ -203,33 +203,33 @@ int adrenaline_thread(SceSize args, void *argp) {
 }
 
 int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate) {
-	sas_args.sasCore = sasCore;
-	sas_args.grainSamples = grainSamples;
-	sas_args.maxVoices = maxVoices;
-	sas_args.outMode = outMode;
-	sas_args.sampleRate = sampleRate;
+	g_sas_args.sasCore = sasCore;
+	g_sas_args.grainSamples = grainSamples;
+	g_sas_args.maxVoices = maxVoices;
+	g_sas_args.outMode = outMode;
+	g_sas_args.sampleRate = sampleRate;
 
-	sas_inited = 1;
+	g_sas_inited = 1;
 
 	return __sceSasInit(sasCore, grainSamples, maxVoices, outMode, sampleRate);
 }
 
 void ReInitSasCore() {
-	if (__sceSasInit && sas_inited) {
+	if (__sceSasInit && g_sas_inited) {
 		sceSasCoreExit();
 		sceSasCoreInit();
-		__sceSasInit(sas_args.sasCore, sas_args.grainSamples, sas_args.maxVoices, sas_args.outMode, sas_args.sampleRate);
+		__sceSasInit(g_sas_args.sasCore, g_sas_args.grainSamples, g_sas_args.maxVoices, g_sas_args.outMode, g_sas_args.sampleRate);
 	}
 }
 
 int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 	// Resume completed
 	if (ev_id == 0x400000) {
-		if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-			adrenaline->savestate_mode = SAVESTATE_MODE_NONE;
+		if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+			g_adrenaline->savestate_mode = SAVESTATE_MODE_NONE;
 			ReInitSasCore();
 
-			if (adrenaline->pops_mode) {
+			if (g_adrenaline->pops_mode) {
 				int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
 				if (sceKermitPeripheralInitPops) {
 					sceKermitPeripheralInitPops();
@@ -242,7 +242,7 @@ int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 }
 
 void VitaSyncPatched() {
-	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		void (* SaveStateBinary)() = (void *)0x00010000;
 		memcpy((void *)SaveStateBinary, binary, size_binary);
 		sctrlFlushCache();
@@ -265,7 +265,7 @@ void VitaSyncPatched() {
 }
 
 int SetFlag1Patched() {
-	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
 
@@ -273,7 +273,7 @@ int SetFlag1Patched() {
 }
 
 int SetFlag2Patched() {
-	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
 
@@ -281,7 +281,7 @@ int SetFlag2Patched() {
 }
 
 int sceKermitSyncDisplayPatched() {
-	if (adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
 

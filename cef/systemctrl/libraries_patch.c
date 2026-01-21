@@ -40,9 +40,9 @@ int (* aLinkLibEntries)(void *lib);
 int (* search_nid_in_entrytable)(void *lib, u32 nid, int unk, int nidSearchOption);
 
 #define N_MISSING_NID(x) (sizeof(x) / sizeof(MissingNid))
-#define N_MISSING_NID_LIST (sizeof(missing_nid_list) / sizeof(MissingNidList))
+#define N_MISSING_NID_LIST (sizeof(g_missing_nid_list) / sizeof(MissingNidList))
 
-MissingNid SysclibForKernel_nids[] = {
+static MissingNid SysclibForKernel_nids[] = {
 	{ 0x1AB53A58, strtok_r },
 	{ 0x87F8D2DA, strtok },
 	{ 0x1D83F344, atob },
@@ -58,17 +58,17 @@ MissingNid LoadCoreForKernel_nids[] = {
 	{ 0xD8779AC6, 0 }, //sceKernelIcacheClearAll
 };
 
-MissingNidList missing_nid_list[] = {
+static MissingNidList g_missing_nid_list[] = {
 	{ "SysclibForKernel", SysclibForKernel_nids, N_MISSING_NID(SysclibForKernel_nids) },
 	{ "LoadCoreForKernel", LoadCoreForKernel_nids, N_MISSING_NID(LoadCoreForKernel_nids) },
 };
 
 void *ResolveMissingNIDs(const char *libname, u32 nid) {
 	for (int i = 0; i < N_MISSING_NID_LIST; i++) {
-		if (strcmp(missing_nid_list[i].libname, libname) == 0) {
-			for (int j = 0; j < missing_nid_list[i].n_nid; j++) {
-				if (missing_nid_list[i].nid[j].nid == nid) {
-					return missing_nid_list[i].nid[j].function;
+		if (strcmp(g_missing_nid_list[i].libname, libname) == 0) {
+			for (int j = 0; j < g_missing_nid_list[i].n_nid; j++) {
+				if (g_missing_nid_list[i].nid[j].nid == nid) {
+					return g_missing_nid_list[i].nid[j].function;
 				}
 			}
 		}

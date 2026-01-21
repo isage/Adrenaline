@@ -29,18 +29,18 @@
 #include "main.h"
 #include "pgd.h"
 
-int (* do_open)(char *file, int flags, SceMode mode, int async, int retAddr, int oldK1);
-int (* do_ioctl)(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen, int async);
+static int (* do_open)(char *file, int flags, SceMode mode, int async, int retAddr, int oldK1);
+static int (* do_ioctl)(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen, int async);
 
-SceUID (* _sceKernelLoadModuleNpDrm)(const char *path, int flags, SceKernelLMOption *option);
+static SceUID (* _sceKernelLoadModuleNpDrm)(const char *path, int flags, SceKernelLMOption *option);
 
-int (* _sceNpDrmRenameCheck)(const char *file_name);
-int (* _sceNpDrmEdataSetupKey)(SceUID fd);
-int (* _sceNpDrmEdataGetDataSize)(SceUID fd);
+static int (* _sceNpDrmRenameCheck)(const char *file_name);
+static int (* _sceNpDrmEdataSetupKey)(SceUID fd);
+static int (* _sceNpDrmEdataGetDataSize)(SceUID fd);
 
-static char ebootpath[256];
+static char g_ebootpath[256];
 static char g_pgd_path[256];
-static u8 pgdbuf[0x90];
+static u8 g_pgdbuf[0x90];
 static u8 g_eboot_key[16];
 static int g_licensed_eboot = 0;
 static int g_is_key = 0;
@@ -197,12 +197,12 @@ int setupEdatVersionKeyPatched(u8 *vkey, u8 *edat, int size) {
 
 	if (ret < 0) { //generate key from mac if official method fails.
 		ret = sceIoOpen(g_pgd_path, 1, 0);
-		sceIoRead(ret, pgdbuf, 16);
-		sceIoLseek(ret, tou32(pgdbuf + 0xC) & 0xFFFF, 0);
-		sceIoRead(ret, pgdbuf, 0x90);
+		sceIoRead(ret, g_pgdbuf, 16);
+		sceIoLseek(ret, tou32(g_pgdbuf + 0xC) & 0xFFFF, 0);
+		sceIoRead(ret, g_pgdbuf, 0x90);
 		sceIoClose(ret);
 
-		ret = get_edat_key(vkey, pgdbuf);
+		ret = get_edat_key(vkey, g_pgdbuf);
 	}
 
 	return ret;
@@ -221,7 +221,7 @@ int setupEbootVersionKeyPatched(u8 *vkey, u8 *cid, u32 type, u8 *act) {
 
 	// Generate key from mac if official method fails.
 	if (ret < 0) {
-		ret = get_version_key(vkey, ebootpath);
+		ret = get_version_key(vkey, g_ebootpath);
 	}
 
 	if (ret >= 0) {
@@ -264,7 +264,7 @@ void patch_drm() {
 int (* _initEboot)(const char *eboot, u32 a1) = NULL;
 int initEbootPatched(const char *eboot, u32 a1) {
 	if ((g_licensed_eboot = is_licensed_eboot(eboot))) {
-		strcpy(ebootpath, eboot);
+		strcpy(g_ebootpath, eboot);
 		patch_drm();
 	}
 
@@ -273,7 +273,7 @@ int initEbootPatched(const char *eboot, u32 a1) {
 
 void PatchNp9660Driver(SceModule* mod) {
 	// Do not patch if configured to not patch it
-	if (config.no_nodrm_engine) {
+	if (g_cfw_config.no_nodrm_engine) {
 		return;
 	}
 
@@ -309,7 +309,7 @@ void PatchNp9660Driver(SceModule* mod) {
 
 void PatchNpDrmDriver(SceModule* mod) {
 	// Do not patch if configured to not patch it
-	if (config.no_nodrm_engine) {
+	if (g_cfw_config.no_nodrm_engine) {
 		return;
 	}
 
@@ -362,7 +362,7 @@ void *vshCheckBootable(void *dst, const void *src, int size) {
 
 void PatchVshForDrm(SceModule *mod) {
 	// Do not patch if configured to not patch it
-	if (config.no_nodrm_engine) {
+	if (g_cfw_config.no_nodrm_engine) {
 		return;
 	}
 
@@ -383,7 +383,7 @@ void PatchVshForDrm(SceModule *mod) {
 
 void PatchDrmOnVsh() {
 	// Do not patch if configured to not patch it
-	if (config.no_nodrm_engine) {
+	if (g_cfw_config.no_nodrm_engine) {
 		return;
 	}
 
@@ -414,7 +414,7 @@ void PatchDrmOnVsh() {
 
 void PatchSysconfForDrm(SceModule *mod) {
 	// Do not patch if configured to not patch it
-	if (config.no_nodrm_engine) {
+	if (g_cfw_config.no_nodrm_engine) {
 		return;
 	}
 
@@ -461,7 +461,7 @@ SceUID sceIoOpenAsyncDrmPatched(const char *path, int flags, SceMode mode) {
 
 void PatchDrmGameModule(SceModule* mod) {
 	// Do not patch if configured to not patch it
-	if (config.no_nodrm_engine) {
+	if (g_cfw_config.no_nodrm_engine) {
 		return;
 	}
 

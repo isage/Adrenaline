@@ -1,7 +1,7 @@
 #include <string.h>
 #include <psptypes.h>
 
-static char *__strtok_context;
+static char *g_strtok_context;
 
 char tolower(char);
 int strtol(const char*, char**, int);
@@ -51,7 +51,7 @@ char *strtok_r(char *string, const char *seps, char **context) {
 }
 
 char *strtok(char *str, const char *seps) {
-	return strtok_r(str, seps, &__strtok_context);
+	return strtok_r(str, seps, &g_strtok_context);
 }
 
 void atob(const char *a0, int *a1) {

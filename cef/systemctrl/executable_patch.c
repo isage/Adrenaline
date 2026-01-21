@@ -31,11 +31,11 @@
 #include "init_patch.h"
 #include "libraries_patch.h"
 
-int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
-int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
-int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize);
-int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
-int (* PrologueModule)(void *modmgr_param, SceModule *mod) = NULL;
+static int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
+static int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
+static int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize);
+static int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
+static int (* PrologueModule)(void *modmgr_param, SceModule *mod) = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -187,8 +187,8 @@ int PartitionCheckPatched(u32 *param, SceLoadCoreExecFileInfo *execInfo) {
 int PrologueModulePatched(void *modmgr_param, SceModule *mod) {
 	int res = PrologueModule(modmgr_param, mod);
 
-	if (res >= 0 && module_handler)
-		module_handler(mod);
+	if (res >= 0 && g_module_handler)
+		g_module_handler(mod);
 
 	return res;
 }

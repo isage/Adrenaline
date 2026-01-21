@@ -95,15 +95,15 @@ static void migrate_config717(SEConfigEPI717* old, SEConfigEPI* new){
 }
 
 static void config_overwrite(SEConfigEPI *config) {
-	if (rebootex_config.overwrite_use_psposk) {
+	if (g_rebootex_config.overwrite_use_psposk) {
 		// Overwrite the config
 		g_og_use_psposk_value = config->use_sony_psposk;
-		config->use_sony_psposk = rebootex_config.overwrite_use_psposk_to;
+		config->use_sony_psposk = g_rebootex_config.overwrite_use_psposk_to;
 	}
 }
 
 static inline void restore_overwrite(SEConfigEPI *config) {
-	if (rebootex_config.overwrite_use_psposk) {
+	if (g_rebootex_config.overwrite_use_psposk) {
 		config->use_sony_psposk = g_og_use_psposk_value;
 	}
 }
@@ -217,16 +217,16 @@ int sctrlSESetConfig(SEConfig *config) {
 
 int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
 	if (size == sizeof(SEConfigEPI)){
-		memcpy(&config, conf, size);
+		memcpy(&g_cfw_config, conf, size);
 		return 0;
 	}
 	return -1;
 }
 
 void sctrlSEApplyConfig(SEConfig *conf) {
-	memcpy(&config, conf, sizeof(SEConfigEPI));
+	memcpy(&g_cfw_config, conf, sizeof(SEConfigEPI));
 }
 
 SEConfig* sctrlSEGetConfigInternal(){
-    return (SEConfig*)&config;
+    return (SEConfig*)&g_cfw_config;
 }

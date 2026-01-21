@@ -29,14 +29,11 @@
 
 #include <adrenaline_log.h>
 
-#include "plugin.h"
 #include "main.h"
+#include "plugin.h"
 
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
-
-extern SEConfigEPI config;
-extern RebootexConfigEPI rebootex_config;
 
 #define MAX_PLUGINS 64
 #define MAX_PLUGIN_PATH 128
@@ -46,9 +43,9 @@ typedef struct{
 	char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
 } Plugins;
 
-Plugins* plugins = NULL;
+Plugins* g_plugins = NULL;
 
-int (*plugin_handler)(const char* path, int modid) = NULL;
+static int (*g_plugin_handler)(const char* path, int modid) = NULL;
 
 enum {
 	RUNLEVEL_UNKNOWN,
@@ -59,19 +56,19 @@ enum {
 };
 static int cur_runlevel = RUNLEVEL_UNKNOWN;
 
-int disable_plugins = 0;
-int is_plugins_loading = 0;
+int g_disable_plugins = 0;
+static int g_is_plugins_loading = 0;
 
 int isLoadingPlugins() {
-	return is_plugins_loading;
+	return g_is_plugins_loading;
 }
 
 static void addPlugin(const char* path) {
-	for (int i=0; i<plugins->count; i++) {
-		char* cmp1 = strchr(plugins->paths[i], ':');
+	for (int i=0; i<g_plugins->count; i++) {
+		char* cmp1 = strchr(g_plugins->paths[i], ':');
 		char* cmp2 = strchr(path, ':');
 		if (!cmp1) {
-			cmp1 = plugins->paths[i];
+			cmp1 = g_plugins->paths[i];
 		}
 		if (!cmp2) {
 			cmp2 = (char*)path;
@@ -80,16 +77,16 @@ static void addPlugin(const char* path) {
 			return; // plugin already added
 		}
 	}
-	if (plugins->count < MAX_PLUGINS) {
-		strcpy(plugins->paths[plugins->count++], path);
+	if (g_plugins->count < MAX_PLUGINS) {
+		strcpy(g_plugins->paths[g_plugins->count++], path);
 	}
 }
 
 static void removePlugin(const char* path) {
-	for (int i=0; i<plugins->count; i++) {
-		if (strcasecmp(plugins->paths[i], path) == 0) {
-			if (--plugins->count > i) {
-				strcpy(plugins->paths[i], plugins->paths[plugins->count]);
+	for (int i=0; i<g_plugins->count; i++) {
+		if (strcasecmp(g_plugins->paths[i], path) == 0) {
+			if (--g_plugins->count > i) {
+				strcpy(g_plugins->paths[i], g_plugins->paths[g_plugins->count]);
 			}
 			break;
 		}
@@ -98,16 +95,16 @@ static void removePlugin(const char* path) {
 
 // Load and Start Plugin Module
 static void startPlugins() {
-	for (int i=0; i<plugins->count; i++) {
+	for (int i=0; i<g_plugins->count; i++) {
 		int res = 0;
-		char* path = plugins->paths[i];
+		char* path = g_plugins->paths[i];
 		// Load Module
 		logmsg4("[DEBUG]: Processing plugin: %s\n", path);
 		int uid = sceKernelLoadModule(path, 0, NULL);
 		if (uid >= 0) {
 			// Call handler
-			if (plugin_handler) {
-				res = plugin_handler(path, uid);
+			if (g_plugin_handler) {
+				res = g_plugin_handler(path, uid);
 				// Unload Module on Error
 				if (res < 0) {
 					sceKernelUnloadModule(uid);
@@ -181,12 +178,12 @@ static int isPath(char* runlevel) {
 }
 
 static int isTitleId(char* runlevel) {
-	if (rebootex_config.title_id[0] == 0) {
+	if (g_rebootex_config.title_id[0] == 0) {
 		return 0;
 	}
 	char gameid[10];
 	memset(gameid, 0, sizeof(gameid));
-	memcpy(gameid, rebootex_config.title_id, 9);
+	memcpy(gameid, g_rebootex_config.title_id, 9);
 	lowerString(gameid, gameid, strlen(gameid)+1);
 	return (strstr(runlevel, gameid) != NULL);
 }
@@ -215,11 +212,11 @@ static int matchingRunlevel(char * runlevel) {
 		return isPath(runlevel);
 	}
 
-	if (isVshRunlevel() && !config.no_xmb_plugins) {
+	if (isVshRunlevel() && !g_cfw_config.no_xmb_plugins) {
 		return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
 	}
 
-	if (isPopsRunlevel() && !config.no_pops_plugins) {
+	if (isPopsRunlevel() && !g_cfw_config.no_pops_plugins) {
 		// check if plugin loads on specific title
 		if (isTitleId(runlevel)) {
 			return 1;
@@ -228,14 +225,14 @@ static int matchingRunlevel(char * runlevel) {
 		return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
 	}
 
-	if (isHomebrewRunlevel() && !config.no_game_plugins) {
+	if (isHomebrewRunlevel() && !g_cfw_config.no_game_plugins) {
 		if (strstr(runlevel, "hbw") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "app") != NULL || strstr(runlevel, "game") != NULL) {
 			// homebrews only
 			return 1;
 		}
 	}
 
-	if (isUmdRunlevel() && !config.no_game_plugins) {
+	if (isUmdRunlevel() && !g_cfw_config.no_game_plugins) {
 		// check if plugin loads on specific title
 		if (isTitleId(runlevel)) {
 			return 1;
@@ -450,13 +447,13 @@ static int ProcessConfigFile(const char* parent, const char* path, void (*enable
 }
 
 void loadPlugins() {
-	if (disable_plugins) {
+	if (g_disable_plugins) {
 		return;
 	}
-	is_plugins_loading = 1;
+	g_is_plugins_loading = 1;
 	// allocate resources
-	plugins = oe_malloc(sizeof(Plugins));
-	plugins->count = 0; // initialize plugins table
+	g_plugins = oe_malloc(sizeof(Plugins));
+	g_plugins->count = 0; // initialize plugins table
 
 	SceIoStat stat;
 	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
@@ -471,7 +468,7 @@ void loadPlugins() {
 	// start all loaded plugins
 	startPlugins();
 	// free resources
-	oe_free(plugins);
-	plugins = NULL;
-	is_plugins_loading = 0;
+	oe_free(g_plugins);
+	g_plugins = NULL;
+	g_is_plugins_loading = 0;
 }

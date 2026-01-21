@@ -30,20 +30,20 @@ typedef struct {
 	int mode;
 } SceDdrPllMode;
 
-SceDdrPllMode pll_modes[] = {
-	{ 19,   8 },
-	{ 37,   0 },
-	{ 74,   9 },
-	{ 95,  10 },
-	{ 111, 11 },
-	{ 133, 12 },
-	{ 148,  1 },
-	{ 166, 13 },
-	{ 190,  2 },
-	{ 222,  3 },
-	{ 266,  4 },
-	{ 333,  5 },
-};
+// static SceDdrPllMode g_pll_modes[] = {
+// 	{ 19,   8 },
+// 	{ 37,   0 },
+// 	{ 74,   9 },
+// 	{ 95,  10 },
+// 	{ 111, 11 },
+// 	{ 133, 12 },
+// 	{ 148,  1 },
+// 	{ 166, 13 },
+// 	{ 190,  2 },
+// 	{ 222,  3 },
+// 	{ 266,  4 },
+// 	{ 333,  5 },
+// };
 
 int scePowerRequestColdResetPatched(int a0) {
 	return sctrlKernelExitVSH(NULL);
@@ -59,8 +59,8 @@ int power_online() {
 	return (scePowerGetBatteryLifeTimePatched() == 0) ? 1 : 0;
 }
 
-float (* sceClkcGetCpuFrequency)();
-float (* sceClkcGetBusFrequency)();
+static float (* sceClkcGetCpuFrequency)();
+static float (* sceClkcGetBusFrequency)();
 /*
 333/166: 0x43A68000/0x43268000
 300/150: 0x4395E1F1/0x4315E1F1

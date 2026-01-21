@@ -23,12 +23,12 @@
 
 #include "main.h"
 
-int (* _sceUtilityLoadModule)(int id);
-int (* _sceUtilityUnloadModule)(int id);
+static int (* _sceUtilityLoadModule)(int id);
+static int (* _sceUtilityUnloadModule)(int id);
 
-int (* _sceUtilityGetSystemParamInt)(int id, int *value);
-int (* _kermitUtilityOskGetStatus)();
-int (* _kermitUtilityOskInitStart)(SceUtilityOskParams *params);
+static int (* _sceUtilityGetSystemParamInt)(int id, int *value);
+static int (* _kermitUtilityOskGetStatus)();
+static int (* _kermitUtilityOskInitStart)(SceUtilityOskParams *params);
 
 __attribute__((noinline)) u32 FindUtilityFunction(u32 nid) {
 	return sctrlHENFindFunction("sceUtility_Driver", "sceUtility", nid);
@@ -60,7 +60,7 @@ void PatchUtility() {
 	HIJACK_FUNCTION(FindUtilityFunction(0x2A2B3DE0), sceUtilityLoadModulePatched, _sceUtilityLoadModule);
 	HIJACK_FUNCTION(FindUtilityFunction(0xE49BFE92), sceUtilityUnloadModulePatched, _sceUtilityUnloadModule);
 
-	if (!config.use_sony_psposk) {
+	if (!g_cfw_config.use_sony_psposk) {
 		_sceUtilityGetSystemParamInt = (void *)FindUtilityFunction(0xA5DA2406);
 		_kermitUtilityOskGetStatus = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility_private", 0xB08B2B48);
 

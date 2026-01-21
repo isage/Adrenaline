@@ -26,10 +26,12 @@
 #include <rebootexconfig.h>
 
 #include "utils.h"
+#include "../../adrenaline_compat.h"
 
-extern RebootexConfigEPI rebootex_config;
-extern SEConfigEPI config;
-extern STMOD_HANDLER module_handler;
+extern RebootexConfigEPI g_rebootex_config;
+extern SEConfigEPI g_cfw_config;
+extern STMOD_HANDLER g_module_handler;
+extern SceAdrenaline *g_adrenaline;
 
 
 void lowerString(char* orig, char* ret, int strSize);

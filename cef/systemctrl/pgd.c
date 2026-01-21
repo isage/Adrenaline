@@ -22,13 +22,13 @@ char *stpcpy(char *dest, const char *src) {
 
 /*************************************************************/
 
-u8 dnas_key1A90[16] = {0xED, 0xE2, 0x5D, 0x2D, 0xBB, 0xF8, 0x12, 0xE5,
+static u8 g_dnas_key1A90[16] = {0xED, 0xE2, 0x5D, 0x2D, 0xBB, 0xF8, 0x12, 0xE5,
 											 0x3C, 0x5C, 0x59, 0x32, 0xFA, 0xE3, 0xE2, 0x43};
-u8 dnas_key1AA0[16] = {0x27, 0x74, 0xFB, 0xEB, 0xA4, 0xA0, 0x01, 0xD7,
+static u8 g_dnas_key1AA0[16] = {0x27, 0x74, 0xFB, 0xEB, 0xA4, 0xA0, 0x01, 0xD7,
 											 0x02, 0x56, 0x9E, 0x33, 0x8C, 0x19, 0x57, 0x83};
 
-PGD_DESC g_pgd;
-u8 kirk_buf[0x814];
+static PGD_DESC g_pgd;
+static u8 g_kirk_buf[0x814];
 
 int kirk7(u8 *buf, int size, int type) {
 	u32 *header = (u32 *)buf;
@@ -59,24 +59,24 @@ int bbmac_getkey(SceMacKey *mkey, u8 *bbmac, u8 *vkey) {
 		return retv;
 	}
 
-	kbuf = kirk_buf + 0x14;
+	kbuf = g_kirk_buf + 0x14;
 
 	// decrypt bbmac
 	if (type == 3) {
 		memcpy(kbuf, bbmac, VERSION_KEY_SIZE);
-		kirk7(kirk_buf, VERSION_KEY_SIZE, 0x63);
+		kirk7(g_kirk_buf, VERSION_KEY_SIZE, 0x63);
 	} else {
-		memcpy(kirk_buf, bbmac, VERSION_KEY_SIZE);
+		memcpy(g_kirk_buf, bbmac, VERSION_KEY_SIZE);
 	}
 
-	memcpy(tmp1, kirk_buf, 16);
+	memcpy(tmp1, g_kirk_buf, 16);
 	memcpy(kbuf, tmp1, 16);
 
 	code = (type == 2) ? 0x3A : 0x38;
-	kirk7(kirk_buf, VERSION_KEY_SIZE, code);
+	kirk7(g_kirk_buf, VERSION_KEY_SIZE, code);
 
 	for (i = 0; i < VERSION_KEY_SIZE; i++) {
-		vkey[i] = tmp[i] ^ kirk_buf[i];
+		vkey[i] = tmp[i] ^ g_kirk_buf[i];
 	}
 
 	return 0;
@@ -131,11 +131,11 @@ int get_edat_key(u8 *vkey, u8 *pgd_buf) {
 	pgd->open_flag = pgd_flag;
 
 	if (pgd_flag & 2) {
-		fkey = dnas_key1A90;
+		fkey = g_dnas_key1A90;
 	}
 
 	if (pgd_flag & 1) {
-		fkey = dnas_key1AA0;
+		fkey = g_dnas_key1AA0;
 	}
 
 	if (fkey == NULL) {

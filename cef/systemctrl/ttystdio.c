@@ -7,6 +7,7 @@
 
 #include <systemctrl_adrenaline.h>
 
+#include "main.h"
 #include "adrenaline.h"
 #include "../../adrenaline_compat.h"
 
@@ -44,10 +45,9 @@ static int io_write(PspIoDrvFileArg *arg, const char *data, int len) {
 
 	(void) sceKernelWaitSema(g_out_sema, 1, 0);
 	if ((arg->fs_num == STDOUT_FILENO) || (arg->fs_num == STDERR_FILENO)) {
-		SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 		if (len < 1023) {
-			memset(adrenaline->printbuf, 0, 1024);
-			strncpy(adrenaline->printbuf, data, len);
+			memset(g_adrenaline->printbuf, 0, 1024);
+			strncpy(g_adrenaline->printbuf, data, len);
 			ret = SendAdrenalineCmd(ADRENALINE_VITA_CMD_PRINT, 0);
 		}
 	}
