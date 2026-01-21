@@ -40,4 +40,7 @@ int sceChkregGetPsCode(u8 *pscode);
 u32 sctrlHENFakeDevkitVersion();
 SceUID sceIoOpenDrmPatched(const char *path, int flags, SceMode mode);
 
+// Temporary fix, remove once SDK is able to build
+int sceKernelQuerySystemCall(void *function);
+
 #endif

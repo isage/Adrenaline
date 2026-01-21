@@ -200,8 +200,6 @@ void PatchGamesByMod(SceModule* mod) {
 		// Stops it trying to find and maybe deleting CFW folders and their contents
 		sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, (void*)0);
 
-		char* title_id = rebootex_config.title_id;
-
 		// Reduce sync issues
 		SetUmdEmuSpeed(1, 1);
 

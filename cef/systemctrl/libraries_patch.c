@@ -16,6 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <pspintrman_kernel.h>
+
 #include <systemctrl_adrenaline.h>
 #include <adrenaline_log.h>
 
