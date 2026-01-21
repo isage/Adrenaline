@@ -202,15 +202,11 @@ void PatchGamesByMod(SceModule* mod) {
 
 		char* title_id = rebootex_config.title_id;
 
-		if (strcasecmp("ULKS46190", title_id) == 0) {
-			// Attempt to improve the `Clazziquai Edition`
+		// Reduce sync issues
+		SetUmdEmuSpeed(1, 1);
 
-			// Reduce sync issues
-			SetUmdEmuSpeed(1, 1);
-
-			// Disable ms cache as well.
-			storageCacheInit(NULL);
-		}
+		// Disable ms cache as well.
+		storageCacheInit(NULL);
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
 		// Remove "overclock" message in `ATV PRO`
