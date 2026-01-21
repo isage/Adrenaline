@@ -5,7 +5,7 @@ PSPGZ = $(CFWSDK)/build-tools/gz/pspgz.py
 KHDR = $(CFWSDK)/build-tools/gz/SystemControl.hdr
 UHDR = $(CFWSDK)/build-tools/gz/UserModule.hdr
 
-all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _pentazemin _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
 KERNEL_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspreg_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel
 
@@ -61,6 +61,7 @@ _binary:
 	make -C binary clean
 	make -C binary -j
 	bin2c binary/binary.bin systemctrl/binary.h binary
+	bin2c binary/binary.bin pentazemin/binary.h binary
 	make -C binary clean
 
 _systemctrl: | _rebootex _binary
@@ -72,6 +73,16 @@ else
 	$(PY) $(PSPGZ) ../user/flash0/kd/systemctrl.prx $(KHDR) systemctrl/systemctrl.prx SystemControl 0x3007
 endif
 	make -C systemctrl clean
+
+_pentazemin: | _binary
+	make -C pentazemin clean
+	make -C pentazemin -j
+ifdef USE_PSP_PACKER
+	psp-packer pentazemin/pentazemin.prx -o ../user/flash0/kd/pentazemin.prx
+else
+	$(PY) $(PSPGZ) ../user/flash0/kd/pentazemin.prx $(KHDR) pentazemin/pentazemin.prx Pentazemin 0x3007
+endif
+	make -C pentazemin clean
 
 _popcorn:
 	make -C popcorn clean
@@ -174,6 +185,7 @@ clean:
 	make -C payloadex_ark clean
 	make -C binary clean
 	make -C systemctrl clean
+	make -C pentazemin clean
 	make -C popcorn clean
 	make -C galaxy clean
 	make -C inferno clean

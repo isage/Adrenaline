@@ -42,6 +42,7 @@ INCLUDE_EXTERN_RESOURCE(kd_pspbtlnf_bin);
 INCLUDE_EXTERN_RESOURCE(kd_pspbtmnf_bin);
 INCLUDE_EXTERN_RESOURCE(kd_pspbtrnf_bin);
 INCLUDE_EXTERN_RESOURCE(kd_systemctrl_prx);
+INCLUDE_EXTERN_RESOURCE(kd_pentazemin_prx);
 INCLUDE_EXTERN_RESOURCE(kd_popcorn_prx);
 INCLUDE_EXTERN_RESOURCE(kd_vshctrl_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_xmbctrl_prx);
@@ -66,6 +67,7 @@ static ScePspemuFlash0Package custom_package[] = {
 	FLASH0_FILE("/kd/pspbtmnf.bin",         kd_pspbtmnf_bin),
 	FLASH0_FILE("/kd/pspbtrnf.bin",         kd_pspbtrnf_bin),
 	FLASH0_FILE("/kd/systemctrl.prx",       kd_systemctrl_prx),
+	FLASH0_FILE("/kd/pentazemin.prx",       kd_pentazemin_prx),
 	FLASH0_FILE("/kd/popcorn.prx",          kd_popcorn_prx),
 	FLASH0_FILE("/kd/vshctrl.prx",          kd_vshctrl_prx),
 	FLASH0_FILE("/vsh/module/xmbctrl.prx",  vsh_module_xmbctrl_prx),
