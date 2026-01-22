@@ -28,6 +28,14 @@
 
 #define EPI_CONFIG_ADDR 0x08800010
 
+#define ADRENALINE_SIZE 0x2000
+#define ADRENALINE_ADDRESS 0xABCDE000
+
+#define DRAW_NATIVE 0xABCDEF00
+#define NATIVE_FRAMEBUFFER 0x0A400000
+
+#define CONVERT_ADDRESS(addr) (0x68000000 + (addr & 0x0FFFFFFF))
+
 enum SaveStateModes {
 	SAVESTATE_MODE_NONE,
 	SAVESTATE_MODE_SAVE,
@@ -83,14 +91,6 @@ typedef struct {
 
 	char printbuf[1024];
 } SceAdrenaline;
-
-#define ADRENALINE_SIZE 0x2000
-#define ADRENALINE_ADDRESS 0xABCDE000
-
-#define DRAW_NATIVE 0xABCDEF00
-#define NATIVE_FRAMEBUFFER 0x0A400000
-
-#define CONVERT_ADDRESS(addr) (0x68000000 + (addr & 0x0FFFFFFF))
 
 enum SEUmdModes
 {
