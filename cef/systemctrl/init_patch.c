@@ -170,9 +170,6 @@ int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 
 	sctrlFlushCache();
 
-	// configure Pentazemin
-	sctrlPentazeminConfigure(g_cfw_config.use_sony_psposk, g_cfw_config.use_ge2, g_cfw_config.use_me2);
-
 	return module_bootstart(4, argp);
 }
 

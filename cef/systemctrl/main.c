@@ -188,6 +188,8 @@ static int OnModuleStart(SceModule *mod) {
 		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
 		if (res == 0) {
 			load_file_config = 0;
+			// configure Pentazemin
+			sctrlPentazeminConfigure(g_cfw_config.use_sony_psposk, g_cfw_config.use_ge2, g_cfw_config.use_me2);
 		}
 	}
 
