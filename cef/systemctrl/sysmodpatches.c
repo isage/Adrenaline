@@ -508,7 +508,7 @@ int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
 	return count;
 }
 
-int (* _sceMeAudio_driver_C300D466)(int codec, int unk, void *info) = NULL;
+static int (* _sceMeAudio_driver_C300D466)(int codec, int unk, void *info) = NULL;
 int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 	int res = _sceMeAudio_driver_C300D466(codec, unk, info);
 
@@ -519,7 +519,7 @@ int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 	return res;
 }
 
-int (*_sceKernelPowerTick)(u32 tick_type) = NULL;
+static int (*_sceKernelPowerTick)(u32 tick_type) = NULL;
 int sceKernelPowerTickPatched(u32 tick_type) {
 	if (_sceKernelPowerTick == NULL) {
 		return SCE_KERR_ILLEGAL_ADDR;
