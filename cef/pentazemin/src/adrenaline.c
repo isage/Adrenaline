@@ -26,15 +26,12 @@
 #include <pspsysmem_kernel.h>
 
 #include <cfwmacros.h>
-#include <systemctrl.h>
 #include <pspextratypes.h>
-#include <systemctrl_se.h>
-#include <rebootexconfig.h>
+#include <systemctrl.h>
 #include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
-#include "externs.h"
 #include "binary.h"
 
 #include "../../adrenaline_compat.h"

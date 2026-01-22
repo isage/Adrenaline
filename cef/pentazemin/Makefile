@@ -4,6 +4,7 @@ TARGET = pentazemin
 
 C_OBJS =  \
 	main.o \
+	src/ttystdio.o \
 	src/usbcam.o \
 	src/vitamem.o \
 	src/syspatch.o \

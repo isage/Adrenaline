@@ -29,4 +29,3 @@ void PatchVlfLib(SceModule* mod) {
 
 	sctrlFlushCache();
 }
-

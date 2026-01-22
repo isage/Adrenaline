@@ -15,13 +15,13 @@
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 
-#include "funcs.h"
 #include "adrenaline.h"
 #include "../../adrenaline_compat.h"
 #include "io_patch.h"
 #include "init_patch.h"
 #include "extra_patches.h"
 #include "externs.h"
+#include "psperror.h"
 
 
 extern int (*_sctrlHENApplyMemory)(u32);
@@ -144,6 +144,31 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
+static int (*_sceKernelPowerTick)(u32 tick_type) = NULL;
+int sceKernelPowerTickPatched(u32 tick_type) {
+	if (_sceKernelPowerTick == NULL) {
+		return SCE_KERR_ILLEGAL_ADDR;
+	}
+
+	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_TICK, tick_type);
+
+	if (res < 0) {
+		return res;
+	}
+
+	u32 k1 = pspSdkSetK1(0);
+	res = _sceKernelPowerTick(tick_type);
+	pspSdkSetK1(k1);
+
+	return res;
+}
+
+void patchSysMem(){
+	SceModule *mod = sceKernelFindModuleByName("sceSystemMemoryManager");
+	u32 power_tick_addr = sctrlHENFindFunctionInMod(mod, "sceSuspendForKernel", 0x090CCB3F);
+	HIJACK_FUNCTION(power_tick_addr, sceKernelPowerTickPatched, _sceKernelPowerTick);
+}
+
 void patch_GameBoot(SceModule* mod){
 	u32 p1 = 0;
 	u32 p2 = 0;
@@ -163,37 +188,49 @@ void patch_GameBoot(SceModule* mod){
 	_sw(0x24040002, p2 + 4);
 }
 
-int sctrlGetUsbState() {
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE, 0);
-}
-
 int sctrlStartUsb() {
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB, 0);
+    return SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB, 0);
 }
 
 int sctrlStopUsb() {
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB, 0);
+    return SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB, 0);
+}
+
+int sctrlGetUsbState() {
+    int state = SendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE, 0);
+    if (state & 0x20)
+        return 1; // Connected
+
+    return 2; // Not connected
+}
+
+int sctrlRebootDevice() {
+	// can't do it separately, because user might have old systemctrl
+	// but this is used only by updater, so that's ok
+	SendAdrenalineCmd(ADRENALINE_VITA_CMD_UPDATE, 0);
+	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT, 0);
 }
 
 void PatchSysconfPlugin(SceModule* mod){
 	u32 text_addr = mod->text_addr;
+
 	// Dummy all vshbridge usbstor functions
 	MAKE_INSTRUCTION(text_addr + 0xCD78, LI_V0(1));   // sceVshBridge_ED978848 - vshUsbstorMsSetWorkBuf
 	MAKE_INSTRUCTION(text_addr + 0xCDAC, MOVE_V0_ZR); // sceVshBridge_EE59B2B7
 	MAKE_INSTRUCTION(text_addr + 0xCF0C, MOVE_V0_ZR); // sceVshBridge_6032E5EE - vshUsbstorMsSetProductInfo
 	MAKE_INSTRUCTION(text_addr + 0xD218, MOVE_V0_ZR); // sceVshBridge_360752BF - vshUsbstorMsSetVSHInfo
 
-   // Dummy LoadUsbModules, UnloadUsbModules
+	// Dummy LoadUsbModules, UnloadUsbModules
 	MAKE_DUMMY_FUNCTION(text_addr + 0xCC70, 0);
 	MAKE_DUMMY_FUNCTION(text_addr + 0xD2C4, 0);
 
 	// Redirect USB functions
-	REDIRECT_SYSCALL(mod->text_addr + 0xAE9C, sctrlStartUsb);
-	REDIRECT_SYSCALL(mod->text_addr + 0xAFF4, sctrlStopUsb);
-	REDIRECT_SYSCALL(mod->text_addr + 0xB4A0, sctrlGetUsbState);
+	REDIRECT_FUNCTION(text_addr + 0xAE9C, sctrlHENMakeSyscallStub(sctrlStartUsb));
+	REDIRECT_FUNCTION(text_addr + 0xAFF4, sctrlHENMakeSyscallStub(sctrlStopUsb));
+	REDIRECT_FUNCTION(text_addr + 0xB4A0, sctrlHENMakeSyscallStub(sctrlGetUsbState));
 
 	// Ignore wait thread end failure
-	_sw(0, text_addr + 0xB264);
+	MAKE_NOP(text_addr + 0xB264);
 }
 
 void patchPopsMan(SceModule* mod){
@@ -223,13 +260,12 @@ int AdrenalineOnModuleStart(SceModule * mod){
 	static int booted = 0;
 
 	if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
-
 		// Protect pops memory
-		if (sceKernelInitKeyConfig() == PSP_INIT_KEYCONFIG_POPS) {
+		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
 			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
-			memset((void *)0x49F40000, 0, 0x80000);
 		}
 
+		memset((void *)0x49F40000, 0, 0x80000);
 		memset((void *)0xABCD0000, 0, 0x1B0);
 
 		PatchLowIODriver2(mod);
@@ -273,7 +309,7 @@ int AdrenalineOnModuleStart(SceModule * mod){
 	}
 
 	if (strcmp(mod->modname, "sceUSBCam_Driver") == 0) {
-		patchUsbCam(mod);
+		PatchUSBCamDriver(mod);
 		goto flush;
 	}
 
@@ -348,6 +384,7 @@ flush:
 void initAdrenalineSysPatch(){
 
 	// Patch stuff
+	patchSysMem();
 	patchLoaderCore();
 	PatchIoFileMgr();
 	PatchMemlmd();

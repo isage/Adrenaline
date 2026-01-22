@@ -5,18 +5,14 @@
 #include <psputilsforkernel.h>
 #include <pspinit.h>
 
-#include <systemctrl_ark.h>
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <systemctrl_private.h>
 
 #include "adrenaline.h"
 #include "../../adrenaline_compat.h"
 #include "externs.h"
 
-
-extern SEConfigARK* se_config;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS

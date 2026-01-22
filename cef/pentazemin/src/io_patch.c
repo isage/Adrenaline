@@ -20,16 +20,16 @@
 #include <string.h>
 
 #include <pspsdk.h>
+#include <pspkernel.h>
 #include <pspinit.h>
+#include <pspthreadman_kernel.h>
 #include <pspiofilemgr.h>
 #include <pspiofilemgr_kernel.h>
-#include <psploadcore.h>
 
 #include <cfwmacros.h>
 
-#include "externs.h"
+#include "adrenaline.h"
 
-#include "../../adrenaline_compat.h"
 
 static PspIoDrv *g_ms_drv;
 static PspIoDrv *g_flashfat_drv;

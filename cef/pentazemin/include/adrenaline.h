@@ -22,6 +22,10 @@
 #include <psptypes.h>
 #include <psploadcore.h>
 
+#include "../../adrenaline_compat.h"
+
+extern SceAdrenaline *g_adrenaline;
+
 int SendAdrenalineCmd(int cmd, u32 args);
 
 void initAdrenalineInfo();

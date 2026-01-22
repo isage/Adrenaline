@@ -21,7 +21,6 @@
 
 #include <pspiofilemgr.h>
 
-// #include "main.h"
 
 int removePath(const char *path) {
 	SceUID dfd = sceIoDopen(path);

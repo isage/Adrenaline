@@ -339,24 +339,6 @@ void PatchSysconfPlugin(SceModule* mod) {
 		MAKE_INSTRUCTION(text_addr + 0x76F0, LI_V0(1));
 	}
 
-	// Dummy all vshbridge usbstor functions
-	MAKE_INSTRUCTION(text_addr + 0xCD78, LI_V0(1));   // sceVshBridge_ED978848 - vshUsbstorMsSetWorkBuf
-	MAKE_INSTRUCTION(text_addr + 0xCDAC, MOVE_V0_ZR); // sceVshBridge_EE59B2B7
-	MAKE_INSTRUCTION(text_addr + 0xCF0C, MOVE_V0_ZR); // sceVshBridge_6032E5EE - vshUsbstorMsSetProductInfo
-	MAKE_INSTRUCTION(text_addr + 0xD218, MOVE_V0_ZR); // sceVshBridge_360752BF - vshUsbstorMsSetVSHInfo
-
-	// Dummy LoadUsbModules, UnloadUsbModules
-	MAKE_DUMMY_FUNCTION(text_addr + 0xCC70, 0);
-	MAKE_DUMMY_FUNCTION(text_addr + 0xD2C4, 0);
-
-	// Redirect USB functions
-	REDIRECT_FUNCTION(text_addr + 0xAE9C, sctrlHENMakeSyscallStub(InitUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xAFF4, sctrlHENMakeSyscallStub(ShutdownUsbPatched));
-	REDIRECT_FUNCTION(text_addr + 0xB4A0, sctrlHENMakeSyscallStub(GetUsbStatusPatched));
-
-	// Ignore wait thread end failure
-	MAKE_NOP(text_addr + 0xB264);
-
 	// Do not set nickname to PXXX on initial setup/reset
 	REDIRECT_FUNCTION(text_addr + 0x1520, sctrlHENMakeSyscallStub(SetDefaultNicknamePatched));
 

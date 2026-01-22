@@ -5,16 +5,13 @@
 #include <psputilsforkernel.h>
 #include <pspinit.h>
 
-#include <systemctrl_ark.h>
 #include <cfwmacros.h>
-#include <rebootexconfig.h>
 #include <bootloadex.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 
 #include "../../adrenaline_compat.h"
-#include "funcs.h"
 
 // Sony flash0 files
 BootFileList* boot_files = (BootFileList*)BOOT_FILE_LIST_ADDR;
@@ -24,8 +21,9 @@ static int cur_file = 14;
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
 
 	char path[64];
+	char* filename = (info->name[0])? info->name : (char*)&(boot_files->bootfile[cur_file]);
 
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", (char*)&(boot_files->bootfile[cur_file])); //not use flash0 cause of cxmb
+	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename); //not use flash0 cause of cxmb
 
 	cur_file++;
 
@@ -40,8 +38,9 @@ SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
 
 	char path[64];
+	char* filename = (info->name[0])? info->name : (char*)&(boot_files->bootfile[cur_file]);
 
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", (char*)&(boot_files->bootfile[cur_file]));
+	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename);
 
 	cur_file++;
 
@@ -52,24 +51,24 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 	return LoadModuleBufferAnchorInBtcnf(buf, (info->attr >> 8) & 1);
 }
 
-int (*ARKPatchInit)(int (* module_bootstart)(SceSize, void *), void *argp) = NULL;
+int (*PrevPatchInit)(int (* module_bootstart)(SceSize, void *), void *argp) = NULL;
 int AdrenalinePatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 	u32 init_addr = ((u32)module_bootstart) - 0x1A54;
 
 	// Ignore StopInit
-	_sw(0, init_addr + 0x18EC);
+	MAKE_NOP(init_addr + 0x18EC);
 
 	// Redirect load functions to load from MS
 	LoadModuleBufferAnchorInBtcnf = (void *)init_addr + 0x1038;
 	MAKE_CALL(init_addr + 0x17E4, LoadModuleBufferAnchorInBtcnfPatched);
-	_sw(0x02402821, init_addr + 0x17E8); //move $a1, $s2
+	MAKE_INSTRUCTION(init_addr + 0x17E8, 0x02402821); // move $a1, $s2
 
-	_sw(0x02402021, init_addr + 0x1868); //move $a0, $s2
+	MAKE_INSTRUCTION(init_addr + 0x1868, 0x02402021); // move $a0, $s2
 	MAKE_CALL(init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
 
 	sctrlFlushCache();
 
-	return ARKPatchInit(module_bootstart, argp);
+	return PrevPatchInit(module_bootstart, argp);
 }
 
 // Patch Loader Core Module
@@ -92,7 +91,7 @@ SceModule* patchLoaderCore(void)
 	for (u32 addr = start_addr; addr<topaddr; addr+=4){
 		u32 data = _lw(addr);
 		if (data == 0x02E02021){
-			ARKPatchInit = (void*)K_EXTRACT_CALL(addr-4);
+			PrevPatchInit = (void*)K_EXTRACT_CALL(addr-4);
 			_sw(JAL(AdrenalinePatchInit), addr-4);
 			break;
 		}

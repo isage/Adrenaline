@@ -21,6 +21,8 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 
+#include "ttystdio.h"
+
 
 PSP_MODULE_INFO("Pentazemin", 0x1007, 1, 0);
 
@@ -31,6 +33,8 @@ int module_start(SceSize args, void * argp)
 {
 	// Vita patches
 	initAdrenalineSysPatch();
+
+	tty_init();
 
 	sctrlFlushCache();
 
