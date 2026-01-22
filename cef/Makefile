@@ -194,4 +194,4 @@ clean:
 	make -C xmbctrl clean
 	make -C satelite clean
 	make -C recovery clean
-	rm -f systemctrl/binary.h systemctrl/rebootex.h
+	rm -f pentazemin/binary.h systemctrl/rebootex.h
