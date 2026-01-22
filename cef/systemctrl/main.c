@@ -189,7 +189,12 @@ static int OnModuleStart(SceModule *mod) {
 		if (res == 0) {
 			load_file_config = 0;
 			// configure Pentazemin
-			sctrlPentazeminConfigure(g_cfw_config.use_sony_psposk, g_cfw_config.use_ge2, g_cfw_config.use_me2);
+			PentazeminConfig penconfig = {
+				.osk_type = g_cfw_config.use_sony_psposk,
+				.ge_type = g_cfw_config.use_ge2,
+				.me_type = g_cfw_config.use_me2,
+			};
+			sctrlPentazeminConfigure(&penconfig);
 		}
 	}
 

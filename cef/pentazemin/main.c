@@ -15,11 +15,13 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
+#include <string.h>
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
+#include <systemctrl_adrenaline.h>
 
 #include "ttystdio.h"
 
@@ -28,17 +30,11 @@ PSP_MODULE_INFO("Pentazemin", 0x1007, 1, 0);
 
 extern void initAdrenalineSysPatch();
 
-int use_sony_psposk;
-int use_ge2;
-int use_me2;
+PentazeminConfig config;
 
-
-void sctrlPentazeminConfigure(int osk_type, int ge_type, int me_type){
-	use_sony_psposk = osk_type;
-	use_ge2 = ge_type;
-	use_me2 = me_type;
+void sctrlPentazeminConfigure(PentazeminConfig* conf){
+	memcpy(&config, conf, sizeof(PentazeminConfig));
 }
-
 
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)

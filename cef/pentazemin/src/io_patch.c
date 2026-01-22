@@ -225,7 +225,7 @@ static int _flashIoOpen(u32 *args) {
 	int flags = args[2];
 	SceMode mode = (SceMode)args[3];
 
-	if (!use_sony_psposk) {
+	if (config.osk_type == OSK_TYPE_VITA) {
 		if (strcmp(file, "/vsh/module/osk_plugin.prx") == 0) {
 			file = "/vsh/module/kermit_osk_plugin.prx";
 		}

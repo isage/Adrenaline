@@ -20,6 +20,7 @@
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
+#include <systemctrl_adrenaline.h>
 
 #include "externs.h"
 
@@ -57,7 +58,7 @@ void PatchUtility() {
 	HIJACK_FUNCTION(sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0x2A2B3DE0), sceUtilityLoadModulePatched, _sceUtilityLoadModule);
 	HIJACK_FUNCTION(sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xE49BFE92), sceUtilityUnloadModulePatched, _sceUtilityUnloadModule);
 
-	if (!use_sony_psposk) {
+	if (config.osk_type == OSK_TYPE_VITA) {
 		_sceUtilityGetSystemParamInt = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		_kermitUtilityOskGetStatus = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility_private", 0xB08B2B48);
 

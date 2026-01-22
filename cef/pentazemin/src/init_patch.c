@@ -9,7 +9,7 @@
 #include <bootloadex.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <systemctrl_private.h>
+#include <systemctrl_adrenaline.h>
 
 #include "externs.h"
 #include "../../adrenaline_compat.h"
@@ -26,13 +26,13 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 	PSPKeyConfig app_type = sceKernelApplicationType();
 
-	if (use_sony_psposk) {
+	if (config.osk_type == OSK_TYPE_PSP) {
 		if (strcmp(filename, "/kd/kermit_utility.prx") == 0) {
 			filename = "/kd/utility.prx";
 		}
 	}
 
-	if (use_ge2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+	if (config.ge_type == GE_TYPE_2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
 		if (strcmp(filename, "/kd/ge.prx") == 0) {
 			filename = "/kd/ge_2.prx";
 
@@ -44,7 +44,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		}
 	}
 
-	if (use_me2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+	if (config.me_type == ME_TYPE_2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
 		if (strcmp(filename, "/kd/kermit_me_wrapper.prx") == 0) {
 			filename = "/kd/kermit_me_wrapper_2.prx";
 
