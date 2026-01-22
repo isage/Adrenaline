@@ -12,8 +12,6 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
-#include "sysmem.h"
-
 
 static void* findGetPartition(){
 	for (u32 addr = SYSMEM_TEXT; ; addr+=4){
@@ -30,9 +28,9 @@ int unlockVitaMemory(u32 user_size_mib){
 	if (apitype == 0x144 || apitype == 0x155 || apitype >= 0x200)
 		return -1;
 
-	SysMemPartition *(* GetPartition)(int partition) = findGetPartition();
+	PspSysMemPartition *(* GetPartition)(int partition) = findGetPartition();
 
-	SysMemPartition *partition;
+	PspSysMemPartition *partition;
 	u32 user_size = user_size_mib * 1024 * 1024; // new p2 size
 
 	// modify p2

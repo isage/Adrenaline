@@ -27,6 +27,7 @@
 #include <pspctrl.h>
 #include <psperror.h>
 #include <pspextratypes.h>
+#include <pspsysmem_kernel.h>
 
 #include <bootloadex.h>
 #include <systemctrl.h>
@@ -57,18 +58,6 @@ static int (*_sceCtrlReadBufferPositive)(SceCtrlData *pad_data, int count) = NUL
 static int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
 static int (* _scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq) = NULL;
 
-typedef struct PartitionData {
-	u32 unk[5];
-	u32 size;
-} PartitionData;
-
-typedef struct SysMemPartition {
-	struct SysMemPartition *next;
-	u32	address;
-	u32 size;
-	u32 attributes;
-	PartitionData *data;
-} SysMemPartition;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -97,8 +86,8 @@ static int protect_pspemu_mem() {
 
 int ApplyMemory() {
 	if (g_rebootex_config.ram2 != 0 && (g_rebootex_config.ram2 + g_rebootex_config.ram11) <= 52) {
-		SysMemPartition *(* GetPartition)(int partition) = NULL;
-		SysMemPartition *partition;
+		PspSysMemPartition *(* GetPartition)(int partition) = NULL;
+		PspSysMemPartition *partition;
 		u32 user_size;
 
 		for (u32 i = 0; i < 0x4000; i += 4) {
