@@ -3,7 +3,6 @@
 
 #include <pspsdk.h>
 
-extern u64 kermit_flash_load(int cmd);
 extern void PatchUSBCamDriver(SceModule*);
 extern void PatchVlfLib(SceModule*);
 extern void PatchImposeDriver(SceModule*);
