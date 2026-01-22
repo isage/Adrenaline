@@ -60,7 +60,6 @@ _rebootex:
 _binary:
 	make -C binary clean
 	make -C binary -j
-	bin2c binary/binary.bin systemctrl/binary.h binary
 	bin2c binary/binary.bin pentazemin/binary.h binary
 	make -C binary clean
 
