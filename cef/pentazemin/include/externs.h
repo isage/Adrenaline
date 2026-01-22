@@ -9,4 +9,8 @@
 extern STMOD_HANDLER g_module_handler;
 extern SceAdrenaline *g_adrenaline;
 
+extern int use_sony_psposk;
+extern int use_ge2;
+extern int use_me2;
+
 #endif

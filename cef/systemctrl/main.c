@@ -256,7 +256,6 @@ static int OnModuleStart(SceModule *mod) {
 		PatchNp9660Driver(mod);
 
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
-		PatchUtility();
 		findAndSetTitleId();
 		logmsg3("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
 		CheckControllerInput();
@@ -293,9 +292,6 @@ static int OnModuleStart(SceModule *mod) {
 
 	} else if (strcmp(modname, "sysconf_plugin_module") == 0) {
 		PatchSysconfForDrm(mod);
-
-	} else if (strcmp(modname, "Pentazemin") == 0) {
-		PatchPentazemin(mod);
 
 	}
 

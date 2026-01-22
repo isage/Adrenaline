@@ -41,7 +41,6 @@ void CheckControllerInput();
 
 void PatchChkreg();
 void PatchSysmem();
-void PatchUtility();
 void PatchLoadCore();
 void PatchModuleMgr();
 void PatchIoFileMgr();
@@ -58,6 +57,5 @@ void PatchGameByTitleId();
 void PatchGameByTitleIdOnLoadExec();
 void PatchGamesByMod(SceModule* mod);
 void PatchHideCfwFiles(SceModule* mod);
-void PatchPentazemin(SceModule* mod);
 
 #endif

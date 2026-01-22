@@ -24,6 +24,7 @@
 #include <pspmodulemgr.h>
 
 #include <cfwmacros.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
@@ -68,55 +69,6 @@ SceUID sceKernelLoadModuleMs2Leda(const char *path, int flags, SceKernelLMOption
 SceUID sceKernelLoadModuleMs2Init(int apitype, const char *path, int flags, SceKernelLMOption *option) {
 	g_leda_apitype = apitype;
 	return sceKernelLoadModuleMs2Handler(path, flags, option);
-}
-
-int sceKernelLoadModulePatchedPentazemin(char* path, int flags, SceKernelLMOption *option){
-	char* tmp = NULL;
-	PSPKeyConfig app_type = sceKernelApplicationType();
-
-	if (g_cfw_config.use_sony_psposk) {
-		tmp = strstr(path, "/kd/kermit_utility.prx");
-		if (tmp) {
-			strcpy(path, "/kd/utility.prx");
-		}
-	}
-
-	if (g_cfw_config.use_ge2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
-		tmp = strstr(path, "/kd/ge.prx");
-		if (tmp) {
-			strcpy(path, "/kd/ge_2.prx");
-
-			char* f0path = "flash0:/kd/ge_2.prx";
-			SceUID mod = sceKernelLoadModule(f0path, 0, NULL);
-			logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", f0path, mod);
-			if (mod >= 0) {
-				return mod;
-			}
-		}
-	}
-
-	if (g_cfw_config.use_me2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
-		tmp = strstr(path, "/kd/kermit_me_wrapper.prx");
-		if (tmp) {
-			strcpy(path, "/kd/kermit_me_wrapper_2.prx");
-
-			char* f0path = "flash0:/kd/kermit_me_wrapper_2.prx";
-			SceUID mod = sceKernelLoadModule(f0path, 0, NULL);
-			logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", f0path, mod);
-			if (mod >= 0) {
-				return mod;
-			}
-		}
-	}
-
-	if (!g_cfw_config.use_sony_psposk) {
-		tmp = strstr(path, "/vsh/module/osk_plugin.prx");
-		if (tmp) {
-			strcpy(path, "/vsh/module/kermit_osk_plugin.prx"); // TODO: verify this, maybe path doesn't have enough space
-		}
-	}
-
-	return sceKernelLoadModule(path, flags, option);
 }
 
 int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option) {
@@ -218,6 +170,9 @@ int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 
 	sctrlFlushCache();
 
+	// configure Pentazemin
+	sctrlPentazeminConfigure(g_cfw_config.use_sony_psposk, g_cfw_config.use_ge2, g_cfw_config.use_me2);
+
 	return module_bootstart(4, argp);
 }
 
@@ -242,8 +197,4 @@ int sctrlHENRegisterHomebrewLoader(int (* handler)(const char *path, int flags, 
 	sctrlFlushCache();
 
 	return 0;
-}
-
-void PatchPentazemin(SceModule* mod){
-	sctrlHookImportByNID(mod, "ModuleMgrForUser", 0x977DE386, sceKernelLoadModulePatchedPentazemin);
 }

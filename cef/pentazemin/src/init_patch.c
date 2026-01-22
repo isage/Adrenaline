@@ -11,6 +11,7 @@
 #include <systemctrl_se.h>
 #include <systemctrl_private.h>
 
+#include "externs.h"
 #include "../../adrenaline_compat.h"
 
 // Sony flash0 files
@@ -22,6 +23,38 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 	char path[64];
 	char* filename = (info->name[0])? info->name : (char*)&(boot_files->bootfile[cur_file]);
+
+	PSPKeyConfig app_type = sceKernelApplicationType();
+
+	if (use_sony_psposk) {
+		if (strcmp(filename, "/kd/kermit_utility.prx") == 0) {
+			filename = "/kd/utility.prx";
+		}
+	}
+
+	if (use_ge2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+		if (strcmp(filename, "/kd/ge.prx") == 0) {
+			filename = "/kd/ge_2.prx";
+
+			char* path = "flash0:/kd/ge_2.prx";
+			SceUID mod = sceKernelLoadModule(path, 0, NULL);
+			if (mod >= 0) {
+				return mod;
+			}
+		}
+	}
+
+	if (use_me2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+		if (strcmp(filename, "/kd/kermit_me_wrapper.prx") == 0) {
+			filename = "/kd/kermit_me_wrapper_2.prx";
+
+			char* path = "flash0:/kd/kermit_me_wrapper_2.prx";
+			SceUID mod = sceKernelLoadModule(path, 0, NULL);
+			if (mod >= 0) {
+				return mod;
+			}
+		}
+	}
 
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename); //not use flash0 cause of cxmb
 

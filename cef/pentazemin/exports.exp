@@ -35,6 +35,7 @@ PSP_EXPORT_FUNC(sctrlStartUsb)
 PSP_EXPORT_FUNC(sctrlStopUsb)
 PSP_EXPORT_FUNC(sctrlGetUsbState)
 PSP_EXPORT_FUNC(sctrlRebootDevice)
+PSP_EXPORT_FUNC(sctrlPentazeminConfigure)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

@@ -28,6 +28,7 @@
 
 #include <cfwmacros.h>
 
+#include "externs.h"
 #include "adrenaline.h"
 
 
@@ -223,6 +224,12 @@ static int _flashIoOpen(u32 *args) {
 	char *file = (char *)args[1];
 	int flags = args[2];
 	SceMode mode = (SceMode)args[3];
+
+	if (!use_sony_psposk) {
+		if (strcmp(file, "/vsh/module/osk_plugin.prx") == 0) {
+			file = "/vsh/module/kermit_osk_plugin.prx";
+		}
+	}
 
 	if (strcmp(file, "/kd/mpeg_vsh.prx") == 0) {
 		file = "/kd/mpeg.prx";
