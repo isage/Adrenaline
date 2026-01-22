@@ -5,31 +5,6 @@ PSP_EXPORT_FUNC_NID(module_start, 0xD3744BE0)
 PSP_EXPORT_VAR(module_info)
 PSP_EXPORT_END
 
-PSP_EXPORT_START(LflashFatfmt, 0x0011, 0x0001)
-PSP_EXPORT_FUNC(sceLflashFatfmtStartFatfmt)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceLFatFs_driver, 0x0011, 0x0001)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceDve_driver, 0x0011, 0x0001)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceLed_driver, 0x0011, 0x0001)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceCodec_driver, 0x0011, 0x0001)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceClockgen_driver, 0x0011, 0x0001)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceNand_driver, 0x0011, 0x0001)
-PSP_EXPORT_END
-
-PSP_EXPORT_START(sceSyscon_driver, 0x0011, 0x0001)
-PSP_EXPORT_END
-
 PSP_EXPORT_START(KUBridge, 0, 0x4001)
 PSP_EXPORT_FUNC(kuKernelBootFrom)
 PSP_EXPORT_FUNC(kuKernelCall)
@@ -136,7 +111,6 @@ PSP_EXPORT_FUNC(sctrlGetInitPARAM)
 PSP_EXPORT_FUNC(sctrlGetSfoPARAM)
 PSP_EXPORT_FUNC(sctrlGetThreadUIDByName)
 PSP_EXPORT_FUNC(sctrlHookImportByNID)
-PSP_EXPORT_FUNC(sctrlRebootDevice)
 
 # sctrl - other USER EXCLUSIVE
 PSP_EXPORT_FUNC(sctrlDeflateDecompress)
@@ -250,7 +224,6 @@ PSP_EXPORT_FUNC(sctrlGetInitPARAM)
 PSP_EXPORT_FUNC(sctrlGetSfoPARAM)
 PSP_EXPORT_FUNC(sctrlGetThreadUIDByName)
 PSP_EXPORT_FUNC(sctrlHookImportByNID)
-PSP_EXPORT_FUNC(sctrlRebootDevice)
 
 # sctrl - KERNEL PRIVATE:
 PSP_EXPORT_FUNC(ApplyMemory)
@@ -296,16 +269,6 @@ PSP_EXPORT_FUNC(sceIoRemoveHidePatched)
 PSP_EXPORT_FUNC(sceIoRmdirHidePatched)
 PSP_EXPORT_END
 # END SystemCtrlPrivate
-
-
-# Functions only available in Adrenaline
-PSP_EXPORT_START(AdrenalineCtrl, 0, 0x4001)
-PSP_EXPORT_FUNC(sctrlStartUsb)
-PSP_EXPORT_FUNC(sctrlStopUsb)
-PSP_EXPORT_FUNC(sctrlGetUsbState)
-PSP_EXPORT_FUNC(sctrlRebootDevice)
-PSP_EXPORT_END
-#END AdrenalineCtrl
 
 
 PSP_EXPORT_START(SysclibForUser, 0, 0x4001)

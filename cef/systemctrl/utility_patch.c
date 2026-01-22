@@ -23,26 +23,10 @@
 
 #include "main.h"
 
-static int (* _sceUtilityLoadModule)(int id);
-static int (* _sceUtilityUnloadModule)(int id);
 
 static int (* _sceUtilityGetSystemParamInt)(int id, int *value);
 static int (* _kermitUtilityOskGetStatus)();
 static int (* _kermitUtilityOskInitStart)(SceUtilityOskParams *params);
-
-__attribute__((noinline)) u32 FindUtilityFunction(u32 nid) {
-	return sctrlHENFindFunction("sceUtility_Driver", "sceUtility", nid);
-}
-
-int sceUtilityLoadModulePatched(int id) {
-	int res = _sceUtilityLoadModule(id);
-	return (id != PSP_MODULE_NP_DRM) ? res : 0;
-}
-
-int sceUtilityUnloadModulePatched(int id) {
-	int res = _sceUtilityUnloadModule(id);
-	return (id != PSP_MODULE_NP_DRM) ? res : 0;
-}
 
 int kermitUtilityOskInitStartPatched(SceUtilityOskParams *params) {
 	int k1 = pspSdkSetK1(0);
@@ -57,11 +41,9 @@ int kermitUtilityOskInitStartPatched(SceUtilityOskParams *params) {
 }
 
 void PatchUtility() {
-	HIJACK_FUNCTION(FindUtilityFunction(0x2A2B3DE0), sceUtilityLoadModulePatched, _sceUtilityLoadModule);
-	HIJACK_FUNCTION(FindUtilityFunction(0xE49BFE92), sceUtilityUnloadModulePatched, _sceUtilityUnloadModule);
 
 	if (!g_cfw_config.use_sony_psposk) {
-		_sceUtilityGetSystemParamInt = (void *)FindUtilityFunction(0xA5DA2406);
+		_sceUtilityGetSystemParamInt = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		_kermitUtilityOskGetStatus = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility_private", 0xB08B2B48);
 
 		HIJACK_FUNCTION(sctrlHENFindFunction("sceUtility_Driver", "sceUtility_private", 0x3B6D7CED), kermitUtilityOskInitStartPatched, _kermitUtilityOskInitStart);

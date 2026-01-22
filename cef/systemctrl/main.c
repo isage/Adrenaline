@@ -30,11 +30,9 @@
 #include <adrenaline_log.h>
 
 #include "main.h"
-#include "adrenaline.h"
 #include "modulepatches.h"
 #include "nodrm.h"
 #include "malloc.h"
-#include "ttystdio.h"
 #include "gameinfo.h"
 #include "plugin.h"
 #include "utils.h"
@@ -46,6 +44,7 @@ PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
 RebootexConfigEPI g_rebootex_config;
 SEConfigEPI g_cfw_config;
+SceAdrenaline *g_adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 static int g_idle = 0;
 
@@ -61,8 +60,6 @@ static u8 g_cache_num_list[] = { 0, 1, 2, 4, 8, 16, 32, 64, 128 };
 int mallocinit();
 
 static void OnSystemStatusIdle() {
-	initAdrenalineInfo();
-	PatchVolatileMemBug();
 
 	if (g_cfw_config.no_ms_cache == 0) {
 		storageCacheInit("ms");
@@ -157,14 +154,6 @@ static void OnSystemStatusIdle() {
 		sctrlHENSetSpeed(g_cpu_list[g_cfw_config.app_cpu_speed % N_CPU], g_bus_list[g_cfw_config.app_cpu_speed % N_CPU]);
 	}
 
-	// Set fake framebuffer so that cwcheat can be displayed
-	if (g_adrenaline->pops_mode) {
-		sceDisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
-		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
-	} else {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
-	}
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED, 0);
 }
 
 static int OnModuleStart(SceModule *mod) {
@@ -208,16 +197,6 @@ static int OnModuleStart(SceModule *mod) {
 				VWRITE32(0, 0);
 			}
 		}
-
-		// Protect pops memory
-		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
-			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
-		}
-
-		memset((void *)0x49F40000, 0, 0x80000);
-		memset((void *)0xABCD0000, 0, 0x1B0);
-
-		PatchLowIODriver2(mod);
 
 	} else if (strcmp(mod->modname, "sceKermitMsfs_driver") == 0) {
 		load_file_config = 1;
@@ -267,14 +246,8 @@ static int OnModuleStart(SceModule *mod) {
 			ApplyAndResetMemory();
 		}
 
-		PatchPowerService(mod);
-		PatchPowerService2(mod);
-
 	} else if (strcmp(modname, "sceChkreg") == 0) {
 		PatchChkreg();
-
-	} else if (strcmp(modname, "sceMesgLed") == 0) {
-		PatchMesgLed(mod);
 
 	} else if (strcmp(modname, "scePspNpDrm_Driver") == 0) {
 		PatchNpDrmDriver(mod);
@@ -282,20 +255,11 @@ static int OnModuleStart(SceModule *mod) {
 	} else if (strcmp(modname, "sceNp9660_driver") == 0) {
 		PatchNp9660Driver(mod);
 
-	} else if (strcmp(modname, "sceUmd_driver") == 0) {
-		PatchUmdDriver(mod);
-
-	} else if(strcmp(modname, "sceMeCodecWrapper") == 0) {
-		PatchMeCodecWrapper(mod);
-
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
 		findAndSetTitleId();
 		logmsg3("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
 		CheckControllerInput();
-
-	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
-		PatchImposeDriver(mod);
 
 	} else if (strcmp(modname, "sceMediaSync") == 0) {
 		PatchMediaSync(mod);
@@ -314,12 +278,6 @@ static int OnModuleStart(SceModule *mod) {
 
 		sctrlFlushCache();
 
-	} else if (strcmp(modname, "sceSAScore") == 0) {
-		PatchSasCore(mod);
-
-	} else if (strcmp(modname, "sceUSBCam_Driver") == 0) {
-		PatchUSBCamDriver(mod);
-
 	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
 		ready_gamepatch_mod = 1;
 		PatchGameByTitleId();
@@ -336,11 +294,9 @@ static int OnModuleStart(SceModule *mod) {
 	} else if (strcmp(modname, "sysconf_plugin_module") == 0) {
 		PatchSysconfForDrm(mod);
 
-	} else if (strcmp(modname, "VLF_Module") == 0) {
-		PatchVlfLib(mod);
+	} else if (strcmp(modname, "Pentazemin") == 0) {
+		PatchPentazemin(mod);
 
-	} else if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
-		PatchCwCheatPlugin(mod);
 	}
 
 	if (!g_idle) {
@@ -362,8 +318,6 @@ int module_start(SceSize args, void *argp) {
 	PatchSysmem();
 	PatchLoadCore();
 	PatchInterruptMgr();
-	PatchIoFileMgr();
-	PatchMemlmd();
 	PatchModuleMgr();
 	sctrlFlushCache();
 
@@ -376,11 +330,7 @@ int module_start(SceSize args, void *argp) {
 
 	UnprotectExtraMemory();
 
-	initAdrenaline();
-
 	memcpy(&g_rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
-
-	tty_init();
 
 	return 0;
 }

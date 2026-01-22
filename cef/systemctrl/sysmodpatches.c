@@ -35,7 +35,6 @@
 #include <adrenaline_log.h>
 
 #include "main.h"
-#include "adrenaline.h"
 #include "../../adrenaline_compat.h"
 
 #include "rebootex.h"
@@ -49,7 +48,6 @@ STMOD_HANDLER g_module_handler = NULL;
 
 static int (* RunReboot)(u32 *params) = NULL;
 static int (* DecodeKL4E)(void *dest, u32 size_dest, void *src, u32 size_src) = NULL;
-static int (* SetIdleCallback)(int flags) = NULL;
 
 static int (* _sceChkregGetPsCode)(u8 *pscode) = NULL;
 static int (* _sceSystemFileGetIndex)(void *sfo, void *a1, void *a2) = NULL;
@@ -147,56 +145,6 @@ void UnprotectExtraMemory() {
 	}
 }
 
-static int exit_callback(int arg1, int arg2, void *common) {
-	sceKernelSuspendAllUserThreads();
-
-	g_adrenaline->pops_mode = 0;
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
-
-	static u32 vshmain_args[0x100];
-	memset(vshmain_args, 0, sizeof(vshmain_args));
-
-	vshmain_args[0] = sizeof(vshmain_args);
-	vshmain_args[1] = 0x20;
-	vshmain_args[16] = 1;
-
-	SceKernelLoadExecVSHParam param;
-
-	memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.argp = NULL;
-	param.args = 0;
-	param.vshmain_args = vshmain_args;
-	param.vshmain_args_size = sizeof(vshmain_args);
-	param.key = "vsh";
-
-	sctrlKernelExitVSH(&param);
-
-	return 0;
-}
-
-static int CallbackThread(SceSize args, void *argp) {
-	SceUID cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
-	if (cbid < 0) {
-		return cbid;
-	}
-
-	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x4AC57943);
-	sceKernelRegisterExitCallback(cbid);
-
-	sceKernelSleepThreadCB();
-
-	return 0;
-}
-
-static SceUID SetupCallbacks() {
-	SceUID thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
-	if (thid >= 0) {
-		sceKernelStartThread(thid, 0, 0);
-	}
-	return thid;
-}
-
 static int exitToVsh(SceSize args, void *argp) {
     int k1 = pspSdkSetK1(0);
 
@@ -292,23 +240,7 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 // ARK CFW compat
 int sctrlHENApplyMemory(u32 p2) {
-	if (p2 > 52) {
-		p2 = 52;
-	}
-
-	int res = sctrlHENSetMemory(p2, 52-p2);
-	if (res < 0) {
-		return res;
-	}
-
-	res = ApplyMemory();
-	// Revert back on fail
-	if (res < 0) {
-		sctrlHENSetMemory(24, 16);
-		ApplyAndResetMemory();
-	}
-
-	return res;
+	return -1; // let Pentazemin implement this
 }
 
 void sctrlHENSetSpeed(int cpu, int bus) {
@@ -384,13 +316,6 @@ int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 
-int sceUmdRegisterUMDCallBackPatched(int cbid) {
-	int k1 = pspSdkSetK1(0);
-	int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
-	pspSdkSetK1(k1);
-	return res;
-}
-
 int sceChkregGetPsCodePatched(u8 *pscode) {
 	int res = _sceChkregGetPsCode(pscode);
 
@@ -411,45 +336,6 @@ int sceChkregGetPsCodePatched(u8 *pscode) {
 	pscode[7] = 0x00;
 
 	return res;
-}
-
-int SetIdleCallbackPatched(int flags) {
-	// Only allow idle callback for music player sleep-timer
-	if (flags & 8) {
-		return SetIdleCallback(flags);
-	}
-
-	return 0;
-}
-
-int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, SceUInt *timeout) {
-	int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
-
-	if (*outBits & 0x1) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
-	} else if (*outBits & 0x2) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
-	}
-
-	return res;
-}
-
-int memcmp_patched(const void *b1, const void *b2, size_t len) {
-	u32 tag = 0x4C9494F0;
-	if (memcmp(&tag, b2, len) == 0) {
-		static u8 kernel661_keys[0x10] = { 0x76, 0xF2, 0x6C, 0x0A, 0xCA, 0x3A, 0xBA, 0x4E, 0xAC, 0x76, 0xD2, 0x40, 0xF5, 0xC3, 0xBF, 0xF9 };
-		memcpy((void *)0xBFC00220, kernel661_keys, sizeof(kernel661_keys));
-		return 0;
-	}
-
-	return memcmp(b1, b2, len);
-}
-
-int sceResmgrDecryptIndexPatched(void *buf, int size, int *retSize) {
-	int k1 = pspSdkSetK1(0);
-	*retSize = ReadFile("flash0:/vsh/etc/version.txt", buf, size);
-	pspSdkSetK1(k1);
-	return 0;
 }
 
 int sceCtrlPeekBufferPositivePatched(SceCtrlData *pad_data, int count) {
@@ -508,36 +394,6 @@ int sceCtrlReadBufferNegativePatched(SceCtrlData *pad_data, int count) {
 	return count;
 }
 
-static int (* _sceMeAudio_driver_C300D466)(int codec, int unk, void *info) = NULL;
-int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
-	int res = _sceMeAudio_driver_C300D466(codec, unk, info);
-
-	if (res < 0 && codec == 0x1002 && unk == 2) {
-		return 0;
-	}
-
-	return res;
-}
-
-static int (*_sceKernelPowerTick)(u32 tick_type) = NULL;
-int sceKernelPowerTickPatched(u32 tick_type) {
-	if (_sceKernelPowerTick == NULL) {
-		return SCE_KERR_ILLEGAL_ADDR;
-	}
-
-	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_TICK, tick_type);
-
-	if (res < 0) {
-		return res;
-	}
-
-	u32 k1 = pspSdkSetK1(0);
-	res = _sceKernelPowerTick(tick_type);
-	pspSdkSetK1(k1);
-
-	return res;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -563,22 +419,9 @@ void PatchLoadExec(SceModule* mod) {
 			continue;
 		}
 
-		// Remove apitype check in FW's above 2.60
-		if (data == 0x24070200) {
-			memset((void *)addr, 0, 0x20);
-			continue;
-		}
-
 		// Patch to do things before reboot
 		if (data == 0x02202021 && VREAD32(addr + 4) == 0x00401821) {
 			K_HIJACK_CALL(addr - 4, RunRebootPatched, RunReboot);
-			continue;
-		}
-
-		// Ignore kermit calls
-		if (data == 0x17C001D3) {
-			MAKE_NOP(addr);
-			jump = addr + 8;
 			continue;
 		}
 
@@ -588,54 +431,13 @@ void PatchLoadExec(SceModule* mod) {
 			VWRITE8(addr + 0x44, 0xFC);
 			continue;
 		}
-
-		// Fix type check
-		if (data == 0x34650002) {
-			MAKE_INSTRUCTION(addr, 0x24050002); // ori $a1, $v1, 0x2 -> li $a1, 2
-			MAKE_INSTRUCTION(addr + 4, 0x12E500B7); // bnez $s7, loc_XXXXXXXX -> beq $s7, $a1, loc_XXXXXXXX
-			MAKE_INSTRUCTION(addr + 8, 0xAC570018); // sw $a1, 24($v0) -> sw $s7, 24($v0)
-			continue;
-		}
-
-		if (data == 0x24100200) {
-			// Some registers are reserved. Use other registers to avoid malfunction
-			MAKE_INSTRUCTION(addr, 0x24050200); // li $s0, 0x200 -> li $a1, 0x200
-			MAKE_INSTRUCTION(addr + 4, 0x12650003); // beq $s3, $s0, loc_XXXXXXXX - > beq $s3, $a1, loc_XXXXXXXX
-			MAKE_INSTRUCTION(addr + 8, 0x241E0210); // li $s5, 0x210 -> li $fp, 0x210
-			MAKE_INSTRUCTION(addr + 0xC, 0x567EFFDE); // bne $s3, $s5, loc_XXXXXXXX -> bne $s3, $fp, loc_XXXXXXXX
-
-			// Allow LoadExecVSH type 1. Ignore peripheralCommon KERMIT_CMD_ERROR_EXIT
-			MAKE_JUMP(addr + 0x14, jump);
-			MAKE_INSTRUCTION(addr + 0x18, 0x24170001); // li $s7, 1
-
-			continue;
-		}
 	}
 
 	sctrlFlushCache();
 }
 
 void PatchChkreg() {
-	MAKE_DUMMY_FUNCTION(K_EXTRACT_IMPORT(&sceChkregCheckRegion), 1);
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceChkregGetPsCode), sceChkregGetPsCodePatched, _sceChkregGetPsCode);
-	sctrlFlushCache();
-}
-
-void PatchImposeDriver(SceModule* mod) {
-	u32 text_addr = mod->text_addr;
-
-	// Hide volume bar
-	MAKE_NOP(text_addr + 0x4AEC);
-
-	HIJACK_FUNCTION(text_addr + 0x381C, SetIdleCallbackPatched, SetIdleCallback);
-
-	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
-		SetupCallbacks();
-		MAKE_DUMMY_FUNCTION(text_addr + 0x91C8, PSP_INIT_KEYCONFIG_GAME);
-	}
-
-	REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
-
 	sctrlFlushCache();
 }
 
@@ -672,14 +474,6 @@ void PatchController(SceModule* mod) {
 	sctrlFlushCache();
 }
 
-void PatchMemlmd() {
-	SceModule *mod = sceKernelFindModuleByName("sceMemlmd");
-	u32 text_addr = mod->text_addr;
-
-	// Allow 6.61 kernel modules
-	MAKE_CALL(text_addr + 0x2C8, memcmp_patched);
-}
-
 void PatchInterruptMgr() {
 	SceModule *mod = sceKernelFindModuleByName("sceInterruptManager");
 	u32 text_addr = mod->text_addr;
@@ -699,24 +493,5 @@ void PatchSysmem() {
 			VWRITE16(addr + 2, 0x1000);
 		}
 	}
-
-	u32 power_tick_addr = sctrlHENFindFunctionInMod(mod, "sceSuspendForKernel", 0x090CCB3F);
-	HIJACK_FUNCTION(power_tick_addr, sceKernelPowerTickPatched, _sceKernelPowerTick);
-}
-
-void PatchUmdDriver(SceModule* mod) {
-	u32 text_addr = mod->text_addr;
-
-	REDIRECT_FUNCTION(text_addr + 0xC80, sceUmdRegisterUMDCallBackPatched);
-	sctrlFlushCache();
-}
-
-void PatchMeCodecWrapper(SceModule* mod) {
-	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceMeAudio_driver", 0xC300D466), sceMeAudio_driver_C300D466_Patched, _sceMeAudio_driver_C300D466);
-	sctrlFlushCache();
-}
-
-void PatchMesgLed(SceModule* mod) {
-	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceResmgr_driver", 0x9DC14891), sceResmgrDecryptIndexPatched);
-	sctrlFlushCache();
+	
 }
