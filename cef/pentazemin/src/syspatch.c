@@ -16,7 +16,7 @@
 #include <systemctrl_private.h>
 
 #include "adrenaline.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 #include "io_patch.h"
 #include "init_patch.h"
 #include "extra_patches.h"
@@ -41,9 +41,9 @@ void OnSystemStatusIdle() {
 		sceDisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
 		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 	} else {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
+		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 	}
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED, 0);
+	sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED, 0);
 }
 
 static int (* _sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size) = NULL;
@@ -125,7 +125,7 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
 		if (strcmp(info.name, "popsmain") == 0) {
-			SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
+			sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
 		}
 	}
 
@@ -137,7 +137,7 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
 		if (strcmp(info.name, "popsmain") == 0) {
-			SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
+			sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 		}
 	}
 
@@ -150,7 +150,7 @@ int sceKernelPowerTickPatched(u32 tick_type) {
 		return SCE_KERR_ILLEGAL_ADDR;
 	}
 
-	int res = SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_TICK, tick_type);
+	int res = sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_TICK, tick_type);
 
 	if (res < 0) {
 		return res;
@@ -189,15 +189,15 @@ void patch_GameBoot(SceModule* mod){
 }
 
 int sctrlStartUsb() {
-    return SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB, 0);
+    return sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB, 0);
 }
 
 int sctrlStopUsb() {
-    return SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB, 0);
+    return sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB, 0);
 }
 
 int sctrlGetUsbState() {
-    int state = SendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE, 0);
+    int state = sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE, 0);
     if (state & 0x20)
         return 1; // Connected
 
@@ -207,8 +207,8 @@ int sctrlGetUsbState() {
 int sctrlRebootDevice() {
 	// can't do it separately, because user might have old systemctrl
 	// but this is used only by updater, so that's ok
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_UPDATE, 0);
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT, 0);
+	sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_UPDATE, 0);
+	return sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT, 0);
 }
 
 void PatchSysconfPlugin(SceModule* mod){

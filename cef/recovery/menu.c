@@ -22,12 +22,14 @@
 #include <pspkerneltypes.h>
 
 #include <systemctrl_se.h>
+#include <systemctrl_adrenaline.h>
 
 #include "main.h"
 #include "menu.h"
 #include "options.h"
 #include "plugins.h"
-#include "../../adrenaline_compat.h"
+
+#include "../../adrenaline_version.h"
 
 #define CTRL_DELAY   100000
 #define CTRL_DEADZONE_DELAY 500000

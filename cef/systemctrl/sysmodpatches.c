@@ -36,7 +36,7 @@
 #include <adrenaline_log.h>
 
 #include "main.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 #include "rebootex.h"
 #include "plugin.h"

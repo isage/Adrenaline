@@ -30,6 +30,7 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
@@ -37,7 +38,7 @@
 #include "main.h"
 #include "gameinfo.h"
 
-#include "../../adrenaline_compat.h"
+#include "../../adrenaline_version.h"
 
 SceSize strncpy_s(char *strDest, SceSize numberOfElements, const char *strSource, SceSize count);
 

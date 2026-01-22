@@ -33,7 +33,7 @@
 
 #include "utils.h"
 
-#include "../adrenaline_compat.h"
+#include "../adrenaline_vita.h"
 
 int ksceKernelSysrootGetShellPid();
 int module_get_export_func(SceUID pid, const char *modname, uint32_t libnid, uint32_t funcnid, uintptr_t *func);

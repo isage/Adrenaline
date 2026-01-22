@@ -31,7 +31,7 @@
 #include <adrenaline_log.h>
 
 #include "main.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 typedef struct LbaParams {
 	int unknown1; // 0

@@ -37,7 +37,7 @@
 #include "utils.h"
 #include "pspdebug.h"
 
-#include "../adrenaline_compat.h"
+#include "../adrenaline_vita.h"
 
 #define printf psvDebugScreenPrintf
 

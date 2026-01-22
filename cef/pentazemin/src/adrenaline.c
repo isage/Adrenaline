@@ -34,7 +34,7 @@
 
 #include "binary.h"
 
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 typedef struct {
 	void *sasCore;
@@ -66,7 +66,7 @@ static int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int 
 
 SceAdrenaline *g_adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
-int SendAdrenalineCmd(int cmd, u32 args) {
+int sctrlSendAdrenalineCmd(int cmd, u32 args) {
 	int k1 = pspSdkSetK1(0);
 
 	char buf[sizeof(SceKermitRequest) + 0x40];

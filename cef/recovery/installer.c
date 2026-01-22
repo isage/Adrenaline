@@ -34,7 +34,7 @@
 #include "menu.h"
 #include "utils.h"
 #include "files.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 #define BIG_BUFFER_SIZE 8 * 1024 * 1024
 #define SMALL_BUFFER_SIZE 2 * 1024 * 1024

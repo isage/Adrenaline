@@ -26,7 +26,7 @@
 #include <rebootexconfig.h>
 
 #include "utils.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 extern RebootexConfigEPI g_rebootex_config;
 extern SEConfigEPI g_cfw_config;

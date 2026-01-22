@@ -20,7 +20,7 @@
 #include <pspkernel.h>
 #include <pspkermit.h>
 
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 volatile SceAdrenaline *adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 

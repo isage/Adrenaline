@@ -54,6 +54,7 @@
 #include "utils.h"
 #include "msfs.h"
 #include "../adrenaline_vita.h"
+#include "../adrenaline_version.h"
 
 #include "lz4/lz4.h"
 

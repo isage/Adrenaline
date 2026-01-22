@@ -38,7 +38,7 @@
 #include "utils.h"
 #include "storage_cache.h"
 
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 

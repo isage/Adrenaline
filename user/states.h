@@ -21,7 +21,7 @@
 
 #include <vita2d.h>
 
-#include "../adrenaline_compat.h"
+#include "../adrenaline_vita.h"
 
 #define MAX_STATES 32
 #define MAX_POSITION 3

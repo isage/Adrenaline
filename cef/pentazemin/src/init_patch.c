@@ -12,7 +12,7 @@
 #include <systemctrl_adrenaline.h>
 
 #include "externs.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 // Sony flash0 files
 BootFileList* boot_files = (BootFileList*)BOOT_FILE_LIST_ADDR;
