@@ -12,7 +12,7 @@ enum SEUmdModes
     MODE_UMD = 0,
     MODE_OE_LEGACY, // not available anymore, will default to inferno
     MODE_MARCH33,
-    MODE_NP9660, // (Galaxy) if not available, will default to inferno for iso/cso or np9660 for PBP
+    MODE_NP9660,
     MODE_INFERNO,
     MODE_ME,
     MODE_VSHUMD,
