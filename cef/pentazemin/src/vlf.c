@@ -20,31 +20,13 @@
 #include <cfwmacros.h>
 
 // Fix VLF Module
-void patchVLF(SceModule * mod)
-{
-    // Flawed Function NIDs
-    unsigned int patches[5] =
-    {
-        0x2A245FE6,
-        0x7B08EAAB,
-        0x22050FC0,
-        0x158BE61A,
-        0xD495179F,
-    };
-    
-    // Iterate NIDs
-    for(int i = 0; i < NELEMS(patches); i++)
-    {
-        // Get Function Address
-        unsigned int funcAddr = (unsigned int)sctrlHENFindFunction("VLF_Module", "VlfGui", patches[i]);
-        
-        // Found Function
-        if(funcAddr)
-        {
-            // Dummy Function
-            _sw(JR_RA, funcAddr);
-            _sw(LI_V0(0), funcAddr + 4);
-        }
-    }
+void PatchVlfLib(SceModule* mod) {
+	static u32 nids[] = { 0x2A245FE6, 0x7B08EAAB, 0x22050FC0, 0x158BE61A, 0xD495179F };
+
+	for (int i = 0; i < (sizeof(nids) / sizeof(u32)); i++) {
+		sctrlHookImportByNID(mod, "VlfGui", nids[i], NULL);
+	}
+
+	sctrlFlushCache();
 }
 

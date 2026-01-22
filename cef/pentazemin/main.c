@@ -29,11 +29,11 @@ extern void initAdrenalineSysPatch();
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
-    // Vita patches
-    initAdrenalineSysPatch();
-   
-    sctrlFlushCache();
-    
-    // Return Success
-    return 0;
+	// Vita patches
+	initAdrenalineSysPatch();
+
+	sctrlFlushCache();
+
+	// Return Success
+	return 0;
 }

@@ -4,11 +4,9 @@ TARGET = pentazemin
 
 C_OBJS =  \
 	main.o \
-	src/funcs.o \
 	src/usbcam.o \
 	src/vitamem.o \
 	src/syspatch.o \
-	src/flashfs.o  \
 	src/io_patch.o  \
 	src/loadexec.o   \
 	src/adrenaline.o  \
@@ -18,13 +16,13 @@ C_OBJS =  \
 	src/impose_patch.o    \
 	src/utility_patch.o    \
 	src/vlf.o \
-		
+
 OBJS = \
-	$(C_OBJS) imports.o
+	$(C_OBJS)
 
 all: $(TARGET).prx
 
-INCDIR = include rebootex
+INCDIR = ../include include
 CFLAGS = -std=c99 -Os -G0 -Wall -fno-pic -fshort-wchar -mno-check-zero-division
 
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
@@ -36,9 +34,9 @@ PRX_EXPORTS = exports.exp
 USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
-LIBDIR = 
+LIBDIR = ../lib
 LDFLAGS =  -nostartfiles
-LIBS = -lpspsystemctrl_kernel
+LIBS = -lpspsystemctrl_kernel -lpspusbcam_driver -lpspusb_driver -lpsppower_driver -lpspkermit_driver -lpspinit_kernel -lpspsysmem_kernel -lpspmodulemgr_kernel
 
 PSP_FW_VERSION = 660
 
