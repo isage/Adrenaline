@@ -31,7 +31,7 @@
 
 #include <taihen.h>
 
-#include "../adrenaline_compat.h"
+#include "../adrenaline_vita.h"
 
 char *sceLsdbGetName(void *a1);
 

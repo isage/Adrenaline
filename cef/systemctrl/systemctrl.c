@@ -30,15 +30,15 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
 #include "modulepatches.h"
 #include "main.h"
-#include "adrenaline.h"
 #include "gameinfo.h"
 
-#include "../../adrenaline_compat.h"
+#include "../../adrenaline_version.h"
 
 SceSize strncpy_s(char *strDest, SceSize numberOfElements, const char *strSource, SceSize count);
 
@@ -424,25 +424,6 @@ void sctrlHENLoadModuleOnReboot(char *module_after, void *buf, int size, int fla
 	g_rebootex_config.buf = buf;
 	g_rebootex_config.size = size;
 	g_rebootex_config.flags = flags;
-}
-
-int sctrlGetUsbState() {
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_GET_USB_STATE, 0);
-}
-
-int sctrlStartUsb() {
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_START_USB, 0);
-}
-
-int sctrlStopUsb() {
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_STOP_USB, 0);
-}
-
-int sctrlRebootDevice() {
-	// can't do it separately, because user might have old systemctrl
-	// but this is used only by updater, so that's ok
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_UPDATE, 0);
-	return SendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT, 0);
 }
 
 u32 sctrlKernelRand(void) {

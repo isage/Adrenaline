@@ -2,9 +2,9 @@ release: all
 	psp-fixup-imports -m nid_map.txt $(TARGET).prx
 
 TARGET = systemctrl
-OBJS =  main.o adrenaline.o executable_patch.o libraries_patch.o io_patch.o init_patch.o power_patch.o \
-	usbcam_patch.o utility_patch.o game_patch.o hide_patch.o sysmodpatches.o modpatches.o \
-	nodrm.o conf.o malloc.o kubridge.o systemctrl.o ttystdio.o LflashFatfmt.o setjmp_clone.o \
+OBJS =  main.o executable_patch.o libraries_patch.o init_patch.o \
+	game_patch.o hide_patch.o sysmodpatches.o \
+	nodrm.o conf.o malloc.o kubridge.o systemctrl.o setjmp_clone.o \
 	sysclibforuser.o gameinfo.o plugin.o pgd.o utils.o storage_cache.o exports.o
 
 INCDIR = ../include
@@ -17,7 +17,7 @@ BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
 LIBDIR = ../lib
-LIBS = -lmicrolz -lpspsemaphore -lpspamctrl_driver -lpspinit_kernel -lpspthreadman_kernel -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
+LIBS = -lmicrolz -ladrenalinectrl -lpspsemaphore -lpspamctrl_driver -lpspinit_kernel -lpspthreadman_kernel -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
 
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1

@@ -7,9 +7,8 @@
 
 #include <systemctrl_adrenaline.h>
 
-#include "main.h"
 #include "adrenaline.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 
 static SceUID g_out_sema = 0;
 
@@ -48,7 +47,7 @@ static int io_write(PspIoDrvFileArg *arg, const char *data, int len) {
 		if (len < 1023) {
 			memset(g_adrenaline->printbuf, 0, 1024);
 			strncpy(g_adrenaline->printbuf, data, len);
-			ret = SendAdrenalineCmd(ADRENALINE_VITA_CMD_PRINT, 0);
+			ret = sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_PRINT, 0);
 		}
 	}
 	(void) sceKernelSignalSema(g_out_sema, 1);

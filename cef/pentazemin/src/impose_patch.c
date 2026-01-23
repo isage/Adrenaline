@@ -5,18 +5,14 @@
 #include <psputilsforkernel.h>
 #include <pspinit.h>
 
-#include <systemctrl_ark.h>
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <systemctrl_private.h>
 
 #include "adrenaline.h"
-#include "../../adrenaline_compat.h"
+#include <systemctrl_adrenaline.h>
 #include "externs.h"
 
-
-extern SEConfigARK* se_config;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -25,7 +21,7 @@ static int exit_callback(int arg1, int arg2, void *common) {
 	sceKernelSuspendAllUserThreads();
 
 	g_adrenaline->pops_mode = 0;
-	SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
+	sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 
 	static u32 vshmain_args[0x100];
 	memset(vshmain_args, 0, sizeof(vshmain_args));
@@ -89,9 +85,9 @@ int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, Sc
 	int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
 
 	if (*outBits & 0x1) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
+		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
 	} else if (*outBits & 0x2) {
-		SendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
+		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 	}
 
 	return res;

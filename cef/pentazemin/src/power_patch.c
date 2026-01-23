@@ -19,12 +19,12 @@
 
 #include <string.h>
 
+#include <pspkernel.h>
 #include <psppower.h>
-#include <psploadcore.h>
 
 #include <cfwmacros.h>
-
-#include "externs.h"
+#include <systemctrl.h>
+#include <systemctrl_se.h>
 
 
 typedef struct {

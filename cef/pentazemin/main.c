@@ -15,22 +15,34 @@
  * along with PRO CFW. If not, see <http://www.gnu.org/licenses/ .
  */
 
+#include <string.h>
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
+#include <systemctrl_adrenaline.h>
+
+#include "ttystdio.h"
 
 
 PSP_MODULE_INFO("Pentazemin", 0x1007, 1, 0);
 
 extern void initAdrenalineSysPatch();
 
+PentazeminConfig config;
+
+void sctrlPentazeminConfigure(PentazeminConfig* conf){
+	memcpy(&config, conf, sizeof(PentazeminConfig));
+}
+
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp)
 {
 	// Vita patches
 	initAdrenalineSysPatch();
+
+	tty_init();
 
 	sctrlFlushCache();
 

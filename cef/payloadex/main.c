@@ -1,264 +1,55 @@
-/*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#include <psperror.h>
+#include <string.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <pspextratypes.h>
-
-#include "libc.h"
-#include <rebootexconfig.h>
 #include <bootloadex.h>
-#include "../../adrenaline_compat.h"
-
-#define REBOOT_MODULE "/rtm.prx"
-
-int (* DcacheClear)(void) = (void *)0x886018AC;
-int (* IcacheClear)(void) = (void *)0x88601E40;
-
-int (* DecryptExecutable)(void *buf, int size, int *retSize);
-
-void (* SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table);
-int (* sceKernelBootLoadFile)(BootFile *file, void *a1, void *a2, void *a3, void *t0);
+#include <bootloadex_ark.h>
 
 RebootexConfigEPI *rebootex_config = (RebootexConfigEPI *)REBOOTEX_CONFIG;
 
-void ClearCaches() {
-	DcacheClear();
-	IcacheClear();
-}
 
-void SetMemoryPartitionTablePatched(void *sysmem_config, SceSysmemPartTable *table) {
-	SetMemoryPartitionTable(sysmem_config, table);
+int pspemuLfatOpenEPI(BootFile* file){
 
-	// Add partition 11
-	table->extVshell.addr = PSP_EXTRA_RAM;
-	table->extVshell.size = 16 * 1024 * 1024;
-}
+    int ret = -1;
+    char* p = file->name;
 
-int PatchSysMem(void *a0, void *sysmem_config) {
-	int (* module_bootstart)(SceSize args, void *sysmem_config) = (void *)VREAD32((u32)a0 + 0x28);
-
-	for (u32 i = 0; i < 0x14000; i += 4) {
-		u32 addr = 0x88000000 + i;
-
-		// Patch to add new partition
-		if (VREAD32(addr) == 0x14600003) {
-			K_HIJACK_CALL(addr - 0x1C, SetMemoryPartitionTablePatched, SetMemoryPartitionTable);
-			continue;
-		}
-	}
-
-	ClearCaches();
-
-	return module_bootstart(4, sysmem_config);
-}
-
-int DecryptExecutablePatched(void *buf, int size, int *retSize) {
-	if (*(u16 *)((u32)buf + 0x150) == 0x8B1F) {
-		*retSize = *(u32 *)((u32)buf + 0xB0);
-		_memcpy(buf, (void *)((u32)buf + 0x150), *retSize);
-		return 0;
-	}
-
-	return DecryptExecutable(buf, size, retSize);
-}
-
-int PatchLoadCore(int (* module_bootstart)(SceSize args, void *argp), void *argp) {
-	u32 text_addr = ((u32)module_bootstart) - 0xAF8;
-
-	for (u32 i = 0; i < 0x8000; i += 4) {
-		u32 addr = text_addr + i;
-
-		// Allow custom modules
-		if (VREAD32(addr) == 0xAE2D0048) {
-			DecryptExecutable = (void *)K_EXTRACT_CALL(addr + 8);
-			MAKE_CALL(addr + 8, DecryptExecutablePatched);
-			break;
-		}
-	}
-
-	ClearCaches();
-
-	return module_bootstart(8, argp);
-}
-
-int InsertModule(void *buf, char *new_module, char *module_after, int flags) {
-	BtcnfHeader *header = (BtcnfHeader *)buf;
-
-	ModuleEntry *modules = (ModuleEntry *)((u32)header + header->modulestart);
-	ModeEntry *modes = (ModeEntry *)((u32)header + header->modestart);
-
-	char *modnamestart = (char *)((u32)header + header->modnamestart);
-	char *modnameend = (char *)((u32)header + header->modnameend);
-
-	if (header->signature != BTCNF_MAGIC)
-		return -1;
-
-	int i = 0;
-	for (int i = 0; i < header->nmodules; i++) {
-		if (_strcmp(modnamestart + modules[i].stroffset, module_after) == 0) {
-			break;
-		}
-	}
-
-	if (i == header->nmodules)
-		return -2;
-
-	int len = _strlen(new_module) + 1;
-
-	// Add new_module name at end
-	_memcpy((void *)modnameend, (void *)new_module, len);
-
-	// Move module_after forward
-	_memmove(&modules[i + 1], &modules[i], (header->nmodules - i) * sizeof(ModuleEntry) + len + modnameend - modnamestart);
-
-	// Add new_module information
-	modules[i].stroffset = modnameend - modnamestart;
-	modules[i].flags = flags;
-
-	// Update header
-	header->nmodules++;
-	header->modnamestart += sizeof(ModuleEntry);
-	header->modnameend += (len + sizeof(ModuleEntry));
-
-	// Update modes
-	int j;
-	for (j = 0; j < header->nmodes; j++) {
-		modes[j].maxsearch++;
-	}
-
-	return 0;
-}
-
-int sceKernelCheckPspConfigPatched(void *buf, int size, int flag) {
-	if (rebootex_config->module_after) {
-		InsertModule(buf, REBOOT_MODULE, rebootex_config->module_after, rebootex_config->flags);
-	}
-
-	return 0;
-}
-
-int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, void *t0) {
-
-	if (_strcmp(file->name, "pspbtcnf.bin") == 0) {
-		file->name = (rebootex_config->bootfileindex == MODE_RECOVERY)?
-			"/kd/pspbtrnf.bin" : "/kd/pspbtjnf.bin";
-
+    if (strcmp(p, "pspbtcnf.bin") == 0){
 		if (rebootex_config->bootfileindex == MODE_RECOVERY) {
 			rebootex_config->bootfileindex = MODE_UMD;
+            file->name = "/kd/pspbtrnf.bin";
 		}
+        else {
+            file->name = "/kd/pspbtjnf.bin";
+        }
+    }
 
-	} else if (_strcmp(file->name, REBOOT_MODULE) == 0) {
-		file->buffer = (void *)0x89000000;
-		file->size = rebootex_config->size;
-		_memcpy(file->buffer, rebootex_config->buf, file->size);
-		return 0;
-	}
-
-	sceKernelBootLoadFile(file, a1, a2, a3, t0);
-
-	return 0; //always return 0 to allow boot with unsuccessfully loaded files
+    return ret;
 }
 
-/*
-	0x89FF0000: Apitype
-	0x89FF0004: vsh: 2, update: 3, pops: 4, licence: 5, app: 6, umd: 7, mlnapp: 8
-	0x89FF0008: Path #1
-	0x89FF0048: Path #2
-	0x89FF0088: Path #3
-	0x89FF00C8: SFO buffer
-	0x89FF14C8: 0x000001F4
-	0x89FF14CC: 0x000000DC
-	0x89FF14D0: 0x00060313
-	0x89FF1510: TITLEID
-	0x89FF1520: 0x00000003
-	0x89FF1540: Path #4
-	0x89FF1590: Version
-*/
 
-int loadParamsPatched(int a0) {
-	int v0 = VREAD32(a0 + 12);
-	int v1 = VREAD32(a0 + 16);
-	VWRITE32((v1 + (v0 << 5)) - 12, VREAD32(0x89FF0000));
-	return 0;
-}
+BootLoadExConfig bleconf = {
+    .boot_type = TYPE_PAYLOADEX,
+    .boot_storage = FLASH_BOOT,
+    .extra_io.vita_io = {
+        .redirect_flash = 0,
+        .pspemuLfatOpenExtra = &pspemuLfatOpenEPI
+    }
+};
 
-int _start(void *a0, void *a1, void *a2) __attribute__((section(".text.start")));
-int _start(void *a0, void *a1, void *a2) {
-	int (* sceBoot)(void *a0, void *a1, void *a2) = NULL;
 
-	*(u32 *)0x89FF0000 = 0x200;
-	*(u32 *)0x89FF0004 = 0x2;
+// Entry Point
+int cfwBoot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
+{
+    // Configure
+    configureBoot(&bleconf);
 
-	for (u32 i = 0; i < 0x4000; i += 4) {
-		u32 addr = 0x88600000 + i;
-		u32 data = VREAD32(addr);
+    // scan for reboot functions
+    findBootFunctions();
 
-		// Find sceBoot
-		if (data == 0x27BD01C0) {
-			sceBoot = (void *)(addr + 4);
-			continue;
-		}
+    // patch reboot buffer
+    patchBootVita();
 
-		// Don't load pspemu params
-		if (data == 0x240500CF) {
-			MAKE_CALL(addr + 4, loadParamsPatched);
-			continue;
-		}
-
-		// Patch call to SysMem module_bootstart
-		if (data == 0x24040004) {
-			MAKE_INSTRUCTION(addr, 0x02202021); // move $a0, $s1
-			MAKE_CALL(addr - 4, PatchSysMem);
-			continue;
-		}
-
-		// Patch call to LoadCore module_bootstart
-		if (data == 0x00600008) {
-			MAKE_INSTRUCTION(addr - 8, 0x00602021); // move $a0, $v1
-			MAKE_JUMP(addr, PatchLoadCore);
-			continue;
-		}
-
-		// Patch sceKernelCheckPspConfig
-		if (data == 0x04400029) {
-			MAKE_CALL(addr - 8, sceKernelCheckPspConfigPatched);
-			continue;
-		}
-
-		// Patch sceKernelBootLoadFile
-		if (data == 0xAFBF0000 && VREAD32(addr + 8) == 0x00000000) {
-			sceKernelBootLoadFile = (void *)K_EXTRACT_CALL(addr + 4);
-			MAKE_CALL(addr + 4, sceKernelBootLoadFilePatched);
-			continue;
-		}
-	}
-
-	ClearCaches();
-
-	// Call original function
-	int res = SCE_ERR_NOT_INIT;
-	// this branch should always happen
-	if (sceBoot != NULL) {
-		res = sceBoot(a0, a1, a2);
-	}
-	return res;
+    // Forward Call
+    return sceBoot(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }

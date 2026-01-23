@@ -1,32 +1,15 @@
 #include <string.h>
-#include <pspsdk.h>
-#include <pspsysmem_kernel.h>
-#include <psputilsforkernel.h>
-#include <pspinit.h>
-#include <pspusbcam.h>
 
-#include <systemctrl_ark.h>
+#include <pspusbcam.h>
+#include <psploadcore.h>
+
 #include <cfwmacros.h>
 #include <systemctrl.h>
-#include <systemctrl_se.h>
-#include <systemctrl_private.h>
 
 void sceUsb_driver_ED8C8695();
 void sceUsb_driver_63E55EBE();
 
-int (* _sceUsbCamSetEvLevel)(int level);
-int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
-int (* _sceUsbCamReadMic)(void *buf, SceSize size);
-int (* _sceUsbCamWaitReadMicEnd)(void);
-int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
-int (* _sceUsbCamReadVideoFrame)(u8 *buf, SceSize size);
-int (* _sceUsbCamWaitReadVideoFrameEnd)(void);
-
-static int dummy_read_cam = 0;
-static int mute_mic = 0;
-static void* mic_buf = NULL;
-static SceSize mic_size = 0;
-
+static int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
 int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int ret = _sceUsbCamStillInput(buf, size);
@@ -127,7 +110,7 @@ int sceUsbCamSetupVideoEx_Patched(PspUsbCamSetupVideoExParam *exparam, void *wor
 		case 8:
 			// Vita camera doesn't support 1280x960
 			param.resolution = 7;
-//        	param.resolution = 6;
+//			param.resolution = 6;
 		break;
 	}
 
@@ -148,6 +131,12 @@ int sceUsbCamSetupVideoEx_Patched(PspUsbCamSetupVideoExParam *exparam, void *wor
 	return res;
 }
 
+
+static int mute_mic = 0;
+static void* mic_buf = NULL;
+static SceSize mic_size = 0;
+
+static int (* _sceUsbCamReadMic)(void *buf, SceSize size);
 int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int res = _sceUsbCamReadMic(buf, size);
@@ -157,19 +146,20 @@ int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
 	return res;
 }
 
+static int (* _sceUsbCamWaitReadMicEnd)(void);
 int sceUsbCamWaitReadMicEnd_Patched() {
 	int k1 = pspSdkSetK1(0);
 	int res = _sceUsbCamWaitReadMicEnd();
-	if (mute_mic && mic_buf)
-	{
+	if (mute_mic && mic_buf) {
 		memset(mic_buf, 0, mic_size);
 	}
 	pspSdkSetK1(k1);
 	return res;
 }
 
-int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize)
-{
+
+static int (* _sceUsbCamSetupMic)(void *param, void *workarea, int wasize);
+int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize) {
 	int res = 0;
 	int k1 = pspSdkSetK1(0);
 	res = _sceUsbCamSetupMic(param, workarea, wasize);
@@ -200,26 +190,27 @@ int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workare
 	return res;
 }
 
-int sceUsbCamSetEvLevel_Patched(int level)
-{
+static int g_dummy_read_cam = 0;
+
+static int (* _sceUsbCamSetEvLevel)(int level);
+int sceUsbCamSetEvLevel_Patched(int level) {
 	int res = 0;
 	int k1 = pspSdkSetK1(0);
-	dummy_read_cam = 1;
+	g_dummy_read_cam = 1;
 	sceKernelDelayThread(100000);
 	res = _sceUsbCamSetEvLevel(level);
 	sceKernelDelayThread(100000);
-	dummy_read_cam = 0;
+	g_dummy_read_cam = 0;
 	sceKernelDelayThread(100000);
 	pspSdkSetK1(k1);
 	return res;
 }
 
-int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size)
-{
+static int (* _sceUsbCamReadVideoFrame)(u8 *buf, SceSize size);
+int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 
-	if (dummy_read_cam)
-	{
+	if (g_dummy_read_cam) {
 		sceKernelDelayThread(300000);
 		pspSdkSetK1(k1);
 		return 0;
@@ -229,11 +220,10 @@ int sceUsbCamReadVideoFrame_Patched(u8 *buf, SceSize size)
 	return res;
 }
 
-int sceUsbCamWaitReadVideoFrameEnd_Patched()
-{
+static int (* _sceUsbCamWaitReadVideoFrameEnd)(void);
+int sceUsbCamWaitReadVideoFrameEnd_Patched() {
 	int k1 = pspSdkSetK1(0);
-	if (dummy_read_cam)
-	{
+	if (g_dummy_read_cam) {
 		sceKernelDelayThread(300000);
 		pspSdkSetK1(k1);
 		return 0x8000;
@@ -243,15 +233,16 @@ int sceUsbCamWaitReadVideoFrameEnd_Patched()
 	return res;
 }
 
-void patchUsbCam(SceModule* mod){
-	REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);
-	REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
-	REDIRECT_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
-	HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
-	HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0x1D686870), sceUsbCamSetEvLevel_Patched, _sceUsbCamSetEvLevel);
-	HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0x99D86281), sceUsbCamReadVideoFrame_Patched, _sceUsbCamReadVideoFrame);
-	HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0xF90B2293), sceUsbCamWaitReadVideoFrameEnd_Patched, _sceUsbCamWaitReadVideoFrameEnd);
-	HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
-	HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
-	HIJACK_FUNCTION(sctrlHENFindFunction(mod->modname, "sceUsbCam", 0xB048A67D), sceUsbCamWaitReadMicEnd_Patched, _sceUsbCamWaitReadMicEnd);
+void PatchUSBCamDriver(SceModule* mod) {
+	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);
+	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xCFE9E999), sceUsbCamSetupVideoEx_Patched);
+	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x2E930264), sceUsbCamSetupMicEx_Patched);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xFB0A6C5D), sceUsbCamStillInput_Patched, _sceUsbCamStillInput);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x1D686870), sceUsbCamSetEvLevel_Patched, _sceUsbCamSetEvLevel);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x99D86281), sceUsbCamReadVideoFrame_Patched, _sceUsbCamReadVideoFrame);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xF90B2293), sceUsbCamWaitReadVideoFrameEnd_Patched, _sceUsbCamWaitReadVideoFrameEnd);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x3DC0088E), sceUsbCamReadMic_Patched, _sceUsbCamReadMic);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x03ED7A82), sceUsbCamSetupMic_Patched, _sceUsbCamSetupMic);
+	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0xB048A67D), sceUsbCamWaitReadMicEnd_Patched, _sceUsbCamWaitReadMicEnd);
+	sctrlFlushCache();
 }

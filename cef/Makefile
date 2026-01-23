@@ -60,7 +60,6 @@ _rebootex:
 _binary:
 	make -C binary clean
 	make -C binary -j
-	bin2c binary/binary.bin systemctrl/binary.h binary
 	bin2c binary/binary.bin pentazemin/binary.h binary
 	make -C binary clean
 
@@ -82,7 +81,7 @@ ifdef USE_PSP_PACKER
 else
 	$(PY) $(PSPGZ) ../user/flash0/kd/pentazemin.prx $(KHDR) pentazemin/pentazemin.prx Pentazemin 0x3007
 endif
-	make -C pentazemin clean
+#	make -C pentazemin clean
 
 _popcorn:
 	make -C popcorn clean
@@ -194,4 +193,4 @@ clean:
 	make -C xmbctrl clean
 	make -C satelite clean
 	make -C recovery clean
-	rm -f systemctrl/binary.h systemctrl/rebootex.h
+	rm -f pentazemin/binary.h systemctrl/rebootex.h

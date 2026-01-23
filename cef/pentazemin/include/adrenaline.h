@@ -22,7 +22,9 @@
 #include <psptypes.h>
 #include <psploadcore.h>
 
-int SendAdrenalineCmd(int cmd, u32 args);
+#include <systemctrl_adrenaline.h>
+
+extern SceAdrenaline *g_adrenaline;
 
 void initAdrenalineInfo();
 

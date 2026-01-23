@@ -40,34 +40,22 @@ void CheckControllerInput();
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchChkreg();
-void PatchMemlmd();
 void PatchSysmem();
-void PatchUtility();
 void PatchLoadCore();
 void PatchModuleMgr();
 void PatchIoFileMgr();
 void PatchInterruptMgr();
-void PatchMesgLed(SceModule* mod);
 void PatchLoadExec(SceModule* mod);
 void PatchMediaSync(SceModule* mod);
-void PatchUmdDriver(SceModule* mod);
 void PatchController(SceModule* mod);
-void PatchImposeDriver(SceModule* mod);
-void PatchUSBCamDriver(SceModule* mod);
-void PatchPowerService(SceModule* mod);
-void PatchMeCodecWrapper(SceModule* mod);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Other Module Patchers
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchVolatileMemBug();
 void PatchGameByTitleId();
 void PatchGameByTitleIdOnLoadExec();
 void PatchGamesByMod(SceModule* mod);
 void PatchHideCfwFiles(SceModule* mod);
-
-void PatchVlfLib(SceModule* mod);
-void PatchCwCheatPlugin(SceModule* mod);
 
 #endif

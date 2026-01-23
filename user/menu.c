@@ -43,6 +43,7 @@
 #include "usb.h"
 #include "utils.h"
 #include "math_utils.h"
+#include "../adrenaline_version.h"
 
 #include "includes/lcd3x_v.h"
 #include "includes/lcd3x_f.h"

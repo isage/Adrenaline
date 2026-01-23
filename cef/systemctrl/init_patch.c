@@ -24,6 +24,7 @@
 #include <pspmodulemgr.h>
 
 #include <cfwmacros.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
@@ -68,65 +69,6 @@ SceUID sceKernelLoadModuleMs2Leda(const char *path, int flags, SceKernelLMOption
 SceUID sceKernelLoadModuleMs2Init(int apitype, const char *path, int flags, SceKernelLMOption *option) {
 	g_leda_apitype = apitype;
 	return sceKernelLoadModuleMs2Handler(path, flags, option);
-}
-
-SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
-	PSPKeyConfig app_type = sceKernelApplicationType();
-
-	if (g_cfw_config.use_sony_psposk) {
-		if (strcmp(info->name, "/kd/kermit_utility.prx") == 0) {
-			info->name = "/kd/utility.prx";
-		}
-	}
-
-	if (g_cfw_config.use_ge2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
-		if (strcmp(info->name, "/kd/ge.prx") == 0) {
-			info->name = "/kd/ge_2.prx";
-
-			char* path = "flash0:/kd/ge_2.prx";
-			SceUID mod = sceKernelLoadModule(path, 0, NULL);
-			logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", path, mod);
-			if (mod >= 0) {
-				return mod;
-			}
-		}
-	}
-
-	if (g_cfw_config.use_me2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
-		if (strcmp(info->name, "/kd/kermit_me_wrapper.prx") == 0) {
-			info->name = "/kd/kermit_me_wrapper_2.prx";
-
-			char* path = "flash0:/kd/kermit_me_wrapper_2.prx";
-			SceUID mod = sceKernelLoadModule(path, 0, NULL);
-			logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", path, mod);
-			if (mod >= 0) {
-				return mod;
-			}
-		}
-	}
-
-	char path[64];
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name); //not use flash0 cause of cxmb
-
-	SceUID mod = sceKernelLoadModule(path, 0, NULL);
-	logmsg4("[DEBUG]: sceKernelLoadModule: path=%s -> 0x%08X\n", info->name, mod);
-	if (mod >= 0) {
-		return mod;
-	}
-
-	return sceKernelLoadModuleBufferBootInitBtcnf(info->size, buf, flags, option);
-}
-
-SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
-	char path[64];
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", info->name);
-
-	SceUID mod = sceKernelLoadModule(path, 0, NULL);
-	if (mod >= 0) {
-		return mod;
-	}
-
-	return LoadModuleBufferAnchorInBtcnf(buf, (info->attr >> 8) & 1);
 }
 
 int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option) {
@@ -223,17 +165,6 @@ START_MODULE:
 
 int PatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 	g_init_addr = ((u32)module_bootstart) - 0x1A54;
-
-	// Ignore StopInit
-	MAKE_NOP(g_init_addr + 0x18EC);
-
-	// Redirect load functions to load from MS
-	LoadModuleBufferAnchorInBtcnf = (void *)g_init_addr + 0x1038;
-	MAKE_CALL(g_init_addr + 0x17E4, LoadModuleBufferAnchorInBtcnfPatched);
-	MAKE_INSTRUCTION(g_init_addr + 0x17E8, 0x02402821); // move $a1, $s2
-
-	MAKE_INSTRUCTION(g_init_addr + 0x1868, 0x02402021); // move $a0, $s2
-	MAKE_CALL(g_init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
 
 	MAKE_JUMP(g_init_addr + 0x1C5C, sceKernelStartModulePatched);
 

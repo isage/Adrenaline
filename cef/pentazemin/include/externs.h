@@ -3,12 +3,11 @@
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <rebootexconfig.h>
-#include <../../adrenaline_compat.h>
+#include <systemctrl_adrenaline.h>
 
-extern RebootexConfigEPI g_rebootex_config;
-extern SEConfigEPI g_cfw_config;
 extern STMOD_HANDLER g_module_handler;
 extern SceAdrenaline *g_adrenaline;
+
+extern PentazeminConfig config;
 
 #endif

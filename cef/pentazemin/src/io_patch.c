@@ -20,16 +20,17 @@
 #include <string.h>
 
 #include <pspsdk.h>
+#include <pspkernel.h>
 #include <pspinit.h>
+#include <pspthreadman_kernel.h>
 #include <pspiofilemgr.h>
 #include <pspiofilemgr_kernel.h>
-#include <psploadcore.h>
 
 #include <cfwmacros.h>
 
 #include "externs.h"
+#include "adrenaline.h"
 
-#include "../../adrenaline_compat.h"
 
 static PspIoDrv *g_ms_drv;
 static PspIoDrv *g_flashfat_drv;
@@ -223,6 +224,12 @@ static int _flashIoOpen(u32 *args) {
 	char *file = (char *)args[1];
 	int flags = args[2];
 	SceMode mode = (SceMode)args[3];
+
+	if (config.osk_type == OSK_TYPE_VITA) {
+		if (strcmp(file, "/vsh/module/osk_plugin.prx") == 0) {
+			file = "/vsh/module/kermit_osk_plugin.prx";
+		}
+	}
 
 	if (strcmp(file, "/kd/mpeg_vsh.prx") == 0) {
 		file = "/kd/mpeg.prx";

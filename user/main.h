@@ -23,7 +23,7 @@
 #include <psp2/ctrl.h>
 #include <psp2/io/stat.h>
 #include <taihen.h>
-#include "../adrenaline_compat.h"
+
 #include "../adrenaline_vita.h"
 
 #define INCLUDE_EXTERN_RESOURCE(name) extern unsigned char _binary_flash0_##name##_start; extern unsigned char _binary_flash0_##name##_size;
