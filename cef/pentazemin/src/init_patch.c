@@ -27,6 +27,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 	char path[64];
 	char* filename = (info->name[0])? info->name : (char*)&(g_boot_files->bootfile[g_cur_file]);
+	g_cur_file++;
 
 	PSPKeyConfig app_type = sceKernelApplicationType();
 
@@ -62,8 +63,6 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename); //not use flash0 cause of cxmb
 
-	g_cur_file++;
-
 	SceUID mod = sceKernelLoadModule(path, 0, NULL);
 	if (mod >= 0)
 		return mod;
@@ -76,10 +75,9 @@ SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo
 
 	char path[64];
 	char* filename = (info->name[0])? info->name : (char*)&(g_boot_files->bootfile[g_cur_file]);
+	g_cur_file++;
 
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename);
-
-	g_cur_file++;
 
 	SceUID mod = sceKernelLoadModule(path, 0, NULL);
 	if (mod >= 0) {
