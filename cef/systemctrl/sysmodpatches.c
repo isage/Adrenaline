@@ -229,7 +229,15 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 
 // ARK CFW compat
 int sctrlHENApplyMemory(u32 p2) {
-	return -1; // let Pentazemin implement this
+	int p11 = 40 - p2;
+	int res = sctrlHENSetMemory(p2, (p11 < 0)? 0 : p11);
+
+	// It can't unlock
+	if (res < 0) {
+		return res;
+	}
+
+	return 0;
 }
 
 void sctrlHENSetSpeed(int cpu, int bus) {
@@ -402,12 +410,6 @@ void PatchLoadExec(SceModule* mod) {
 		u32 addr = text_addr + i;
 		u32 data = VREAD32(addr);
 
-		// Allow loadexec in whatever user level. Make sceKernelGetUserLevel return 4
-		if (data == 0x1445FFF4) {
-			MAKE_DUMMY_FUNCTION(K_EXTRACT_CALL(addr - 0x10), 4);
-			continue;
-		}
-
 		// Patch to do things before reboot
 		if (data == 0x02202021 && VREAD32(addr + 4) == 0x00401821) {
 			K_HIJACK_CALL(addr - 4, RunRebootPatched, RunReboot);
@@ -482,5 +484,6 @@ void PatchSysmem() {
 			VWRITE16(addr + 2, 0x1000);
 		}
 	}
-	
+
+	sctrlFlushCache();
 }
