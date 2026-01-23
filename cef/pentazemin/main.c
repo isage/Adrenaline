@@ -25,6 +25,9 @@
 #include <systemctrl.h>
 #include <systemctrl_adrenaline.h>
 
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 #include "externs.h"
 #include "ttystdio.h"
 #include "adrenaline.h"
@@ -137,6 +140,8 @@ int PentazeminOnModuleStart(SceModule * mod) {
 
 // Boot Time Entry Point
 int module_start(SceSize args, void * argp) {
+	logInit("ms0:/log_pentazemin.txt");
+	logmsg("Pentazemin started...\n");
 
 	PatchSysmem();
 	PatchLoaderCore();

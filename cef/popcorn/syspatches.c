@@ -429,7 +429,7 @@ void PatchScePopsMgr(void) {
 
 	// Patch permission issues with audio function
 	_sceMeAudio_2AB4FE43 = (void*)sctrlHENFindFunctionInMod(mod, "sceMeAudio", 0x2AB4FE43);
-	sctrlHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched);//, 1); // why 1?
+	sctrlHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched);
 
 	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadPatched);
 
