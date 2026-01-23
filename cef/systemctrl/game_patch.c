@@ -206,7 +206,7 @@ void PatchGamesByMod(SceModule* mod) {
 		SetUmdEmuSpeed(1, 1);
 
 		// Disable ms cache as well.
-		storageCacheInit(NULL);
+		sctrlMsCacheInit(NULL, 0);
 
 	} else if (strcmp(mod->modname, "ATVPRO") == 0){
 		// Remove "overclock" message in `ATV PRO`
@@ -274,7 +274,7 @@ void PatchGamesByMod(SceModule* mod) {
 		SetUmdEmuSpeed(0, 1);
 
 		// Disable ms cache as well.
-		storageCacheInit(NULL);
+		sctrlMsCacheInit(NULL, 0);
 	}
 
 	sctrlFlushCache();

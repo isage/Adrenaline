@@ -224,6 +224,7 @@ PSP_EXPORT_FUNC(sctrlGetInitPARAM)
 PSP_EXPORT_FUNC(sctrlGetSfoPARAM)
 PSP_EXPORT_FUNC(sctrlGetThreadUIDByName)
 PSP_EXPORT_FUNC(sctrlHookImportByNID)
+PSP_EXPORT_FUNC(sctrlMsCacheInit)
 
 # sctrl - KERNEL PRIVATE:
 PSP_EXPORT_FUNC(ApplyMemory)

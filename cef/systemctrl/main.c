@@ -62,7 +62,7 @@ int mallocinit();
 static void OnSystemStatusIdle() {
 
 	if (g_cfw_config.no_ms_cache == 0) {
-		storageCacheInit("ms");
+		sctrlMsCacheInit("ms", MSCACHE_BUFSIZE_MIN);
 	}
 
 	// March33 UMD seek/speed simulation
@@ -177,7 +177,7 @@ static int OnModuleStart(SceModule *mod) {
 	}
 
 	// Third-party Plugins modules
-	if (isLoadingPlugins()) {
+	if (sctrlIsLoadingPlugins()) {
 		// Fix 6.60 plugins on 6.61
 		sctrlHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
         sctrlHookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
