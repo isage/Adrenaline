@@ -81,7 +81,7 @@ ifdef USE_PSP_PACKER
 else
 	$(PY) $(PSPGZ) ../user/flash0/kd/pentazemin.prx $(KHDR) pentazemin/pentazemin.prx Pentazemin 0x3007
 endif
-#	make -C pentazemin clean
+	make -C pentazemin clean
 
 _popcorn:
 	make -C popcorn clean

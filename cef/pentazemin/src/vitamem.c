@@ -15,7 +15,7 @@
 
 static void* findGetPartition(){
 	for (u32 addr = SYSMEM_TEXT; ; addr+=4){
-		if (_lw(addr) == 0x2C85000D){
+		if (VREAD32(addr) == 0x2C85000D){
 			return (void*)(addr-4);
 		}
 	}
@@ -23,10 +23,11 @@ static void* findGetPartition(){
 }
 
 int unlockVitaMemory(u32 user_size_mib){
-
-	int apitype = sceKernelInitApitype(); // prevent in pops and vsh
-	if (apitype == 0x144 || apitype == 0x155 || apitype >= 0x200)
+	// Do not allow in pops and vsh
+	int apitype = sceKernelInitApitype();
+	if (apitype == PSP_INIT_APITYPE_MS5 || apitype == PSP_INIT_APITYPE_EF5 || apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
 		return -1;
+	}
 
 	PspSysMemPartition *(* GetPartition)(int partition) = findGetPartition();
 
@@ -41,7 +42,7 @@ int unlockVitaMemory(u32 user_size_mib){
 	// modify p11
 	for (int i=8; i<12; i++){
 		partition = GetPartition(i);
-		if (partition){
+		if (partition) {
 			partition->size = 0;
 			partition->address = 0x88800000 + user_size;
 			partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
@@ -64,13 +65,23 @@ int memoryHandlerVita(u32 p2){
 
 	// call orig function to determine if can unlock
 	int res = _sctrlHENApplyMemory(p2);
-	if (res<0) return res;
+	if (res < 0) {
+		return res;
+	}
 
 	// unlock
 	res = unlockVitaMemory(p2);
 
 	// unlock fail? revert back to 24MB
-	if (res<0) _sctrlHENApplyMemory(24);
+	if (res < 0) {
+		_sctrlHENApplyMemory(24);
+	}
 
 	return res;
+}
+
+void PatchMemUnlock() {
+	HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENApplyMemory), memoryHandlerVita, _sctrlHENApplyMemory);
+
+	sctrlFlushCache();
 }

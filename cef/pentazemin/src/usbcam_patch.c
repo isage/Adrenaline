@@ -9,6 +9,15 @@
 void sceUsb_driver_ED8C8695();
 void sceUsb_driver_63E55EBE();
 
+static int g_mute_mic = 0;
+static void* g_mic_buf = NULL;
+static SceSize g_mic_size = 0;
+static int g_dummy_read_cam = 0;
+
+////////////////////////////////////////////////////////////////////////////////
+// PATCHED IMPLEMENTATIONS
+////////////////////////////////////////////////////////////////////////////////
+
 static int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
 int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
@@ -131,17 +140,12 @@ int sceUsbCamSetupVideoEx_Patched(PspUsbCamSetupVideoExParam *exparam, void *wor
 	return res;
 }
 
-
-static int mute_mic = 0;
-static void* mic_buf = NULL;
-static SceSize mic_size = 0;
-
 static int (* _sceUsbCamReadMic)(void *buf, SceSize size);
 int sceUsbCamReadMic_Patched(void *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int res = _sceUsbCamReadMic(buf, size);
-	mic_buf = buf;
-	mic_size = size;
+	g_mic_buf = buf;
+	g_mic_size = size;
 	pspSdkSetK1(k1);
 	return res;
 }
@@ -150,8 +154,8 @@ static int (* _sceUsbCamWaitReadMicEnd)(void);
 int sceUsbCamWaitReadMicEnd_Patched() {
 	int k1 = pspSdkSetK1(0);
 	int res = _sceUsbCamWaitReadMicEnd();
-	if (mute_mic && mic_buf) {
-		memset(mic_buf, 0, mic_size);
+	if (g_mute_mic && g_mic_buf) {
+		memset(g_mic_buf, 0, g_mic_size);
 	}
 	pspSdkSetK1(k1);
 	return res;
@@ -164,7 +168,7 @@ int sceUsbCamSetupMic_Patched(void *param, void *workarea, int wasize) {
 	int k1 = pspSdkSetK1(0);
 	res = _sceUsbCamSetupMic(param, workarea, wasize);
 	pspSdkSetK1(k1);
-	mute_mic = 0;
+	g_mute_mic = 0;
 	return res;
 
 }
@@ -185,12 +189,10 @@ int sceUsbCamSetupMicEx_Patched(PspUsbCamSetupMicExParam *exparam, void *workare
 
 	pspSdkSetK1(k1);
 
-	mute_mic = 1;
+	g_mute_mic = 1;
 
 	return res;
 }
-
-static int g_dummy_read_cam = 0;
 
 static int (* _sceUsbCamSetEvLevel)(int level);
 int sceUsbCamSetEvLevel_Patched(int level) {
@@ -232,6 +234,10 @@ int sceUsbCamWaitReadVideoFrameEnd_Patched() {
 	pspSdkSetK1(k1);
 	return res;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// MODULE PATCHERS
+////////////////////////////////////////////////////////////////////////////////
 
 void PatchUSBCamDriver(SceModule* mod) {
 	REDIRECT_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceUsbCam", 0x0A41A298), sceUsbCamSetupStillEx_Patched);

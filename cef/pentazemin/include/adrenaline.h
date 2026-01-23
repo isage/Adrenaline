@@ -25,12 +25,9 @@
 #include <systemctrl_adrenaline.h>
 
 extern SceAdrenaline *g_adrenaline;
+extern PentazeminConfig g_config;
 
 void initAdrenalineInfo();
-
-void PatchSasCore(SceModule* mod);
-void PatchLowIODriver2(SceModule* mod);
-void PatchPowerService2(SceModule* mod);
 
 int initAdrenaline();
 

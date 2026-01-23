@@ -31,6 +31,9 @@ static int (* _sceUtilityGetSystemParamInt)(int id, int *value);
 static int (* _kermitUtilityOskGetStatus)();
 static int (* _kermitUtilityOskInitStart)(SceUtilityOskParams *params);
 
+////////////////////////////////////////////////////////////////////////////////
+// PATCHED IMPLEMENTATIONS
+////////////////////////////////////////////////////////////////////////////////
 
 int sceUtilityLoadModulePatched(int id) {
 	int res = _sceUtilityLoadModule(id);
@@ -54,11 +57,15 @@ int kermitUtilityOskInitStartPatched(SceUtilityOskParams *params) {
 	return _kermitUtilityOskInitStart(params);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// MODULE PATCHERS
+////////////////////////////////////////////////////////////////////////////////
+
 void PatchUtility() {
 	HIJACK_FUNCTION(sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0x2A2B3DE0), sceUtilityLoadModulePatched, _sceUtilityLoadModule);
 	HIJACK_FUNCTION(sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xE49BFE92), sceUtilityUnloadModulePatched, _sceUtilityUnloadModule);
 
-	if (config.osk_type == OSK_TYPE_VITA) {
+	if (g_config.osk_type == OSK_TYPE_VITA) {
 		_sceUtilityGetSystemParamInt = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility", 0xA5DA2406);
 		_kermitUtilityOskGetStatus = (void *)sctrlHENFindFunction("sceUtility_Driver", "sceUtility_private", 0xB08B2B48);
 
