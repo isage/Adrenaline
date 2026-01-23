@@ -25,8 +25,9 @@
 #include <pspintrman_kernel.h>
 #include <pspthreadman_kernel.h>
 
-#include <systemctrl.h>
 #include <cfwmacros.h>
+#include <systemctrl.h>
+#include <vshctrl.h>
 
 #include <adrenaline_log.h>
 
