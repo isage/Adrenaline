@@ -24,16 +24,14 @@ USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_kernel -lpspusbcam_driver -lpspusb_driver -lpsppower_driver -lpspkermit_driver -lpspinit_kernel -lpspsysmem_kernel -lpspmodulemgr_kernel
+LIBS = -lpspsystemctrl_kernel -lpspinit_kernel -lpspthreadman_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
 
 ifdef PENTAZEMIN_DEBUG
 CFLAGS += -DDEBUG=$(PENTAZEMIN_DEBUG)
-LIBS += -lpspsysclib_kernel
 endif
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
-LIBS += -lpspsysclib_kernel
 endif
 
 include $(PSPSDK)/lib/build.mak
