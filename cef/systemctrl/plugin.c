@@ -59,7 +59,7 @@ static int cur_runlevel = RUNLEVEL_UNKNOWN;
 int g_disable_plugins = 0;
 static int g_is_plugins_loading = 0;
 
-int isLoadingPlugins() {
+int sctrlIsLoadingPlugins() {
 	return g_is_plugins_loading;
 }
 

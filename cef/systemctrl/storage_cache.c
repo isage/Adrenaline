@@ -34,9 +34,6 @@
 //#define CHECK_MODE
 #undef CHECK_MODE
 
-// Not much of a difference when past 4Kb
-#define MSCACHE_SIZE (4*1024)
-
 #define INVALID_POS (-1)
 
 // Cache Structure
@@ -295,7 +292,7 @@ static int storageIoUnk21Cache(PspIoDrvFileArg *arg) {
 }
 
 // Initialize "ms" Driver Cache
-int storageCacheInit(const char* driver) {
+int sctrlMsCacheInit(const char* driver, int cache_size) {
 	if (driver == NULL){
 		if (g_hooked_drv){
 			// Unhook Driver Functions
@@ -345,7 +342,7 @@ int storageCacheInit(const char* driver) {
 	}
 
 	// Allocate Memory
-	SceUID memid = sceKernelAllocPartitionMemory(1, "storageCache", PSP_SMEM_High, MSCACHE_SIZE + 64, NULL);
+	SceUID memid = sceKernelAllocPartitionMemory(1, "storageCache", PSP_SMEM_High, cache_size + 64, NULL);
 	g_cache_mem = memid;
 
 	if (memid < 0) {
@@ -364,7 +361,7 @@ int storageCacheInit(const char* driver) {
 	g_cache.buf = PTR_ALIGN_64(g_cache.buf);
 
 	// Set Cache Size
-	g_cacheSize = MSCACHE_SIZE;
+	g_cacheSize = cache_size;
 
 	disableCache(&g_cache);
 

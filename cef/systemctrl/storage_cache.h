@@ -21,7 +21,6 @@
 #ifndef _STORAGE_CACHE_H_
 #define _STORAGE_CACHE_H_
 
-int storageCacheInit(const char *driver);
 void storageCacheDisable(void);
 void storageCacheStat(int reset);
 

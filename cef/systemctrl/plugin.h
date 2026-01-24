@@ -25,8 +25,5 @@ extern int g_disable_plugins;
 // Load Plugins
 void loadPlugins(void);
 
-/// Returns true if the system is at the stage of loading third-party plugins.
-int isLoadingPlugins();
-
 #endif
 
