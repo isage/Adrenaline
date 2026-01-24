@@ -170,7 +170,7 @@ jobs:
           sed -r -i "s|^(#define[[:space:]]+EPI_NIGHTLY_VER[[:space:]]+\")([0-9]+)(\")|\1${sha}\3|" adrenaline_version.h
 
       - name: Build eCFW
-        run: make -j1 -C cef NIGHTLY=1 SCTRL_DEBUG=3
+        run: make -j1 -C cef NIGHTLY=1 SCTRL_DEBUG=3 PENTAZEMIN_DEBUG=3
 
       - name: Build VPK
         run: |
