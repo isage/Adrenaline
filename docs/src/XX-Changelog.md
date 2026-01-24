@@ -11,6 +11,7 @@
 - Add `Scale3x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add image overlay filter for PS1 game/apps **\[[docs](./06-PS1Playback.md#overlay-image)\]**
 - "Fix" manual double launch on first install
+- Improve frame pacing on Original graphics filtering
 
 ### Epinephrine CFW
 - **Breaking change:** New plugin configuration format **\[[docs](./04-HomebrewSupport/02-PluginConfigFormat.md)\]**
@@ -68,6 +69,8 @@
 - **DEV:** Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
 - **DEV:** Add stubs for the UMDemu ISO drivers
 - **DEV:** Add NID translation table to `sceAudioRouting_driver` (Improve plugin compatibility)
+- **DEV:** Create, use and share with ARK a PSP CFW SDK
+- **DEV:** Split patches to make vPSP possible to it's own module: `Pentazemin`
 
 - **Internal:** Some code reorganization
 - **Internal:** Code clean ups

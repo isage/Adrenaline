@@ -29,6 +29,7 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 **Core parts:**
 
 - `cef/systemctrl`: The heart of the eCFW, therefore it's name `SystemControl`. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW module and third-party plugins.
+- `cef/pentazemin`: The `Pentazemin` module patches the necessary system modules and old homebrew modules to make the vPSP environment to work. It also works as a compatibility layer for other PSP CFW to run on Adrenaline more easily (like ARK).
 - `cef/vshctrl`: The `VshControl` module handles the main patches for the `XMB`/`VSH` to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on `XMB`/`VSH` contexts.
 - `cef/galaxy`: The `GalaxyController` module provide patches to use ISO and Compressed ISO with the Sony's NP9660 driver.
 - `cef/inferno`: The `InfernoDriver` module is the custom driver that allows executing ISO and Compressed ISO.
