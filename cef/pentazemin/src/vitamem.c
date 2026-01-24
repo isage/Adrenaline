@@ -82,6 +82,4 @@ int memoryHandlerVita(u32 p2){
 
 void PatchMemUnlock() {
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(sctrlHENApplyMemory), memoryHandlerVita, _sctrlHENApplyMemory);
-
-	sctrlFlushCache();
 }

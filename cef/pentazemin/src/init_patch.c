@@ -135,6 +135,4 @@ void PatchLoaderCore(void) {
 			break;
 		}
 	}
-
-	sctrlFlushCache();
 }

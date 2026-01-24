@@ -56,11 +56,12 @@ void OnSystemStatusIdle() {
 
 
 int PentazeminOnModuleStart(SceModule * mod) {
+	char *modname = mod->modname;
 
 	// System fully booted Status
 	static int booted = 0;
 
-	if (strcmp(mod->modname, "sceLowIO_Driver") == 0) {
+	if (strcmp(modname, "sceLowIO_Driver") == 0) {
 		// Protect pops memory
 		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
 			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
@@ -71,50 +72,50 @@ int PentazeminOnModuleStart(SceModule * mod) {
 
 		PatchLowIODriver2(mod);
 
-	}else if (strcmp(mod->modname, "sceLoadExec") == 0) {
+	}else if (strcmp(modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod);
 
-	} else if (strcmp(mod->modname, "scePower_Service") == 0) {
+	} else if (strcmp(modname, "scePower_Service") == 0) {
 		PatchPowerService(mod);
 		PatchPowerService2(mod);
 
-	} else if (strcmp(mod->modname, "sceChkreg") == 0) {
+	} else if (strcmp(modname, "sceChkreg") == 0) {
 		PatchChkreg(mod);
 
-	} else if (strcmp(mod->modname, "sceMesgLed") == 0) {
+	} else if (strcmp(modname, "sceMesgLed") == 0) {
 		PatchMesgLed(mod);
 
-	} else if (strcmp(mod->modname, "sceUmd_driver") == 0) {
+	} else if (strcmp(modname, "sceUmd_driver") == 0) {
 		PatchUmdDriver(mod);
 
-	} else if(strcmp(mod->modname, "sceMeCodecWrapper") == 0) {
+	} else if(strcmp(modname, "sceMeCodecWrapper") == 0) {
 		PatchMeCodecWrapper(mod);
 
-	} else if (strcmp(mod->modname, "sceUtility_Driver") == 0) {
+	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		PatchUtility();
 
-	} else if (strcmp(mod->modname, "sceUSBCam_Driver") == 0) {
+	} else if (strcmp(modname, "sceUSBCam_Driver") == 0) {
 		PatchUSBCamDriver(mod);
 
-	} else if (strcmp(mod->modname, "sceImpose_Driver") == 0) {
+	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
 		PatchImposeDriver(mod);
 
-	} else if (strcmp(mod->modname, "sceSAScore") == 0) {
+	} else if (strcmp(modname, "sceSAScore") == 0) {
 		PatchSasCore(mod);
 
-	} else if (strcmp(mod->modname, "scePops_Manager") == 0){
+	} else if (strcmp(modname, "scePops_Manager") == 0){
 		PatchPopsMgr(mod);
 
-	} else if (strcmp(mod->modname, "pops") == 0){
+	} else if (strcmp(modname, "pops") == 0){
 		PatchPops(mod);
 
-	} else if (strcmp(mod->modname, "sysconf_plugin_module") == 0){
+	} else if (strcmp(modname, "sysconf_plugin_module") == 0){
 		PatchSysconfPlugin(mod);
 
-	} else if (strcmp(mod->modname, "CWCHEATPRX") == 0) {
+	} else if (strcmp(modname, "CWCHEATPRX") == 0) {
 		PatchCwCheatPlugin(mod);
 
-	} else if(strcmp(mod->modname, "VLF_Module") == 0) {
+	} else if(strcmp(modname, "VLF_Module") == 0) {
 		PatchVlfLib(mod);
 	}
 
@@ -147,6 +148,8 @@ int module_start(SceSize args, void * argp) {
 	PatchLoaderCore();
 	PatchIoFileMgr();
 	PatchMemlmd();
+	PatchMemUnlock();
+	sctrlFlushCache();
 
 	// initialize Adrenaline Layer
 	initAdrenaline();
@@ -154,10 +157,8 @@ int module_start(SceSize args, void * argp) {
 	// Register Module Start Handler
 	previous = sctrlHENSetStartModuleHandler(PentazeminOnModuleStart);
 
-	PatchMemUnlock();
 
 	tty_init();
-	sctrlFlushCache();
 
 	// Return Success
 	return 0;

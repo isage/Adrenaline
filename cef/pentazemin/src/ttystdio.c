@@ -7,8 +7,8 @@
 
 #include <systemctrl_adrenaline.h>
 
-#include "adrenaline.h"
-#include <systemctrl_adrenaline.h>
+// #include "adrenaline.h"
+extern SceAdrenaline *g_adrenaline;
 
 static SceUID g_out_sema = 0;
 

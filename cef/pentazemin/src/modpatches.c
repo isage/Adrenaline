@@ -12,6 +12,8 @@
 #include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
 
+#include <adrenaline_log.h>
+
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,13 +93,15 @@ int sceKernelPowerTickPatched(u32 tick_type) {
 	int res = sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_TICK, tick_type);
 
 	if (res < 0) {
-		return res;
+		goto exit;
 	}
 
 	u32 k1 = pspSdkSetK1(0);
 	res = _sceKernelPowerTick(tick_type);
 	pspSdkSetK1(k1);
 
+exit:
+	logmsg4("[DEBUG]: %s: tick_type=%d -> 0x%08X\n", __func__, tick_type, res);
 	return res;
 }
 
@@ -147,8 +151,6 @@ void PatchSysmem(void) {
 	SceModule *mod = sceKernelFindModuleByName("sceSystemMemoryManager");
 	u32 power_tick_addr = sctrlHENFindFunctionInMod(mod, "sceSuspendForKernel", 0x090CCB3F);
 	HIJACK_FUNCTION(power_tick_addr, sceKernelPowerTickPatched, _sceKernelPowerTick);
-
-	sctrlFlushCache();
 }
 
 void PatchVolatileMemBug() {
