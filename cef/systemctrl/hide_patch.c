@@ -183,7 +183,8 @@ void PatchHideCfwFiles(SceModule* mod) {
 	// 1. Sanity check: Not VSH or UPDATE
 	// 2. If it is an (unsigned) homebrew running (PSP_INIT_APITYPE_MS2 and PSP_INIT_APITYPE_EF2)
 	// 3. If it is configured to not hide even on games
-	if (apptype == PSP_INIT_KEYCONFIG_VSH || apptype == PSP_INIT_KEYCONFIG_UPDATER || apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || g_cfw_config.no_hide_cfw_files) {
+	// 4. Not on POPS, as PS1 games do not have anti-CFW for PSP
+	if (apptype == PSP_INIT_KEYCONFIG_VSH || apptype == PSP_INIT_KEYCONFIG_UPDATER || apptype == PSP_INIT_KEYCONFIG_POPS || apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || g_cfw_config.no_hide_cfw_files) {
 		return;
 	}
 

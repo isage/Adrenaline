@@ -205,10 +205,10 @@ static int OnModuleStart(SceModule *mod) {
 			}
 		}
 
-	} else if (strcmp(mod->modname, "sceKermitMsfs_driver") == 0) {
+	} else if (strcmp(modname, "sceKermitMsfs_driver") == 0) {
 		load_file_config = 1;
 
-	} else if (strcmp(mod->modname, "sceController_Service") == 0) {
+	} else if (strcmp(modname, "sceController_Service") == 0) {
 		PatchController(mod);
 
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
