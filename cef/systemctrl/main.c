@@ -179,8 +179,8 @@ static int OnModuleStart(SceModule *mod) {
 	// Third-party Plugins modules
 	if (sctrlIsLoadingPlugins()) {
 		// Fix 6.60 plugins on 6.61
-		sctrlHookImportByNID(mod, "SysMemForKernel", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
-        sctrlHookImportByNID(mod, "SysMemUserForUser", 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+		const char *sysmemlib = (IS_KERNEL_ADDR(text_addr)) ? "SysMemForKernel" : "SysMemUserForUser";
+		sctrlHookImportByNID(mod, sysmemlib, 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
 	}
 
 	if (load_file_config) {

@@ -64,8 +64,9 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename); //not use flash0 cause of cxmb
 
 	SceUID mod = sceKernelLoadModule(path, 0, NULL);
-	if (mod >= 0)
+	if (mod >= 0) {
 		return mod;
+	}
 
 	return sceKernelLoadModuleBufferBootInitBtcnf(info->size, buf, flags, option);
 }
