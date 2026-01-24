@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-1f1a5430.js";
+            window.path_to_searchindex_js = "searchindex-100ae054.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f070d2aa.js"></script>
@@ -437,6 +437,7 @@
 <p><strong>Core parts:</strong></p>
 <ul>
 <li><code>cef/systemctrl</code>: The heart of the eCFW, therefore it’s name <code>SystemControl</code>. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW module and third-party plugins.</li>
+<li><code>cef/pentazemin</code>: The <code>Pentazemin</code> module patches the necessary system modules and old homebrew modules to make the vPSP environment to work. It also works as a compatibility layer for other PSP CFW to run on Adrenaline more easily (like ARK).</li>
 <li><code>cef/vshctrl</code>: The <code>VshControl</code> module handles the main patches for the <code>XMB</code>/<code>VSH</code> to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on <code>XMB</code>/<code>VSH</code> contexts.</li>
 <li><code>cef/galaxy</code>: The <code>GalaxyController</code> module provide patches to use ISO and Compressed ISO with the Sony’s NP9660 driver.</li>
 <li><code>cef/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>

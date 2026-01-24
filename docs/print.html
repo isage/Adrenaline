@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-1f1a5430.js";
+            window.path_to_searchindex_js = "searchindex-100ae054.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f070d2aa.js"></script>
@@ -5612,10 +5612,10 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <h3 id="umdemu-iso-seek-time-delay-factor"><a class="header" href="#umdemu-iso-seek-time-delay-factor">UMDemu ISO seek time delay factor</a></h3>
 <p>Epinephrine’s UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that seek time simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
+<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desync issues when both seek and <a href="#umdemu-iso-read-speed-delay-factor">read</a> time are set to <code>Auto</code>.</p>
 <h4 id="option"><a class="header" href="#option">Option:</a></h4>
 <ul>
-<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
+<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes. If <code>UMDemu ISO read speed delay factor</code> is different than <code>Auto</code>, it is interpreted as <code>0x</code> (i.e. no seek time delays).</li>
 <li><code>1x</code></li>
 <li><code>2x</code></li>
 <li><code>3x</code></li>
@@ -5627,16 +5627,16 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
   warning
 </p>
 
-<p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance issues.</p>
+<p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance penalties on games that do not need it.</p>
 </div>
 
 <h3 id="umdemu-iso-read-speed-delay-factor"><a class="header" href="#umdemu-iso-read-speed-delay-factor">UMDemu ISO read speed delay factor</a></h3>
 <p>Epinephrine’s UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that read speed simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
+<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desyc issues when both <a href="#umdemu-iso-seek-time-delay-factor">seek</a> and read time are set to <code>Auto</code>.</p>
 <h4 id="option-1"><a class="header" href="#option-1">Option:</a></h4>
 <ul>
-<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
+<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes. If <code>UMDemu ISO seek speed delay factor</code> is different than <code>Auto</code>, it is interpreted as <code>0x</code> (i.e. no read time delays).</li>
 <li><code>1x</code></li>
 <li><code>2x</code></li>
 <li><code>3x</code></li>
@@ -6487,6 +6487,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p><strong>Core parts:</strong></p>
 <ul>
 <li><code>cef/systemctrl</code>: The heart of the eCFW, therefore it’s name <code>SystemControl</code>. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW module and third-party plugins.</li>
+<li><code>cef/pentazemin</code>: The <code>Pentazemin</code> module patches the necessary system modules and old homebrew modules to make the vPSP environment to work. It also works as a compatibility layer for other PSP CFW to run on Adrenaline more easily (like ARK).</li>
 <li><code>cef/vshctrl</code>: The <code>VshControl</code> module handles the main patches for the <code>XMB</code>/<code>VSH</code> to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on <code>XMB</code>/<code>VSH</code> contexts.</li>
 <li><code>cef/galaxy</code>: The <code>GalaxyController</code> module provide patches to use ISO and Compressed ISO with the Sony’s NP9660 driver.</li>
 <li><code>cef/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
@@ -7922,6 +7923,7 @@ cmake --build build
 <li>Add <code>Scale3x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
 <li>Add image overlay filter for PS1 game/apps <strong>[<a href="#overlay-image">docs</a>]</strong></li>
 <li>“Fix” manual double launch on first install</li>
+<li>Improve frame pacing on Original graphics filtering</li>
 </ul>
 <h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
 <ul>
@@ -8043,6 +8045,12 @@ cmake --build build
 </li>
 <li>
 <p><strong>DEV:</strong> Add NID translation table to <code>sceAudioRouting_driver</code> (Improve plugin compatibility)</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Create, use and share with ARK a PSP CFW SDK</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Split patches to make vPSP possible to it’s own module: <code>Pentazemin</code></p>
 </li>
 <li>
 <p><strong>Internal:</strong> Some code reorganization</p>
@@ -8546,6 +8554,7 @@ select ‘Original’ screen mode in Adrenaline settings. On a PS TV this will f
 <li><code>Cat</code> (aka. <code>isage</code>) for everything that he has done for Adrenaline and continued improving it along the way.</li>
 <li><code>GrayJack</code> for everything that they have done for Adrenaline and help Cat maintain it.</li>
 <li>Every other giant shoulder we are standing on.</li>
+<li><code>n̶u̶l̸l̵</code> for relentlessly testing many different configurations to improve the performance of the patches for <code>Megpoid the Music#</code> and being a great tester in general.</li>
 </ul>
 
                     </main>

@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-1f1a5430.js";
+            window.path_to_searchindex_js = "searchindex-100ae054.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f070d2aa.js"></script>
@@ -698,10 +698,10 @@
 <h3 id="umdemu-iso-seek-time-delay-factor"><a class="header" href="#umdemu-iso-seek-time-delay-factor">UMDemu ISO seek time delay factor</a></h3>
 <p>Epinephrine’s UMDemu drivers have the ability to simulate the seek time for the disc reader reach to an disc offset before reading and retrieving data that would happen when reading a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that seek time simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
+<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desync issues when both seek and <a href="./08-CfwConfiguration.html#umdemu-iso-read-speed-delay-factor">read</a> time are set to <code>Auto</code>.</p>
 <h4 id="option"><a class="header" href="#option">Option:</a></h4>
 <ul>
-<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
+<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes. If <code>UMDemu ISO read speed delay factor</code> is different than <code>Auto</code>, it is interpreted as <code>0x</code> (i.e. no seek time delays).</li>
 <li><code>1x</code></li>
 <li><code>2x</code></li>
 <li><code>3x</code></li>
@@ -713,16 +713,16 @@
   warning
 </p>
 
-<p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance issues.</p>
+<p>Do not forget to re-set to <code>Auto</code> before launching a ISO game/app that do not need this configured to avoid performance penalties on games that do not need it.</p>
 </div>
 
 <h3 id="umdemu-iso-read-speed-delay-factor"><a class="header" href="#umdemu-iso-read-speed-delay-factor">UMDemu ISO read speed delay factor</a></h3>
 <p>Epinephrine’s UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that read speed simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games. Epinephrine automatically sets for games known to have those checks (when set to <code>Auto</code>, of course).</p>
+<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desyc issues when both <a href="./08-CfwConfiguration.html#umdemu-iso-seek-time-delay-factor">seek</a> and read time are set to <code>Auto</code>.</p>
 <h4 id="option-1"><a class="header" href="#option-1">Option:</a></h4>
 <ul>
-<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
+<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes. If <code>UMDemu ISO seek speed delay factor</code> is different than <code>Auto</code>, it is interpreted as <code>0x</code> (i.e. no read time delays).</li>
 <li><code>1x</code></li>
 <li><code>2x</code></li>
 <li><code>3x</code></li>
