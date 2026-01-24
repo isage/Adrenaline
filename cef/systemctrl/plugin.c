@@ -59,10 +59,6 @@ static int cur_runlevel = RUNLEVEL_UNKNOWN;
 int g_disable_plugins = 0;
 static int g_is_plugins_loading = 0;
 
-int sctrlIsLoadingPlugins() {
-	return g_is_plugins_loading;
-}
-
 static void addPlugin(const char* path) {
 	for (int i=0; i<g_plugins->count; i++) {
 		char* cmp1 = strchr(g_plugins->paths[i], ':');
@@ -471,4 +467,8 @@ void loadPlugins() {
 	oe_free(g_plugins);
 	g_plugins = NULL;
 	g_is_plugins_loading = 0;
+}
+
+int sctrlIsLoadingPlugins() {
+	return g_is_plugins_loading;
 }

@@ -485,5 +485,4 @@ void PatchSysmem() {
 		}
 	}
 
-	sctrlFlushCache();
 }
