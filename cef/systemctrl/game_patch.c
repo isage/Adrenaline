@@ -158,14 +158,7 @@ int sceWlanGetSwitchStatePatched() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchGameByTitleIdOnLoadExec() {
-	char* title_id = g_rebootex_config.title_id;
-
-	if (strcasecmp("ULUS10295", title_id) == 0 || strcasecmp("ULES00975", title_id) == 0 || strcasecmp("ULAS42115", title_id) == 0) {
-		// Fix The Simpsons Game
-		g_cfw_config.use_sony_psposk = 1;
-		g_rebootex_config.overwrite_use_psposk = 1;
-		g_rebootex_config.overwrite_use_psposk_to = 1;
-	}
+	// char* title_id = g_rebootex_config.title_id;
 }
 
 void PatchGameByTitleId() {

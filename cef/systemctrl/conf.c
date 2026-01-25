@@ -95,17 +95,11 @@ static void migrate_config717(SEConfigEPI717* old, SEConfigEPI* new){
 }
 
 static void config_overwrite(SEConfigEPI *config) {
-	if (g_rebootex_config.overwrite_use_psposk) {
-		// Overwrite the config
-		g_og_use_psposk_value = config->use_sony_psposk;
-		config->use_sony_psposk = g_rebootex_config.overwrite_use_psposk_to;
-	}
+
 }
 
 static inline void restore_overwrite(SEConfigEPI *config) {
-	if (g_rebootex_config.overwrite_use_psposk) {
-		config->use_sony_psposk = g_og_use_psposk_value;
-	}
+
 }
 
 int sctrlSEGetConfigEx(SEConfig *config, int size) {
