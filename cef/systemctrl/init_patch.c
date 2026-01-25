@@ -35,7 +35,6 @@
 int (* custom_start_module_handler)(int modid, SceSize argsize, void * argp, int * modstatus, SceKernelSMOption * opt) = NULL;
 
 static SceUID (* sceKernelLoadModuleMs2Handler)(const char *path, int flags, SceKernelLMOption *option);
-static SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 
 u32 g_init_addr = 0;
 

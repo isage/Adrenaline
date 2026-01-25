@@ -5,7 +5,8 @@ TARGET = systemctrl
 OBJS =  main.o executable_patch.o libraries_patch.o init_patch.o \
 	game_patch.o hide_patch.o sysmodpatches.o \
 	nodrm.o conf.o malloc.o kubridge.o systemctrl.o setjmp_clone.o \
-	sysclibforuser.o gameinfo.o plugin.o pgd.o utils.o storage_cache.o exports.o
+	sysclibforuser.o gameinfo.o plugin.o pgd.o utils.o storage_cache.o \
+	../bits/ttystdio.o exports.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -Wno-builtin-declaration-mismatch -fshort-wchar -fno-pic -mno-check-zero-division

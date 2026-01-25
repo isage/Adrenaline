@@ -29,9 +29,9 @@
 #include <adrenaline_log.h>
 
 #include "externs.h"
-#include "ttystdio.h"
 #include "adrenaline.h"
 #include "modulepatches.h"
+#include "../bits/ttystdio.h"
 
 
 PSP_MODULE_INFO("Pentazemin", 0x1007, 1, 0);
@@ -157,8 +157,9 @@ int module_start(SceSize args, void * argp) {
 	// Register Module Start Handler
 	previous = sctrlHENSetStartModuleHandler(PentazeminOnModuleStart);
 
-
-	tty_init();
+	if (g_config.patch_stdio) {
+		tty_init();
+	}
 
 	// Return Success
 	return 0;

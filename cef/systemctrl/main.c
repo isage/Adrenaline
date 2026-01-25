@@ -25,6 +25,7 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <infernoctrl.h>
+#include <systemctrl_adrenaline.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
@@ -37,8 +38,8 @@
 #include "plugin.h"
 #include "utils.h"
 #include "storage_cache.h"
+#include "../bits/ttystdio.h"
 
-#include <systemctrl_adrenaline.h>
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
@@ -334,6 +335,8 @@ int module_start(SceSize args, void *argp) {
 	UnprotectExtraMemory();
 
 	memcpy(&g_rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
+
+	tty_init();
 
 	return 0;
 }

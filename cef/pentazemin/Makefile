@@ -2,7 +2,7 @@ PSPSDK = $(shell psp-config --pspsdk-path)
 
 TARGET = pentazemin
 
-C_OBJS = main.o src/epictrl.o src/ttystdio.o src/usbcam_patch.o src/vitamem.o src/modpatches.o \
+C_OBJS = main.o src/epictrl.o ../bits/ttystdio.o src/usbcam_patch.o src/vitamem.o src/modpatches.o \
 	src/io_patch.o src/adrenaline.o src/init_patch.o src/power_patch.o src/LflashFatfmt.o src/impose_patch.o src/utility_patch.o \
 
 OBJS = \

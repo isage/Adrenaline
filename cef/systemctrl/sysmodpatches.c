@@ -399,8 +399,6 @@ void PatchLoadExec(SceModule* mod) {
 	u32 text_addr = mod->text_addr;
 	u32 text_size = mod->text_size;
 
-	u32 jump = 0;
-
 	// Allow loadexec in whatever user level. Ignore K1 Check
 	VWRITE16(text_addr + 0x16A6, 0x1000);
 	VWRITE16(text_addr + 0x241E, 0x1000);
