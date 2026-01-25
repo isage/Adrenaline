@@ -306,7 +306,7 @@ int sceUmd_040A7090(int error) {
 		error = SCE_ERROR150_EMEDIUMTYPE;
 	}
 
-	logmsg("%s: error=0x%08X -> 0x%08X\n", __func__, error, error);
+	logmsg3("%s: error=0x%08X -> 0x%08X\n", __func__, error, error);
 	return error;
 }
 

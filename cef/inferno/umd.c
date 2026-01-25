@@ -527,7 +527,7 @@ int sceUmd_040A7090(int orig_error_code) {
 	}
 
 exit:
-	logmsg("%s: error=0x%08X -> 0x%08X\n", __func__, orig_error_code, error_code);
+	logmsg3("%s: error=0x%08X -> 0x%08X\n", __func__, orig_error_code, error_code);
 	return error_code;
 }
 
