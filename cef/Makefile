@@ -40,10 +40,17 @@ _btcnf:
 	make -C btcnf/pspbtcnf_recovery clean
 
 _payloadex:
+ifdef USE_OLD_BOOTLOADEX
+	make -C payloadex_old clean
+	make -C payloadex_old -j
+	cp "payloadex_old/payloadex.bin" "../user/flash0/payloadex.bin"
+	make -C payloadex_old clean
+else
 	make -C payloadex clean
 	make -C payloadex -j
 	cp "payloadex/payloadex.bin" "../user/flash0/payloadex.bin"
 	make -C payloadex clean
+endif
 
 _payloadex_ark:
 	make -C payloadex_ark clean
@@ -52,10 +59,17 @@ _payloadex_ark:
 	make -C payloadex_ark clean
 
 _rebootex:
+ifdef USE_OLD_BOOTLOADEX
+	make -C rebootex_old clean
+	make -C rebootex_old -j
+	bin2c rebootex_old/rebootex.bin systemctrl/rebootex.h rebootex
+	make -C rebootex_old clean
+else
 	make -C rebootex clean
 	make -C rebootex -j
 	bin2c rebootex/rebootex.bin systemctrl/rebootex.h rebootex
 	make -C rebootex clean
+endif
 
 _binary:
 	make -C binary clean
@@ -181,6 +195,8 @@ clean:
 	make -C btcnf/pspbtcnf_recovery clean
 	make -C payloadex clean
 	make -C rebootex clean
+	make -C payloadex_old clean
+	make -C rebootex_old clean
 	make -C payloadex_ark clean
 	make -C binary clean
 	make -C systemctrl clean
