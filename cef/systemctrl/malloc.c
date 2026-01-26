@@ -18,7 +18,7 @@
 
 #include <pspinit.h>
 
-#include "main.h"
+#include "externs.h"
 
 // SceUID heapid = -1;
 

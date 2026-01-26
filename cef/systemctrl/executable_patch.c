@@ -27,7 +27,7 @@
 #include <pspextratypes.h>
 #include <systemctrl_adrenaline.h>
 
-#include "main.h"
+#include "externs.h"
 #include "init_patch.h"
 #include "libraries_patch.h"
 

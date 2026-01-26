@@ -35,7 +35,7 @@
 #include <adrenaline_log.h>
 
 #include "modulepatches.h"
-#include "main.h"
+#include "externs.h"
 #include "gameinfo.h"
 
 #include "../../adrenaline_version.h"

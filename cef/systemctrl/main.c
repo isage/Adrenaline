@@ -30,7 +30,7 @@
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 #include "modulepatches.h"
 #include "nodrm.h"
 #include "malloc.h"

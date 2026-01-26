@@ -16,17 +16,17 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __SCTRL_EXTERNS_H_
+#define __SCTRL_EXTERNS_H_
 
 #include <pspkermit.h>
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <rebootexconfig.h>
+#include <systemctrl_adrenaline.h>
 
 #include "utils.h"
-#include <systemctrl_adrenaline.h>
 
 extern RebootexConfigEPI g_rebootex_config;
 extern SEConfigEPI g_cfw_config;
@@ -44,7 +44,4 @@ int sceChkregGetPsCode(u8 *pscode);
 u32 sctrlHENFakeDevkitVersion();
 SceUID sceIoOpenDrmPatched(const char *path, int flags, SceMode mode);
 
-// Temporary fix, remove once SDK is able to build
-int sceKernelQuerySystemCall(void *function);
-
-#endif
+#endif /* __SCTRL_EXTERNS_H_ */

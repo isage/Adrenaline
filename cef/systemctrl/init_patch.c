@@ -28,7 +28,7 @@
 
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 #include "plugin.h"
 
 // init.prx Custom sceKernelStartModule Handler

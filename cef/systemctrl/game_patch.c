@@ -28,7 +28,7 @@
 
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 #include "utils.h"
 #include "storage_cache.h"
 

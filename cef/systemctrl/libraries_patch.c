@@ -31,7 +31,7 @@
 
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 #include "libraries_patch.h"
 #include "string_clone.h"
 

@@ -23,7 +23,7 @@
 #include <kubridge.h>
 #include <cfwmacros.h>
 
-#include "main.h"
+#include "externs.h"
 
 int kuKernelGetModel() {
 	return 1; // Fake slim model

@@ -26,7 +26,7 @@
 
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 
 #define ADRENALINE717_CFG_MAGIC_2 0x334F4E33
 
@@ -57,8 +57,6 @@ typedef struct {
 typedef struct {
 	int magic[2];
 } AdrenalineMagics;
-
-static u8 g_og_use_psposk_value = 0;
 
 static int getMagicsFromFile(SceUID fd, AdrenalineMagics* magic) {
 	int read = sceIoRead(fd, magic, sizeof(AdrenalineMagics));

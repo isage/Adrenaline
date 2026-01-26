@@ -30,7 +30,7 @@
 
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 
 static char *g_blacklist[] = {
 	"iso",

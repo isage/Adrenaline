@@ -26,7 +26,7 @@
 
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 #include "pgd.h"
 
 static int (* do_open)(char *file, int flags, SceMode mode, int async, int retAddr, int oldK1);

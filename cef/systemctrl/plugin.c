@@ -29,7 +29,7 @@
 
 #include <adrenaline_log.h>
 
-#include "main.h"
+#include "externs.h"
 #include "plugin.h"
 
 #define LINE_BUFFER_SIZE 1024
