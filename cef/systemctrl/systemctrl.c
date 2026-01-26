@@ -215,8 +215,6 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 
 	// Reset rebootex stuff that is per title basis before exiting an app.
 	memset(g_rebootex_config.title_id, 0, 10);
-	g_rebootex_config.overwrite_use_psposk = 0;
-	g_rebootex_config.overwrite_use_psposk_to = 0;
 
 	// Set boot mode to normal on not recovery
 	if (g_rebootex_config.bootfileindex != MODE_RECOVERY) {
