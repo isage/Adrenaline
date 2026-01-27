@@ -102,7 +102,7 @@ jobs:
           echo "PSPDEV=$(pwd)/local/pspdev" >> $GITHUB_ENV
           echo "$(pwd)/local/pspdev/bin" >> $GITHUB_PATH
           echo "USE_PSP_PACKER=1" >> $GITHUB_ENV
-          echo "USE_OLD_BOOTLOADEX=1" >> $GITHUB_ENV
+        #   echo "USE_OLD_BOOTLOADEX=1" >> $GITHUB_ENV
 
       - name: Set Nightly Version
         run: |
@@ -164,7 +164,7 @@ jobs:
           echo "PSPDEV=$(pwd)/local/pspdev" >> $GITHUB_ENV
           echo "$(pwd)/local/pspdev/bin" >> $GITHUB_PATH
           echo "USE_PSP_PACKER=1" >> $GITHUB_ENV
-          echo "USE_OLD_BOOTLOADEX=1" >> $GITHUB_ENV
+        #   echo "USE_OLD_BOOTLOADEX=1" >> $GITHUB_ENV
 
       - name: Set Nightly Version
         run: |
