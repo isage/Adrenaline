@@ -49,8 +49,9 @@ static void AdjustExecInfo(void *buf, SceLoadCoreExecFileInfo *execInfo) {
 		return;
 	}
 	// don't null attribute for proper encrypted apps (senseme, etc)
-	if (execInfo->mod_info_attribute == 0 && modInfo->modattribute != 0)
+	if (execInfo->mod_info_attribute == 0 && modInfo->modattribute != 0) {
 		execInfo->mod_info_attribute = modInfo->modattribute;
+	}
 
 	execInfo->is_kernel_mod = (execInfo->mod_info_attribute & 0x1000) ? 1 : 0;
 }
@@ -125,8 +126,9 @@ int sceKernelProbeExecutableObjectPatched(void *buf, SceLoadCoreExecFileInfo *ex
 	int ret = _sceKernelProbeExecutableObject(buf, execInfo);
 
 	// homebrew: force user privelege level after probe
-	if (header->e_magic == ELF_MAGIC && attr == 0x457F && execInfo->mod_info_attribute == 0)
+	if (header->e_magic == ELF_MAGIC && attr == 0x457F && execInfo->mod_info_attribute == 0) {
 		execInfo->mod_info_attribute = 0x200;
+	}
 
 	return ret;
 }
@@ -187,8 +189,9 @@ int PartitionCheckPatched(u32 *param, SceLoadCoreExecFileInfo *execInfo) {
 int PrologueModulePatched(void *modmgr_param, SceModule *mod) {
 	int res = PrologueModule(modmgr_param, mod);
 
-	if (res >= 0 && g_module_handler)
+	if (res >= 0 && g_module_handler) {
 		g_module_handler(mod);
+	}
 
 	return res;
 }
