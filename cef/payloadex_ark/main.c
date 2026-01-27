@@ -40,7 +40,7 @@ int pspemuLfatOpenArkVPSP(BootFile* file){
 }
 
 
-BootLoadExConfig bleconf = {
+BootLoadExConfig g_bleconf = {
     .boot_type = TYPE_PAYLOADEX,
     .boot_storage = FLASH_BOOT,
     .extra_io.vita_io = {
@@ -51,16 +51,15 @@ BootLoadExConfig bleconf = {
 
 
 // Entry Point
-int cfwBoot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7)
-{
-
+int cfwBoot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7) {
     RebootexConfigEPI *rebootex_config_adr = (RebootexConfigEPI *)REBOOTEX_CONFIG;
     if (rebootex_config_adr->bootfileindex == MODE_RECOVERY) arkconf.recovery = 1;
 
     memcpy(ark_config, &arkconf, sizeof(ARKConfig));
 
+
     // Configure
-    configureBoot(&bleconf);
+    configureBoot(&g_bleconf);
 
     // scan for reboot functions
     findBootFunctions();

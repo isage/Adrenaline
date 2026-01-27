@@ -39,7 +39,7 @@ int (* DecryptExecutable)(void *buf, int size, int *retSize);
 void (* SetMemoryPartitionTable)(void *sysmem_config, SceSysmemPartTable *table);
 int (* sceKernelBootLoadFile)(BootFile *file, void *a1, void *a2, void *a3, void *t0);
 
-RebootexConfigEPI *rebootex_config = (RebootexConfigEPI *)REBOOTEX_CONFIG;
+RebootexConfigEPI *g_rebootex_config = (RebootexConfigEPI *)REBOOTEX_CONFIG;
 
 void ClearCaches() {
 	DcacheClear();
@@ -150,8 +150,8 @@ int InsertModule(void *buf, char *new_module, char *module_after, int flags) {
 }
 
 int sceKernelCheckPspConfigPatched(void *buf, int size, int flag) {
-	if (rebootex_config->module_after) {
-		InsertModule(buf, REBOOT_MODULE, rebootex_config->module_after, rebootex_config->flags);
+	if (g_rebootex_config->module_after) {
+		InsertModule(buf, REBOOT_MODULE, g_rebootex_config->module_after, g_rebootex_config->flags);
 	}
 
 	return 0;
@@ -160,17 +160,17 @@ int sceKernelCheckPspConfigPatched(void *buf, int size, int flag) {
 int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, void *t0) {
 
 	if (_strcmp(file->name, "pspbtcnf.bin") == 0) {
-		file->name = (rebootex_config->bootfileindex == MODE_RECOVERY)?
+		file->name = (g_rebootex_config->bootfileindex == MODE_RECOVERY)?
 			"/kd/pspbtrnf.bin" : "/kd/pspbtjnf.bin";
 
-		if (rebootex_config->bootfileindex == MODE_RECOVERY) {
-			rebootex_config->bootfileindex = MODE_UMD;
+		if (g_rebootex_config->bootfileindex == MODE_RECOVERY) {
+			g_rebootex_config->bootfileindex = MODE_UMD;
 		}
 
 	} else if (_strcmp(file->name, REBOOT_MODULE) == 0) {
 		file->buffer = (void *)0x89000000;
-		file->size = rebootex_config->size;
-		_memcpy(file->buffer, rebootex_config->buf, file->size);
+		file->size = g_rebootex_config->size;
+		_memcpy(file->buffer, g_rebootex_config->buf, file->size);
 		return 0;
 	}
 
