@@ -15,10 +15,6 @@
 #include "externs.h"
 #include <systemctrl_adrenaline.h>
 
-// Sony flash0 files
-static BootFileList* g_boot_files = (BootFileList*)BOOT_FILE_LIST_ADDR;
-static int g_cur_file = 14;
-
 ////////////////////////////////////////////////////////////////////////////////
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,8 +22,7 @@ static int g_cur_file = 14;
 SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
 
 	char path[64];
-	char* filename = (info->name[0])? info->name : (char*)&(g_boot_files->bootfile[g_cur_file]);
-	g_cur_file++;
+	char* filename = info->name;
 
 	PSPKeyConfig app_type = sceKernelApplicationType();
 
@@ -75,8 +70,7 @@ static SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
 
 	char path[64];
-	char* filename = (info->name[0])? info->name : (char*)&(g_boot_files->bootfile[g_cur_file]);
-	g_cur_file++;
+	char* filename = info->name;
 
 	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename);
 
@@ -116,13 +110,6 @@ int AdrenalinePatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 void PatchLoaderCore(void) {
 	// Find Module
 	SceModule* mod = sceKernelFindModuleByName("sceLoaderCore");
-
-	for (int i = 0; i < g_boot_files->nfiles; i++) {
-		if (strcmp((char*)&(g_boot_files->bootfile[i]), "/kd/init.prx") == 0){
-			g_cur_file = i+1;
-			break;
-		}
-	}
 
 	// Fetch Text Address
 	u32 start_addr = mod->text_addr;
