@@ -34,8 +34,8 @@
 static int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 static int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 static int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize);
-static int (* PartitionCheck)(u32 *param, SceLoadCoreExecFileInfo *execInfo);
-static int (* PrologueModule)(void *modmgr_param, SceModule *mod) = NULL;
+static int (* PartitionCheck)(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo *execInfo);
+static int (* PrologueModule)(SceModuleMgrParam *mod_param, SceModule *mod) = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -143,8 +143,8 @@ int PspUncompressPatched(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newS
 	return PspUncompress(buf, execInfo, newSize);
 }
 
-int PartitionCheckPatched(u32 *param, SceLoadCoreExecFileInfo *execInfo) {
-	SceUID fd = param[0x18/4];
+int PartitionCheckPatched(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo *execInfo) {
+	SceUID fd = mod_param->fd;
 
 	// Get position
 	int pos = sceIoLseek32(fd, 0, PSP_SEEK_CUR);
@@ -183,11 +183,11 @@ int PartitionCheckPatched(u32 *param, SceLoadCoreExecFileInfo *execInfo) {
 	}
 
 	sceIoLseek32(fd, pos, PSP_SEEK_SET);
-	return PartitionCheck(param, execInfo);
+	return PartitionCheck(mod_param, execInfo);
 }
 
-int PrologueModulePatched(void *modmgr_param, SceModule *mod) {
-	int res = PrologueModule(modmgr_param, mod);
+int PrologueModulePatched(SceModuleMgrParam *mod_param, SceModule *mod) {
+	int res = PrologueModule(mod_param, mod);
 
 	if (res >= 0 && g_module_handler) {
 		g_module_handler(mod);
