@@ -61,17 +61,18 @@ GetItem g_menu_items[] = {
 	{17, 1, "NoDRM engine", 1, 0, &g_cfw_config.no_nodrm_engine},
 	{18, 1, "XMB Control", 1, 0, &g_cfw_config.no_xmbctrl},
 	{19, 0, "Force high memory layout", 1, 1, &g_cfw_config.force_high_memory},
-	{20, 0, "Use Graphic Engine 2", 1, 1, &g_cfw_config.use_ge2},
-	{21, 0, "Use Media Engine 2", 1, 1, &g_cfw_config.use_me2},
-	{22, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1, &g_cfw_config.execute_boot_bin},
-	{23, 0, "Inferno ISO cache policy", 0, 1, &g_cfw_config.iso_cache},
-	{24, 0, "Inferno ISO cache number", 0, 1, &g_cfw_config.iso_cache_num},
-	{25, 0, "Inferno ISO cache size", 0, 1, &g_cfw_config.iso_cache_size},
-	{26, 0, "UMDemu ISO seek time delay factor", 0, 1, &g_cfw_config.umd_seek},
-	{27, 0, "UMDemu ISO read speed delay factor", 0, 1, &g_cfw_config.umd_speed},
-	{28, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
-	{29, 1, "Game Plugins", 1, 1, &g_cfw_config.no_game_plugins},
-	{30, 1, "POPS Plugins", 1, 1, &g_cfw_config.no_pops_plugins},
+	{20, 0, "Fake max free memory", 1, 1, &g_cfw_config.fake_max_free_mem},
+	{21, 0, "Use Graphic Engine 2", 1, 1, &g_cfw_config.use_ge2},
+	{22, 0, "Use Media Engine 2", 1, 1, &g_cfw_config.use_me2},
+	{23, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1, &g_cfw_config.execute_boot_bin},
+	{24, 0, "Inferno ISO cache policy", 0, 1, &g_cfw_config.iso_cache},
+	{25, 0, "Inferno ISO cache number", 0, 1, &g_cfw_config.iso_cache_num},
+	{26, 0, "Inferno ISO cache size", 0, 1, &g_cfw_config.iso_cache_size},
+	{27, 0, "UMDemu ISO seek time delay factor", 0, 1, &g_cfw_config.umd_seek},
+	{28, 0, "UMDemu ISO read speed delay factor", 0, 1, &g_cfw_config.umd_speed},
+	{29, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
+	{30, 1, "Game Plugins", 1, 1, &g_cfw_config.no_game_plugins},
+	{31, 1, "POPS Plugins", 1, 1, &g_cfw_config.no_pops_plugins},
 };
 
 #define N_ITEMS (sizeof(g_menu_items) / sizeof(GetItem))
@@ -97,6 +98,7 @@ ItemOptions g_item_opts[] = {
 	{2, g_boolean_options},           // Use NoDRM Engine
 	{2, g_boolean_options},           // XMB Control
 	{3, g_highmem_options},           // Force high memory layout
+	{NELEMS(g_fake_free_mem), g_fake_free_mem}, // Fake max free memory
 	{2, g_boolean_options},           // Use Graphic Engine 2
 	{2, g_boolean_options},           // Use Media Engine 2
 	{2, g_boolean_options},           // Execute BOOT.BIN in Game

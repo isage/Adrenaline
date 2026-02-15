@@ -309,6 +309,7 @@ static Entry g_general_entries[] = {
 
 static Entry g_advanced_entries[] = {
 	{ "Force high memory layout", NULL, g_highmem, sizeof(g_highmem), &g_cfw_config.force_high_memory },
+	{ "Fake max free memory", NULL, g_fake_free_mem, sizeof(g_fake_free_mem), &g_cfw_config.fake_max_free_mem },
 	{ "Use Graphic Engine 2", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_ge2 },
 	{ "Use Media Engine 2", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_me2 },
 	{ "Execute BOOT.BIN in UMDemu ISO", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.execute_boot_bin },

@@ -42,4 +42,6 @@ static char *g_iso_umd_seek_read_options[] = {"Auto", "1x", "2x", "3x", "4x"};
 
 static char *g_hide_pics_options[] = {"Disabled", "Both", "PIC0 Only", "PIC1 Only"};
 
+static char *g_fake_free_mem[] = {"Auto", "16MB", "24MB", "32MB", "40MB", "48MB", "52MB", "60MB", "64MB"};
+
 #endif
