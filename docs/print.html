@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-100ae054.js";
+            window.path_to_searchindex_js = "searchindex-403ad185.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f070d2aa.js"></script>
@@ -5495,6 +5495,40 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Some important stuff for the VITA’s PSPemu are put in this region of memory. Although Epinephrine protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.</p>
 </div>
 
+<h3 id="fake-max-free-memory"><a class="header" href="#fake-max-free-memory">Fake max free memory</a></h3>
+<p>Controls wether to limit the reported maximum free memory and how much to limit from <code>sceKernelMaxFreeMemSize</code> on a title.</p>
+<p>Any option other than <code>Auto</code> will always use that value, regardless of existent game patches and fixes.</p>
+<h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
+<ul>
+<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes (often related to high memory layout instabilities)</li>
+<li><code>16MB</code>: Set the maximum value to 16MB</li>
+<li><code>24MB</code>: Set the maximum value to 24MB (Maximum User RAM)</li>
+<li><code>32MB</code>: Set the maximum value to 32MB (Max Kernel + Max User RAM)</li>
+<li><code>40MB</code>: Set the maximum value to 40MB (Max Stable high memory layout User RAM)</li>
+<li><code>48MB</code>: Set the maximum value to 48MB (Max Kernel + Max Stable high memory layout User RAM)</li>
+<li><code>52MB</code>: Set the maximum value to 52MB (Max “Max” high memory layout User RAM)</li>
+<li><code>60MB</code>: Set the maximum value to 60MB (Max Kernel + Max “Max” high memory layout User RAM)</li>
+<li><code>64MB</code>: Set the maximum value to 64MB (Max PSP RAM, probably not very useful)</li>
+</ul>
+<div class="mdbook-callouts mdbook-callouts-warning">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  warning
+</p>
+
+<p>This option is very unstable on non-<code>Auto</code> values, i.e. it can easily break many titles with both low and high values.</p>
+<p>This options is made available to facilitate exploratory tests with games that breaks with high memory layout or similar issues.</p>
+</div>
+
+<div class="mdbook-callouts mdbook-callouts-caution">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  caution
+</p>
+
+<p>Some games may require more specific values to make then stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the <a href="https://github.com/isage/Adrenaline/issues">project issue tracer</a> (but also check first to avoid opening duplicated issue tracker).</p>
+</div>
+
 <h3 id="use-graphic-engine-2"><a class="header" href="#use-graphic-engine-2">Use Graphic Engine 2</a></h3>
 <p>Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
@@ -5554,7 +5588,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h3 id="inferno-iso-cache-policy"><a class="header" href="#inferno-iso-cache-policy">Inferno ISO cache policy</a></h3>
 <p>Configures what cache policy the <code>Inferno</code> UMDemu driver will use for its overall cache (also known as <code>Inferno Cache</code>).</p>
-<h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
+<h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
 <ul>
 <li><code>LRU</code>: Least Recently Used policy. Uses less cpu cycles because it will discards the cache slot from the queue that have not been used in a timeframe when new cache item needs to be added.</li>
 <li><code>RR</code>: Random Replacement policy. Uses slightly less memory as it doesn’t need to keep track of data related to cache slots usage. It can be beneficial for uniform or streaming reading patterns.</li>
@@ -5572,7 +5606,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Configures how many caches the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
+<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1</code></li>
@@ -5588,7 +5622,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Configures the size of cache the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This also could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
+<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32KB</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1KB</code></li>
@@ -5935,7 +5969,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h3 id="button-assign"><a class="header" href="#button-assign">Button assign</a></h3>
 <p>Configures what button is used for confirmation/enter system-wide.</p>
-<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
+<h4 id="options-11"><a class="header" href="#options-11">Options:</a></h4>
 <ul>
 <li><code>⭕️ is enter</code></li>
 <li><code>❌ is enter</code></li>
@@ -7974,6 +8008,9 @@ cmake --build build
 <p>Add <code>Use Graphic Engine 2</code> and <code>Use Media Engine 2</code> advanced CFW options <strong>[<a href="#use-graphic-engine-2">docs</a>]</strong></p>
 </li>
 <li>
+<p>Add <code>Fake max free memory</code> advanced CFW option <strong>[<a href="#fake-max-free-memory">docs</a>]</strong></p>
+</li>
+<li>
 <p>Add <code>Hide CFW files in PSP games</code> general CFW option <strong>[<a href="#hide-cfw-files-in-psp-games">docs</a>]</strong></p>
 </li>
 <li>
@@ -8017,6 +8054,9 @@ cmake --build build
 <li>Fix <code>Lego Star Wars II</code> WLAN switch state wrongly returning “off”</li>
 <li>Fix <code>Megpoid the Music#</code> audio and synchronization issues when run as ISO/CISO</li>
 <li>Patch to remove the “overclocked” message on <code>ATV Pro</code></li>
+<li>Fix <code>Rainbow Six: Vegas</code> instabilities with high memory layout options</li>
+<li>Fix <code>Assassin's Creed: Bloodlines</code> instabilities with Stable high memory layout</li>
+<li>Fix <code>PaRappa The Rapper</code> instabilities with Stable high memory layout</li>
 </ul>
 </li>
 <li>
@@ -8555,6 +8595,7 @@ select ‘Original’ screen mode in Adrenaline settings. On a PS TV this will f
 <li><code>GrayJack</code> for everything that they have done for Adrenaline and help Cat maintain it.</li>
 <li>Every other giant shoulder we are standing on.</li>
 <li><code>n̶u̶l̸l̵</code> for relentlessly testing many different configurations to improve the performance of the patches for <code>Megpoid the Music#</code> and being a great tester in general.</li>
+<li><code>Sotico</code> for doing a bunch of tests to help to fix game instabilities with high memory layout. Also for finding and reporting bugs.</li>
 </ul>
 
                     </main>
