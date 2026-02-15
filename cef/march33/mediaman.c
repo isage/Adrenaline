@@ -134,7 +134,7 @@ int sceUmdCheckMedium() {
 
 exit:
 	logmsg("%s: () -> 0x%08X\n", __func__, res);
-	return 1;
+	return res;
 }
 
 int sceUmdGetErrorStat() {
