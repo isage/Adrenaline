@@ -32,6 +32,7 @@
 - Patch libcrypt for custom or converted PS1 game/apps **\[[docs](./06-PS1Playback.md#anti-libcrypt-patch)\]**
 - Add `Memory Stick Cache` to speedup I/O operations in the Memory Stick drive (`ms0`) **\[[docs](./08-CfwConfiguration.md#memory-stick-cache)\]**
 - Add `Use Graphic Engine 2` and `Use Media Engine 2` advanced CFW options **\[[docs](./08-CfwConfiguration.md#use-graphic-engine-2)\]**
+- Add `Fake max free memory` advanced CFW option **\[[docs](./08-CfwConfiguration.md#fake-max-free-memory)\]**
 - Add `Hide CFW files in PSP games` general CFW option **\[[docs](./08-CfwConfiguration.md#hide-cfw-files-in-psp-games)\]**
 - Implement "Hold L while launching apps" to not load plugins **\[[docs](./04-HomebrewSupport/01-Plugin.md#launch-without-plugins)\]**
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN` **\[[docs](./08-CfwConfiguration.md#execute-bootbin-in-umdemu-iso)\]**
@@ -58,6 +59,9 @@
 	- Fix `Lego Star Wars II` WLAN switch state wrongly returning "off"
 	- Fix `Megpoid the Music#` audio and synchronization issues when run as ISO/CISO
 	- Patch to remove the "overclocked" message on `ATV Pro`
+	- Fix `Rainbow Six: Vegas` instabilities with high memory layout options
+	- Fix `Assassin's Creed: Bloodlines` instabilities with Stable high memory layout
+	- Fix `PaRappa The Rapper` instabilities with Stable high memory layout
 
 
 - **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size

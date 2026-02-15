@@ -187,6 +187,32 @@ Controls whether to force the unlock extra RAM space for the user-space RAM part
 > [!WARNING] Max Option Warning
 > Some important stuff for the VITA's PSPemu are put in this region of memory. Although Epinephrine protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.
 
+### Fake max free memory
+
+Controls wether to limit the reported maximum free memory and how much to limit from `sceKernelMaxFreeMemSize` on a title.
+
+Any option other than `Auto` will always use that value, regardless of existent game patches and fixes.
+
+#### Options:
+
+- `Auto`: Disabled by default, but also can change based on automatic game patches and fixes (often related to high memory layout instabilities)
+- `16MB`: Set the maximum value to 16MB
+- `24MB`: Set the maximum value to 24MB (Maximum User RAM)
+- `32MB`: Set the maximum value to 32MB (Max Kernel + Max User RAM)
+- `40MB`: Set the maximum value to 40MB (Max Stable high memory layout User RAM)
+- `48MB`: Set the maximum value to 48MB (Max Kernel + Max Stable high memory layout User RAM)
+- `52MB`: Set the maximum value to 52MB (Max "Max" high memory layout User RAM)
+- `60MB`: Set the maximum value to 60MB (Max Kernel + Max "Max" high memory layout User RAM)
+- `64MB`: Set the maximum value to 64MB (Max PSP RAM, probably not very useful)
+
+> [!WARNING]
+> This option is very unstable on non-`Auto` values, i.e. it can easily break many titles with both low and high values.
+>
+> This options is made available to facilitate exploratory tests with games that breaks with high memory layout or similar issues.
+
+> [!CAUTION]
+> Some games may require more specific values to make then stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the [project issue tracer](https://github.com/isage/Adrenaline/issues) (but also check first to avoid opening duplicated issue tracker).
+
 ### Use Graphic Engine 2
 
 Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads `ge_2.prx` instead of `ge.prx`.
