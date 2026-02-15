@@ -32,7 +32,14 @@
 #include "utils.h"
 #include "storage_cache.h"
 
+#define FAKE_MAX_FREE_DISABLED ((SceSize) -1)
+
+#define MB (1024*1024)
+
 static STMOD_HANDLER game_previous = NULL;
+
+static SceSize g_fake_total_free_mem = FAKE_MAX_FREE_DISABLED;
+static SceSize g_fake_max_free_mem = FAKE_MAX_FREE_DISABLED;
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -79,6 +86,62 @@ static void DisableInfernoCache() {
 		// Avoids the CFW to try to re-enable the cache once again
 		g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
 	}
+}
+
+/** `fake_max` in bytes, ignored when `g_cfw_config.fake_max_free_mem` is not AUTO */
+static void SetFakeMaxFreeMemory(u32 fake_max, u32 fake_total) {
+	switch (g_cfw_config.fake_max_free_mem) {
+		case FAKE_MAX_FREE_MEM_16MB:
+			g_fake_max_free_mem = 16 * MB;
+			g_fake_total_free_mem = 16 * MB;
+			break;
+		case FAKE_MAX_FREE_MEM_24MB:
+			g_fake_max_free_mem = 24 * MB;
+			g_fake_total_free_mem = 24 * MB;
+			break;
+		case FAKE_MAX_FREE_MEM_32MB:
+			g_fake_max_free_mem = 32 * MB;
+			g_fake_total_free_mem = 32 * MB;
+			break;
+		case FAKE_MAX_FREE_MEM_40MB:
+			g_fake_max_free_mem = 40 * MB;
+			g_fake_total_free_mem = 40 * MB;
+			break;
+		case FAKE_MAX_FREE_MEM_48MB:
+			g_fake_max_free_mem = 48 * MB;
+			g_fake_total_free_mem = 48 * MB;
+			break;
+		case FAKE_MAX_FREE_MEM_52MB:
+			g_fake_max_free_mem = 52 * MB;
+			g_fake_total_free_mem = 52 * MB;
+			break;
+		case FAKE_MAX_FREE_MEM_60MB:
+			g_fake_max_free_mem = 60 * MB;
+			g_fake_total_free_mem = 60 * MB;
+			break;
+
+		case FAKE_MAX_FREE_MEM_AUTO:
+			if (fake_max != 0) {
+				g_fake_max_free_mem = fake_max;
+			} else {
+				g_fake_max_free_mem = FAKE_MAX_FREE_DISABLED;
+			}
+
+			if (fake_total != 0) {
+				g_fake_total_free_mem = fake_total;
+			} else {
+				g_fake_total_free_mem = FAKE_MAX_FREE_DISABLED;
+			}
+			break;
+		default:
+			g_fake_total_free_mem = FAKE_MAX_FREE_DISABLED;
+			break;
+	}
+
+	// if (g_fake_total_free_mem != FAKE_MAX_FREE_DISABLED) {
+	// 	g_fake_max_free_mem = g_fake_total_free_mem - 1024;
+	// }
+	logmsg2("[INFO]: False max max free memory %d and Fake max total free memory set to %d\n", g_fake_max_free_mem, g_fake_total_free_mem);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,6 +216,32 @@ int sceWlanGetSwitchStatePatched() {
 	return res;
 }
 
+SceSize (* _sceKernelTotalFreeMemSize)(void) = NULL;
+SceSize sceKernelTotalFreeMemSizePatched(void) {
+	SceSize res = _sceKernelTotalFreeMemSize();
+
+	if (g_fake_total_free_mem != FAKE_MAX_FREE_DISABLED && res > g_fake_total_free_mem) {
+		res = g_fake_total_free_mem;
+	}
+
+	logmsg3("[DEBUG]: %s: () -> %d\n", __func__, res);
+	return res;
+}
+
+SceSize (* _sceKernelMaxFreeMemSize)(void) = NULL;
+SceSize sceKernelMaxFreeMemSizePatched(void) {
+	SceSize res = _sceKernelMaxFreeMemSize();
+
+	if (g_fake_max_free_mem != FAKE_MAX_FREE_DISABLED && res >= g_fake_max_free_mem) {
+		res = g_fake_max_free_mem;
+	}
+
+	logmsg3("[DEBUG]: %s: () -> %d\n", __func__, res);
+	return res;
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +252,9 @@ void PatchGameByTitleIdOnLoadExec() {
 
 void PatchGameByTitleId() {
 	char* title_id = g_rebootex_config.title_id;
+
+	// Make sure this is set before by module
+	SetFakeMaxFreeMemory(0, 0);
 
 	if (strcasecmp("ULJM05221", title_id) == 0) {
 		// Fix TwinBee Portable when not using English or Japanese language
@@ -184,11 +276,23 @@ void PatchGameByTitleId() {
 		// don't play well with Inferno cache
 		DisableInfernoCache();
 
+	} else if (strcasecmp("UCUS98702", title_id) == 0 || strcasecmp("UCES00775", title_id) == 0 || strcasecmp("UCKS45039", title_id) == 0 || strcasecmp("UCJS10046", title_id) == 0 || strcasecmp("UCAS40135", title_id) == 0) {
+		// Patch `PaRappa the Rapper` to be more stable on high memory layout
+		SetFakeMaxFreeMemory(32*MB, 0);
+
+	} else if (strcasecmp("ULUS10455", title_id) == 0 || strcasecmp("ULES01367", title_id) == 0 || strcasecmp("ULJM05571", title_id) == 0 || strcasecmp("ULKS46231", title_id) == 0) {
+		// Patch `Assassin's Creed: Bloodlines` to be more stable on high memory layout
+		SetFakeMaxFreeMemory(32*MB, 0);
+
 	}
 }
 
 void PatchGamesByMod(SceModule* mod) {
 	char *modname = mod->modname;
+
+	sctrlHookImportByNID(mod, "SysMemUserForUser", 0xA291F107, sceKernelMaxFreeMemSizePatched);
+	// This one is more for exploratory purposes
+	sctrlHookImportByNID(mod, "SysMemUserForUser", 0xF919F628, sceKernelTotalFreeMemSizePatched);
 
 	if (strcmp(modname, "DJMAX") == 0 || strcmp(modname, "djmax") == 0) {
 		// Fix Anti-CFW checks on `DJ Max` games
@@ -263,11 +367,16 @@ void PatchGamesByMod(SceModule* mod) {
 		sctrlHookImportByNID(mod, "sceWlanDrv", 0xD7763699, sceWlanGetSwitchStatePatched);
 
 	} else if (strcmp(modname, "Megpoid") == 0) {
-		// Fix sync and sync issues on `Megpoid the Music#`
+		// Fix sound and sync issues on `Megpoid the Music#`
 		SetUmdEmuSpeed(0, 1);
 
 		// Disable ms cache as well.
 		sctrlMsCacheInit(NULL, 0);
+
+	} else if (strcmp(modname, "OpenSeasonPSP") == 0) {
+		// Patch `Rainbow Six` to be more stable on high memory layout
+		SetFakeMaxFreeMemory(16982272, 0);
+
 	}
 
 	sctrlFlushCache();

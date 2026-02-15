@@ -483,4 +483,9 @@ void PatchSysmem() {
 		}
 	}
 
+	extern SceSize (* _sceKernelMaxFreeMemSize)(void);
+	extern SceSize (* _sceKernelTotalFreeMemSize)(void);
+
+	_sceKernelMaxFreeMemSize = (void*)sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", 0xA291F107);
+	_sceKernelTotalFreeMemSize = (void*)sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", 0xF919F628);
 }
