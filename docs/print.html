@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-403ad185.js";
+            window.path_to_searchindex_js = "searchindex-85c0b2d5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f070d2aa.js"></script>
@@ -5695,6 +5695,19 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>This can reduce greatly the performance of executing ISO games/apps that do not need them configured if you forget to return them to <code>Auto</code>.</p>
 </div>
 
+<h3 id="tty-redirection"><a class="header" href="#tty-redirection">TTY redirection</a></h3>
+<p>Controls whether to redirect TTY stdout to VITA-side.</p>
+<p>If enabled, the stdout of the vPSP-side is redirected to the VITA-side. There, they can be used for remote logging (CatLog and similar homebrews), for example.</p>
+<div class="mdbook-callouts mdbook-callouts-caution">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  caution
+</p>
+
+<p>When enabled, you may find regression on game or homebrew performance if they do excessive outputs to the stdout (usually for debug).</p>
+<p>CFW modules can also do excessive outputs to stdout when compiled with higher DEBUG levels, and that also can affect title performance.</p>
+</div>
+
 <h3 id="xmb-plugins"><a class="header" href="#xmb-plugins">XMB plugins</a></h3>
 <p>Controls whether to load plugins on XMB/VSH.</p>
 <h3 id="game-plugins"><a class="header" href="#game-plugins">GAME plugins</a></h3>
@@ -8014,6 +8027,9 @@ cmake --build build
 <p>Add <code>Hide CFW files in PSP games</code> general CFW option <strong>[<a href="#hide-cfw-files-in-psp-games">docs</a>]</strong></p>
 </li>
 <li>
+<p>Add <code>TTY redirection</code> advanced CFW option <strong>[<a href="#tty-redirection">docs</a>]</strong></p>
+</li>
+<li>
 <p>Implement “Hold L while launching apps” to not load plugins <strong>[<a href="#launch-without-plugins">docs</a>]</strong></p>
 </li>
 <li>
@@ -8057,6 +8073,7 @@ cmake --build build
 <li>Fix <code>Rainbow Six: Vegas</code> instabilities with high memory layout options</li>
 <li>Fix <code>Assassin's Creed: Bloodlines</code> instabilities with Stable high memory layout</li>
 <li>Fix <code>PaRappa The Rapper</code> instabilities with Stable high memory layout</li>
+<li>Fix <code>Tony Hawk's Underground 2: Remix</code> (US) erroring with lack of space on save</li>
 </ul>
 </li>
 <li>
