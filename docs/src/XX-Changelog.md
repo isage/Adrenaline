@@ -34,6 +34,7 @@
 - Add `Use Graphic Engine 2` and `Use Media Engine 2` advanced CFW options **\[[docs](./08-CfwConfiguration.md#use-graphic-engine-2)\]**
 - Add `Fake max free memory` advanced CFW option **\[[docs](./08-CfwConfiguration.md#fake-max-free-memory)\]**
 - Add `Hide CFW files in PSP games` general CFW option **\[[docs](./08-CfwConfiguration.md#hide-cfw-files-in-psp-games)\]**
+- Add `TTY redirection` advanced CFW option **\[[docs](./08-CfwConfiguration.md#tty-redirection)\]**
 - Implement "Hold L while launching apps" to not load plugins **\[[docs](./04-HomebrewSupport/01-Plugin.md#launch-without-plugins)\]**
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN` **\[[docs](./08-CfwConfiguration.md#execute-bootbin-in-umdemu-iso)\]**
 - Implement PSP native music player and `SenseMe` to continue to play music after system suspend
@@ -62,6 +63,7 @@
 	- Fix `Rainbow Six: Vegas` instabilities with high memory layout options
 	- Fix `Assassin's Creed: Bloodlines` instabilities with Stable high memory layout
 	- Fix `PaRappa The Rapper` instabilities with Stable high memory layout
+	- Fix `Tony Hawk's Underground 2: Remix` (US) erroring with lack of space on save
 
 
 - **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size

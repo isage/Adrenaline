@@ -352,6 +352,17 @@ This can be used to bypass the anti-CFW checks in some games and fix desynchroni
 >
 > This can reduce greatly the performance of executing ISO games/apps that do not need them configured if you forget to return them to `Auto`.
 
+### TTY redirection
+
+Controls whether to redirect TTY stdout to VITA-side.
+
+If enabled, the stdout of the vPSP-side is redirected to the VITA-side. There, they can be used for remote logging (CatLog and similar homebrews), for example.
+
+> [!CAUTION]
+> When enabled, you may find regression on game or homebrew performance if they do excessive outputs to the stdout (usually for debug).
+>
+> CFW modules can also do excessive outputs to stdout when compiled with higher DEBUG levels, and that also can affect title performance.
+
 ### XMB plugins
 
 Controls whether to load plugins on XMB/VSH.
