@@ -28,6 +28,8 @@
 
 #include <cfwmacros.h>
 
+#include <adrenaline_log.h>
+
 #include "externs.h"
 #include "adrenaline.h"
 
@@ -158,8 +160,8 @@ static int _msIoDevctl(u32 *args) {
 
 	int res = g_ms_funcs.IoDevctl(arg, devname, cmd, indata, inlen, outdata, outlen);
 
-	// Fix integer overflow in Outrun
 	if (cmd == 0x02425818) {
+		// Fix integer overflow in Outrun
 		if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 			u32 data = *(u32 *)indata;
 			if (data) {
@@ -167,7 +169,21 @@ static int _msIoDevctl(u32 *args) {
 
 				u64 size = (u64)info->freeClusters * (u64)info->sectorSize * (u64)info->sectorCount;
 				if (size >= 0x7FFFFFFF) {
-					info->freeClusters = 0x7FFFFFFF / info->sectorSize / info->sectorCount;
+					u32 sectorSize = info->sectorSize;
+					u32 memStickSectorSize = 32 * 1024;
+					u32 sectorCount = memStickSectorSize / sectorSize;
+					u32 freeSize = 1900 * 1024 * 1024; // pretend to have 1.8GB, enough for any game
+					u32 clusterSize = sectorSize * sectorCount;
+					if (clusterSize) {
+						u32 maxClusters = (u32)(freeSize / clusterSize);
+						if (info->freeClusters > maxClusters) {
+							info->maxClusters = maxClusters;
+							info->freeClusters = maxClusters;
+							info->maxSectors = maxClusters;
+							info->sectorCount = sectorCount;
+							logmsg4("[INFO]: %s: Faked free size to 1.8GB\n", __func__);
+						}
+					}
 				}
 			}
 		}
