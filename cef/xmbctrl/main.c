@@ -60,19 +60,20 @@ GetItem g_menu_items[] = {
 	{16, 1, "Memory Stick Cache", 1, 0, &g_cfw_config.no_ms_cache},
 	{17, 1, "NoDRM engine", 1, 0, &g_cfw_config.no_nodrm_engine},
 	{18, 1, "XMB Control", 1, 0, &g_cfw_config.no_xmbctrl},
-	{19, 0, "Force high memory layout", 1, 1, &g_cfw_config.force_high_memory},
-	{20, 0, "Fake max free memory", 1, 1, &g_cfw_config.fake_max_free_mem},
-	{21, 0, "Use Graphic Engine 2", 1, 1, &g_cfw_config.use_ge2},
-	{22, 0, "Use Media Engine 2", 1, 1, &g_cfw_config.use_me2},
-	{23, 0, "Execute BOOT.BIN in UMDemu ISO", 1, 1, &g_cfw_config.execute_boot_bin},
+	{19, 0, "Force high memory layout", 0, 1, &g_cfw_config.force_high_memory},
+	{20, 0, "Fake max free memory", 0, 1, &g_cfw_config.fake_max_free_mem},
+	{21, 0, "Use Graphic Engine 2", 0, 1, &g_cfw_config.use_ge2},
+	{22, 0, "Use Media Engine 2", 0, 1, &g_cfw_config.use_me2},
+	{23, 0, "Execute BOOT.BIN in UMDemu ISO", 0, 1, &g_cfw_config.execute_boot_bin},
 	{24, 0, "Inferno ISO cache policy", 0, 1, &g_cfw_config.iso_cache},
 	{25, 0, "Inferno ISO cache number", 0, 1, &g_cfw_config.iso_cache_num},
 	{26, 0, "Inferno ISO cache size", 0, 1, &g_cfw_config.iso_cache_size},
 	{27, 0, "UMDemu ISO seek time delay factor", 0, 1, &g_cfw_config.umd_seek},
 	{28, 0, "UMDemu ISO read speed delay factor", 0, 1, &g_cfw_config.umd_speed},
-	{29, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
-	{30, 1, "Game Plugins", 1, 1, &g_cfw_config.no_game_plugins},
-	{31, 1, "POPS Plugins", 1, 1, &g_cfw_config.no_pops_plugins},
+	{29, 0, "TTY redirection", 1, 1, &g_cfw_config.tty_redirection },
+	{30, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
+	{31, 1, "Game Plugins", 0, 1, &g_cfw_config.no_game_plugins},
+	{32, 1, "POPS Plugins", 0, 1, &g_cfw_config.no_pops_plugins},
 };
 
 #define N_ITEMS (sizeof(g_menu_items) / sizeof(GetItem))
@@ -107,6 +108,7 @@ ItemOptions g_item_opts[] = {
 	{NELEMS(g_iso_cache_size_options), g_iso_cache_size_options}, // ISO cache size
 	{NELEMS(g_iso_umd_seek_read_options), g_iso_umd_seek_read_options}, // ISO UMD seek delay
 	{NELEMS(g_iso_umd_seek_read_options), g_iso_umd_seek_read_options}, // ISO UMD read speed delay
+	{2, g_boolean_options},           // TTY redirection
 	{2, g_boolean_options},           // VSH/XMB Plugins
 	{2, g_boolean_options},           // Game Plugins
 	{2, g_boolean_options},           // POPS Plugins

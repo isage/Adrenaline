@@ -318,6 +318,7 @@ static Entry g_advanced_entries[] = {
 	{ "Inferno ISO cache size", NULL, g_iso_cache_size, sizeof(g_iso_cache_size), &g_cfw_config.iso_cache_size },
 	{ "UMDemu  ISO seek time delay factor", NULL, g_umd_seek_read_delay, sizeof(g_umd_seek_read_delay), &g_cfw_config.umd_seek },
 	{ "UMDemu  ISO read speed delay factor", NULL, g_umd_seek_read_delay, sizeof(g_umd_seek_read_delay), &g_cfw_config.umd_speed },
+	{ "TTY redirection", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.tty_redirection },
 	{ "XMB  plugins", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_xmb_plugins },
 	{ "GAME plugins", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_game_plugins },
 	{ "POPS plugins", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_pops_plugins },

@@ -344,7 +344,10 @@ int module_start(SceSize args, void *argp) {
 
 	memcpy(&g_rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
 
-	tty_init();
+	// Only start the redirection it configured
+	if (g_cfw_config.tty_redirection) {
+		tty_init();
+	}
 
 	return 0;
 }
