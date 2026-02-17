@@ -18,9 +18,10 @@
 */
 
 #include <string.h>
-#include <systemctrl_adrenaline.h>
+
 #include <pspusbcam.h>
 #include <pspdisplay.h>
+#include <psperror.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
@@ -166,6 +167,28 @@ static int OnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
 	u32 text_addr = mod->text_addr;
 
+	// Load SE config from file
+	if (load_file_config) {
+		int res = sctrlSEGetConfig((SEConfig*)&g_cfw_config);
+		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
+		if (res == 0) {
+			load_file_config = 0;
+			// configure Pentazemin
+			PentazeminConfig penconfig = {
+				.osk_type = g_cfw_config.use_sony_psposk,
+				.ge_type = g_cfw_config.use_ge2,
+				.me_type = g_cfw_config.use_me2,
+			};
+			sctrlPentazeminConfigure(&penconfig);
+		}
+
+		// If it reached title module and still ENOENT, no point in continue trying
+		if (res == SCE_ENOENT && ready_gamepatch_mod) {
+			logmsg("[ERROR]: Failed to load CFW config from file. Continuing with in memory version or default.\n");
+			load_file_config = 0;
+		}
+	}
+
 	// Game/App module patches
 	if (ready_gamepatch_mod) {
 		if (sceKernelApplicationType() != PSP_INIT_KEYCONFIG_VSH) {
@@ -182,21 +205,6 @@ static int OnModuleStart(SceModule *mod) {
 		// Fix 6.60 plugins on 6.61
 		const char *sysmemlib = (IS_KERNEL_ADDR(text_addr)) ? "SysMemForKernel" : "SysMemUserForUser";
 		sctrlHookImportByNID(mod, sysmemlib, 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
-	}
-
-	if (load_file_config) {
-		int res = sctrlSEGetConfig((SEConfig*)&g_cfw_config);
-		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
-		if (res == 0) {
-			load_file_config = 0;
-			// configure Pentazemin
-			PentazeminConfig penconfig = {
-				.osk_type = g_cfw_config.use_sony_psposk,
-				.ge_type = g_cfw_config.use_ge2,
-				.me_type = g_cfw_config.use_me2,
-			};
-			sctrlPentazeminConfigure(&penconfig);
-		}
 	}
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {

@@ -105,12 +105,14 @@ int sctrlSEGetConfigEx(SEConfig *config, int size) {
 	int read = SCE_ERR_ININDEX;
 	int res = 0;
 
-	memset(config, 0, size);
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
 	if (fd < 0) {
 		res = SCE_ENOENT;
 		goto exit;
 	}
+
+	// Clean if not failed to open.
+	memset(config, 0, size);
 
 	int file_size = sceIoLseek32(fd, 0, PSP_SEEK_END);
 	sceIoLseek(fd, 0, PSP_SEEK_SET);
