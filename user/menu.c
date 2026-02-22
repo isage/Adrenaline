@@ -177,6 +177,7 @@ static int OpenOfficialSettings() {
 
 static int ExitPspEmuApplication() {
 	stopUsb(usbdevice_modid);
+	ExitAdrenalineMenu();
 	ScePspemuErrorExit(0);
 	return 0;
 }
