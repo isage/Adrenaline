@@ -82,4 +82,6 @@ void* adr_malloc(size_t size);
 void* adr_realloc(void* ptr, size_t size);
 void adr_free(void* ptr);
 
+char *getMsLocation(void);
+
 #endif

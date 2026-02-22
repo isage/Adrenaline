@@ -372,3 +372,17 @@ void adr_free(void* ptr) {
 	mspace_free(mspace, ptr);
 }
 
+char *getMsLocation() {
+	switch (config.ms_location) {
+		case MEMORY_STICK_LOCATION_UR0:
+			return "ur0:";
+		case MEMORY_STICK_LOCATION_IMC0:
+			return "imc0:";
+		case MEMORY_STICK_LOCATION_XMC0:
+			return "xmc0:";
+		case MEMORY_STICK_LOCATION_UMA0:
+			return "uma0:";
+		default:
+			return "ux0:";
+	}
+}

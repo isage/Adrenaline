@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "main.h"
+#include "utils.h"
 
 #include "files.h"
 
@@ -203,8 +204,18 @@ int ScePspemuLoadFlash0Ark() {
 	memset(flash0_data, 0, FLASH0_ARK_SIZE);
 
 	// read flash0 ark package
-	SceUID fd = sceIoOpen(FLASH0_ARK_PATH, SCE_O_RDONLY, 0777);
-	if (fd < 0) return fd;
+	char ark_path[47];
+	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getMsLocation());
+	SceUID fd = sceIoOpen(ark_path, SCE_O_RDONLY, 0777);
+
+	if (fd < 0) {
+		// Try again on `ux0:` just to be sure
+		fd = sceIoOpen("ux0:" FLASH0_ARK_PATH, SCE_O_RDONLY, 0777);
+
+		if (fd < 0) {
+			return fd;
+		}
+	}
 
 	sceIoRead(fd, flash0_data, FLASH0_ARK_SIZE);
 	sceIoClose(fd);

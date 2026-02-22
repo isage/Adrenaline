@@ -642,27 +642,10 @@ static int ScePspemuMsfsChdir(const char *path) {
 static int ScePspemuMsfsDevctl(const char *dev, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	// Device information command
 	if (cmd == 0x02425818 && outdata && outlen == sizeof(ScePspemuIoDevInfo)) {
-		char *path;
 		SceIoDevInfo devinfo;
 		memset(&devinfo, 0, sizeof(SceIoDevInfo));
-		switch (config.ms_location) {
-			case MEMORY_STICK_LOCATION_UR0:
-				path = "ur0:";
-				break;
-			case MEMORY_STICK_LOCATION_IMC0:
-				path = "imc0:";
-				break;
-			case MEMORY_STICK_LOCATION_XMC0:
-				path = "xmc0:";
-				break;
-			case MEMORY_STICK_LOCATION_UMA0:
-				path = "uma0:";
-				break;
-			default:
-				path = "ux0:";
-				break;
-		}
 
+		char *path = getMsLocation();
 		int res = sceIoDevctl(path, 0x3001, NULL, 0, &devinfo, sizeof(SceIoDevInfo));
 		if (res < 0) {
 			return res;

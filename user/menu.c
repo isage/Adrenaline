@@ -197,7 +197,9 @@ static int EnterAdrenalineMenu() {
 
 	// Check if ARK is installed
 	SceIoStat stat;
-	if (sceIoGetstat(FLASH0_ARK_PATH, &stat) < 0){
+	char ark_path[47];
+	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getMsLocation());
+	if (sceIoGetstat(ark_path, &stat) < 0 && sceIoGetstat("ux0:" FLASH0_ARK_PATH, &stat) < 0){
 		settings_entries[0].n_options = 1;
 		config.cfw_type = 0;
 	} else {
