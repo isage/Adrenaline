@@ -18,6 +18,8 @@ The available options are:
 
 > [!NOTE]
 > The `ARK` options is only available if you have ARK savedata files properly installed. Otherwise, only the `EPI` will be available.
+>
+> Adrenaline searches for ARK savedata files on the selected [`Memory Stick Location`](#memory-stick-location) option first, and falls back to search on `ux0:/pspemu` if not found.
 
 > [!IMPORTANT]
 > Changing vPSP Custom Firmware requires to close and reopen the Adrenaline Application to take effect.

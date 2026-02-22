@@ -45,7 +45,33 @@ No. That project is a whole modified Adrenaline distribution (and not a plugin a
 Although, we been thinking on other solution(s) to the launch Adrenaline with app/game X from the livearea.
 
 ## Why rename the eCFW part of the project to Epinephrine
+---
 
 Now that the app supports natively loading other eCFW, it felt like making a clearer distinction on what is the Adrenaline (the app that does patches that allow to run CFW on PSPemu) and Adrenaline (the actual eCFW). This distinction always existed, but since they were always distributed together under the same name made the distinction blurrier to the end-user.
 
 The decision on the name was easy, we've been using "EPI" as abbreviation for Adrenaline CFW module names and such. And as [explained before](./XX-FAQ.md#why-many-things-have-epi-in-the-name), EPI is abbreviation on epinephrine, which is just a more technical name for adrenaline. So with that, we can name the two sides of the project while maintaining the meaning the same as it was before and a nice (and geeky) play with words.
+
+## How to install/use ARK with Adrenaline?
+---
+
+### Part 1 - Getting the ARK files
+
+There is two ways to get the ARK files:
+
+#### Option 1: FasterARK
+1. Download and install [FasterARK.vpk](https://github.com/PSP-Arkfive/FasterARK/releases)
+2. Run it from LiveArea, choose your installation type and proceed
+
+#### Option 2: Update from ARK-4
+1. Download [ARK.zip](https://github.com/PSP-Arkfive/ARK-5/releases) from the ARK release page
+2. Extract the zip file
+3. Put the `FLASH0.ARK` file in your `???0:pspemu/PSP/SAVEDATA/ARK_01234/` folder
+
+### Part 2 - Setting Adrenaline
+
+1. Open Adrenaline
+2. Open [Adrenaline Menu](./03-AdrenalineMenu.md)
+3. Go to the [`Settings`](./03-AdrenalineMenu/02-AdrenalineSettings.md) tab
+4. Change the value of the [`vPSP Custom Firmware`](./03-AdrenalineMenu/02-AdrenalineSettings.md#vpsp-custom-firmware) option to `ARK`
+5. Return to the [`Main`](./03-AdrenalineMenu.md#main-tab) tab and select `Exit PspEmu Application`
+6. Reopen Adrenaline
