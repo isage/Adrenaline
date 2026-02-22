@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-85c0b2d5.js";
+            window.path_to_searchindex_js = "searchindex-7b887929.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-f070d2aa.js"></script>
@@ -467,8 +467,33 @@
 <p>No. That project is a whole modified Adrenaline distribution (and not a plugin as many believe), that means when you install it, you are overwriting your entire Adrenaline installation. That means when you install it, now you have “Adrenaline from Adrenaline Bubble Manager” instead of “Adrenaline from TheFlow” or “Adrenaline from Isage fork” (this one, and the only one that is being maintained).</p>
 <p>Although, we been thinking on other solution(s) to the launch Adrenaline with app/game X from the livearea.</p>
 <h2 id="why-rename-the-ecfw-part-of-the-project-to-epinephrine"><a class="header" href="#why-rename-the-ecfw-part-of-the-project-to-epinephrine">Why rename the eCFW part of the project to Epinephrine</a></h2>
+<hr>
 <p>Now that the app supports natively loading other eCFW, it felt like making a clearer distinction on what is the Adrenaline (the app that does patches that allow to run CFW on PSPemu) and Adrenaline (the actual eCFW). This distinction always existed, but since they were always distributed together under the same name made the distinction blurrier to the end-user.</p>
 <p>The decision on the name was easy, we’ve been using “EPI” as abbreviation for Adrenaline CFW module names and such. And as <a href="./XX-FAQ.html#why-many-things-have-epi-in-the-name">explained before</a>, EPI is abbreviation on epinephrine, which is just a more technical name for adrenaline. So with that, we can name the two sides of the project while maintaining the meaning the same as it was before and a nice (and geeky) play with words.</p>
+<h2 id="how-to-installuse-ark-with-adrenaline"><a class="header" href="#how-to-installuse-ark-with-adrenaline">How to install/use ARK with Adrenaline?</a></h2>
+<hr>
+<h3 id="part-1---getting-the-ark-files"><a class="header" href="#part-1---getting-the-ark-files">Part 1 - Getting the ARK files</a></h3>
+<p>There is two ways to get the ARK files:</p>
+<h4 id="option-1-fasterark"><a class="header" href="#option-1-fasterark">Option 1: FasterARK</a></h4>
+<ol>
+<li>Download and install <a href="https://github.com/PSP-Arkfive/FasterARK/releases">FasterARK.vpk</a></li>
+<li>Run it from LiveArea, choose your installation type and proceed</li>
+</ol>
+<h4 id="option-2-update-from-ark-4"><a class="header" href="#option-2-update-from-ark-4">Option 2: Update from ARK-4</a></h4>
+<ol>
+<li>Download <a href="https://github.com/PSP-Arkfive/ARK-5/releases">ARK.zip</a> from the ARK release page</li>
+<li>Extract the zip file</li>
+<li>Put the <code>FLASH0.ARK</code> file in your <code>???0:pspemu/PSP/SAVEDATA/ARK_01234/</code> folder</li>
+</ol>
+<h3 id="part-2---setting-adrenaline"><a class="header" href="#part-2---setting-adrenaline">Part 2 - Setting Adrenaline</a></h3>
+<ol>
+<li>Open Adrenaline</li>
+<li>Open <a href="./03-AdrenalineMenu.html">Adrenaline Menu</a></li>
+<li>Go to the <a href="./03-AdrenalineMenu/02-AdrenalineSettings.html"><code>Settings</code></a> tab</li>
+<li>Change the value of the <a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#vpsp-custom-firmware"><code>vPSP Custom Firmware</code></a> option to <code>ARK</code></li>
+<li>Return to the <a href="./03-AdrenalineMenu.html#main-tab"><code>Main</code></a> tab and select <code>Exit PspEmu Application</code></li>
+<li>Reopen Adrenaline</li>
+</ol>
 
                     </main>
 
