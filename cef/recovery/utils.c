@@ -16,7 +16,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
@@ -24,6 +23,8 @@
 #include <pspreg.h>
 #include <psperror.h>
 #include <pspiofilemgr.h>
+
+int tolower(int c);
 
 char *stristr(const char *str1, const char *str2) {
 	#define MAXLEN 256

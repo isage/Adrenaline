@@ -17,6 +17,7 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <pspiofilemgr.h>
@@ -28,9 +29,6 @@
 #include "utils.h"
 #include "options.h"
 #include "plugins.h"
-
-void *user_malloc(SceSize size);
-void user_free(void *ptr);
 
 typedef struct {
 	char name[138];
@@ -190,7 +188,7 @@ static void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*
 		int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
 		sceIoLseek(fd, 0, PSP_SEEK_SET);
 
-		u8* buf = user_malloc(fsize+1);
+		u8* buf = malloc(fsize+1);
 		if (buf == NULL){
 			sceIoClose(fd);
 			return;
@@ -201,7 +199,7 @@ static void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*
 		buf[fsize] = 0;
 
 		// Allocate Line Buffer
-		char* line = user_malloc(LINE_BUFFER_SIZE);
+		char* line = malloc(LINE_BUFFER_SIZE);
 		// Buffer Allocation Success
 		if (line != NULL) {
 			// Read Lines
@@ -211,16 +209,16 @@ static void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*
 			while ((nread=readLine((char*)buf+total_read, line)) > 0) {
 				total_read += nread;
 				if (line[0] == 0) continue; // empty line
-				char* dupline = user_malloc(strlen(line)+1);
+				char* dupline = malloc(strlen(line)+1);
 				strcpy(dupline, line);
 				// Process Line
 				if (processLine(strtrim(line), process_line)) {
-					user_free(dupline);
+					free(dupline);
 				} else {
 					process_custom(dupline);
 				}
 			}
-			user_free(line);
+			free(line);
 		}
 		// Close Plugin Config
 		sceIoClose(fd);
@@ -306,7 +304,6 @@ int Plugins() {
 
 	for (int i = 0; i < g_plugin_count; i++) {
 		Plugin* plugin = &g_plugins[i];
-	    printf(plugin->name);
 		g_plugins_tool_entries[i].name = plugin->name;
 		g_plugins_tool_entries[i].function = (void *)SetPlugins;
 		g_plugins_tool_entries[i].options = g_disenabled;
@@ -318,7 +315,7 @@ int Plugins() {
 
 #define CHUNK_SIZE 512
 void ImportClassicPlugins(int sel) {
-	char* buf = user_malloc(CHUNK_SIZE);
+	char* buf = malloc(CHUNK_SIZE);
 	int read = 0;
 
 	SceUID game_fd = sceIoOpen("ms0:/seplugins/game.txt", PSP_O_RDONLY, 0777);
@@ -378,6 +375,6 @@ void ImportClassicPlugins(int sel) {
 	sceIoClose(pops_fd);
 
 	sceIoClose(plugins_fd);
-	user_free(buf);
+	free(buf);
 	readPlugins();
 }

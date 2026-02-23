@@ -1,6 +1,13 @@
 .vscode
 
 build
+cef/build
+
+cef/**/*.o
+cef/**/*.prx
+cef/**/*.elf
+
+cef/btcnf/**/pspbtcnf*.bin
 
 cef/systemctrl/binary.h
 cef/systemctrl/rebootex.h
