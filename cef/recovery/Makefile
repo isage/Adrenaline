@@ -1,5 +1,5 @@
 TARGET = recovery
-OBJS = main.o menu.o installer.o plugins.o utils.o vgraph.o imports.o
+OBJS = crt0.o main.o libc.o menu.o installer.o plugins.o utils.o vgraph.o imports.o
 
 INCDIR = ../include
 CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division -Wno-unused-variable -Wno-incompatible-pointer-types
@@ -9,11 +9,8 @@ PSP_FW_VERSION = 661
 
 BUILD_PRX = 1
 
-USE_PSPSDK_LIBC = 1
-USE_PSPSDK_LIBS = 1
-
 LIBDIR = ../lib
-LIBS = -lz -lpspreg -lpspsystemctrl_user -lpspkubridge -ladrenalinectrl -lpspsysc_user -lpsppsar
+LIBS = -nostdlib -lgcc -lz -lpspuser -lpspreg -lpspsystemctrl_user -lpspkubridge -ladrenalinectrl -lpspsysc_user -lpsppsar -lpspmodinfo
 
 
 ifdef RECOVERY_DEBUG

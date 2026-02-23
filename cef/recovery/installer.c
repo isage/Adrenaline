@@ -439,7 +439,9 @@ void ResetSettings() {
 
 	int res = CreateDirectories(g_flash1_dirs, sizeof(g_flash1_dirs) / sizeof(char **));
 	if (res < 0) {
-		printf("Error creating directories (0x%08X).\n", res);
+		VGraphGoto(2, 24);
+		VGraphSetTextColor(0x4, 0x0);
+		VGraphPrintf("Error creating directories (0x%08X).\n", res);
 		goto EXIT;
 	}
 
