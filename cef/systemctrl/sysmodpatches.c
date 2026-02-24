@@ -44,6 +44,8 @@
 #define EXIT_TO_VSH_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_SELECT | PSP_CTRL_DOWN)
 #define EXIT_TO_VSH2_MASK (PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_DOWN)
 
+#define EXTRA_RAM_SETTABLE (0)
+
 STMOD_HANDLER g_module_handler = NULL;
 
 
@@ -85,7 +87,7 @@ static int protect_pspemu_mem() {
 }
 
 int ApplyMemory() {
-	if (g_rebootex_config.ram2 != 0 && (g_rebootex_config.ram2 + g_rebootex_config.ram11) <= 52) {
+	if (g_rebootex_config.ram2 != EXTRA_RAM_SETTABLE && (g_rebootex_config.ram2 + g_rebootex_config.ram11) <= 52) {
 		PspSysMemPartition *(* GetPartition)(int partition) = NULL;
 		PspSysMemPartition *partition;
 		u32 user_size;
@@ -123,7 +125,7 @@ int ApplyMemory() {
 
 void ApplyAndResetMemory() {
 	ApplyMemory();
-	g_rebootex_config.ram2 = 0;
+	g_rebootex_config.ram2 = EXTRA_RAM_SETTABLE;
 }
 
 void UnprotectExtraMemory() {
@@ -227,7 +229,6 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 	return 0;
 }
 
-// ARK CFW compat
 int sctrlHENApplyMemory(u32 p2) {
 	int p11 = 40 - p2;
 	int res = sctrlHENSetMemory(p2, (p11 < 0)? 0 : p11);
@@ -265,7 +266,7 @@ void sctrlHENSetSpeed(int cpu, int bus) {
 int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 	int largememory = 0;
 
-	if (g_rebootex_config.ram2 == 0) {
+	if (g_rebootex_config.ram2 == EXTRA_RAM_SETTABLE) {
 		SFOHeader *header = (SFOHeader *)sfo;
 		SFODir *entries = (SFODir *)(sfo + sizeof(SFOHeader));
 
@@ -279,12 +280,12 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 			sctrlHENSetMemory(52, 0);
 			ApplyMemory();
 		} else if (largememory == 2) {
-			sctrlHENSetMemory(40, 12);
+			sctrlHENSetMemory(40, 0);
 			ApplyMemory();
 		} else if (largememory > 2) {
 			// Invalid value, but just to be safe, unlock stable extra RAM, but
 			// left in a state that can be re-set
-			sctrlHENSetMemory(40, 12);
+			sctrlHENSetMemory(40, 0);
 			ApplyAndResetMemory();
 		}
 	} else {
