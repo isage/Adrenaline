@@ -32,6 +32,8 @@
 #include "libraries_patch.h"
 
 #define PSP_MEMORY_PARTITION_UNKNOWN (0)
+#define DEFAULT_USER_STACK_SIZE_BYTES (256 * 1024)
+#define SCE_MODULE_USER_MODULE  (0x100)
 
 static int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 static int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
@@ -205,6 +207,12 @@ int PartitionCheckPatched(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo 
 
 int PrologueModulePatched(SceModuleMgrParam *mod_param, SceModule *mod) {
 	int res = PrologueModule(mod_param, mod);
+
+	if (res >= 0 && (mod->mod_state & SCE_MODULE_USER_MODULE) && mod_param->mpid_text == 11 && mod_param->mpid_data == 11 && sctrlIsLoadingPlugins()) {
+		SceSize stack_size = (mod_param->stack_size == 0) ? DEFAULT_USER_STACK_SIZE_BYTES : mod_param->stack_size;
+		g_last_plugin_mem_size = mod->text_size + mod->data_size + stack_size;
+		g_plugins_loaded_mem += g_last_plugin_mem_size;
+	}
 
 	if (res >= 0 && g_module_handler) {
 		g_module_handler(mod);
