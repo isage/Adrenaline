@@ -57,6 +57,10 @@ enum {
 static int cur_runlevel = RUNLEVEL_UNKNOWN;
 
 int g_disable_plugins = 0;
+// If a third-party plugin is being loaded.
+u8 g_is_plugin_loading = 0;
+
+// If the CFW is currently doing plugin loading.
 static int g_is_plugins_loading = 0;
 
 static void addPlugin(const char* path) {
@@ -89,6 +93,13 @@ static void removePlugin(const char* path) {
 	}
 }
 
+static SceUID loadPlugin(char *path) {
+	g_is_plugin_loading = 1;
+	int res = sceKernelLoadModule(path, 0, NULL);
+	g_is_plugin_loading = 0;
+	return res;
+}
+
 // Load and Start Plugin Module
 static void startPlugins() {
 	for (int i=0; i<g_plugins->count; i++) {
@@ -96,7 +107,7 @@ static void startPlugins() {
 		char* path = g_plugins->paths[i];
 		// Load Module
 		logmsg4("[DEBUG]: Processing plugin: %s\n", path);
-		int uid = sceKernelLoadModule(path, 0, NULL);
+		int uid = loadPlugin(path);
 		if (uid >= 0) {
 			// Call handler
 			if (g_plugin_handler) {
