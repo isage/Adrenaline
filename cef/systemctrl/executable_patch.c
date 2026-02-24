@@ -31,6 +31,8 @@
 #include "init_patch.h"
 #include "libraries_patch.h"
 
+#define PSP_MEMORY_PARTITION_UNKNOWN (0)
+
 static int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 static int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 static int (* PspUncompress)(void *buf, SceLoadCoreExecFileInfo *execInfo, u32 *newSize);
@@ -183,6 +185,21 @@ int PartitionCheckPatched(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo 
 	}
 
 	sceIoLseek32(fd, pos, PSP_SEEK_SET);
+
+	// Patch to use p11 to load user plugins when possible
+	if (!execInfo->is_kernel_mod && sctrlIsLoadingPlugins() && g_is_plugin_loading) {
+		// Use p2 is ram2 size `> 24` (normal user mem) and ram11 `< 4` (arbitrary), or force high mem turned on
+
+		if (mod_param->mpid_data == PSP_MEMORY_PARTITION_UNKNOWN) {
+			mod_param->mpid_data = ((g_rebootex_config.ram2 > 24 && g_rebootex_config.ram11 < 4) || g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) ? 2 : 11;
+		}
+
+		if (mod_param->mpid_text == PSP_MEMORY_PARTITION_UNKNOWN) {
+			mod_param->mpid_text = ((g_rebootex_config.ram2 > 24 && g_rebootex_config.ram11 < 4) || g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) ? 2 : 11;
+		}
+	}
+
+
 	return PartitionCheck(mod_param, execInfo);
 }
 
