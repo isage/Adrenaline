@@ -13,6 +13,7 @@ add_cef_prx(pentazemin
     src/LflashFatfmt.c
     src/impose_patch.c
     src/utility_patch.c
+    binary.h
   LINK_LIBS
     pspsystemctrl_kernel
     pspinit_kernel
@@ -28,6 +29,11 @@ add_cef_prx(pentazemin
     pspsysmem_kernel
 )
 
-target_include_directories(pentazemin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(pentazemin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_BINARY_DIR})
+
+add_custom_command(OUTPUT binary.h
+  DEPENDS binary
+  COMMAND bin2c "$<TARGET_FILE:binary>.bin" binary.h binary
+)
 
 copy_prx_flash0(pentazemin Pentazemin)
