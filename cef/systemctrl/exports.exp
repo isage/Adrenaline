@@ -273,6 +273,8 @@ PSP_EXPORT_FUNC(sceIoOpenHidePatched)
 PSP_EXPORT_FUNC(sceIoDopenHidePatched)
 PSP_EXPORT_FUNC(sceKernelMaxFreeMemSizePatched)
 PSP_EXPORT_FUNC(sceKernelTotalFreeMemSizePatched)
+PSP_EXPORT_FUNC(sceKernelCreateThreadPluginPatched)
+PSP_EXPORT_FUNC(sceKernelAllocPartitionMemoryPluginPatched)
 PSP_EXPORT_END
 # END SystemCtrlPrivate
 
