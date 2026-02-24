@@ -202,9 +202,7 @@ static int OnModuleStart(SceModule *mod) {
 
 	// Third-party Plugins modules
 	if (sctrlIsLoadingPlugins()) {
-		// Fix 6.60 plugins on 6.61
-		const char *sysmemlib = (IS_KERNEL_ADDR(text_addr)) ? "SysMemForKernel" : "SysMemUserForUser";
-		sctrlHookImportByNID(mod, sysmemlib, 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
+		PatchPluginModule(mod);
 	}
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {
