@@ -207,6 +207,13 @@ int sctrlHENSetMemory(u32 p2, u32 p11) {
 		return -1;
 	}
 
+	// P11 must be at least as big as the memory used to hold user-level plugins loaded to P11
+	// This should never be true with `Force High Memory Layout`.
+	// But could happen if a user plugin uses `sctrlHENApplyMemory`
+	if ( (p11 * 1024 * 1024) < g_plugins_loaded_mem) {
+		return -4;
+	}
+
 	// Checks for unlock state
 	if (p2 > 24) {
 		// already enabled

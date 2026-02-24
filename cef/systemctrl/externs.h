@@ -34,6 +34,9 @@ extern STMOD_HANDLER g_module_handler;
 extern SceAdrenaline *g_adrenaline;
 extern u8 g_is_plugin_loading;
 
+// Plugin used mem in bytes (text + data + stack)
+extern SceSize g_plugins_loaded_mem;
+extern SceSize g_last_plugin_mem_size;
 
 void lowerString(char* orig, char* ret, int strSize);
 

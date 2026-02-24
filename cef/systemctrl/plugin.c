@@ -60,6 +60,11 @@ int g_disable_plugins = 0;
 // If a third-party plugin is being loaded.
 u8 g_is_plugin_loading = 0;
 
+// Plugin used mem in bytes (text + data + stack) on P11
+SceSize g_plugins_loaded_mem = 0;
+// Last loaded plugin P11 mem size
+SceSize g_last_plugin_mem_size = 0;
+
 // If the CFW is currently doing plugin loading.
 static int g_is_plugins_loading = 0;
 
@@ -95,8 +100,15 @@ static void removePlugin(const char* path) {
 
 static SceUID loadPlugin(char *path) {
 	g_is_plugin_loading = 1;
-	int res = sceKernelLoadModule(path, 0, NULL);
+	SceKernelLMOption opt = {
+		.position = PSP_SMEM_High,
+		.access = 1, //default
+		.mpiddata = 0, //default
+		.mpidtext = 0, //default
+	};
+	int res = sceKernelLoadModule(path, 0, &opt);
 	g_is_plugin_loading = 0;
+
 	return res;
 }
 
@@ -118,11 +130,16 @@ static void startPlugins() {
 					continue;
 				}
 			}
+
 			// Start Module
 			res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+
 			// Unload Module on Error
 			if (res < 0) {
 				sceKernelUnloadModule(uid);
+				g_plugins_loaded_mem -= g_last_plugin_mem_size;
+				g_last_plugin_mem_size = 0;
+				continue;
 			}
 			logmsg3("[INFO]: Loaded plugin: %s\n", path);
 		}
