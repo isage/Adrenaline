@@ -23,6 +23,8 @@
 
 #include <psptypes.h>
 
+#define SCE_MODULE_USER_MODULE  (0x100)
+
 int ReadFile(char *file, void *buf, int size);
 int WriteFile(char *file, void *buf, int size);
 

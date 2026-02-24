@@ -57,5 +57,6 @@ void PatchGameByTitleId();
 void PatchGameByTitleIdOnLoadExec();
 void PatchGamesByMod(SceModule* mod);
 void PatchHideCfwFiles(SceModule* mod);
+void PatchPluginModule(SceModule *mod);
 
 #endif

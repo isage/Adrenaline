@@ -33,7 +33,6 @@
 
 #define PSP_MEMORY_PARTITION_UNKNOWN (0)
 #define DEFAULT_USER_STACK_SIZE_BYTES (256 * 1024)
-#define SCE_MODULE_USER_MODULE  (0x100)
 
 static int (* _sceKernelCheckExecFile)(void *buf, SceLoadCoreExecFileInfo *execInfo);
 static int (* _sceKernelProbeExecutableObject)(void *buf, SceLoadCoreExecFileInfo *execInfo);
