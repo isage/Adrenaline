@@ -11,10 +11,10 @@ function(add_cef_prx NAME)
   target_compile_options(${NAME} PRIVATE -Os -G0 -Wall -fno-pic -fshort-wchar ${ARG_COMPILE_OPS})
 
   if(ARG_USER)
-    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} pspdebug pspdisplay pspge pspctrl)
+    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} pspdisplay pspge pspctrl)
   else()
     target_compile_definitions(${NAME} PRIVATE __KERNEL__)
-    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} pspmodinfo pspsdk pspkernel)
+    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} pspsdk pspmodinfo pspkernel)
     target_link_options(${NAME} PRIVATE -nostdlib)
   endif()
 
@@ -34,6 +34,7 @@ function(copy_prx_flash0 NAME MODULE_NAME)
   set(multiValueArgs "")
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+  set(PACKER pspgz)
   if(ARG_USER)
     set(OUTPUT_PATH ${FLASH0_DIR}/vsh/module/${NAME}.prx)
     set(PACK_CMD python3 $<TARGET_PROPERTY:tool_pspgz,EXEC>
@@ -45,11 +46,13 @@ function(copy_prx_flash0 NAME MODULE_NAME)
   endif()
 
   if(USE_PSP_PACKER)
+  	set(PACKER psp-packer)
     set(PACK_CMD psp-packer $<TARGET_FILE:${NAME}>.prx -o ${OUTPUT_PATH})
   endif()
 
   add_custom_command(
     TARGET ${NAME} POST_BUILD
     COMMAND ${PACK_CMD}
+	COMMENT "Calling ${PACKER} for target ${NAME}"
   )
 endfunction()

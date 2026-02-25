@@ -4,6 +4,7 @@ add_cef_prx(satelite USER
     menu.c
     blit.c
   LINK_LIBS
+	pspdebug
     pspsystemctrl_user
     pspsysc_user
     pspvshctrl
