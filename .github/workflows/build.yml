@@ -55,12 +55,6 @@ jobs:
           sudo tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz -C /usr/local/
           sudo chmod -R 755 /usr/local/pspdev
 
-      - name: Setup CFW SDK
-        run: |
-          git clone https://github.com/pspdev/psp-cfw-sdk.git
-          make -C psp-cfw-sdk
-          make -C psp-cfw-sdk install
-
       - name: Setup psp-packer
         run: |
           git clone https://github.com/VitaArchive/psp-packer.git
@@ -110,11 +104,13 @@ jobs:
           sed -r -i "s|^(#define[[:space:]]+EPI_NIGHTLY_VER[[:space:]]+\")([0-9]+)(\")|\1${sha}\3|" adrenaline_version.h
 
       - name: Build eCFW
-        run: make -j1 -C cef NIGHTLY=1
+        run: |
+            psp-cmake -S cef -B cef/build -DNIGHTLY=1
+            cmake --build cef/build -j
 
       - name: Build VPK
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1 -DNIGHTLY=1
           cmake --build build
           mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
 
@@ -128,7 +124,7 @@ jobs:
 
       - name: Build UPDATER
         run: |
-          cmake --build build --target updater
+          cmake --build build --target updater -j
           zip -r build/updater-${{ steps.vars.outputs.sha_short }}.zip build/updater
 
       - name: Upload UPDATER
@@ -171,12 +167,15 @@ jobs:
           sha="${{ steps.vars.outputs.sha_short }}"
           sed -r -i "s|^(#define[[:space:]]+EPI_NIGHTLY_VER[[:space:]]+\")([0-9]+)(\")|\1${sha}\3|" adrenaline_version.h
 
+
       - name: Build eCFW
-        run: make -j1 -C cef NIGHTLY=1 SCTRL_DEBUG=3 PENTAZEMIN_DEBUG=3
+        run: |
+            psp-cmake -S cef -B cef/build -DNIGHTLY=1 -DSCTRL_DEBUG=3 -DPENTAZEMIN_DEBUG=3
+            cmake --build cef/build -j
 
       - name: Build VPK
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1 -DNIGHTLY=1
           cmake --build build
           mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
 
