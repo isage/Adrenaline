@@ -17,13 +17,16 @@
 */
 
 #include <pspinit.h>
+#include <pspsysmem_kernel.h>
+
+#include <adrenaline_log.h>
 
 #include "externs.h"
 
 // SceUID heapid = -1;
 
 static void* malloc_impl(SceUID partition, SceSize size) {
-	SceUID uid = sceKernelAllocPartitionMemory(partition, "", 1, size+sizeof(SceUID), NULL);
+	SceUID uid = sceKernelAllocPartitionMemory(partition, "", PSP_SMEM_High, size+sizeof(SceUID), NULL);
 	int* ptr = sceKernelGetBlockHeadAddr(uid);
 	if (ptr){
 		ptr[0] = uid;
@@ -48,11 +51,16 @@ void *oe_malloc(SceSize size) {
 }
 
 void* user_malloc(SceSize size) {
-	return malloc_impl(PSP_MEMORY_PARTITION_USER, size);
+	u32 k1 = pspSdkSetK1(0);
+	SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
+	pspSdkSetK1(k1);
+	int pid = ((size+sizeof(SceUID)) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
+	logmsg3("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
+	return malloc_impl(pid, size);
 }
 
 static void* generic_memalign(int pid, SceSize align, SceSize size) {
-	SceUID uid = sceKernelAllocPartitionMemory(pid, "", 1, size+sizeof(SceUID)+align, NULL);
+	SceUID uid = sceKernelAllocPartitionMemory(pid, "", PSP_SMEM_High, size+sizeof(SceUID)+align, NULL);
 	int* ptr = sceKernelGetBlockHeadAddr(uid);
 	if (ptr){
 		ptr = (void*)(((u32)ptr & (~(align-1))) + 64);
@@ -63,7 +71,12 @@ static void* generic_memalign(int pid, SceSize align, SceSize size) {
 }
 
 void* user_memalign(SceSize align, SceSize size) {
-	return generic_memalign(PSP_MEMORY_PARTITION_USER, align, size);
+	u32 k1 = pspSdkSetK1(0);
+	SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
+	pspSdkSetK1(k1);
+	int pid = ((size+sizeof(SceUID)+align) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
+	logmsg3("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
+	return generic_memalign(pid, align, size);
 }
 
 void* oe_memalign(SceSize align, SceSize size) {

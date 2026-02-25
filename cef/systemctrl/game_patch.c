@@ -324,11 +324,11 @@ void PatchGamesByMod(SceModule* mod) {
 		// Fix infinite loading screen on `Jackass: The Game`
 		char* title_id = g_rebootex_config.title_id;
 		if (strcasecmp("ULES00897", title_id) == 0) { // PAL
-			logmsg4("%s: [DEBUG]: Patching Jackass PAL\n", __func__);
+			logmsg4("[DEBUG]: %s: Patching Jackass PAL\n", __func__);
 			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, sctrlHENMakeSyscallStub(moduleLoaderJackass));
 
 		} else if (strcasecmp("ULUS10303", title_id) == 0) { // NTSC
-			logmsg4("%s: [DEBUG]: Patching Jackass NTSC\n", __func__);
+			logmsg4("[DEBUG]: %s: Patching Jackass NTSC\n", __func__);
 			REDIRECT_FUNCTION(mod->text_addr + 0x357B54, sctrlHENMakeSyscallStub(moduleLoaderJackass));
 		}
 
