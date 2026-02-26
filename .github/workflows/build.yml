@@ -170,7 +170,7 @@ jobs:
 
       - name: Build eCFW
         run: |
-            psp-cmake -S cef -B cef/build -DNIGHTLY=1 -DSCTRL_DEBUG=3 -DPENTAZEMIN_DEBUG=3
+            psp-cmake -S cef -B cef/build -DNIGHTLY=1 -DSYSTEMCTRL_DEBUG=3 -DPENTAZEMIN_DEBUG=3
             cmake --build cef/build -j
 
       - name: Build VPK
