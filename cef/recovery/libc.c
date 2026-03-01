@@ -3,35 +3,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-int atoi(const char *s)
-{
-    int result = 0;
-    int sign = 1;
-
-    // Skip leading whitespace
-    while (*s == ' ' || *s == '\t' || *s == '\n' ||
-           *s == '\r' || *s == '\f' || *s == '\v') {
-        s++;
-    }
-
-    // Handle optional sign
-    if (*s == '-') {
-        sign = -1;
-        s++;
-    } else if (*s == '+') {
-        s++;
-    }
-
-    // Parse digits
-    while (*s >= '0' && *s <= '9') {
-        result = result * 10 + (*s - '0');
-        s++;
-    }
-
-    return sign * result;
-}
-
-
 static int itostr(char *buf, int in_data, int base, int upper, int sign) {
 	int res, len, i;
 	unsigned int data;
@@ -47,12 +18,12 @@ static int itostr(char *buf, int in_data, int base, int upper, int sign) {
 	do {
 		res = data%base;
 		data = data/base;
-		if(res<10){
+		if (res<10) {
 			res += '0';
-		}else{
-			if(upper){
+		} else {
+			if (upper) {
 				res += 'A'-10;
-			}else{
+			} else {
 				res += 'a'-10;
 			}
 		}
@@ -61,7 +32,7 @@ static int itostr(char *buf, int in_data, int base, int upper, int sign) {
 	len = str-buf;
 
 	/* reverse digital order */
-	for(i=0; i<len/2; i++){
+	for (i=0; i<len/2; i++) {
 		res = buf[i];
 		buf[i] = buf[len-1-i];
 		buf[len-1-i] = res;
@@ -71,14 +42,14 @@ static int itostr(char *buf, int in_data, int base, int upper, int sign) {
 }
 
 /*
- * _vsnprintf - Format a string and place it in a buffer
+ * vsnprintf - Format a string and place it in a buffer
  * @buf: The buffer to place the result into
  * @size: The size of the buffer
  * @fmt: The format string to use
  * @args: Arguments for the format string
  */
 #define OUT_C(c) \
-	if(str<end){ \
+	if (str<end) { \
 		*str++ = (c); \
 	} else { \
 		goto exit; \
@@ -99,7 +70,7 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 	end = buf+size;
 
 	while (*fmt) {
-		if(*fmt!='%'){
+		if (*fmt!='%') {
 			OUT_C(*fmt++);
 			continue;
 		}
@@ -109,7 +80,7 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 		fmt++;
 
 		/* %% */
-		if(*fmt=='%'){
+		if (*fmt=='%') {
 			OUT_C(*fmt++);
 			continue;
 		}
@@ -120,17 +91,17 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 		add_sign = 0;
 		while ((ch=*fmt)) {
 
-			if(*fmt=='0'){
+			if (*fmt=='0') {
 				zero_pad = '0';
-			}else if(*fmt=='-'){
+			} else if (*fmt=='-') {
 				left_adj = 1;
-			}else if(*fmt=='#'){
-			}else if(*fmt==' '){
-				if(add_sign!='+')
+			} else if (*fmt=='#') {
+			} else if (*fmt==' ') {
+				if (add_sign!='+')
 					add_sign = ' ';
-			}else if(*fmt=='+'){
+			} else if (*fmt=='+') {
 				add_sign = '+';
-			}else{
+			} else {
 				break;
 			}
 			fmt++;
@@ -146,7 +117,7 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 		if (*fmt && *fmt=='.') {
 			fmt++;
 			/* skip n */
-			while(*fmt && *fmt>'0' && *fmt<='9'){
+			while(*fmt && *fmt>'0' && *fmt<='9') {
 				fmt++;
 			}
 		}
@@ -159,7 +130,7 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 		s = digital_buf;
 		while ((ch=*fmt)) {
 			fmt++;
-			switch(ch){
+			switch(ch) {
 			/* hexadecimal */
 			case 'p':
 			case 'X':
@@ -190,7 +161,7 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 			/* string */
 			case 's':
 				s = va_arg(args, char *);
-				if(!s) s = "<NUL>";
+				if (!s) s = "<NUL>";
 				len = strlen(s);
 				break;
 
@@ -214,13 +185,13 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 			break;
 		}
 
-		if(base){
+		if (base) {
 			i = va_arg(args, int);
-			if(base==10 && sign){
-				if(i<0){
+			if (base==10 && sign) {
+				if (i<0) {
 					add_sign = '-';
 				}
-			}else{
+			} else {
 				add_sign = 0;
 			}
 
@@ -230,17 +201,17 @@ int vsnprintf(char *buf, int size, char *fmt, va_list args) {
 			add_sign = 0;
 		}
 
-		if(s) {
+		if (s) {
 			if (len>=field_width) {
 				field_width = len;
-				if(add_sign)
+				if (add_sign)
 					field_width++;
 			}
 			for (i=0; i<field_width; i++) {
-				if(left_adj){
-					if(i<len){
+				if (left_adj) {
+					if (i<len) {
 						OUT_C(*s++);
-					}else{
+					} else {
 						OUT_C(' ');
 					}
 				} else {

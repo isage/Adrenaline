@@ -332,7 +332,7 @@ void Installer() {
 
 		if (cbExpanded > 0) {
 			if (is5Dnum(name)) {
-				int num = atoi(name);
+				int num = strtoul(name, NULL, 10);
 
 				// Files from 1g-3g
 				if (num >= 1 && num <= 3) {
