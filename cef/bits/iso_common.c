@@ -49,14 +49,14 @@ int g_total_sectors = -1;
 char* g_sector_buffer = NULL;
 
 // reader functions
-static int is_compressed = 0;
-static int max_retries = 16;
-static int o_flags = 0xF0000 | PSP_O_RDONLY;
+static int g_is_compressed = 0;
+static int g_max_retries = 16;
+static int g_o_flags = 0xF0000 | PSP_O_RDONLY;
 
 static int read_raw_data(void* arg, u8* addr, u32 size, u32 offset);
 
 // ciso data
-CisoFile g_ciso_file = {
+static CisoFile g_ciso_file = {
     .read_data = (void*)&read_raw_data,
 	#ifdef __USE_USER_ALLOC
 	.memalign = &user_memalign,
@@ -72,12 +72,34 @@ int zlib_inflate(void* dst, int dst_len, void* src){
     return sceKernelDeflateDecompress(dst, dst_len, src, NULL);
 }
 
+// Fix non-Latin1 characters in ISO name
+//
+// Technically, EPI doesn't need this when the drive being used as Memory Stick
+// is ExFAT and seems to force work with UTF8, but could be a issue if the drive
+// being used is FAT32 (no, I won't format a drive to FAT32 on a VITA just to
+// test if the bug happens in such edge case).
+//
+// That also helps in the case someone want's to use this code for real PSP
+// hardware, where it is a known issue.
+static SceUID sceIoOpen_patched(const char *file, int flags, SceMode mode) {
+	// Save the sdk version of the title and set to 6.60 to enable UTF8 support
+	// on `sceIo*` functions.
+	u32 sdk_ver = sceKernelGetCompiledSdkVersion();
+	sceKernelSetCompiledSdkVersion(FW_660);
+
+	SceUID res = sceIoOpen(file, flags, mode);
+
+	// Return to the previous value to avoid savedata issues on titles.
+	sceKernelSetCompiledSdkVersion(sdk_ver);
+	return res;
+}
+
 static void wait_until_ms0_ready(void) {
 	int ret, status = 0;
 
 	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_VSH) {
-		o_flags = PSP_O_RDONLY;
-		max_retries = 10;
+		g_o_flags = PSP_O_RDONLY;
+		g_max_retries = 10;
 		return; // no wait on VSH
 	}
 
@@ -114,7 +136,7 @@ static int read_raw_data(void* arg, u8* addr, u32 size, u32 offset) {
 	SceOff ofs;
 	int i = 0;
 
-	for (i = 0; i < max_retries; ++i) {
+	for (i = 0; i < g_max_retries; ++i) {
 		ofs = sceIoLseek(g_iso_fd, offset, PSP_SEEK_SET);
 
 		if (ofs >= 0) {
@@ -131,12 +153,12 @@ static int read_raw_data(void* arg, u8* addr, u32 size, u32 offset) {
 	}
 
 	int ret = 0;
-	if (i == max_retries) {
+	if (i == g_max_retries) {
 		ret = SCE_ENODEV;
 		goto exit;
 	}
 
-	for (i = 0; i < max_retries; ++i) {
+	for (i = 0; i < g_max_retries; ++i) {
 		ret = sceIoRead(g_iso_fd, addr, size);
 
 		if (ret >= 0) {
@@ -153,7 +175,7 @@ static int read_raw_data(void* arg, u8* addr, u32 size, u32 offset) {
 		#endif // __READ_RAW_DELAY_THREAD
 	}
 
-	if (i == max_retries) {
+	if (i == g_max_retries) {
 		ret = SCE_ENODEV;
 		goto exit;
 	}
@@ -196,12 +218,12 @@ static
 #endif // __ISO_EXTRA__
 void iso_free() {
 	#ifdef __USE_USER_ALLOC
-	if (is_compressed) {
+	if (g_is_compressed) {
 		ciso_close(&g_ciso_file);
 	}
 	user_free(g_sector_buffer);
 	#else
-	if (is_compressed) {
+	if (g_is_compressed) {
 		ciso_close(&g_ciso_file);
 	}
 	sceKernelFreeHeapMemory(heapid, g_sector_buffer);
@@ -222,10 +244,10 @@ int iso_open(void) {
 
 	int retries = 0;
 	do {
-		g_iso_fd = sceIoOpen(g_iso_fn, o_flags, 0777);
+		g_iso_fd = sceIoOpen_patched(g_iso_fn, g_o_flags, 0777);
 
 		if (g_iso_fd < 0) {
-			if (++retries >= max_retries) {
+			if (++retries >= g_max_retries) {
 				return g_iso_fd;
 			}
 
@@ -239,11 +261,11 @@ int iso_open(void) {
 
 	g_ciso_file.reader_arg = (void*)g_iso_fd;
 
-    is_compressed = ciso_open(&g_ciso_file);
+    g_is_compressed = ciso_open(&g_ciso_file);
 
-	if (is_compressed < 0) return is_compressed;
+	if (g_is_compressed < 0) return g_is_compressed;
     // total number of DVD sectors (2K) in the original ISO.
-    else if (is_compressed > 0){
+    else if (g_is_compressed > 0){
         g_total_sectors = g_ciso_file.uncompressed_size / ISO_SECTOR_SIZE;
     }
     else {
@@ -264,7 +286,7 @@ int iso_open(void) {
 }
 
 int iso_read(IoReadArg *args) {
-	if (is_compressed) {
+	if (g_is_compressed) {
 		return ciso_read(&g_ciso_file, args->address, args->size, args->offset);
 	}
 	return read_raw_data(NULL, args->address, args->size, args->offset);
@@ -278,19 +300,19 @@ void iso_close() {
 	iso_free();
 
 	g_total_sectors = 0;
-	is_compressed = 0;
+	g_is_compressed = 0;
 	memset(g_iso_fn, 0, 255);
 }
 
 #ifdef __ISO_EXTRA__
 int iso_re_open(void) {
-	int retries = max_retries;
+	int retries = g_max_retries;
 	int fd = -1;
 
 	sceIoClose(g_iso_fd);
 
 	while (retries -- > 0) {
-		fd = sceIoOpen(g_iso_fn, o_flags, 0777);
+		fd = sceIoOpen_patched(g_iso_fn, g_o_flags, 0777);
 
 		if (fd >= 0) {
 			break;
