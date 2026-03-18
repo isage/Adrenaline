@@ -11,10 +11,10 @@ function(add_cef_prx NAME)
   target_compile_options(${NAME} PRIVATE -Os -G0 -Wall -fno-pic -fshort-wchar ${ARG_COMPILE_OPS})
 
   if(ARG_USER)
-    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} pspdisplay pspge pspctrl)
+    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} )
   else()
     target_compile_definitions(${NAME} PRIVATE __KERNEL__)
-    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} pspsdk pspmodinfo pspkernel)
+    target_link_libraries(${NAME} PRIVATE pspsdk pspmodinfo ${ARG_LINK_LIBS})
     target_link_options(${NAME} PRIVATE -nostdlib)
   endif()
 

@@ -152,7 +152,6 @@ int SetDefaultNicknamePatched() {
         if(!sceRegOpenCategory(h, "/CONFIG/SYSTEM", 2, &hd)) {
             char* name = (char*)0xa83ff050;
             if(sceRegSetKeyValue(hd, "owner_name", name, strlen(name)) == 0) {
-                printf("Set registry value\n");
                 sceRegFlushCategory(hd);
             }
             sceRegCloseCategory(hd);

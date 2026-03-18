@@ -27,21 +27,21 @@ add_cef_prx(systemctrl
     microlz
     adrenalinectrl
     pspsemaphore
-    pspamctrl_driver
     pspinit_kernel
-    pspthreadman_kernel
-    pspinterruptmanager_kernel
-    psploadexec_kernel
-    pspsysclib_kernel
-    psploadcore_kernel
-    pspmodulemgr_kernel
-    pspusbcam_driver
-    pspusb_driver
-    pspchkreg_driver
-    psppower_driver
-    pspdisplay_driver
-    pspkermit_driver
+    pspstdio_kernel
+    psputils_kernel
     pspsysmem_kernel
+    pspkermit_driver
+    pspchkreg_driver
+    pspamctrl_driver
+    pspsysclib_kernel
+    pspdisplay_driver
+    psploadcore_kernel
+    psploadexec_kernel
+    pspthreadman_kernel
+    pspmodulemgr_kernel
+    pspiofilemgr_kernel
+    pspinterruptmanager_kernel
 )
 
 target_include_directories(systemctrl PRIVATE ${CMAKE_CURRENT_BINARY_DIR})

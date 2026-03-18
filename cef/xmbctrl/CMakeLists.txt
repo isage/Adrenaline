@@ -10,13 +10,13 @@ add_cef_prx(xmbctrl USER
   COMPILE_OPS
     -std=c99
   LINK_LIBS
-    pspsystemctrl_user
-    pspsysc_user
-    pspkubridge
-    pspvshctrl
     psppaf
-    pspvsh 
+    pspvsh
+    pspvshctrl
+    pspkubridge
+    pspsysc_user
     pspvshcommongui
+    pspsystemctrl_user
 )
 
 target_include_directories(vshctrl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -14,7 +14,7 @@ USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_kernel -lpspsemaphore -lpspamctrl_driver
+LIBS = -lpspsemaphore -lpspinit_kernel -lpsputils_kernel -lpspamctrl_driver -lpspsysclib_kernel -lpsploadcore_kernel -lpspiofilemgr_kernel -lpspsystemctrl_kernel
 
 ifdef POPCORN_DEBUG
 CFLAGS += -DDEBUG=$(POPCORN_DEBUG)

@@ -18,11 +18,10 @@ BUILD_PRX = 1
 PRX_EXPORTS = exports.exp
 
 LIBDIR = ../lib
-LIBS = -lmicrolz -ladrenalinectrl -lpspsemaphore -lpspamctrl_driver -lpspinit_kernel -lpspthreadman_kernel -lpspinterruptmanager_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpspchkreg_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
+LIBS = -lmicrolz -ladrenalinectrl -lpspsemaphore -lpspinit_kernel -lpspstdio_kernel -lpsputils_kernel -lpspsysmem_kernel -lpspkermit_driver -lpspchkreg_driver -lpspamctrl_driver -lpspsysclib_kernel -lpspdisplay_driver -lpsploadcore_kernel -lpsploadexec_kernel -lpspthreadman_kernel -lpspmodulemgr_kernel -lpspiofilemgr_kernel -lpspinterruptmanager_kernel
 
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
-
 
 ifdef SCTRL_DEBUG
 CFLAGS += -DDEBUG=$(SCTRL_DEBUG)

@@ -82,15 +82,21 @@ int zlib_inflate(void* dst, int dst_len, void* src){
 // That also helps in the case someone want's to use this code for real PSP
 // hardware, where it is a known issue.
 static SceUID sceIoOpen_patched(const char *file, int flags, SceMode mode) {
+	static int (* _sceKernelSetCompiledSdkVersion)(int) = NULL;
+
 	// Save the sdk version of the title and set to 6.60 to enable UTF8 support
 	// on `sceIo*` functions.
 	u32 sdk_ver = sceKernelGetCompiledSdkVersion();
-	sceKernelSetCompiledSdkVersion(FW_660);
+
+	if (_sceKernelSetCompiledSdkVersion == NULL) {
+		_sceKernelSetCompiledSdkVersion = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x7591C7DB);
+	}
+	_sceKernelSetCompiledSdkVersion(FW_660);
 
 	SceUID res = sceIoOpen(file, flags, mode);
 
 	// Return to the previous value to avoid savedata issues on titles.
-	sceKernelSetCompiledSdkVersion(sdk_ver);
+	_sceKernelSetCompiledSdkVersion(sdk_ver);
 	return res;
 }
 

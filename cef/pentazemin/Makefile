@@ -2,11 +2,10 @@ PSPSDK = $(shell psp-config --pspsdk-path)
 
 TARGET = pentazemin
 
-C_OBJS = main.o src/epictrl.o ../bits/ttystdio.o src/usbcam_patch.o src/vitamem.o src/modpatches.o \
-	src/io_patch.o src/adrenaline.o src/init_patch.o src/power_patch.o src/LflashFatfmt.o src/impose_patch.o src/utility_patch.o \
+C_OBJS = main.o epictrl.o ../bits/ttystdio.o usbcam_patch.o vitamem.o modpatches.o \
+	io_patch.o adrenaline.o init_patch.o power_patch.o LflashFatfmt.o impose_patch.o utility_patch.o \
 
-OBJS = \
-	$(C_OBJS)
+OBJS = $(C_OBJS)
 
 all: $(TARGET).prx
 
@@ -24,7 +23,7 @@ USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_kernel -lpspinit_kernel -lpspthreadman_kernel -lpsploadexec_kernel -lpspsysclib_kernel -lpsploadcore_kernel -lpspmodulemgr_kernel -lpspusbcam_driver -lpspusb_driver -lpsppower_driver -lpspdisplay_driver -lpspkermit_driver -lpspsysmem_kernel
+LIBS = -lpspusb_driver -lpspinit_kernel -lpspstdio_kernel -lpsppower_driver -lpsputils_kernel -lpspsysmem_kernel -lpspkermit_driver -lpspusbcam_driver -lpspdisplay_driver -lpspsysclib_kernel -lpspsysevent_kernel -lpsploadcore_kernel -lpspthreadman_kernel -lpspmodulemgr_kernel -lpspiofilemgr_kernel -lpspinterruptmanager_kernel -lpspsystemctrl_kernel
 
 ifdef PENTAZEMIN_DEBUG
 CFLAGS += -DDEBUG=$(PENTAZEMIN_DEBUG)

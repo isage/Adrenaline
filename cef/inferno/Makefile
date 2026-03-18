@@ -14,7 +14,7 @@ USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
 LIBDIR = ../lib
-LIBS = -lcisoread -lpspsystemctrl_kernel -lpspsemaphore -lpspsysmem_kernel -lpspinit_kernel
+LIBS = -lcisoread -lpspsemaphore -lpspinit_kernel -lpsputils_kernel -lpspsysmem_kernel -lpspkernel_library -lpspsysclib_kernel -lpspsysevent_kernel -lpsploadcore_kernel -lpspiofilemgr_kernel -lpspthreadman_kernel -lpspsystemctrl_kernel
 
 ifdef INFERNO_DEBUG
 CFLAGS += -DDEBUG=$(INFERNO_DEBUG)

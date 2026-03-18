@@ -13,14 +13,17 @@ add_cef_prx(recovery USER
     -nostdlib
     gcc
     z
-    pspuser
+    pspge
     pspreg
-    pspsystemctrl_user
-    pspkubridge
-    adrenalinectrl
-    pspsysc_user
+    pspuser
     psppsar
+    pspctrl
     pspmodinfo
+    pspdisplay
+    pspkubridge
+    pspsysc_user
+    adrenalinectrl
+    pspsystemctrl_user
   COMPILE_OPS
     -Wno-unused-variable
     -Wno-incompatible-pointer-types

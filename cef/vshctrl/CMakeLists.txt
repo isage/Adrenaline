@@ -22,6 +22,7 @@ add_cef_prx(vshctrl
     pspsysmem_kernel
     pspinit_kernel
     pspctrl_driver
+	pspkernel
 )
 
 target_include_directories(vshctrl PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

@@ -10,8 +10,7 @@ PSP_FW_VERSION = 661
 BUILD_PRX = 1
 
 LIBDIR = ../lib
-LIBS = -nostdlib -lgcc -lz -lpspuser -lpspreg -lpspsystemctrl_user -lpspkubridge -ladrenalinectrl -lpspsysc_user -lpsppsar -lpspmodinfo
-
+LIBS = -nostdlib -lgcc -lz -lpspge -lpspreg -lpspuser -lpsppsar -lpspctrl -lpspmodinfo -lpspdisplay -lpspkubridge -lpspsysc_user -ladrenalinectrl -lpspsystemctrl_user
 
 ifdef RECOVERY_DEBUG
 CFLAGS += -DDEBUG=$(RECOVERY_DEBUG)

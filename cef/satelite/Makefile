@@ -14,7 +14,7 @@ USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
 LIBDIR = ../lib
-LIBS = -lpspsystemctrl_user -lpspsysc_user -lpspvshctrl -lpsppower
+LIBS = -lpspdebug -lpsppower -lpspdisplay -lpspvshctrl -lpspsysc_user -lpspsystemctrl_user
 
 ifdef SATELITE_DEBUG
 CFLAGS += -DDEBUG=$(SATELITE_DEBUG)

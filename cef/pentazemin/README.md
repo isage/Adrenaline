@@ -1,4 +1,11 @@
 # Pentazemin
+
 Compat Layer that allows ARK to run on Adrenaline.
 
-Stripped down and modified from the orginal Adrenaline's SystemControl.
+Stripped down and modified from the original Adrenaline's SystemControl.
+
+## License
+
+This software is licensed under the [GNU General Public License, v. 3](./../LICENSE)
+(GPLv3). If a copy of the GPLv3 was not distributed with this file, you can obtain
+one at https://www.gnu.org/licenses/gpl-3.0.html.

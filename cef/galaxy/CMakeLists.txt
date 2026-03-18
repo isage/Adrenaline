@@ -5,10 +5,15 @@ add_cef_prx(galaxy
     ../bits/iso_common.c
   LINK_LIBS
     cisoread
-    pspsystemctrl_kernel
-    pspsysmem_kernel
-    pspsysclib_kernel
     pspinit_kernel
+    psputils_kernel
+    pspsysmem_kernel
+    pspkernel_library
+    pspsysclib_kernel
+    psploadcore_kernel
+    pspthreadman_kernel
+    pspiofilemgr_kernel
+    pspsystemctrl_kernel
 )
 
 copy_prx_flash0(galaxy GalaxyController)
