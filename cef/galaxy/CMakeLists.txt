@@ -14,6 +14,7 @@ add_cef_prx(galaxy
     pspthreadman_kernel
     pspiofilemgr_kernel
     pspsystemctrl_kernel
+    pspstdio_kernel
 )
 
 copy_prx_flash0(galaxy GalaxyController)

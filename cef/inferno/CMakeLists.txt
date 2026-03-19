@@ -19,6 +19,7 @@ add_cef_prx(inferno
     pspiofilemgr_kernel
     pspthreadman_kernel
     pspsystemctrl_kernel
+    pspstdio_kernel
 )
 
 copy_prx_flash0(inferno InfernoDriver)

@@ -18,6 +18,7 @@ add_cef_prx(march33
     pspiofilemgr_kernel
     pspthreadman_kernel
     pspsystemctrl_kernel
+    pspstdio_kernel
 )
 
 copy_prx_flash0(march33 March33Driver)
