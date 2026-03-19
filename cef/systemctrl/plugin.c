@@ -104,6 +104,7 @@ static void startPlugins() {
 				// Unload Module on Error
 				if (res < 0) {
 					sceKernelUnloadModule(uid);
+					logmsg("[ERROR]: %s: Failed to load %s -> 0x%08X\n", __func__, path, res);
 					continue;
 				}
 			}
@@ -111,6 +112,7 @@ static void startPlugins() {
 			res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
 			// Unload Module on Error
 			if (res < 0) {
+				logmsg("[ERROR]: %s: Failed to start %s -> 0x%08X\n", __func__, path, res);
 				sceKernelUnloadModule(uid);
 			}
 			logmsg3("[INFO]: Loaded plugin: %s\n", path);
