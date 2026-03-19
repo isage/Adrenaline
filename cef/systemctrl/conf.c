@@ -107,7 +107,7 @@ int sctrlSEGetConfigEx(SEConfig *config, int size) {
 
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
 	if (fd < 0) {
-		res = SCE_ENOENT;
+		res = fd;
 		goto exit;
 	}
 
@@ -168,6 +168,11 @@ exit:
 }
 
 int sctrlSESetConfigEx(SEConfig *cnf, int size) {
+	// Stop if trying to save a non `SEConfigEPI`
+	if (size != sizeof(SEConfigEPI)) {
+		return SCE_ERR_INSIZE;
+	}
+
 	int k1 = pspSdkSetK1(0);
 
 	SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
@@ -198,6 +203,9 @@ int sctrlSESetConfigEx(SEConfig *cnf, int size) {
 	sceIoClose(fd);
 	pspSdkSetK1(k1);
 
+	// Update the config in memory.
+	sctrlSEApplyConfig(cnf);
+
 	return 0;
 }
 
@@ -214,7 +222,7 @@ int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
 		memcpy(&g_cfw_config, conf, size);
 		return 0;
 	}
-	return -1;
+	return SCE_ERR_INSIZE;
 }
 
 void sctrlSEApplyConfig(SEConfig *conf) {

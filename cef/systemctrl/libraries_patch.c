@@ -177,7 +177,7 @@ int aLinkLibEntriesPatched(SceStubLibrary *lib) {
 	int res = aLinkLibEntries(lib);
 
 	if (res < 0) {
-		logmsg("[ERROR]: %s: libname=%s -> 0x%08X\n", __func__, lib->lib_name, res);
+		logmsg4("[ERROR]: %s: libname=%s -> 0x%08X\n", __func__, lib->lib_name, res);
 	}
 
 	return res;
