@@ -124,11 +124,11 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 	if (!g_plugindone) {
 		char *waitmodule;
 
-		if (sceKernelFindModuleByName("sceNp9660_driver")) {
-			waitmodule = "sceMeCodecWrapper";
-		} else {
+//		if (sceKernelFindModuleByName("sceNp9660_driver")) {
+//			waitmodule = "sceMeCodecWrapper";
+//		} else {
 			waitmodule = "sceMediaSync";
-		}
+//		}
 
 		if (sceKernelFindModuleByName(waitmodule) != NULL) {
 			g_plugindone = 1;
