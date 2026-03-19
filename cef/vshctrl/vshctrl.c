@@ -30,7 +30,7 @@
 
 #include "isofs_driver/isofs_driver.h"
 
-#include <externs.h>
+#include "externs.h"
 
 u8 g_set = 0;
 
@@ -174,7 +174,9 @@ int vshDetectDiscType(const char *path) {
 }
 
 int vctrlVSHUpdateConfig(SEConfig* config) {
+	u32 k1 = pspSdkSetK1(0);
 	memcpy(&g_cfw_config, (SEConfigEPI*)config, sizeof(SEConfigEPI));
-	sctrlSESetConfig(config);
-	return 0;
+	int res = sctrlSESetConfig(config);
+	pspSdkSetK1(k1);
+	return res;
 }
