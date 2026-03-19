@@ -20,7 +20,7 @@ void loadSettings() {
 }
 
 void saveSettings() {
-	sctrlSESetConfig((SEConfig*)&g_cfw_config);
+	vctrlVSHUpdateConfig((SEConfig*)&g_cfw_config);
 
 	// Apply VSH config change
 	if (g_cfw_config.vsh_cpu_speed != g_old_vsh_speed) {

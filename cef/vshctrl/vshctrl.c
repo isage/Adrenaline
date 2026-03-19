@@ -172,3 +172,9 @@ int vshDetectDiscType(const char *path) {
 	pspSdkSetK1(k1);
 	return res;
 }
+
+int vctrlVSHUpdateConfig(SEConfig* config) {
+	memcpy(&g_cfw_config, (SEConfigEPI*)config, sizeof(SEConfigEPI));
+	sctrlSESetConfig(config);
+	return 0;
+}

@@ -177,6 +177,7 @@ int PAF_Resource_ResolveRefWString(void *, u32 *, int *, char **, int *);
 
 int vshGetRegistryValue(u32 *, char *, void *, int , int *);
 int vshSetRegistryValue(u32 *, char *, int , int *);
+int vctrlVSHUpdateConfig(SEConfig *config);
 
 int sceVshCommonGuiBottomDialog(void *a0, void *a1, void *a2, int (* cancel_handler)(), void *t0, void *t1, int (* handler)(), void *t3);
 
