@@ -114,8 +114,9 @@ static void startPlugins() {
 			if (res < 0) {
 				logmsg("[ERROR]: %s: Failed to start %s -> 0x%08X\n", __func__, path, res);
 				sceKernelUnloadModule(uid);
+			} else {
+				logmsg3("[INFO]: Loaded plugin: %s\n", path);
 			}
-			logmsg3("[INFO]: Loaded plugin: %s\n", path);
 		}
 	}
 }

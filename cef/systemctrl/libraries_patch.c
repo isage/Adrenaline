@@ -162,7 +162,7 @@ u32 sctrlHENFindImport(const char *mod_name, const char *library, u32 nid) {
 	return 0;
 }
 
-int aLinkLibEntriesPatched(void *lib) {
+int aLinkLibEntriesPatched(SceStubLibrary *lib) {
 	char *libname = (char *)((u32 *)lib)[8/4];
 
 	// Fix Prometheus patch
@@ -174,7 +174,13 @@ int aLinkLibEntriesPatched(void *lib) {
 		libname[9] = 'y';
 	}
 
-	return aLinkLibEntries(lib);
+	int res = aLinkLibEntries(lib);
+
+	if (res < 0) {
+		logmsg("[ERROR]: %s: libname=%s -> 0x%08X\n", __func__, lib->lib_name, res);
+	}
+
+	return res;
 }
 
 int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) {
