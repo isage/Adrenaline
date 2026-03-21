@@ -126,7 +126,8 @@ void findAndSetTitleId() {
 	}
 
 	SceGameInfo* gameinfo = sceKernelGetGameInfo();
-	if (gameinfo != NULL) {
+	// Get the info from SceGameInfo if the `title_id` field is set
+	if ((gameinfo->flags & 0x100) != 0) {
 		memcpy(g_rebootex_config.title_id, gameinfo->title_id, 9);
 	}
 

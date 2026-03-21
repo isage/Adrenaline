@@ -98,7 +98,7 @@ void initAdrenalineInfo() {
 	}
 
 	SceGameInfo *game_info = sceKernelGetGameInfo();
-	if (game_info) {
+	if ((game_info->flags & 0x100) != 0) {
 		strcpy(g_adrenaline->titleid, game_info->title_id);
 	}
 
