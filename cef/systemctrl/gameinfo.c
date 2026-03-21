@@ -127,7 +127,7 @@ void findAndSetTitleId() {
 
 	SceGameInfo* gameinfo = sceKernelGetGameInfo();
 	if (gameinfo != NULL) {
-		memcpy(gameinfo->title_id, g_rebootex_config.title_id, 9);
+		memcpy(g_rebootex_config.title_id, gameinfo->title_id, 9);
 	}
 
 	if (g_rebootex_config.title_id[0] == '\0') {
@@ -143,11 +143,7 @@ SceGameInfo* sceKernelGetGameInfoPatched() {
 	SceGameInfo* gameinfo = sceKernelGetGameInfo();
 
 	if (gameinfo == NULL) {
-		return gameinfo;
-	}
-
-	if (g_rebootex_config.title_id[0] != 0) {
-		memcpy(gameinfo->title_id, g_rebootex_config.title_id, 9);
+		return &g_default_gameinfo;
 	}
 
 	return gameinfo;
