@@ -16,23 +16,21 @@ int data279C = 0;
 int data27A0 = 0;
 
 //500 = sceUmdMan_driver_B54D5BE8
-int sceUmdMan_driver_454E1B06()
-{
+int sceUmdMan_driver_454E1B06() {
 	return 0;
 }
 
 //500 = sceUmdMan_driver_B9B02322
-int sceUmdMan_driver_E52119E7()
-{
+int sceUmdMan_driver_E52119E7() {
 	return 0;
 }
 
 //reset cache read?
 //500 = sceUmdMan_driver_31699C86
-int sceUmdMan_driver_7AD43944(int a0)
-{
-	if(a0 != data279C )
+int sceUmdMan_driver_7AD43944(int a0) {
+	if (a0 != data279C) {
 		return 0x80010002;
+	}
 
 	data2794 = 0;
 	data2798 = 0;
@@ -43,8 +41,7 @@ int sceUmdMan_driver_7AD43944(int a0)
 }
 
 //500= sceUmdMan_driver_988597A2
-int sceUmdMan_driver_42D993AC()
-{
+int sceUmdMan_driver_42D993AC() {
 	return 0;
 }
 
@@ -52,10 +49,10 @@ int sceUmdMan_driver_42D993AC()
 #define SET_GP(gp) asm volatile ("move $gp, %0\n" :: "r" (gp))
 
 //500 = sceUmdMan_driver_63B69CE1
-int sceUmdMan_driver_26C75616(int a0,int a1, int a2)
-{
-	if(data279C)
+int sceUmdMan_driver_26C75616(int a0,int a1, int a2) {
+	if (data279C) {
 		return 0x8001000C;
+	}
 
 	data279C = a0;
 	GET_GP(data2794);
@@ -63,7 +60,7 @@ int sceUmdMan_driver_26C75616(int a0,int a1, int a2)
 	data27A0 = a2;
 	data2798 = a1;
 
-	SceModule2 *mod = sceKernelFindModuleByName("sceIsofs_driver");
+	SceModule *mod = sceKernelFindModuleByName("sceIsofs_driver");
 	u32 text_addr=mod->text_addr;
 /*
 #define ISOF_PATCH_ADDR1	0x00004020
@@ -79,9 +76,8 @@ int sceUmdMan_driver_26C75616(int a0,int a1, int a2)
 
 	ClearCaches();
 
-	if(data2798)
-	{
-		int (* func)() = (void*)data2798;
+	if (data2798) {
+		int (* func)(int, int, int) = (void*)data2798;
 
 		//$gp = data2794;
 		SET_GP( data2794 );
@@ -93,37 +89,31 @@ int sceUmdMan_driver_26C75616(int a0,int a1, int a2)
 }
 
 
-int sceUmd9660_driver_94ACF219()
-{
+int sceUmd9660_driver_94ACF219() {
 	return 0;
 }
 
-int sceUmd9660_driver_1D89BD8F()
-{
+int sceUmd9660_driver_1D89BD8F() {
 	return 0;
 }
 
-int sceUmd9660_driver_385336B5()
-{
+int sceUmd9660_driver_385336B5() {
 	return 0;
 }
+
 void sceUmd9660_driver_5041FC4C(){}
 void sceUmd9660_driver_1FE5B02F(){}
 
-int sceNp9660_driver_1D642536()
-{
+int sceNp9660_driver_1D642536() {
 	return 0;
 }
 
-int sceNp9660_driver_28DCC33D()
-{
+int sceNp9660_driver_28DCC33D() {
 	return 0;
 }
 
-int sceNp9660_driver_FD85B350(int *a0)
-{
-	if( a0 )
-	{
+int sceNp9660_driver_FD85B350(int *a0) {
+	if ( a0 ) {
 		*a0 = 0;
 	}
 	return 0;

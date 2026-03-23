@@ -15,21 +15,21 @@ int IsofileReadSectors(int lba, void *buf, int nsectors)
 	}
 
 	read = read / SECTOR_SIZE;
-	
-	return read;	
+
+	return read;
 }
 */
 
 //loc_000058A8:
-int IsofileGetDiscSize(int umdfd)
-{
+int IsofileGetDiscSize(int umdfd) {
 	int ret = sceIoLseek(umdfd, 0, PSP_SEEK_CUR);
 	int size = sceIoLseek(umdfd, 0, PSP_SEEK_END);
 
 	sceIoLseek(umdfd, ret, PSP_SEEK_SET);
 
-	if (size < 0)
+	if (size < 0) {
 		return size;
+	}
 
 	return size / SECTOR_SIZE;
 }

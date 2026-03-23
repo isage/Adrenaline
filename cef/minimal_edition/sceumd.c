@@ -32,8 +32,7 @@ int sceUmdSemaid = 0;
 
 //int event_id;
 
-int sceUmd_Init()
-{
+int sceUmd_Init() {
 	UmdStatus = 0x32 ;//data27B0//( PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT)
 	umdErrorStat = 0;
 	umdcbid =-1;
@@ -44,27 +43,21 @@ int sceUmd_Init()
 	return (0 < sceUmdSemaid)? 0: sceUmdSemaid ;
 }
 
-void pspUmdCallback(int a0)
-{
-	if(umdcbid >= 0)
-	{
+void pspUmdCallback(int a0) {
+	if (umdcbid >= 0) {
 		//SceUID 	cb,int 	arg2
 		sceKernelNotifyCallback( umdcbid , a0);
 	}
 }
 
-int sceUmdCheckMedium(void)
-{
+int sceUmdCheckMedium(void) {
 	return 1;
 }
 
-int sceUmdGetDiscInfo(pspUmdInfo *info)
-{
+int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	int k1 = pspSdkSetK1(0);
-	if(info)
-	{
-		if( info->size == 8 )
-		{
+	if (info) {
+		if (info->size == 8) {
 			info->type=16;//PSP_UMD_TYPE_GAME
 			pspSdkSetK1(k1);
 			return 0;
@@ -75,15 +68,13 @@ int sceUmdGetDiscInfo(pspUmdInfo *info)
 	return 0x80010016;
 }
 
-int sceUmdActivate(int unit, const char *drive)
-{
+int sceUmdActivate(int unit, const char *drive) {
 	int k1 = pspSdkSetK1(0);
 	int sp;
 
 //	cls(0x0000FF00);
 
-	if(strcmp(drive,"disc0:") != 0)
-	{
+	if (strcmp(drive,"disc0:") != 0) {
 		pspSdkSetK1(k1);
 		return 0x80010016;
 	}
@@ -94,12 +85,11 @@ int sceUmdActivate(int unit, const char *drive)
 
 	UmdStatus = 0x32 ;//( PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT)
 
-	if(data2480== 1 )
-	{
+	if (data2480 == 1 ) {
 		pspUmdCallback( 0x22 );//(PSP_UMD_READY | PSP_UMD_PRESENT)
-	}
-	else if(!(UmdStatus & 0x20) )//(PSP_UMD_READY)
-	{
+
+		//(PSP_UMD_READY)
+	} else if (!(UmdStatus & 0x20) ) {
 		pspUmdCallback( 0x32 );//( PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT)
 	}
 
@@ -107,14 +97,12 @@ int sceUmdActivate(int unit, const char *drive)
 	return 0;
 }
 
-int sceUmdDeactivate(int unit, const char *drive)
-{
+int sceUmdDeactivate(int unit, const char *drive) {
 	int k1 = pspSdkSetK1(0);
 
 	int r =sceIoUnassign(drive);
 
-	if(r>=0)
-	{
+	if (r>=0) {
 		pspUmdCallback( 0x12 );//( PSP_UMD_INITED | PSP_UMD_PRESENT)
 		UmdStatus = 0x12 ;//( PSP_UMD_INITED | PSP_UMD_PRESENT)
 	}
@@ -123,49 +111,43 @@ int sceUmdDeactivate(int unit, const char *drive)
 	return r;
 }
 
-int loc_00001758(int stat , unsigned int timeout , int flag)
-{
+int loc_00001758(int stat , unsigned int timeout , int flag) {
 	int k1 = pspSdkSetK1(0);
 	u32 sp = timeout;//SceUInt
 	int ret = 0;
 
-	if( stat & (0x3B))//( PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY )
-	{
+	// ( PSP_UMD_NOT_PRESENT | PSP_UMD_PRESENT | PSP_UMD_INITING | PSP_UMD_INITED | PSP_UMD_READY )
+	if ( stat & (0x3B)) {
 
-		if( stat & 0x20)//PSP_UMD_READY
-		{
+		//PSP_UMD_READY
+		if ( stat & 0x20) {
 			UmdStatus |= 0x20;
-		}
-		else	if( !(stat & 0x12 ))//(PSP_UMD_INITED | PSP_UMD_PRESENT)
-		{
-			if(stat & 0x9)//(PSP_UMD_INITING | PSP_UMD_NOT_PRESENT)
-			{
 
+			//(PSP_UMD_INITED | PSP_UMD_PRESENT)
+		} else if ( !(stat & 0x12 )) {
+
+			//(PSP_UMD_INITING | PSP_UMD_NOT_PRESENT)
+			if (stat & 0x9) {
 				int (* WaitSema)(SceUID id, int signal, u32 * timeout);
 
-				if(flag)
+				if (flag)
 					WaitSema = (void *)sceKernelWaitSemaCB;
 				else
 					WaitSema = (void *)sceKernelWaitSema;
 
-				if(sp)
+				if (sp)
 					WaitSema( sceUmdSemaid , 1 , &sp);
 				else
 					WaitSema( sceUmdSemaid , 1 , NULL );
 
 			}
 		}
-
-	}
-	else
-	{
+	} else {
 		ret = 0x80010016;
 	}
 
-	if(flag)
-	{
-		if( data2480 == 2)
-		{
+	if (flag) {
+		if (data2480 == 2) {
 			sceKernelCheckCallback();
 		}
 	}
@@ -174,23 +156,19 @@ int loc_00001758(int stat , unsigned int timeout , int flag)
 	return ret;
 }
 
-int sceUmdWaitDriveStat(int stat)
-{
+int sceUmdWaitDriveStat(int stat) {
 	return loc_00001758(stat ,0 ,0);
 }
 
-int sceUmdWaitDriveStatWithTimer(int stat, unsigned int timeout)
-{
+int sceUmdWaitDriveStatWithTimer(int stat, unsigned int timeout) {
 	return loc_00001758( stat, timeout , 0);
 }
 
-int sceUmdWaitDriveStatCB(int stat, unsigned int timeout)
-{
+int sceUmdWaitDriveStatCB(int stat, unsigned int timeout) {
 	return loc_00001758(stat , timeout , 1);
 }
 
-int sceUmdCancelWaitDriveStat(void)
-{
+int sceUmdCancelWaitDriveStat(void) {
 	int k1 = pspSdkSetK1(0);
 
 //	int r = sceKernelCancelEventFlag( event_id , UmdStatus  , 0);
@@ -201,50 +179,47 @@ int sceUmdCancelWaitDriveStat(void)
 
 }
 
-void sceUmdSetErrorStatus(int stat)
-{
+void sceUmdSetErrorStatus(int stat) {
 	umdErrorStat = stat;
 }
 
-void sceUmdSetDriveStatus(int stat)
-{
+void sceUmdSetDriveStatus(int stat) {
 	int intr = sceKernelCpuSuspendIntr();
 
-	if( stat & 1)//PSP_UMD_NOT_PRESENT
-	{
+	//PSP_UMD_NOT_PRESENT
+	if ( stat & 1) {
 		UmdStatus &= 0xFFFFFFC1;//~( PSP_UMD_READY |  PSP_UMD_INITED | PSP_UMD_INITING | PSP_UMD_CHANGED | PSP_UMD_PRESENT)
-	}
-	else if(stat & 0x3E)//( PSP_UMD_READY |  PSP_UMD_INITED | PSP_UMD_INITING | PSP_UMD_CHANGED | PSP_UMD_PRESENT)
-	{
+
+		//( PSP_UMD_READY |  PSP_UMD_INITED | PSP_UMD_INITING | PSP_UMD_CHANGED | PSP_UMD_PRESENT)
+	} else if (stat & 0x3E) {
 		UmdStatus &= 0xFFFFFFFE;//~(PSP_UMD_NOT_PRESENT)
 	}
 
-	if(stat & 8)//PSP_UMD_INITING
-	{
+	//PSP_UMD_INITING
+	if (stat & 8) {
 		UmdStatus &= 0xFFFFFFCF;
 		//~ (PSP_UMD_INITED | PSP_UMD_READY)
 		//( PSP_UMD_NOT_PRESENT|PSP_UMD_PRESENT|PSP_UMD_CHANGED|PSP_UMD_INITING)
-	}
-	else if(stat & 0x30)//(PSP_UMD_READY |  PSP_UMD_INITED)
-	{
+
+	//(PSP_UMD_READY |  PSP_UMD_INITED)
+	} else if (stat & 0x30) {
 		UmdStatus &= 0xFFFFFFF7;
 		// ~ (PSP_UMD_INITING)
 		//(PSP_UMD_READY |  PSP_UMD_INITED | PSP_UMD_NOT_PRESENT| PSP_UMD_PRESENT| PSP_UMD_CHANGED)
 	}
 
-	if( !(stat & 0x20) )//
-	{
+	if ( !(stat & 0x20) ) {
 		UmdStatus &= 0xFFFFFFDF;
 	}
 
-	if((stat | UmdStatus ) & 0x20)// PSP_UMD_READY
-	{
+	// PSP_UMD_READY
+	if ((stat | UmdStatus ) & 0x20) {
 		UmdStatus |= stat;
 		UmdStatus |= 0x10;//PSP_UMD_INITED
 	}
 
-	if( (stat|UmdStatus) & 0x10)// PSP_UMD_INITED
-	{
+	// PSP_UMD_INITED
+	if ( (stat|UmdStatus) & 0x10) {
 		UmdStatus |= 2;// PSP_UMD_PRESENT
 		sceUmdSetErrorStatus(0);
 	}
@@ -254,41 +229,36 @@ void sceUmdSetDriveStatus(int stat)
 	sceKernelCpuResumeIntr(intr);
 }
 
-int sceUmdGetDriveStatus(void)
-{
+int sceUmdGetDriveStatus(void) {
 	return UmdStatus;
 }
 
-int sceUmdGetDriveStat(void)
-{
+int sceUmdGetDriveStat(void) {
 	int k1 = pspSdkSetK1(0);
 	int r =UmdStatus;
 	pspSdkSetK1(k1);
 	return r;
-
 }
 
-int sceUmdGetErrorStatus(void)
-{
+int sceUmdGetErrorStatus(void) {
 	return umdErrorStat;
 }
-int sceUmdGetErrorStat(void)
-{
+
+int sceUmdGetErrorStat(void) {
 	int k1 = pspSdkSetK1(0);
 
 	int r = umdErrorStat;
 	pspSdkSetK1(k1);
 	return r;
-
 }
-int sceUmdRegisterUMDCallBack(int cbid)
-{
+
+int sceUmdRegisterUMDCallBack(int cbid) {
 	int k1 = pspSdkSetK1(0);
 
 	int r =sceKernelGetThreadmanIdType(cbid);
 
-	if(r == 8 )//SCE_KERNEL_TMID_ThreadEventHandler
-	{
+	//SCE_KERNEL_TMID_ThreadEventHandler
+	if (r == 8) {
 		umdcbid = cbid;
 		pspUmdCallback(UmdStatus);
 
@@ -298,33 +268,26 @@ int sceUmdRegisterUMDCallBack(int cbid)
 
 	pspSdkSetK1(k1);
 	return 0x80010016;
-
 }
-int sceUmdUnRegisterUMDCallBack(int cbid)
-{
+
+int sceUmdUnRegisterUMDCallBack(int cbid) {
 	int k1 = pspSdkSetK1(0);
 	uidControlBlock *sp;
 
 	int r =sceKernelGetUIDcontrolBlock( cbid , &sp);
-	if(r == 0)
-	{
-		if(umdcbid == cbid)
-		{
+	if (r == 0) {
+		if (umdcbid == cbid) {
 			umdcbid = -1;
 		}
-	}
-	else
-	{
+	} else {
 		r = 0x80010016;
 	}
 
 	pspSdkSetK1(k1);
 	return r;
-
 }
 
-int sceUmdClearDriveStatus(int a0)
-{
+int sceUmdClearDriveStatus(int a0) {
 	int intr = sceKernelCpuSuspendIntr();
 
 //	sceKernelClearEventFlag( event_id , a0);
@@ -335,26 +298,23 @@ int sceUmdClearDriveStatus(int a0)
 }
 
 //sceUmd_36FF82F3:
-int sceUmdReplacePermit(void)
-{
-	return 0;
-}
-//sceUmd_30DCD985:
-int sceUmdReplaceProhibit(void)
-{
+int sceUmdReplacePermit(void) {
 	return 0;
 }
 
-int sceUmd_659587F7(int a0)
-{
-	if( a0 == 0)
+//sceUmd_30DCD985:
+int sceUmdReplaceProhibit(void) {
+	return 0;
+}
+
+int sceUmd_659587F7(int a0) {
+	if ( a0 == 0) {
 		return 0;
+	}
 
 	u32 version = sceKernelGetCompiledSdkVersion();
-	if(!version)
-	{
-		switch( a0 )
-		{
+	if (!version) {
+		switch( a0 ) {
 		case 0x80010074:
 			return 0x8001006E;
 			break;
