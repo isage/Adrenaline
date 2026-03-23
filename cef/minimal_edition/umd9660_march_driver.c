@@ -5,6 +5,7 @@
 #include <pspkernel.h>
 #include <pspthreadman_kernel.h>
 
+#include <psperror.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
@@ -190,7 +191,7 @@ int umd9660_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 		}
 	}
 
-	return 0x80010013;
+	return SCE_ENODEV;
 }
 
 //sub_00000740:
@@ -243,7 +244,7 @@ int umd9660_close(PspIoDrvFileArg *arg) {
 	if ( io_status[(int)(arg->arg)].flag) {
 		io_status[(int)(arg->arg)].flag = 0;
 	} else {
-		ret = 0x80010016;
+		ret = SCE_EINVAL;
 	}
 
 	if (sceKernelSignalSema( umd_sema ,1) < 0) {
@@ -272,7 +273,7 @@ SceOff umd9660_lseek(PspIoDrvFileArg *arg ,SceOff offset,int whence) {
 			return -1;
 		}
 
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 
@@ -309,7 +310,7 @@ int loc_00000488( void *outdata , int outlen , void *indata ) {
 		return Umd9660ReadSectors( offset , outdata , size );//loc_000003E0
 	}
 
-	return 0x80010069;
+	return SCE_ENOBUFS;
 }
 
 //loc_000004F4:
@@ -336,12 +337,13 @@ int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, 
 */
 	case 0x01E180D3:
 	case 0x01E080A8:
-		return 0x80010086;
+		return SCE_ENOSYS;
 		break;
 
 	case 0x01E38012:
-		if ( outlen < 0)
+		if ( outlen < 0) {
 			outlen += 3;
+		}
 
 		memset( outdata , 0 , outlen);
 		((u32 *)outdata)[0]= 0xE0000800;
@@ -360,13 +362,13 @@ int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, 
 			((int *)outdata)[0]= 0;
 			return 0;
 		}
-		return 0x80010016;
+		return SCE_EINVAL;
 		break;
 	case 0x01E380C0:
 		if (indata && outdata) {
 			return loc_00000488( outdata , outlen , indata );
 		}
-		return 0x80010016;
+		return SCE_EINVAL;
 		break;
 	case 0x01F20001:
 		((int *)outdata)[0]= -1;
@@ -384,7 +386,7 @@ int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, 
 		if ( indata && (inlen >= 4)) {
 			return 0;
 		}
-		return 0x80010016;
+		return SCE_EINVAL;
 
 		break;
 	case 0x01F100A5:
@@ -399,7 +401,7 @@ int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, 
 			((int *)outdata)[0] = umd_file_len;//data23D4
 			return 0;
 		}
-		return 0x80010016;
+		return SCE_EINVAL;
 
 		break;
 		//add
@@ -409,7 +411,7 @@ int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, 
 				return 0;
 			}
 		}
-		return 0x80010016;
+		return SCE_EINVAL;
 		break;
 
 	case 0x00208811:
@@ -422,7 +424,7 @@ int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, 
 	}
 
 	Kprintf("unknown devctl 0x%08X\n",cmd);
-	return 0x80010086;
+	return SCE_ENOSYS;
 }
 
 //sub_0000083C:
@@ -450,7 +452,7 @@ int umd9660_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inle
 		if (indata && (inlen >= 4)) {
 			return umd9660_lseek( arg , ((SceOff *)indata)[0] , ((int *)indata)[3] );//sub_000000D8
 		}
-		return 0x80010016;
+		return SCE_EINVAL;
 		break;
 
 	case 0x01F30003:
@@ -460,7 +462,7 @@ int umd9660_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inle
 				return umd9660_read( arg , outdata, size );//sub_00000740
 			}
 		}
-		return 0x80010016;
+		return SCE_EINVAL;
 		break;
 
 	case 0x00208082:
@@ -476,7 +478,7 @@ int umd9660_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inle
 	}
 
 	Kprintf("Unknown ioctl 0x%08X\n",cmd);
-	return 0x80010086;
+	return SCE_ENOSYS;
 }
 
 
@@ -492,11 +494,11 @@ int  ReadUmdFileRetry(void *buf, int size, int fpointer) {
 				}
 				OpenIso();
 			}
-			return 0x80010013;
+			return SCE_ENODEV;
 		}
 		OpenIso();
 	}
-	return 0x80010013;
+	return SCE_ENODEV;
 }
 
 int Umd9660ReadSectors3(UmdReadParams *read_params) {

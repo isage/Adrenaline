@@ -11,7 +11,7 @@
 PSP_MODULE_INFO("umd_driver", 0x1006, 1, 0);
 PSP_MAIN_THREAD_ATTR(0);
 
-u32 module_sdk_version =  0x03060010;
+u32 module_sdk_version = 0x03060010;
 
 /*
 #define JAL_OPCODE	0x0C000000
@@ -101,10 +101,6 @@ void cls(int color)
 
 */
 
-void ClearCaches() {
-	sceKernelDcacheWritebackAll();
-	sceKernelIcacheClearAll();
-}
 
 
 int module_start(SceSize args, void *argp) {

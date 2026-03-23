@@ -1,35 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+
 #include <pspsdk.h>
 #include <pspkernel.h>
 
-#include <stdio.h>
-#include <string.h>
 // #include <systemctrl_me.h>
 #include <systemctrl.h>
-
-#include "isof_patch_list.h"
-
-void ClearCaches();
+#include <psperror.h>
+#include <cfwmacros.h>
 
 int data2794 = 0;
-int data2798 = 0;
+void *data2798 = 0;
 int data279C = 0;
-int data27A0 = 0;
+void *data27A0 = 0;
 
 //500 = sceUmdMan_driver_B54D5BE8
-int sceUmdMan_driver_454E1B06() {
+int sceUmdManRegisterImposeCallBack() {
 	return 0;
 }
 
 //500 = sceUmdMan_driver_B9B02322
-int sceUmdMan_driver_E52119E7() {
+int sceUmdManUnRegisterImposeCallback() {
 	return 0;
 }
 
 //reset cache read?
 //500 = sceUmdMan_driver_31699C86
-int sceUmdMan_driver_7AD43944(int a0) {
+int sceUmdManUnRegisterInsertEjectUMDCallBack(int a0) {
 	if (a0 != data279C) {
-		return 0x80010002;
+		return SCE_ENOENT;
 	}
 
 	data2794 = 0;
@@ -41,7 +40,7 @@ int sceUmdMan_driver_7AD43944(int a0) {
 }
 
 //500= sceUmdMan_driver_988597A2
-int sceUmdMan_driver_42D993AC() {
+int sceUmdManIsDvdDrive() {
 	return 0;
 }
 
@@ -49,35 +48,29 @@ int sceUmdMan_driver_42D993AC() {
 #define SET_GP(gp) asm volatile ("move $gp, %0\n" :: "r" (gp))
 
 //500 = sceUmdMan_driver_63B69CE1
-int sceUmdMan_driver_26C75616(int a0,int a1, int a2) {
+int sceUmdManRegisterInsertEjectUMDCallBack(int id,void * callback, void *arg) {
 	if (data279C) {
-		return 0x8001000C;
+		return SCE_ENOMEM;
 	}
 
-	data279C = a0;
+	data279C = id;
 	GET_GP(data2794);
-//	data2794 = asm("$gp");
-	data27A0 = a2;
-	data2798 = a1;
+	data27A0 = arg;
+	data2798 = callback;
 
 	SceModule *mod = sceKernelFindModuleByName("sceIsofs_driver");
 	u32 text_addr=mod->text_addr;
-/*
-#define ISOF_PATCH_ADDR1	0x00004020
-#define ISOF_PATCH_ADDR2	0x00004058
-#define ISOF_PATCH_ADDR3	0x0000410C
-#define ISOF_PATCH_ADDR4	0x000042E8
-*/
-	//addu	$v0, $zr, $zr
-	_sw(0x00001021, text_addr + isof_patch_list.IsofPatchAddr1 );
-	_sw(0x00001021, text_addr + isof_patch_list.IsofPatchAddr2 );
-	_sw(0x00001021, text_addr + isof_patch_list.IsofPatchAddr3 );
-	_sw(0x00001021, text_addr + isof_patch_list.IsofPatchAddr4 );
 
-	ClearCaches();
+	//addu	$v0, $zr, $zr
+	MAKE_INSTRUCTION(text_addr+0x3FEC, 0x00001021);
+	MAKE_INSTRUCTION(text_addr+0x4024, 0x00001021);
+	MAKE_INSTRUCTION(text_addr+0x40D8, 0x00001021);
+	MAKE_INSTRUCTION(text_addr+0x42B4, 0x00001021);
+
+	sctrlFlushCache();
 
 	if (data2798) {
-		int (* func)(int, int, int) = (void*)data2798;
+		int (* func)(int, void *, int) = (void*)data2798;
 
 		//$gp = data2794;
 		SET_GP( data2794 );
@@ -89,30 +82,30 @@ int sceUmdMan_driver_26C75616(int a0,int a1, int a2) {
 }
 
 
-int sceUmd9660_driver_94ACF219() {
+int sceUmd9660_driver_7EB57F56() {
 	return 0;
 }
 
-int sceUmd9660_driver_1D89BD8F() {
+int sceUmd9660_driver_C0933C16() {
 	return 0;
 }
 
-int sceUmd9660_driver_385336B5() {
+int sceUmd9660_driver_887C3193() {
 	return 0;
 }
 
-void sceUmd9660_driver_5041FC4C(){}
-void sceUmd9660_driver_1FE5B02F(){}
+void sceUmd9660_driver_3CC9CE54(){}
+void sceUmd9660_driver_FE3A8B67(){}
 
-int sceNp9660_driver_1D642536() {
+int sceNp9660_driver_B925CA6C() {
 	return 0;
 }
 
-int sceNp9660_driver_28DCC33D() {
+int sceNp9660_driver_8EF69DC6() {
 	return 0;
 }
 
-int sceNp9660_driver_FD85B350(int *a0) {
+int sceNp9660_driver_7A05EB3C(int *a0) {
 	if ( a0 ) {
 		*a0 = 0;
 	}

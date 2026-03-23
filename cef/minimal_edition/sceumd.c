@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 
 #include <pspsdk.h>
 #include <pspkernel.h>
@@ -6,8 +8,7 @@
 #include <pspumd.h>
 #include <pspthreadman.h>
 
-#include <stdio.h>
-#include <string.h>
+#include <psperror.h>
 
 #include "umd9660_driver.h"
 
@@ -65,7 +66,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	}
 
 	pspSdkSetK1(k1);
-	return 0x80010016;
+	return SCE_EINVAL;
 }
 
 int sceUmdActivate(int unit, const char *drive) {
@@ -76,7 +77,7 @@ int sceUmdActivate(int unit, const char *drive) {
 
 	if (strcmp(drive,"disc0:") != 0) {
 		pspSdkSetK1(k1);
-		return 0x80010016;
+		return SCE_EINVAL;
 	}
 
 	sp=1;
@@ -143,7 +144,7 @@ int loc_00001758(int stat , unsigned int timeout , int flag) {
 			}
 		}
 	} else {
-		ret = 0x80010016;
+		ret = SCE_EINVAL;
 	}
 
 	if (flag) {
@@ -267,7 +268,7 @@ int sceUmdRegisterUMDCallBack(int cbid) {
 	}
 
 	pspSdkSetK1(k1);
-	return 0x80010016;
+	return SCE_EINVAL;
 }
 
 int sceUmdUnRegisterUMDCallBack(int cbid) {
@@ -280,7 +281,7 @@ int sceUmdUnRegisterUMDCallBack(int cbid) {
 			umdcbid = -1;
 		}
 	} else {
-		r = 0x80010016;
+		r = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
@@ -307,37 +308,28 @@ int sceUmdReplaceProhibit(void) {
 	return 0;
 }
 
-int sceUmd_659587F7(int a0) {
-	if ( a0 == 0) {
+int sceUmd_040A7090(int error) {
+	if ( error == 0) {
 		return 0;
 	}
 
 	u32 version = sceKernelGetCompiledSdkVersion();
 	if (!version) {
-		switch( a0 ) {
-		case 0x80010074:
-			return 0x8001006E;
-			break;
-		case 0x80010070:
-			return 0x80010062;
-			break;
-		case 0x80010071:
-			return 0x80010067;
-			break;
-		case 0x8001005B:
-//			return 0x80010062;
-			return 0x80010024;
-			break;
-		case 0x80010087:
-			return 0x8001007B;
-			break;
-		case 0x8001B006:
-			return 0x8001007C;
-			break;
-		case 0x80010086:
-			return 0x8001B000;
-			break;
+		if (error == SCE_ETIMEDOUT) {
+			error = SCE_ERROR150_ETIMEDOUT;
+		} else if (error == SCE_EADDRINUSE) {
+			error = SCE_ERROR150_EADDRINUSE;
+		} else if (error == SCE_ENAMETOOLONG) {
+			error = SCE_ERROR150_EADDRINUSE;
+		} else if (error == SCE_ECONNABORTED) {
+			error = SCE_ERROR150_ECONNABORTED;
+		} else if (error == SCE_ENOSYS) {
+			error = SCE_ERROR150_ENOTSUP;
+		} else if (error == SCE_ENOMEDIUM) {
+			error = SCE_ERROR150_ENOMEDIUM;
+		} else if (error == SCE_EWRONGMEDIUM) {
+			error = SCE_ERROR150_EMEDIUMTYPE;
 		}
 	}
-	return a0;
+	return error;
 }
