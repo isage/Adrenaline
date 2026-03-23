@@ -1,10 +1,14 @@
+#include <stdio.h>
+#include <string.h>
+
 #include <pspsdk.h>
 #include <pspkernel.h>
 #include <pspsysevent.h>
 #include <psploadexec_kernel.h>
 
-#include <stdio.h>
-#include <string.h>
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 //#include <systemctrl_se.h>
 //#include <systemctrl.h>
 
@@ -91,6 +95,8 @@ void cls(int color)
 
 
 int module_start(SceSize args, void *argp) {
+	logInit("ms0:/log_me-iso.txt");
+	logmsg("Minimal Edition ISO driver started...\n")
 
 //	cls(0x000000ff);
 
