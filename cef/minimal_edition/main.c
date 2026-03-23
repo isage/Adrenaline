@@ -8,23 +8,10 @@
 //#include <systemctrl_se.h>
 //#include <systemctrl.h>
 
-PSP_MODULE_INFO("umd_driver", 0x1006, 1, 0);
+PSP_MODULE_INFO("EPI-MEisoDriver", 0x1006, 2, 0);
 PSP_MAIN_THREAD_ATTR(0);
 
-u32 module_sdk_version = 0x03060010;
-
-/*
-#define JAL_OPCODE	0x0C000000
-#define J_OPCODE	0x08000000
-#define SC_OPCODE	0x0000000C
-#define JR_RA		0x03e00008
-
-#define NOP	0x00000000
-
-#define MAKE_JUMP(a, f) _sw(J_OPCODE | (((u32)(f) & 0x0ffffffc) >> 2), a);
-#define MAKE_CALL(a, f) _sw(JAL_OPCODE | (((u32)(f) >> 2)  & 0x03ffffff), a);
-*/
-extern SceUID umd_sema;
+extern SceUID g_umd_sema;
 
 int sceUmd_Init();
 int march_init();
@@ -32,7 +19,7 @@ void pspUmdCallback(int a0);
 
 static int SysEventHandler(int ev_id, char* ev_name, void* param, int* result) {
 	if ( ev_id == 0x400 ) {
-		if (sceKernelWaitSema(umd_sema, 1, 0) >= 0) {
+		if (sceKernelWaitSema(g_umd_sema, 1, 0) >= 0) {
 			pspUmdCallback( 0x9 );
 		}
 	}
@@ -44,7 +31,7 @@ static int SysEventHandler(int ev_id, char* ev_name, void* param, int* result) {
 	}
 	*/
 	else if ( ev_id == 0x400000 ) {
-		if (sceKernelSignalSema(umd_sema, 1) >= 0) {
+		if (sceKernelSignalSema(g_umd_sema, 1) >= 0) {
 			pspUmdCallback( 0x32 );
 		}
 	}
@@ -59,7 +46,7 @@ static int SysEventHandler(int ev_id, char* ev_name, void* param, int* result) {
 
 static PspSysEventHandler event_handler = {
 	sizeof(PspSysEventHandler),
-	"",
+	"meIsoSysEvent",
 	0x00FFFF00,
 	SysEventHandler
 };
@@ -118,7 +105,7 @@ int module_start(SceSize args, void *argp) {
 	}
 
 	r = sceUmd_Init();//sub_00001514
-	if (r< 0) {
+	if (r < 0) {
 		return r;
 	}
 

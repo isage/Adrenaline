@@ -9,10 +9,10 @@
 #include <psperror.h>
 #include <cfwmacros.h>
 
-int data2794 = 0;
-void *data2798 = 0;
-int data279C = 0;
-void *data27A0 = 0;
+static int g_gp_iecallback = 0;
+static void *g_iecallback = 0;
+static int g_id_iecallback = 0;
+static void *g_arg_iecallback = 0;
 
 //500 = sceUmdMan_driver_B54D5BE8
 int sceUmdManRegisterImposeCallBack() {
@@ -27,14 +27,14 @@ int sceUmdManUnRegisterImposeCallback() {
 //reset cache read?
 //500 = sceUmdMan_driver_31699C86
 int sceUmdManUnRegisterInsertEjectUMDCallBack(int a0) {
-	if (a0 != data279C) {
+	if (a0 != g_id_iecallback) {
 		return SCE_ENOENT;
 	}
 
-	data2794 = 0;
-	data2798 = 0;
-	data279C = 0;
-	data27A0 = 0;
+	g_gp_iecallback = 0;
+	g_iecallback = 0;
+	g_id_iecallback = 0;
+	g_arg_iecallback = 0;
 
 	return 0;
 }
@@ -49,14 +49,14 @@ int sceUmdManIsDvdDrive() {
 
 //500 = sceUmdMan_driver_63B69CE1
 int sceUmdManRegisterInsertEjectUMDCallBack(int id,void * callback, void *arg) {
-	if (data279C) {
+	if (g_id_iecallback) {
 		return SCE_ENOMEM;
 	}
 
-	data279C = id;
-	GET_GP(data2794);
-	data27A0 = arg;
-	data2798 = callback;
+	g_id_iecallback = id;
+	GET_GP(g_gp_iecallback);
+	g_arg_iecallback = arg;
+	g_iecallback = callback;
 
 	SceModule *mod = sceKernelFindModuleByName("sceIsofs_driver");
 	u32 text_addr=mod->text_addr;
@@ -69,13 +69,13 @@ int sceUmdManRegisterInsertEjectUMDCallBack(int id,void * callback, void *arg) {
 
 	sctrlFlushCache();
 
-	if (data2798) {
-		int (* func)(int, void *, int) = (void*)data2798;
+	if (g_iecallback) {
+		int (* func)(int, void *, int) = (void*)g_iecallback;
 
-		//$gp = data2794;
-		SET_GP( data2794 );
+		//$gp = g_gp_iecallback;
+		SET_GP( g_gp_iecallback );
 
-		func( data279C , data27A0 , 1);
+		func( g_id_iecallback , g_arg_iecallback , 1);
 	}
 
 	return 0;
