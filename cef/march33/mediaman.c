@@ -121,7 +121,7 @@ int sceUmdUnRegisterUMDCallBack(SceUID cbid) {
 
 int sceUmdCheckMedium() {
 	int res = 0;
-	if (g_iso_fn[0] == '\0'){
+	if (g_iso_fn[0] == '\0') {
 		res = 0;
 		goto exit;
 	}
