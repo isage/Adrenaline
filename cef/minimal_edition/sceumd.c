@@ -11,6 +11,7 @@
 #include <psperror.h>
 
 #include "umd9660_driver.h"
+#include "../bits/iso_common.h"
 
 int sceKernelCancelSema(int semaid, int signal, int *result);
 
@@ -52,7 +53,21 @@ void pspUmdCallback(int a0) {
 }
 
 int sceUmdCheckMedium(void) {
-	return 1;
+	int res = 0;
+	if (g_iso_fn[0] == '\0') {
+		res = 0;
+		goto exit;
+	}
+
+	while (!g_iso_opened) {
+		sceKernelDelayThread(10000);
+	}
+
+	res = 1;
+
+exit:
+	logmsg("%s: () -> 0x%08X\n", __func__, res);
+	return res;
 }
 
 int sceUmdGetDiscInfo(pspUmdInfo *info) {
