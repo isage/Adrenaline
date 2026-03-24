@@ -20,6 +20,7 @@ static char *g_cpuspeeds_options[] = {
 static char *g_umd_driver_options[] = {
 	"Inferno",
 	"M33 Driver",
+	"ME Driver",
 	"Sony NP9660",
 };
 

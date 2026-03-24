@@ -3,6 +3,7 @@ set(BTCNF_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/btcnf.py")
 set(BTCNFS
   pspbtknf:pspbtcnf_inferno
   pspbtlnf:pspbtcnf_march33
+  pspbtnnf:pspbtcnf_me
   pspbtjnf:pspbtcnf_normal
   pspbtmnf:pspbtcnf_np9660
   pspbtrnf:pspbtcnf_recovery

@@ -37,6 +37,7 @@ INCLUDE_EXTERN_RESOURCE(kd_inferno_prx);
 INCLUDE_EXTERN_RESOURCE(kd_kermit_idstorage_prx);
 INCLUDE_EXTERN_RESOURCE(kd_libpsardumper_prx);
 INCLUDE_EXTERN_RESOURCE(kd_march33_prx);
+INCLUDE_EXTERN_RESOURCE(kd_minimal_edition_prx);
 INCLUDE_EXTERN_RESOURCE(kd_pspbtjnf_bin);
 INCLUDE_EXTERN_RESOURCE(kd_pspbtknf_bin);
 INCLUDE_EXTERN_RESOURCE(kd_pspbtlnf_bin);
@@ -62,6 +63,7 @@ static ScePspemuFlash0Package custom_package[] = {
 	FLASH0_FILE("/kd/kermit_idstorage.prx", kd_kermit_idstorage_prx),
 	FLASH0_FILE("/kd/libpsardumper.prx",    kd_libpsardumper_prx),
 	FLASH0_FILE("/kd/march33.prx",          kd_march33_prx),
+	FLASH0_FILE("/kd/minimal_edition.prx",  kd_minimal_edition_prx),
 	FLASH0_FILE("/kd/pspbtjnf.bin",         kd_pspbtjnf_bin),
 	FLASH0_FILE("/kd/pspbtknf.bin",         kd_pspbtknf_bin),
 	FLASH0_FILE("/kd/pspbtlnf.bin",         kd_pspbtlnf_bin),

@@ -22,7 +22,7 @@
 static char *g_disenabled[] = { "Disabled", "Enabled" };
 static char *g_endisabled[] = { "Enabled", "Disabled" };
 
-static char *g_umdmodes[] = { "Inferno", "M33 Driver", "Sony NP9660" };
+static char *g_umdmodes[] = { "Inferno", "M33 Driver", "ME Driver", "Sony NP9660" };
 static char *g_extendedcolors[] = { "Disabled", "02g", "03g" };
 static char *g_cpuspeeds[] = { "Default", "20/10", "75/37", "100/50", "133/66", "222/111", "266/133", "300/150", "333/166" };
 static char *g_highmem[] = { "Default", "Stable", "Max" };

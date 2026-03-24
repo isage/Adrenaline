@@ -1,5 +1,5 @@
-TARGET = isotope
-OBJS = main.o sceumd.o sceumdman.o umd9660_march_driver.o isoread.o csoread.o stub.o exports.o
+TARGET = minimal_edition
+OBJS = main.o sceumd.o sceumdman.o umd9660_march_driver.o exports.o ../bits/iso_common.o
 
 INCDIR = ../include
 CFLAGS = -O2 -G0 -Wall -Wno-array-bounds -fshort-wchar -fno-pic -mno-check-zero-division

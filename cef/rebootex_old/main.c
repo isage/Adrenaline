@@ -175,6 +175,10 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
 				name = "/kd/pspbtlnf.bin";
 				break;
 
+			case MODE_ME:
+				name = "/kd/pspbtnnf.bin";
+				break;
+
 			case MODE_NP9660:
 				name = "/kd/pspbtmnf.bin";
 				break;

@@ -245,6 +245,9 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		} else if (g_cfw_config.umd_mode == ISO_MODE_MARCH33) {
 			logmsg2("[INFO]: Launching with March33 Driver\n");
 			sctrlSESetBootConfFileIndex(MODE_MARCH33);
+		} else if (g_cfw_config.umd_mode == ISO_MODE_ME) {
+			logmsg2("[INFO]: Launching with ME Driver\n");
+			sctrlSESetBootConfFileIndex(MODE_ME);
 		} else if (g_cfw_config.umd_mode == ISO_MODE_NP9660) {
 			logmsg2("[INFO]: Launching with NP9660 Driver\n");
 			sctrlSESetBootConfFileIndex(MODE_NP9660);

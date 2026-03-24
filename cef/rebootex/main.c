@@ -28,6 +28,10 @@ int pspemuLfatOpenEPI(BootFile* file) {
 				file->name = "/kd/pspbtlnf.bin";
 				break;
 
+			case MODE_ME:
+				file->name = "/kd/pspbtnnf.bin";
+				break;
+
 			case MODE_NP9660:
 				file->name = "/kd/pspbtmnf.bin";
 				break;

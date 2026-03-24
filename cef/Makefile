@@ -5,7 +5,7 @@ PSPGZ = $(CFWSDK)/build-tools/gz/pspgz.py
 KHDR = $(CFWSDK)/build-tools/gz/SystemControl.hdr
 UHDR = $(CFWSDK)/build-tools/gz/UserModule.hdr
 
-all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _pentazemin _popcorn _galaxy _march33 _inferno _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _pentazemin _popcorn _galaxy _march33 _inferno _me _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
 
 KERNEL_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspreg_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel
 
@@ -23,6 +23,11 @@ _btcnf:
 	make -C btcnf/pspbtcnf_march33
 	cp "btcnf/pspbtcnf_march33/pspbtcnf.bin" "../user/flash0/kd/pspbtlnf.bin"
 	make -C btcnf/pspbtcnf_march33 clean
+
+	make -C btcnf/pspbtcnf_me clean
+	make -C btcnf/pspbtcnf_me
+	cp "btcnf/pspbtcnf_me/pspbtcnf.bin" "../user/flash0/kd/pspbtnnf.bin"
+	make -C btcnf/pspbtcnf_me clean
 
 	make -C btcnf/pspbtcnf_normal clean
 	make -C btcnf/pspbtcnf_normal
@@ -137,6 +142,16 @@ else
 endif
 	make -C inferno clean
 
+_me:
+	make -C minimal_edition clean
+	make -C minimal_edition -j
+ifdef USE_PSP_PACKER
+	psp-packer minimal_edition/minimal_edition.prx -o ../user/flash0/kd/minimal_edition.prx
+else
+	$(PY) $(PSPGZ) ../user/flash0/kd/minimal_edition.prx $(KHDR) minimal_edition/minimal_edition.prx InfernoDriver 0x3007
+endif
+	make -C minimal_edition clean
+
 _vshctrl:
 	make -C vshctrl clean
 	make -C vshctrl -j
@@ -190,6 +205,7 @@ endif
 clean:
 	make -C btcnf/pspbtcnf_inferno clean
 	make -C btcnf/pspbtcnf_march33 clean
+	make -C btcnf/pspbtcnf_me clean
 	make -C btcnf/pspbtcnf_normal clean
 	make -C btcnf/pspbtcnf_np9660 clean
 	make -C btcnf/pspbtcnf_recovery clean
@@ -204,6 +220,7 @@ clean:
 	make -C popcorn clean
 	make -C galaxy clean
 	make -C inferno clean
+	make -C minimal_edition clean
 	make -C vshctrl clean
 	make -C kermit_idstorage clean
 	make -C xmbctrl clean
