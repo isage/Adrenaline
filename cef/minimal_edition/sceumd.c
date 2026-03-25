@@ -10,6 +10,8 @@
 
 #include <psperror.h>
 
+#include <adrenaline_log.h>
+
 #include "umd9660_driver.h"
 #include "../bits/iso_common.h"
 
