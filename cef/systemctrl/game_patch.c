@@ -51,15 +51,31 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 
 	// Config in `Auto` mode
 	if (g_cfw_config.umd_seek == 0 && g_cfw_config.umd_speed == 0) {
-		if (g_rebootex_config.bootfileindex == MODE_INFERNO) {
-			SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 
-			SetUmdDelay = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
-			CacheInit = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
-		} else if (g_rebootex_config.bootfileindex == MODE_MARCH33) {
-			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-March33Driver", "march33_driver", 0xFAEC97D6);
-		} else if (g_rebootex_config.bootfileindex == MODE_NP9660) {
-			SetUmdDelay = (void*)sctrlHENFindFunction("EPI-GalaxyController", "galaxy_driver", 0xFAEC97D6);
+		if (g_rebootex_config.bootfileindex != MODE_UMD) {
+			char * iso_mod_name = "INVALID";
+			switch (g_rebootex_config.bootfileindex){
+				case MODE_INFERNO:
+					iso_mod_name = "EPI-InfernoDriver";
+					break;
+				case MODE_MARCH33:
+					iso_mod_name = "EPI-March33Driver";
+					break;
+				case MODE_ME:
+					iso_mod_name = "EPI-MEisoDriver";
+					break;
+				case MODE_NP9660:
+					iso_mod_name = "EPI-GalaxyController";
+					break;
+				default:
+					break;
+			}
+
+			SetUmdDelay = (void*)sctrlHENFindFunction(iso_mod_name, "isoCtrl_driver", 0xFAEC97D6);
+
+			if (g_rebootex_config.bootfileindex == MODE_INFERNO) {
+				CacheInit = (void*)sctrlHENFindFunction(iso_mod_name, "inferno_driver", 0x8CDE7F95);
+			}
 		}
 
 		if (SetUmdDelay != NULL) {
