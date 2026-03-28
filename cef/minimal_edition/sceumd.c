@@ -48,6 +48,7 @@ int sceUmd_Init() {
 }
 
 void pspUmdCallback(int a0) {
+	logmsg4("[DEBUG]: %s: stat=0x%08X -> ()\n", __func__, a0);
 	if (g_umdcbid >= 0) {
 		//SceUID 	cb,int 	arg2
 		sceKernelNotifyCallback( g_umdcbid , a0);
@@ -74,58 +75,66 @@ exit:
 
 int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	int k1 = pspSdkSetK1(0);
+	int res = 0;
+
 	if (info) {
 		if (info->size == 8) {
 			info->type = PSP_UMD_TYPE_GAME;
 			pspSdkSetK1(k1);
-			return 0;
+			res = 0;
 		}
+	} else  {
+		res = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
-	return SCE_EINVAL;
+	logmsg("%s: disc_info=0x%p -> 0x%08X\n", __func__, info, res);
+	return res;
 }
 
 int sceUmdActivate(int unit, const char *drive) {
 	int k1 = pspSdkSetK1(0);
-	int sp;
+	int res = 0;
+	int sp = 1;
 
 //	cls(0x0000FF00);
 
 	if (strcmp(drive,"disc0:") != 0) {
 		pspSdkSetK1(k1);
-		return SCE_EINVAL;
+		res = SCE_EINVAL;
+		goto exit;
 	}
-
-	sp=1;
 
 	sceIoAssign( drive ,"umd0:","isofs0:", IOASSIGN_RDONLY ,&sp,4);
 
 	g_umd_status = PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT;
 
-	if (g_game_group == 1 ) {
+	if (g_game_group == 1) {
 		pspUmdCallback( PSP_UMD_READY | PSP_UMD_PRESENT );
 
 	} else if (!(g_umd_status & PSP_UMD_READY) ) {
 		pspUmdCallback( PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT );
 	}
 
+exit:
 	pspSdkSetK1(k1);
-	return 0;
+	logmsg("%s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, unit, drive, res);
+	return res;
 }
 
 int sceUmdDeactivate(int unit, const char *drive) {
 	int k1 = pspSdkSetK1(0);
 
-	int r =sceIoUnassign(drive);
+	int res =sceIoUnassign(drive);
 
-	if (r>=0) {
+	if (res >= 0) {
 		pspUmdCallback( PSP_UMD_INITED | PSP_UMD_PRESENT );
 		g_umd_status = PSP_UMD_INITED | PSP_UMD_PRESENT ;
 	}
 
 	pspSdkSetK1(k1);
-	return r;
+	logmsg("%s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, unit, drive, res);
+	return res;
 }
 
 int WaitDriveStat(int stat , SceUInt timeout , int flag) {
@@ -168,15 +177,24 @@ int WaitDriveStat(int stat , SceUInt timeout , int flag) {
 }
 
 int sceUmdWaitDriveStat(int stat) {
-	return WaitDriveStat(stat ,0 ,0);
+	int res =  WaitDriveStat(stat, 0, 0);
+
+	logmsg("%s: stat=0x%08X -> 0x%08X\n", __func__, stat, res);
+	return res;
 }
 
 int sceUmdWaitDriveStatWithTimer(int stat, unsigned int timeout) {
-	return WaitDriveStat( stat, timeout , 0);
+	int res =  WaitDriveStat( stat, timeout , 0);
+
+	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, res);
+	return res;
 }
 
 int sceUmdWaitDriveStatCB(int stat, unsigned int timeout) {
-	return WaitDriveStat(stat , timeout , 1);
+	int res = WaitDriveStat(stat , timeout , 1);
+
+	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, res);
+	return res;
 }
 
 int sceUmdCancelWaitDriveStat(void) {
@@ -186,15 +204,18 @@ int sceUmdCancelWaitDriveStat(void) {
 	int r =sceKernelCancelSema( g_umd_sema_id , -1 /* UmdStatus */ , NULL);
 
 	pspSdkSetK1(k1);
+	logmsg("%s: () -> 0x%08X\n", __func__, r);
 	return r;
 
 }
 
 void sceUmdSetErrorStatus(int stat) {
+	logmsg("%s: 0x%08X SET.\n", __func__, stat);
 	g_umd_error_stat = stat;
 }
 
 void sceUmdSetDriveStatus(int stat) {
+	logmsg("%s: status=0x%08X -> ()\n", __func__, stat);
 	int intr = sceKernelCpuSuspendIntr();
 
 	if ( stat & PSP_UMD_NOT_PRESENT) {
@@ -231,6 +252,7 @@ void sceUmdSetDriveStatus(int stat) {
 }
 
 int sceUmdGetDriveStatus(void) {
+	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_status);
 	return g_umd_status;
 }
 
@@ -238,10 +260,12 @@ int sceUmdGetDriveStat(void) {
 	int k1 = pspSdkSetK1(0);
 	int r = g_umd_status;
 	pspSdkSetK1(k1);
+	logmsg("%s: () -> 0x%08X\n", __func__, r);
 	return r;
 }
 
 int sceUmdGetErrorStatus(void) {
+	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_error_stat);
 	return g_umd_error_stat;
 }
 
@@ -250,11 +274,14 @@ int sceUmdGetErrorStat(void) {
 
 	int r = g_umd_error_stat;
 	pspSdkSetK1(k1);
+
+	logmsg("%s: () -> 0x%08X\n", __func__, r);
 	return r;
 }
 
 int sceUmdRegisterUMDCallBack(int cbid) {
 	int k1 = pspSdkSetK1(0);
+	int res = 0;
 
 	int r = sceKernelGetThreadmanIdType(cbid);
 
@@ -263,28 +290,31 @@ int sceUmdRegisterUMDCallBack(int cbid) {
 		pspUmdCallback(g_umd_status);
 
 		pspSdkSetK1(k1);
-		return 0;
+	} else {
+		res = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
-	return SCE_EINVAL;
+	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
+	return res;
 }
 
 int sceUmdUnRegisterUMDCallBack(int cbid) {
 	int k1 = pspSdkSetK1(0);
 	uidControlBlock *sp;
 
-	int r = sceKernelGetUIDcontrolBlock(cbid , &sp);
-	if (r == 0) {
+	int res = sceKernelGetUIDcontrolBlock(cbid , &sp);
+	if (res == 0) {
 		if (g_umdcbid == cbid) {
 			g_umdcbid = -1;
 		}
 	} else {
-		r = SCE_EINVAL;
+		res = SCE_EINVAL;
 	}
 
 	pspSdkSetK1(k1);
-	return r;
+	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
+	return res;
 }
 
 int sceUmdClearDriveStatus(int clear) {
@@ -294,6 +324,7 @@ int sceUmdClearDriveStatus(int clear) {
 	g_umd_status &= clear;
 
 	sceKernelCpuResumeIntr(intr);
+	logmsg("%s: clear=0x%08X -> g_drivestat=0x%08X\n", __func__, clear, g_umd_status);
 	return g_umd_status;
 }
 
@@ -330,5 +361,7 @@ int sceUmd_040A7090(int error) {
 			error = SCE_ERROR150_EMEDIUMTYPE;
 		}
 	}
+
+	logmsg3("%s: error=0x%08X -> 0x%08X\n", __func__, error, error);
 	return error;
 }
