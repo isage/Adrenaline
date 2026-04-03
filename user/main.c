@@ -538,8 +538,8 @@ static int sceCompatWaitSpecialRequestPatched(int mode) {
 
 	SceIoStat stat;
 	char ark_path[47];
-	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getMsLocation());
-	allow_ark = sceIoGetstat(ark_path, &stat) >= 0 || sceIoGetstat("ux0:" FLASH0_ARK_PATH, &stat) >= 0;
+	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
+	allow_ark = sceIoGetstat(ark_path, &stat) >= 0 || sceIoGetstat("ux0:pspemu" FLASH0_ARK_PATH, &stat) >= 0;
 
 	if (pad.buttons & SCE_CTRL_RTRIGGER) {
 		((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode

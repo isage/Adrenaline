@@ -205,12 +205,12 @@ int ScePspemuLoadFlash0Ark() {
 
 	// read flash0 ark package
 	char ark_path[47];
-	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getMsLocation());
+	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
 	SceUID fd = sceIoOpen(ark_path, SCE_O_RDONLY, 0777);
 
 	if (fd < 0) {
 		// Try again on `ux0:` just to be sure
-		fd = sceIoOpen("ux0:" FLASH0_ARK_PATH, SCE_O_RDONLY, 0777);
+		fd = sceIoOpen("ux0:pspemu" FLASH0_ARK_PATH, SCE_O_RDONLY, 0777);
 
 		if (fd < 0) {
 			return fd;

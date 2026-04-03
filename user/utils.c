@@ -310,8 +310,27 @@ char *getPspemuMemoryStickLocation() {
 			return "xmc0:pspemu";
 		case MEMORY_STICK_LOCATION_UMA0:
 			return "uma0:pspemu";
+		case MEMORY_STICK_LOCATION_UMA0_PSP:
+			return "uma0:";
 		default:
 			return "ux0:pspemu";
+	}
+}
+
+char *getPspemuMemoryStickDevice() {
+	switch (config.ms_location) {
+		case MEMORY_STICK_LOCATION_UR0:
+			return "ur0:";
+		case MEMORY_STICK_LOCATION_IMC0:
+			return "imc0:";
+		case MEMORY_STICK_LOCATION_XMC0:
+			return "xmc0:";
+		case MEMORY_STICK_LOCATION_UMA0:
+			return "uma0:";
+		case MEMORY_STICK_LOCATION_UMA0_PSP:
+			return "uma0:";
+		default:
+			return "ux0:";
 	}
 }
 
@@ -372,17 +391,3 @@ void adr_free(void* ptr) {
 	mspace_free(mspace, ptr);
 }
 
-char *getMsLocation() {
-	switch (config.ms_location) {
-		case MEMORY_STICK_LOCATION_UR0:
-			return "ur0:";
-		case MEMORY_STICK_LOCATION_IMC0:
-			return "imc0:";
-		case MEMORY_STICK_LOCATION_XMC0:
-			return "xmc0:";
-		case MEMORY_STICK_LOCATION_UMA0:
-			return "uma0:";
-		default:
-			return "ux0:";
-	}
-}

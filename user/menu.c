@@ -95,7 +95,7 @@ static char *graphics_options[] = { "Original", "Bilinear", "Sharp bilinear", "A
 static char *flux_mode_options[] = { "None", "Yellow", "Blue", "Black" };
 static char *no_yes_options[] = { "No", "Yes" };
 static char *yes_no_options[] = { "Yes", "No" };
-static char *ms_location_options[] = { "ux0:pspemu", "ur0:pspemu", "imc0:pspemu", "xmc0:pspemu", "uma0:pspemu" };
+static char *ms_location_options[] = { "ux0:pspemu", "ur0:pspemu", "imc0:pspemu", "xmc0:pspemu", "uma0:pspemu", "uma0:" };
 static char *usbdevice_options[] = { "Memory Card", "Internal Storage", "sd2vita", "psvsd" };
 static char *cfwtype_options[] = { "EPI", "ARK" };
 
@@ -199,8 +199,8 @@ static int EnterAdrenalineMenu() {
 	// Check if ARK is installed
 	SceIoStat stat;
 	char ark_path[47];
-	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getMsLocation());
-	if (sceIoGetstat(ark_path, &stat) < 0 && sceIoGetstat("ux0:" FLASH0_ARK_PATH, &stat) < 0){
+	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
+	if (sceIoGetstat(ark_path, &stat) < 0 && sceIoGetstat("ux0:pspemu" FLASH0_ARK_PATH, &stat) < 0){
 		settings_entries[0].n_options = 1;
 		config.cfw_type = 0;
 	} else {

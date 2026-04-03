@@ -645,7 +645,7 @@ static int ScePspemuMsfsDevctl(const char *dev, unsigned int cmd, void *indata, 
 		SceIoDevInfo devinfo;
 		memset(&devinfo, 0, sizeof(SceIoDevInfo));
 
-		char *path = getMsLocation();
+		char *path = getPspemuMemoryStickDevice();
 		int res = sceIoDevctl(path, 0x3001, NULL, 0, &devinfo, sizeof(SceIoDevInfo));
 		if (res < 0) {
 			return res;

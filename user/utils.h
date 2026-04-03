@@ -72,6 +72,7 @@ void getDateString(char string[24], int date_format, SceDateTime *time);
 void SetPspemuFrameBuffer(void *base);
 
 char *getPspemuMemoryStickLocation();
+char *getPspemuMemoryStickDevice();
 
 uint32_t encode_movw(uint8_t rd, uint16_t imm16);
 uint32_t encode_movt(uint8_t rd, uint16_t imm16);
@@ -81,7 +82,5 @@ void mspace_init(void);
 void* adr_malloc(size_t size);
 void* adr_realloc(void* ptr, size_t size);
 void adr_free(void* ptr);
-
-char *getMsLocation(void);
 
 #endif
