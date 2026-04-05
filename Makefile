@@ -11,4 +11,4 @@ cmake:
 
 clean:
 	make -C cef clean
-	rm -rf build
+	rm -rf build cef/build
