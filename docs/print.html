@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7b887929.js";
+            window.path_to_searchindex_js = "searchindex-4a8c9325.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f070d2aa.js"></script>
+        <script src="toc-06adaeb4.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -3371,7 +3371,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </style>
 <h1 id="psp-playback"><a class="header" href="#psp-playback">PSP Playback</a></h1>
 <hr>
-<p>Epinephrine allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having three available drivers: <code>Inferno 2</code>, <code>March33 2</code>, and <code>Sony's NP9660</code></p>
+<p>Epinephrine allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having four available drivers: <code>Inferno 2</code>, <code>March33 2</code>, <code>MinimalEdition 2</code>, and <code>Sony's NP9660</code></p>
 <p>There are three formats of PSP game images: <code>PBP</code>, <code>ISO</code>, and <code>Compressed ISO</code>.</p>
 <p>The <code>PBP</code> image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Epinephrine CFW always uses the original <code>Sony's NP9660</code> driver. Usually, <code>PBP</code> files live on <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code> directory.</p>
 <p>The <code>ISO</code> image format is a 1:1 copy of a Universal Media Disc (UMD), while <code>Compressed ISO</code> is an <code>ISO</code> image compressed in some way to reduce space usage. There are a few competing formats for <code>Compressed ISO</code>: <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>, each with different tradeoffs. Epinephrine CFW supports all of those formats and allows you to choose between the three UMDemu drivers available. All of those image options should go in <code>??0:/pspemu/ISO/</code> directory.</p>
@@ -3408,7 +3408,19 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </ul>
 <h3 id="march-33-2"><a class="header" href="#march-33-2">March 33 2</a></h3>
 <p>March33 driver was originally developed for the March33 CFW by the M33 Team. Epinephrine comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.</p>
-<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
+<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code>, <code>ME Driver</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
+<ul>
+<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
+<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
+<li><strong>Configurable seek and read speed delays</strong>: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+<ul>
+<li>By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.</li>
+</ul>
+</li>
+</ul>
+<h3 id="minimal-edition-2"><a class="header" href="#minimal-edition-2">Minimal Edition 2</a></h3>
+<p>Minimal Edition Driver (a.k.a. ME Driver) was originally developed for the Minimal Edition CFW by <strong>neur0n</strong>. Epinephrine comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.</p>
+<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code>, <code>March33 Driver</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
 <li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
@@ -3420,7 +3432,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </ul>
 <h3 id="sonys-np9660"><a class="header" href="#sonys-np9660">Sony’s NP9660</a></h3>
 <p>It is the original PSP UMDemu driver from Sony, but with patches to trick it into running ISO and Compressed ISO formats. This driver is also the one used on <code>PBP</code> games; it has guaranteed compatibility with all games that Sony released on PSN.</p>
-<p>This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
+<p>This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33 Driver</code>, <code>ME Driver</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
 <li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
@@ -4249,6 +4261,268 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <ul>
 <li><strong><code>Support for other compressed formats</code></strong>: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only <code>CSO</code> and <code>ZSO</code>, but also adds support for <code>DAX</code> as seen on ME’s March33 update, as well as the rarely seen before <code>JSO</code> and <code>CSOv2</code> formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.</li>
 <li><strong><code>Emulation of Empty UMD Drive</code></strong>: On older versions of March33, as well as other ISO Drivers except Inferno 2, it was never intended for the driver to run without an ISO file to be mounted, thus several bugs existed that caused malfunction when the driver was used without an ISO file specified, this prevented emulation of an empty UMD drive, which was needed on PS Vita to run certain homebrew that checked for a UMD. The main bug was in the implementation of the function <code>sceUmdCheckMedium</code>, a boolean function used to check if a UMD is inserted in the drive, on ISO driver this function was hardcoded to always return true, except if an ISO driver is not specified, then it was hardcoded to wait in an infinite loop until one is (which never happens). The solution used by eCFW such as ARK (up to ARK-3) and TN-CEF (including Adrenaline) was to include a small dummy fake.cso file to mount when no ISO file is specified. On the new <code>March33 2</code> driver, among other things, this function has been corrected to behave exactly like the original, simply returning False if no ISO has been specified, thus allowing the ISO driver to simulate an empty UMD drive by loading it without an ISO file specified.</li>
+<li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks.</li>
+<li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><style>
+.mdbook-callouts {
+  padding: 8px 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  /* border-left: 0.25em solid var(--mdbook-callouts-color); */
+  background: var(--mdbook-callouts-background);
+}
+
+.mdbook-callouts > *:first-child {
+  margin-top: 0;
+}
+
+.mdbook-callouts > *:last-child {
+  margin-bottom: 0;
+}
+
+.mdbook-callouts-title {
+  display: flex;
+  font-weight: 600;
+  align-items: center;
+  line-height: 1;
+  color: var(--mdbook-callouts-color);
+  text-transform: capitalize;
+}
+
+.mdbook-callouts-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.2em;
+  background-color: currentColor;
+  -webkit-mask: no-repeat center / 100%;
+  mask: no-repeat center / 100%;
+  -webkit-mask-image: var(--mdbook-callouts-icon);
+  mask-image: var(--mdbook-callouts-icon);
+}
+
+/* icons at: https://lucide.dev/icons/ */
+
+.mdbook-callouts-info {
+  --mdbook-callouts-color: rgb(var(--color-blue-rgb));
+  --mdbook-callouts-background: rgba(var(--color-blue-rgb), 0.1);
+  /* https://lucide.dev/icons/info */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWluZm8iPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PHBhdGggZD0iTTEyIDE2di00Ii8+PHBhdGggZD0iTTEyIDhoLjAxIi8+PC9zdmc+');
+}
+
+.mdbook-callouts-note {
+  --mdbook-callouts-color: rgb(var(--color-blue-rgb));
+  --mdbook-callouts-background: rgba(var(--color-blue-rgb), 0.1);
+  /* https://lucide.dev/icons/pencil */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXBlbmNpbCI+PHBhdGggZD0iTTE3IDNhMi44NSAyLjgzIDAgMSAxIDQgNEw3LjUgMjAuNSAyIDIybDEuNS01LjVaIi8+PHBhdGggZD0ibTE1IDUgNCA0Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-tip,
+.mdbook-callouts-hint {
+  --mdbook-callouts-color: rgb(var(--color-cyan-rgb));
+  --mdbook-callouts-background: rgba(var(--color-cyan-rgb), 0.1);
+  /* https://lucide.dev/icons/flame */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWZsYW1lIj48cGF0aCBkPSJNOC41IDE0LjVBMi41IDIuNSAwIDAgMCAxMSAxMmMwLTEuMzgtLjUtMi0xLTMtMS4wNzItMi4xNDMtLjIyNC00LjA1NCAyLTYgLjUgMi41IDIgNC45IDQgNi41IDIgMS42IDMgMy41IDMgNS41YTcgNyAwIDEgMS0xNCAwYzAtMS4xNTMuNDMzLTIuMjk0IDEtM2EyLjUgMi41IDAgMCAwIDIuNSAyLjV6Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-important {
+  --mdbook-callouts-color: rgb(var(--color-purple-rgb));
+  --mdbook-callouts-background: rgba(var(--color-purple-rgb), 0.1);
+  /* https://lucide.dev/icons/alert-circle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFsZXJ0LWNpcmNsZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjgiIHkyPSIxMiIvPjxsaW5lIHgxPSIxMiIgeDI9IjEyLjAxIiB5MT0iMTYiIHkyPSIxNiIvPjwvc3ZnPg==');
+}
+
+.mdbook-callouts-success,
+.mdbook-callouts-check,
+.mdbook-callouts-done {
+  --mdbook-callouts-color: rgb(var(--color-green-rgb));
+  --mdbook-callouts-background: rgba(var(--color-green-rgb), 0.1);
+  /* https://lucide.dev/icons/check */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZWNrIj48cGF0aCBkPSJNMjAgNiA5IDE3bC01LTUiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-question,
+.mdbook-callouts-help,
+.mdbook-callouts-faq {
+  --mdbook-callouts-color: rgb(var(--color-pink-rgb));
+  --mdbook-callouts-background: rgba(var(--color-pink-rgb), 0.1);
+  /* https://lucide.dev/icons/help-circle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWhlbHAtY2lyY2xlIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIvPjxwYXRoIGQ9Ik05LjA5IDlhMyAzIDAgMCAxIDUuODMgMWMwIDItMyAzLTMgMyIvPjxwYXRoIGQ9Ik0xMiAxN2guMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-warning,
+.mdbook-callouts-warn {
+  --mdbook-callouts-color: rgb(var(--color-orange-rgb));
+  --mdbook-callouts-background: rgba(var(--color-orange-rgb), 0.1);
+  /* https://lucide.dev/icons/alert-triangle */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWFsZXJ0LXRyaWFuZ2xlIj48cGF0aCBkPSJtMjEuNzMgMTgtOC0xNGEyIDIgMCAwIDAtMy40OCAwbC04IDE0QTIgMiAwIDAgMCA0IDIxaDE2YTIgMiAwIDAgMCAxLjczLTNaIi8+PHBhdGggZD0iTTEyIDl2NCIvPjxwYXRoIGQ9Ik0xMiAxN2guMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-caution {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/shield-alert */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXNoaWVsZC1hbGVydCI+PHBhdGggZD0iTTEyIDIyczgtNCA4LTEwVjVsLTgtMy04IDN2N2MwIDYgOCAxMCA4IDEwIi8+PHBhdGggZD0iTTEyIDh2NCIvPjxwYXRoIGQ9Ik0xMiAxNmguMDEiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-failure,
+.mdbook-callouts-fail,
+.mdbook-callouts-missing {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/x */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXgiPjxwYXRoIGQ9Ik0xOCA2IDYgMTgiLz48cGF0aCBkPSJtNiA2IDEyIDEyIi8+PC9zdmc+');
+}
+
+.mdbook-callouts-error,
+.mdbook-callouts-danger {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/zap */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXphcCI+PHBvbHlnb24gcG9pbnRzPSIxMyAyIDMgMTQgMTIgMTQgMTEgMjIgMjEgMTAgMTIgMTAgMTMgMiIvPjwvc3ZnPg==');
+}
+
+.mdbook-callouts-bug {
+  --mdbook-callouts-color: rgb(var(--color-red-rgb));
+  --mdbook-callouts-background: rgba(var(--color-red-rgb), 0.1);
+  /* https://lucide.dev/icons/bug */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWJ1ZyI+PHBhdGggZD0ibTggMiAxLjg4IDEuODgiLz48cGF0aCBkPSJNMTQuMTIgMy44OCAxNiAyIi8+PHBhdGggZD0iTTkgNy4xM3YtMWEzLjAwMyAzLjAwMyAwIDEgMSA2IDB2MSIvPjxwYXRoIGQ9Ik0xMiAyMGMtMy4zIDAtNi0yLjctNi02di0zYTQgNCAwIDAgMSA0LTRoNGE0IDQgMCAwIDEgNCA0djNjMCAzLjMtMi43IDYtNiA2Ii8+PHBhdGggZD0iTTEyIDIwdi05Ii8+PHBhdGggZD0iTTYuNTMgOUM0LjYgOC44IDMgNy4xIDMgNSIvPjxwYXRoIGQ9Ik02IDEzSDIiLz48cGF0aCBkPSJNMyAyMWMwLTIuMSAxLjctMy45IDMuOC00Ii8+PHBhdGggZD0iTTIwLjk3IDVjMCAyLjEtMS42IDMuOC0zLjUgNCIvPjxwYXRoIGQ9Ik0yMiAxM2gtNCIvPjxwYXRoIGQ9Ik0xNy4yIDE3YzIuMS4xIDMuOCAxLjkgMy44IDQiLz48L3N2Zz4=');
+}
+
+.mdbook-callouts-examples,
+.mdbook-callouts-example {
+  --mdbook-callouts-color: rgb(var(--color-purple-rgb));
+  --mdbook-callouts-background: rgba(var(--color-purple-rgb), 0.1);
+  /* https://lucide.dev/icons/list */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxpc3QiPjxsaW5lIHgxPSI4IiB4Mj0iMjEiIHkxPSI2IiB5Mj0iNiIvPjxsaW5lIHgxPSI4IiB4Mj0iMjEiIHkxPSIxMiIgeTI9IjEyIi8+PGxpbmUgeDE9IjgiIHgyPSIyMSIgeTE9IjE4IiB5Mj0iMTgiLz48bGluZSB4MT0iMyIgeDI9IjMuMDEiIHkxPSI2IiB5Mj0iNiIvPjxsaW5lIHgxPSIzIiB4Mj0iMy4wMSIgeTE9IjEyIiB5Mj0iMTIiLz48bGluZSB4MT0iMyIgeDI9IjMuMDEiIHkxPSIxOCIgeTI9IjE4Ii8+PC9zdmc+');
+}
+
+.mdbook-callouts-quote {
+  --mdbook-callouts-color: rgb(158, 158, 158);
+  --mdbook-callouts-background: rgba(158, 158, 158, 0.1);
+  /* https://lucide.dev/icons/quote */
+  --mdbook-callouts-icon: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXF1b3RlIj48cGF0aCBkPSJNMyAyMWMzIDAgNy0xIDctOFY1YzAtMS4yNS0uNzU2LTIuMDE3LTItMkg0Yy0xLjI1IDAtMiAuNzUtMiAxLjk3MlYxMWMwIDEuMjUuNzUgMiAyIDIgMSAwIDEgMCAxIDF2MWMwIDEtMSAyLTIgMnMtMSAuMDA4LTEgMS4wMzFWMjBjMCAxIDAgMSAxIDF6Ii8+PHBhdGggZD0iTTE1IDIxYzMgMCA3LTEgNy04VjVjMC0xLjI1LS43NTctMi4wMTctMi0yaC00Yy0xLjI1IDAtMiAuNzUtMiAxLjk3MlYxMWMwIDEuMjUuNzUgMiAyIDJoLjc1YzAgMi4yNS4yNSA0LTIuNzUgNHYzYzAgMSAwIDEgMSAxeiIvPjwvc3ZnPg==');
+}
+
+
+.ayu {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.light {
+  --color-red-rgb: 233, 49, 71;
+  --color-red: #e93147;
+  --color-orange-rgb: 236, 117, 0;
+  --color-orange: #ec7500;
+  --color-yellow-rgb: 224, 172, 0;
+  --color-yellow: #e0ac00;
+  --color-green-rgb: 8, 185, 78;
+  --color-green: #08b94e;
+  --color-cyan-rgb: 0, 191, 188;
+  --color-cyan: #00bfbc;
+  --color-blue-rgb: 8, 109, 221;
+  --color-blue: #086ddd;
+  --color-purple-rgb: 120, 82, 238;
+  --color-purple: #7852ee;
+  --color-pink-rgb: 213, 57, 132;
+  --color-pink: #d53984;
+}
+
+.coal {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.navy {
+  --color-red-rgb: 251, 70, 76;
+  --color-red: #fb464c;
+  --color-orange-rgb: 233, 151, 63;
+  --color-orange: #e9973f;
+  --color-yellow-rgb: 224, 222, 113;
+  --color-yellow: #e0de71;
+  --color-green-rgb: 68, 207, 110;
+  --color-green: #44cf6e;
+  --color-cyan-rgb: 83, 223, 221;
+  --color-cyan: #53dfdd;
+  --color-blue-rgb: 2, 122, 255;
+  --color-blue: #027aff;
+  --color-purple-rgb: 168, 130, 255;
+  --color-purple: #a882ff;
+  --color-pink-rgb: 250, 153, 205;
+  --color-pink: #fa99cd;
+}
+
+.rust {
+  --color-red-rgb: 233, 49, 71;
+  --color-red: #e93147;
+  --color-orange-rgb: 236, 117, 0;
+  --color-orange: #ec7500;
+  --color-yellow-rgb: 224, 172, 0;
+  --color-yellow: #e0ac00;
+  --color-green-rgb: 8, 185, 78;
+  --color-green: #08b94e;
+  --color-cyan-rgb: 0, 191, 188;
+  --color-cyan: #00bfbc;
+  --color-blue-rgb: 8, 109, 221;
+  --color-blue: #086ddd;
+  --color-purple-rgb: 120, 82, 238;
+  --color-purple: #7852ee;
+  --color-pink-rgb: 213, 57, 132;
+  --color-pink: #d53984;
+}
+</style>
+<h1 id="minimal-edition-driver-me-driver"><a class="header" href="#minimal-edition-driver-me-driver">Minimal Edition Driver (ME Driver)</a></h1>
+<hr>
+<p>The Epinephrine <code>Minimal Edition 2</code> driver is an evolution of the Minimal Edition Driver of the popular, Minimal Edition CFW also known as (L)ME CFW.</p>
+<div class="mdbook-callouts mdbook-callouts-note">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  note
+</p>
+
+<p>This has nothing to do with Media Engine, which also is abbreviated as <code>ME</code>.</p>
+</div>
+
+<h2 id="evolution-of-the-driver-2"><a class="header" href="#evolution-of-the-driver-2">Evolution of the driver</a></h2>
+<p>The ME driver was originally developed by neur0n for their custom firmware (L)ME CFW. It started as a reverse engineer of the <code>March33 Driver</code> when it was closed-source, but then it started to evolve as the ME CFW was being developed. Back then, the ME CFW also called this driver as “March33 Drive” for it’s history of the March33 driver reversed engineered. The following version is a ludic version number; we will consider all reported changes as the last release of the same base OFW version.</p>
+<ul>
+<li><strong><code>ME Driver 1.0</code></strong>: A reverse-engineered version of the <code>March33</code> driver made available in the ME CFW.</li>
+<li><strong><code>ME Driver 1.5</code></strong>: An natural evolution fo the <code>MinimalEdition</code> driver by the latest release of the ME CFW.</li>
+</ul>
+<p>Now that we’ve covered the history and evolution of the <code>MinimalEdition</code> Driver over the years, we can focus on the changes made to it in EPI that justify it being called <code>MinimalEdition Driver 2</code>.</p>
+<ul>
+<li><strong><code>Support for other compressed formats</code></strong>: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only <code>CSO</code> and <code>ZSO</code>, but also adds support for <code>DAX</code> as seen on ME’s March33 update, as well as the rarely seen before <code>JSO</code> and <code>CSOv2</code> formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.</li>
+<li><strong><code>Emulation of Empty UMD Drive</code></strong>: On older versions of ME Driver, as well as other ISO Drivers except Inferno 2, it was never intended for the driver to run without an ISO file to be mounted, thus several bugs existed that caused malfunction when the driver was used without an ISO file specified, this prevented emulation of an empty UMD drive, which was needed on PS Vita to run certain homebrew that checked for a UMD. The main bug was in the implementation of the function <code>sceUmdCheckMedium</code>, a boolean function used to check if a UMD is inserted in the drive, on ISO driver this function was hardcoded to always return true, except if an ISO driver is not specified, then it was hardcoded to wait in an infinite loop until one is (which never happens). The solution used by eCFW such as ARK (up to ARK-3) and TN-CEF (including Adrenaline) was to include a small dummy fake.cso file to mount when no ISO file is specified. On the new <code>ME Driver 2</code> driver, among other things, this function has been corrected to behave exactly like the original, simply returning False if no ISO has been specified, thus allowing the ISO driver to simulate an empty UMD drive by loading it without an ISO file specified.</li>
 <li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks.</li>
 <li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.</li>
 </ul>
@@ -8015,6 +8289,9 @@ cmake --build build
 </li>
 <li>
 <p>Introduce March33 Driver v2: An evolution of the March33 ISO driver <strong>[<a href="#march33-driver">docs</a>]</strong></p>
+</li>
+<li>
+<p>Introduce MinimalEdition Driver v2: An evolution of the ME ISO driver <strong>[<a href="#minimal-edition-driver-me-driver">docs</a>]</strong></p>
 </li>
 <li>
 <p>Introduce an improved implementation of the GalaxyController <strong>[<a href="#galaxy-controller">docs</a>]</strong></p>

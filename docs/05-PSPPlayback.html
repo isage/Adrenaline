@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-7b887929.js";
+            window.path_to_searchindex_js = "searchindex-4a8c9325.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-f070d2aa.js"></script>
+        <script src="toc-06adaeb4.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -414,7 +414,7 @@
 </style>
 <h1 id="psp-playback"><a class="header" href="#psp-playback">PSP Playback</a></h1>
 <hr>
-<p>Epinephrine allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having three available drivers: <code>Inferno 2</code>, <code>March33 2</code>, and <code>Sony's NP9660</code></p>
+<p>Epinephrine allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having four available drivers: <code>Inferno 2</code>, <code>March33 2</code>, <code>MinimalEdition 2</code>, and <code>Sony's NP9660</code></p>
 <p>There are three formats of PSP game images: <code>PBP</code>, <code>ISO</code>, and <code>Compressed ISO</code>.</p>
 <p>The <code>PBP</code> image format is the official Sony format. It is the format used for PlayStation Network (PSN) digital games, game updates, and game DLCs. For PSN games, Epinephrine CFW always uses the original <code>Sony's NP9660</code> driver. Usually, <code>PBP</code> files live on <code>???0:/pspemu/PSP/GAME/⟨TITLE_ID⟩/</code> directory.</p>
 <p>The <code>ISO</code> image format is a 1:1 copy of a Universal Media Disc (UMD), while <code>Compressed ISO</code> is an <code>ISO</code> image compressed in some way to reduce space usage. There are a few competing formats for <code>Compressed ISO</code>: <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>, each with different tradeoffs. Epinephrine CFW supports all of those formats and allows you to choose between the three UMDemu drivers available. All of those image options should go in <code>??0:/pspemu/ISO/</code> directory.</p>
@@ -451,7 +451,19 @@
 </ul>
 <h3 id="march-33-2"><a class="header" href="#march-33-2">March 33 2</a></h3>
 <p>March33 driver was originally developed for the March33 CFW by the M33 Team. Epinephrine comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.</p>
-<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
+<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code>, <code>ME Driver</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
+<ul>
+<li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
+<li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
+<li><strong>Configurable seek and read speed delays</strong>: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+<ul>
+<li>By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.</li>
+</ul>
+</li>
+</ul>
+<h3 id="minimal-edition-2"><a class="header" href="#minimal-edition-2">Minimal Edition 2</a></h3>
+<p>Minimal Edition Driver (a.k.a. ME Driver) was originally developed for the Minimal Edition CFW by <strong>neur0n</strong>. Epinephrine comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.</p>
+<p>This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than <code>NP9660</code>, <code>March33 Driver</code> and <code>Inferno</code>. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.</p>
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
 <li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
@@ -463,7 +475,7 @@
 </ul>
 <h3 id="sonys-np9660"><a class="header" href="#sonys-np9660">Sony’s NP9660</a></h3>
 <p>It is the original PSP UMDemu driver from Sony, but with patches to trick it into running ISO and Compressed ISO formats. This driver is also the one used on <code>PBP</code> games; it has guaranteed compatibility with all games that Sony released on PSN.</p>
-<p>This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
+<p>This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than <code>March33 Driver</code>, <code>ME Driver</code> and <code>Inferno</code>. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.</p>
 <ul>
 <li><strong>Support for all ISO formats</strong>: <code>ISO</code>, <code>CSO</code>, <code>CSOv2</code>, <code>JSO</code>, <code>ZSO</code>, and <code>DAX</code>.</li>
 <li><strong>Improved Compressed ISO read speeds</strong>: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.</li>
