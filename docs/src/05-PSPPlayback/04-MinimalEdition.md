@@ -3,6 +3,9 @@
 
 The Epinephrine `Minimal Edition 2` driver is an evolution of the Minimal Edition Driver of the popular, Minimal Edition CFW also known as (L)ME CFW.
 
+> [!NOTE]
+> This has nothing to do with Media Engine, which also is abbreviated as `ME`.
+
 
 ## Evolution of the driver
 
