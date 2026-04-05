@@ -17,7 +17,7 @@
 
 
 SceUID g_umd_sema = -1;	//data2740
-SceUID umdfd = -1;		//data23D0
+// SceUID umdfd = -1;		//data23D0
 static int g_umd_file_len = 0x7FFFFFFF;	//data23D4 (sector len)
 //int DiscType = 0x10;	//
 //int DiscFlag = 1;		//
@@ -25,7 +25,7 @@ static int g_umd_file_len = 0x7FFFFFFF;	//data23D4 (sector len)
 static u8 *g_sectorbuf = NULL;	//data2484
 //int data7DE4 = -1;		//
 //SceOff umd_cur_offset; //
-static char *g_umdfilename;	//data2790
+// static char *g_umdfilename;	//data2790
 
 
 static u8 g_umd_seek = 0;
@@ -88,7 +88,7 @@ static int umd9660_init(PspIoDrvArg * arg) {
 	memset(g_io_status , 0 , sizeof(IO_STATUS) * 8);
 
 	g_read_arg.offset = 0x10*SECTOR_SIZE;
-	g_read_arg.address = buff;
+	g_read_arg.address = g_sectorbuf;
 	g_read_arg.size = SECTOR_SIZE;
 
 	iso_read(&g_read_arg);
@@ -515,7 +515,10 @@ int data2248[4] = { -1 , -1 , -1 , -1};
 
 //sub_00000090
 int march_init() {
-	g_umdfilename = sctrlSEGetUmdFile();
+	// Get ISO path
+	memset(g_iso_fn, 0, sizeof(g_iso_fn));
+	strncpy(g_iso_fn, sctrlSEGetUmdFile(), sizeof(g_iso_fn)-1);
+	logmsg3("[INFO] UMD File: %s\n", g_iso_fn);
 
 	int r = sceIoAddDrv( &umd9660_driver );
 	if (r < 0) {
