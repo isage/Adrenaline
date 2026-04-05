@@ -17,16 +17,6 @@
 
 int sceKernelCancelSema(int semaid, int signal, int *result);
 
-/* UMD Info struct
-typedef struct pspUmdInfo
-{
-	// Set to sizeof(pspUmdInfo)
-	unsigned int size;
-	// One or more of ::pspUmdTypes
-	unsigned int type;
-} pspUmdInfo;
-*/
-
 extern int g_game_group;
 
 static int g_umd_status = 0;
@@ -34,14 +24,11 @@ static int g_umdcbid = -1;
 static int g_umd_error_stat = 0;
 static int g_umd_sema_id = 0;
 
-//int event_id;
-
 int sceUmd_Init() {
 	g_umd_status = PSP_UMD_READY | PSP_UMD_INITED | PSP_UMD_PRESENT;
 	g_umd_error_stat = 0;
 	g_umdcbid =-1;
 
-//	event_id = sceKernelCreateEventFlag("SceMediaManUser" , 513 , 0 , 0 );
 	g_umd_sema_id = sceKernelCreateSema("MediaManSema" ,0 ,0 ,1 ,NULL);
 
 	return (0 < g_umd_sema_id) ? 0 : g_umd_sema_id;
@@ -50,8 +37,7 @@ int sceUmd_Init() {
 void pspUmdCallback(int a0) {
 	logmsg4("[DEBUG]: %s: stat=0x%08X -> ()\n", __func__, a0);
 	if (g_umdcbid >= 0) {
-		//SceUID 	cb,int 	arg2
-		sceKernelNotifyCallback( g_umdcbid , a0);
+		sceKernelNotifyCallback(g_umdcbid , a0);
 	}
 }
 
@@ -96,8 +82,6 @@ int sceUmdActivate(int unit, const char *drive) {
 	int k1 = pspSdkSetK1(0);
 	int res = 0;
 	int sp = 1;
-
-//	cls(0x0000FF00);
 
 	if (strcmp(drive,"disc0:") != 0) {
 		pspSdkSetK1(k1);
@@ -200,8 +184,7 @@ int sceUmdWaitDriveStatCB(int stat, unsigned int timeout) {
 int sceUmdCancelWaitDriveStat(void) {
 	int k1 = pspSdkSetK1(0);
 
-//	int r = sceKernelCancelEventFlag( event_id , UmdStatus  , 0);
-	int r =sceKernelCancelSema( g_umd_sema_id , -1 /* UmdStatus */ , NULL);
+	int r = sceKernelCancelSema( g_umd_sema_id , -1 /* UmdStatus */ , NULL);
 
 	pspSdkSetK1(k1);
 	logmsg("%s: () -> 0x%08X\n", __func__, r);
@@ -234,19 +217,15 @@ void sceUmdSetDriveStatus(int stat) {
 		g_umd_status &= 0xFFFFFFDF;
 	}
 
-	// PSP_UMD_READY
 	if ((stat | g_umd_status ) & PSP_UMD_READY) {
 		g_umd_status |= stat;
 		g_umd_status |= PSP_UMD_INITED;
 	}
 
-	// PSP_UMD_INITED
 	if ( (stat|g_umd_status) & PSP_UMD_INITED) {
 		g_umd_status |= PSP_UMD_PRESENT;
 		sceUmdSetErrorStatus(0);
 	}
-
-//	sceKernelSetEventFlag( event_id , UmdStatus );
 
 	sceKernelCpuResumeIntr(intr);
 }

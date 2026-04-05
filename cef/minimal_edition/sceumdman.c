@@ -4,7 +4,6 @@
 #include <pspsdk.h>
 #include <pspkernel.h>
 
-// #include <systemctrl_me.h>
 #include <systemctrl.h>
 #include <psperror.h>
 #include <cfwmacros.h>

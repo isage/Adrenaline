@@ -15,26 +15,16 @@
 #include "umd9660_driver.h"
 #include "../bits/iso_common.h"
 
+void sceKernelSetQTGP3(void*);
 
 SceUID g_umd_sema = -1;	//data2740
-// SceUID umdfd = -1;		//data23D0
 static int g_umd_file_len = 0x7FFFFFFF;	//data23D4 (sector len)
-//int DiscType = 0x10;	//
-//int DiscFlag = 1;		//
-//int umd_cur_sector = -1;//
 static u8 *g_sectorbuf = NULL;	//data2484
-//int data7DE4 = -1;		//
-//SceOff umd_cur_offset; //
-// static char *g_umdfilename;	//data2790
-
 
 static u8 g_umd_seek = 0;
 static u8 g_umd_speed = 0;
 static u32 g_cur_offset = 0;
 static u32 g_last_read_offset = 0;
-
-
-void sceKernelSetQTGP3(void*);
 
 typedef struct {
 	int flag;
