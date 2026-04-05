@@ -1,7 +1,7 @@
 # PSP Playback
 ---
 
-Epinephrine allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having three available drivers: `Inferno 2`, `March33 2`, and `Sony's NP9660`
+Epinephrine allows the user to execute PSP game images, making it possible to play digital copies of PSP games on PlayStation Vita or PSTV. To make it possible, it uses PSP UMDemu drivers, having four available drivers: `Inferno 2`, `March33 2`, `MinimalEdition 2`, and `Sony's NP9660`
 
 There are three formats of PSP game images: `PBP`, `ISO`, and `Compressed ISO`.
 
@@ -35,7 +35,18 @@ This is the default UMDemu ISO driver and the one with the most person-hours put
 
 March33 driver was originally developed for the March33 CFW by the M33 Team. Epinephrine comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.
 
-This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than `NP9660` and `Inferno`. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.
+This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than `NP9660`, `ME Driver` and `Inferno`. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.
+
+- **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`.
+- **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.
+- **Configurable seek and read speed delays**: This allows for simulating the disc seek and read time for the drive to behave more similarly as reading from a physical UMD disc, which allows bypassing some forms of anti-CFW checks in some games.
+    - By default, it is automatically set for games known to include such checks, but it is configurable in the case a user finds a game with checks that are not automatically handled.
+
+### Minimal Edition 2
+
+Minimal Edition Driver (a.k.a. ME Driver) was originally developed for the Minimal Edition CFW by **neur0n**. Epinephrine comes with a modified version with ISO and Compressed ISO read improvements and bug fixes; other than that, there were no other significant changes in the source code.
+
+This driver is made available mostly for compatibility reasons, as historically some games had a better time with this driver than `NP9660`, `March33 Driver` and `Inferno`. There are many PSP games and PSP modded games out there; there is a slight chance it can still have better compatibility in niche cases.
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`.
 - **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.
@@ -46,7 +57,7 @@ This driver is made available mostly for compatibility reasons, as historically 
 
 It is the original PSP UMDemu driver from Sony, but with patches to trick it into running ISO and Compressed ISO formats. This driver is also the one used on `PBP` games; it has guaranteed compatibility with all games that Sony released on PSN.
 
-This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than `March33` and `Inferno`. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.
+This driver is made available for ISO mostly for compatibility reasons, as historically some games had a better time with this driver than `March33 Driver`, `ME Driver` and `Inferno`. There are many PSP games out there, so there is a slight chance it can still have better compatibility in niche cases.
 
 - **Support for all ISO formats**: `ISO`, `CSO`, `CSOv2`, `JSO`, `ZSO`, and `DAX`.
 - **Improved Compressed ISO read speeds**: Usage of a more efficient algorithm, block offsets cache, and a more aggressive form of the speedup hacks.

@@ -22,7 +22,8 @@
 	- **Migration instructions below**
 - Update the Inferno Driver to Inferno 2 **\[[docs](./05-PSPPlayback/02-Inferno.md)\]**
 - Introduce March33 Driver v2: An evolution of the March33 ISO driver **\[[docs](./05-PSPPlayback/03-March33.md)\]**
-- Introduce an improved implementation of the GalaxyController **\[[docs](./05-PSPPlayback/04-Galaxy.md)\]**
+- Introduce MinimalEdition Driver v2: An evolution of the ME ISO driver **\[[docs](./05-PSPPlayback/04-MinimalEdition.md)\]**
+- Introduce an improved implementation of the GalaxyController **\[[docs](./05-PSPPlayback/05-Galaxy.md)\]**
 - Add support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver. **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
 - Introduce CFW Settings on the XMB **\[[docs](./10-XmbCfwMenus.md#-adrenaline-cfw-settings)\]**
 - Introduce Plugin Manager on the XMB **\[[docs](./10-XmbCfwMenus.md#-plugins-manager)\]**
