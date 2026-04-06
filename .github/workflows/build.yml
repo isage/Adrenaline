@@ -27,7 +27,9 @@ jobs:
 
     steps:
       - name: Install Dependencies
-        run: sudo apt-get install build-essential cmake pkgconf libreadline8 libusb-0.1 libgpgme11 libarchive-tools fakeroot python3 wget
+        run: |
+         sudo apt-get update
+         sudo apt-get install build-essential cmake pkgconf libreadline8 libusb-0.1 libgpgme11 libarchive-tools fakeroot python3 wget
 
       - name: Install Dependencies 2
         uses: dtolnay/rust-toolchain@master
