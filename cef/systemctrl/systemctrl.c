@@ -23,6 +23,7 @@
 #include <pspcrypt.h>
 #include <psperror.h>
 #include <pspintrman.h>
+#include <pspsysmem_kernel.h>
 #include <pspintrman_kernel.h>
 #include <psputilsforkernel.h>
 #include <pspiofilemgr_kernel.h>
@@ -715,4 +716,17 @@ u32 sctrlHENFindRefInGlobals(char* libname, u32 addr, u32 ptr){
     while (VREAD32(addr += 4) != ptr);
 
     return addr;
+}
+
+PspSysMemPartition* sctrlGetMemoryPartition(int partition) {
+    static PspSysMemPartition *(* GetPartition)(int partition) = NULL;
+    if (GetPartition == NULL){
+        for (u32 addr = SYSMEM_TEXT; ; addr+=4){
+            if (_lw(addr) == 0x2C85000D){
+                GetPartition = (void*)(addr-4);
+                break;
+            }
+        }
+    }
+    return GetPartition(partition);
 }
