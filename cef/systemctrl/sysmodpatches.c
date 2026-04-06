@@ -88,30 +88,15 @@ static int protect_pspemu_mem() {
 
 int ApplyMemory() {
 	if (g_rebootex_config.ram2 != EXTRA_RAM_SETTABLE && (g_rebootex_config.ram2 + g_rebootex_config.ram11) <= 52) {
-		PspSysMemPartition *(* GetPartition)(int partition) = NULL;
 		PspSysMemPartition *partition;
 		u32 user_size;
 
-		for (u32 i = 0; i < 0x4000; i += 4) {
-			u32 addr = 0x88000000 + i;
-			u32 data = VREAD32(addr);
-
-			if (data == 0x2C85000D) {
-				GetPartition = (void *)(addr - 4);
-				break;
-			}
-		}
-
-		if (!GetPartition) {
-			return SCE_KERR_ILLEGAL_ADDR;
-		}
-
 		user_size = (g_rebootex_config.ram2 * 1024 * 1024);
-		partition = GetPartition(PSP_MEMORY_PARTITION_USER);
+		partition = sctrlGetMemoryPartition(PSP_MEMORY_PARTITION_USER);
 		partition->size = user_size;
 		partition->data->size = (((user_size >> 8) << 9) | 0xFC);
 
-		partition = GetPartition(11);
+		partition = sctrlGetMemoryPartition(11);
 		partition->size = (g_rebootex_config.ram11 * 1024 * 1024);
 		partition->address = 0x88800000 + user_size;
 		partition->data->size = (((partition->size >> 8) << 9) | 0xFC);
@@ -131,35 +116,42 @@ void ApplyAndResetMemory() {
 void UnprotectExtraMemory() {
 	u32 *prot = (u32 *)0xBC000040;
 
+	// Allow user code to read/write to extra ram
 	for (int i = 0; i < 0x10; i++) {
 		prot[i] = 0xFFFFFFFF;
+	}
+
+	// Allow user to allocate on extra ram
+	PspSysMemPartition* partition = sctrlGetMemoryPartition(11);
+	if (partition){
+		partition->address &= 0x7FFFFFFF;
 	}
 }
 
 static int exitToVsh(SceSize args, void *argp) {
-    int k1 = pspSdkSetK1(0);
+	int k1 = pspSdkSetK1(0);
 
-    // Refuse operation in Save dialog
-    if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) {
+	// Refuse operation in Save dialog
+	if(sceKernelFindModuleByName("sceVshSDUtility_Module") != NULL) {
 		return 0;
 	}
 
-    // Refuse operation in Dialog
-    if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) {
+	// Refuse operation in Dialog
+	if(sceKernelFindModuleByName("sceDialogmain_Module") != NULL) {
 		return 0;
 	}
 
-    int (*_sceDisplaySetHoldMode)(int) = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
-    if (_sceDisplaySetHoldMode) _sceDisplaySetHoldMode(0);
+	int (*_sceDisplaySetHoldMode)(int) = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x7ED59BC4);
+	if (_sceDisplaySetHoldMode) _sceDisplaySetHoldMode(0);
 
-    // reset some flags
-    SetUmdFile("");
-    sctrlSESetBootConfFileIndex(MODE_UMD);
+	// reset some flags
+	SetUmdFile("");
+	sctrlSESetBootConfFileIndex(MODE_UMD);
 
-    int res = sctrlKernelExitVSH(NULL);
+	int res = sctrlKernelExitVSH(NULL);
 
-    pspSdkSetK1(k1);
-    return res;
+	pspSdkSetK1(k1);
+	return res;
 }
 
 static void startExitThread(){
