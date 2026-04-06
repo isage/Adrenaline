@@ -291,7 +291,7 @@ void OnInitMenuPspConfigPatched() {
 			loadPlugins();
 			for (int i = 0; i < g_plugins.count; i++) {
 				Plugin *plugin = (Plugin *)(g_plugins.table[i]);
-				if (plugin->name != NULL) {
+				if (plugin->name != NULL && plugin->surname != NULL) {
 					AddSysconfContextItem(plugin->name, plugin->surname, plugin->name);
 				}
 			}
@@ -344,7 +344,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 
 				char *p = paf_strrchr(plugin->path, '/');
 				char g_buf[64] = {0};
-				if (p) {
+				if (p != NULL && plugin->runlevel != NULL) {
 					char *p2 = paf_strchr(p + 1, '.');
 					if (p2) {
 						int len = (int)(p2 - (p + 1));
@@ -358,7 +358,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 					}
 				} else {
 					char *p2 = paf_strchr(file, '.');
-					if (p2) {
+					if (p2 != NULL && plugin->runlevel != NULL) {
 						int len = (int)(p2 - (file));
 
 						paf_snprintf(g_buf, 63, " [%s]", plugin->runlevel);

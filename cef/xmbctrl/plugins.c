@@ -284,11 +284,16 @@ void savePlugins() {
 	for (int i = 0; i < g_plugins.count; i++) {
 		Plugin *plugin = (Plugin *)(g_plugins.table[i]);
 
+		// Skip bad lines
+		if (plugin->name == NULL || plugin->runlevel == NULL || plugin->surname == NULL) {
+			continue;
+		}
+
 		if (plugin->active == PLUGIN_REMOVED) {
 			continue;
 		}
 
-		if (plugin->name != NULL) {
+		if (plugin->name != NULL && plugin->runlevel != NULL) {
 			char buf[256] = {0};
 			char *enabled = (plugin->active) ? "on" : "off";
 			paf_sprintf(buf, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
