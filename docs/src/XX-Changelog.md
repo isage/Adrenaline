@@ -78,6 +78,7 @@
 - **DEV:** Add NID translation table to `sceAudioRouting_driver` (Improve plugin compatibility)
 - **DEV:** Create, use and share with ARK a PSP CFW SDK
 - **DEV:** Split patches to make vPSP possible to it's own module: `Pentazemin`
+- **DEV:** Load user plugins to extra memory if possible
 
 - **Internal:** Some code reorganization
 - **Internal:** Code clean ups
