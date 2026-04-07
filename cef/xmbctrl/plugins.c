@@ -2,6 +2,8 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
+#include <adrenaline_log.h>
+
 #include "list.h"
 #include "xmbctrl.h"
 #include "plugins.h"
@@ -280,9 +282,11 @@ void loadPlugins(){
 		paf_strcpy(plugin->path, sample_plugin_path);
 		add_list(&g_plugins, plugin);
 	}
+	logmsg("[DEBUG]: Plugin Manager: Plugin file loaded\n");
 }
 
 void savePlugins() {
+	logmsg("[DEBUG]: Plugin Manager: Plugin file saved\n");
 	if (g_plugins.count == 0) {
 		return;
 	}

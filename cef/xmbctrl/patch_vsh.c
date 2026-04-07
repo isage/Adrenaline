@@ -21,6 +21,8 @@
 #include <vshctrl.h>
 #include <cfwmacros.h>
 
+#include <adrenaline_log.h>
+
 #include "xmbctrl.h"
 #include "utils.h"
 
@@ -293,6 +295,7 @@ void OnInitMenuPspConfigPatched() {
 				Plugin *plugin = (Plugin *)(g_plugins.table[i]);
 				if (plugin->name != NULL && plugin->surname != NULL) {
 					AddSysconfContextItem(plugin->name, plugin->surname, plugin->name);
+					logmsg("[DEBUG]: Plugin Manager: Registered %s\n", plugin->name);
 				}
 			}
 		}
@@ -369,6 +372,8 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 						file[len+rl_len] = '\0';
 					}
 				}
+
+				logmsg("[DEBUG]: Plugin Manager: Got %s\n", plugin->name);
 
 				utf8_to_unicode((wchar_t *)g_user_buffer, file);
 				return (wchar_t *)g_user_buffer;

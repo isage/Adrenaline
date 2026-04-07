@@ -14,6 +14,7 @@ add_cef_prx(xmbctrl USER
     pspvsh
     pspvshctrl
     pspkubridge
+    pspsysc_user
     pspvshcommongui
     pspsystemctrl_user
 )

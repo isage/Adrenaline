@@ -19,10 +19,12 @@ LIBS = -lpsppaf -lpspvsh -lpspvshctrl -lpspkubridge -lpspvshcommongui -lpspsyste
 
 ifdef XMBCTRL_DEBUG
 CFLAGS += -DDEBUG=$(XMBCTRL_DEBUG)
+LIBS += -lpspsysc_user
 endif
 
 ifdef DEBUG
 CFLAGS += -DDEBUG=$(DEBUG)
+LIBS += -lpspsysc_user
 endif
 
 include ../lib/build_prx.mak
