@@ -327,7 +327,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 				if (paf_strcmp(name, g_menu_items[i].item) == 0) {
 					if (g_menu_items[i].advanced) {
 						static char buff[128];
-						paf_sprintf(buff, "%s %s", ADVANCED, g_menu_items[i].item);
+						paf_snprintf(buff, 128, ADVANCED " %s", g_menu_items[i].item);
 						utf8_to_unicode((wchar_t *)g_user_buffer, buff);
 					}else {
 						utf8_to_unicode((wchar_t *)g_user_buffer, g_menu_items[i].item);
@@ -339,8 +339,9 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 			if (paf_strncmp(name, "plugin_", 7) == 0) {
 				u32 i = paf_strtoul(name + 7, NULL, 10);
 				Plugin *plugin = (Plugin *)(g_plugins.table[i]);
-				static char file[128];
-				paf_strcpy(file, plugin->path);
+				static char file[128] = {0};
+				paf_memset(file, 0, 128);
+				paf_strncpy(file, plugin->path, 127);
 
 				char *p = paf_strrchr(plugin->path, '/');
 				char g_buf[64] = {0};
@@ -380,11 +381,11 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 		}
 
 		if (paf_strcmp(name, "msgtop_sysconf_cfwconfig") == 0) {
-			paf_sprintf(g_buf, "%s Epinephrine CFW Settings", STAR);
+			paf_snprintf(g_buf, 63, STAR " Epinephrine CFW Settings");
 			utf8_to_unicode((wchar_t *)g_user_buffer, g_buf);
 			return (wchar_t *)g_user_buffer;
 		} else if (paf_strcmp(name, "msgtop_sysconf_pluginsmgr") == 0) {
-			paf_sprintf(g_buf, "%s Plugins Manager", STAR);
+			paf_snprintf(g_buf, 63, STAR " Plugins Manager");
 			utf8_to_unicode((wchar_t *)g_user_buffer, g_buf);
 			return (wchar_t *)g_user_buffer;
 		}

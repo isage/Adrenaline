@@ -13,7 +13,7 @@ static char* sample_plugin_path = "ms0:/SEPLUGINS/example.prx";
 static int g_cur_place = 0;
 
 static int isRunlevelEnabled(char* line) {
-	return (paf_strcasecmp(line, "on") == 0 || paf_strcasecmp(line, "1") == 0 || paf_strcasecmp(line, "enabled") == 0 || paf_strcasecmp(line, "true") == 0);
+	return (paf_strncasecmp(line, "on", 2) == 0 || paf_strncasecmp(line, "1", 1) == 0 || paf_strncasecmp(line, "enabled", 7) == 0 || paf_strncasecmp(line, "true", 4) == 0);
 }
 
 static int isspace(int c) {
@@ -167,8 +167,10 @@ static void ProcessPluginFile(char* path, int (process_line)(char*, char*, char*
 			while ((nread=readLine((char*)buf+total_read, line)) > 0) {
 				total_read += nread;
 				if (line[0] == 0) continue; // empty line
-				char* dupline = paf_malloc(paf_strlen(line)+1);
-				paf_strcpy(dupline, line);
+				int dup_line_len = paf_strlen(line)+1;
+				char* dupline = paf_malloc(dup_line_len);
+				paf_memset(dupline, 0, dup_line_len);
+				paf_strncpy(dupline, line, dup_line_len);
 				// Process Line
 				if (processLine(strtrim(line), process_line)) {
 					paf_free(dupline);
@@ -207,20 +209,39 @@ static void processCustomLine(char* line) {
 static void processPlugin(char* runlevel, char* path, char* enabled) {
 	int n = g_plugins.count;
 	char* name = paf_malloc(20);
+	if (name == NULL) {
+		return;
+	}
+	paf_memset(name, 0, 20);
 	paf_snprintf(name, 20, "plugin_%d", n);
 
 	char* surname = paf_malloc(20);
+	if (surname == NULL) {
+		return;
+	}
+	paf_memset(surname, 0, 20);
 	paf_snprintf(surname, 20, "plugins%d", n);
 
-	int path_len = paf_strlen(path) + 10;
+	int path_len = paf_strlen(path) + 1;
 	char* full_path = (char*)paf_malloc(path_len);
+	if (full_path == NULL) {
+		return;
+	}
+	paf_memset(full_path, 0, path_len);
 	paf_snprintf(full_path, path_len, "%s", path);
 
-	int run_level_len = paf_strlen(runlevel) + 10;
+	int run_level_len = paf_strlen(runlevel) + 1;
 	char* run_level = (char*)paf_malloc(run_level_len);
+	if (run_level == NULL) {
+		return;
+	}
+	paf_memset(run_level, 0, run_level_len);
 	paf_snprintf(run_level, run_level_len, "%s", runlevel);
 
 	Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
+	if (plugin == NULL) {
+		return;
+	}
 	plugin->name = name;
 	plugin->surname = surname;
 	plugin->path = full_path;
