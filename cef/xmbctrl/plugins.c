@@ -275,7 +275,15 @@ void savePlugins() {
 
 	sctrlSEGetConfig(&g_cfw_config);
 
-	int fd = sceIoOpen("ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	SceIoStat stat;
+	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
+
+	int fd = -1;
+	if (epiplugins_exists) {
+		fd = sceIoOpen("ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	} else {
+		fd = sceIoOpen("ms0:/seplugins/plugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	}
 
 	if (fd < 0) {
 		return;
@@ -284,20 +292,20 @@ void savePlugins() {
 	for (int i = 0; i < g_plugins.count; i++) {
 		Plugin *plugin = (Plugin *)(g_plugins.table[i]);
 
-		// Skip bad lines
-		if (plugin->name == NULL || plugin->runlevel == NULL || plugin->surname == NULL) {
-			continue;
-		}
-
 		if (plugin->active == PLUGIN_REMOVED) {
 			continue;
 		}
 
 		if (plugin->name != NULL && plugin->runlevel != NULL) {
-			char buf[256] = {0};
+			static char buf[256] = {0};
 			char *enabled = (plugin->active) ? "on" : "off";
-			paf_sprintf(buf, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
+			paf_memset(buf, 0, 256);
+			paf_snprintf(buf, 256, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
 			sceIoWrite(fd, buf, paf_strlen(buf));
+
+		  // Custom line
+		} else {
+			sceIoWrite(fd, plugin->path, paf_strlen(plugin->path));
 		}
 	}
 
