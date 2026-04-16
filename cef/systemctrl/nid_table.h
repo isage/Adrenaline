@@ -549,6 +549,8 @@ OldNewNid sceDisplay_driver_nid[] = {
 	{ 0x643F3841, 0x3E17FE8D },
 	{ 0x820C6038, 0xF338AAE0 },
 	{ 0x66961521, 0x8475E040 },
+	{ 0x40F1469C, 0xA70066A1 }, // sceDisplayWaitVblankStartMulti
+	{ 0x77ED8B3A, 0x113958AE }, // sceDisplayWaitVblankStartMultiCB
 };
 
 OldNewNid sceAudio_driver_nid[] = {
