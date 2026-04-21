@@ -59,6 +59,7 @@ static int (*_sceCtrlPeekBufferNegative)(SceCtrlData *pad_data, int count) = NUL
 static int (*_sceCtrlReadBufferPositive)(SceCtrlData *pad_data, int count) = NULL;
 static int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NULL;
 static int (* _scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq) = NULL;
+static int (* _scePowerGetClockFrequency_k)() = NULL;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -256,6 +257,20 @@ void sctrlHENSetSpeed(int cpu, int bus) {
 		}
 	}
 	pspSdkSetK1(k1);
+}
+
+u32 sctrlHENGetSpeed() {
+	u32 res = 222;
+	int k1 = pspSdkSetK1(0);
+
+	_scePowerGetClockFrequency_k = (void *)FindPowerFunction(0xFDB5BFE9);
+
+	if (_scePowerGetClockFrequency_k != NULL) {
+		res = _scePowerGetClockFrequency_k();
+	}
+
+	pspSdkSetK1(k1);
+	return res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
