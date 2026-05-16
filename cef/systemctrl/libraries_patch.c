@@ -486,7 +486,7 @@ u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_onl
 	return 0;
 }
 
-void sctrlHENHijackFunction(FunctionPatchData* patch_data, void* func_addr, void* patch_func, void** orig_func) {
+void sctrlHENHijackFunction(SctrlFunctionPatchData* patch_data, void* func_addr, void* patch_func, void** orig_func) {
 
 	void* ptr = patch_data;
 
