@@ -338,3 +338,35 @@ void savePlugins() {
 		sceIoClose(fd);
 	}
 }
+
+char* getPluginDisplayName(const Plugin *plugin, char *file) {
+	char *p = paf_strrchr(plugin->path, '/');
+	if (p == NULL) {
+		p = paf_strchr(plugin->path, ',');
+	}
+
+	if (p != NULL) {
+		p = strtrim(p+1);
+	} else {
+		p = strtrim(plugin->path);
+	}
+
+	int len = paf_strlen(p);
+	char *p2 = paf_strchr(p + 1, '.');
+
+	if (p2) {
+		len = (int)(p2 - p);
+	}
+
+	if (plugin->runlevel != NULL) {
+		int rlv_len = paf_strlen(plugin->runlevel);
+		paf_snprintf(file, len + rlv_len, "%s [%s]", p, plugin->runlevel);
+		file[len + rlv_len] = '\0';
+	} else {
+		paf_strncpy(file, p, len);
+		file[len] = '\0';
+	}
+
+
+	return file;
+}

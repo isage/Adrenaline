@@ -186,7 +186,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 
 		// Plugin Manager is added before the `msgtop_sysconf_console`
 		// So apply re-patch the action for it
-		g_new_item->action = item->action;
+		g_new_item->action = g_sysconf_action;
 	}
 
 	// prevent adding more than once
@@ -342,40 +342,17 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 			if (paf_strncmp(name, "plugin_", 7) == 0) {
 				u32 i = paf_strtoul(name + 7, NULL, 10);
 				Plugin *plugin = (Plugin *)(g_plugins.table[i]);
-				static char file[128] = {0};
-				paf_memset(file, 0, 128);
-				paf_strncpy(file, plugin->path, 127);
+				int len = paf_strlen(plugin->path) + paf_strlen(plugin->runlevel) + 4;
+				char *file = paf_malloc(len);
 
-				char *p = paf_strrchr(plugin->path, '/');
-				char g_buf[64] = {0};
-				if (p != NULL && plugin->runlevel != NULL) {
-					char *p2 = paf_strchr(p + 1, '.');
-					if (p2) {
-						int len = (int)(p2 - (p + 1));
-						paf_strncpy(file, p + 1, len);
-
-						paf_snprintf(g_buf, 63, " [%s]", plugin->runlevel);
-						int rl_len = paf_strlen(g_buf);
-
-						paf_strncpy(file + len, g_buf, rl_len);
-						file[len+rl_len] = '\0';
-					}
+				if (file != NULL) {
+					paf_memset(file, 0, len);
+					utf8_to_unicode((wchar_t *)g_user_buffer, getPluginDisplayName(plugin, file));
+					paf_free(file);
 				} else {
-					char *p2 = paf_strchr(file, '.');
-					if (p2 != NULL && plugin->runlevel != NULL) {
-						int len = (int)(p2 - (file));
-
-						paf_snprintf(g_buf, 63, " [%s]", plugin->runlevel);
-						int rl_len = paf_strlen(g_buf);
-
-						paf_strncpy(file + len, g_buf, rl_len);
-						file[len+rl_len] = '\0';
-					}
+					logmsg("[ERROR]: Failed to allocate plugin display name");
 				}
 
-				logmsg("[DEBUG]: Plugin Manager: Got %s\n", plugin->name);
-
-				utf8_to_unicode((wchar_t *)g_user_buffer, file);
 				return (wchar_t *)g_user_buffer;
 			} else if (paf_strncmp(name, "plugins", 7) == 0) {
 				u32 i = paf_strtoul(name + 7, NULL, 10);
