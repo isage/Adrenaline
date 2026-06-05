@@ -15,21 +15,8 @@
 List g_plugins;
 
 static char* sample_plugin_path = "ms0:/SEPLUGINS/example.prx";
-
 static int g_cur_place = 0;
 
-void textlog(char *fmt, ...) 
-{
-	char msg[256];
-    va_list list;
-    va_start(list, fmt);
-    vsprintf(msg, fmt, list);
-    va_end(list);
-	
-	SceUID fd = sceIoOpen("ms0:/epixmbctrl.log", PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND, 0777);
-	sceIoWrite(fd, msg, paf_strlen(msg));
-	sceIoClose(fd);
-}
 
 static int isRunlevelEnabled(char* line) {
 	return (paf_strncasecmp(line, "on", 2) == 0 || paf_strncasecmp(line, "1", 1) == 0 || paf_strncasecmp(line, "enabled", 7) == 0 || paf_strncasecmp(line, "true", 4) == 0);
@@ -272,26 +259,19 @@ static void processPlugin(char* runlevel, char* path, char* enabled) {
 }
 
 void loadPlugins(){
-	textlog("loading plugins\n");
-	
 	clear_list(&g_plugins, &list_cleaner);
 
 	SceIoStat stat;
 	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
 
-	textlog("loading from ");
-
 	if (epiplugins_exists) {
-		textlog("epiplugins.txt\n");
 		ProcessPluginFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
 	} else {
-		textlog("plugins.txt\n");
 		ProcessPluginFile("ms0:/seplugins/plugins.txt", &processPlugin, &processCustomLine);
 	}
 
 
 	if (g_plugins.count == 0){
-		textlog("no plugins found, adding example one\n");
 		// Add example plugin
 		Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
 		plugin->name = (char*)paf_malloc(20);
@@ -306,7 +286,6 @@ void loadPlugins(){
 		paf_strcpy(plugin->path, sample_plugin_path);
 		add_list(&g_plugins, plugin);
 	}
-	textlog("all done\n");
 	logmsg("[DEBUG]: Plugin Manager: Plugin file loaded\n");
 }
 
