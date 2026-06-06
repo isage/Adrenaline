@@ -43,6 +43,6 @@ void loadPlugins(void);
 
 void savePlugins(void);
 
-char* getPluginDisplayName(const Plugin *plugin, char *file);
+char* getPluginDisplayName(const Plugin *plugin, char *file, int len);
 
 #endif

@@ -1,4 +1,8 @@
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
+
+#include <stdio.h>
+#include <stdarg.h>
+
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
@@ -11,8 +15,8 @@
 List g_plugins;
 
 static char* sample_plugin_path = "ms0:/SEPLUGINS/example.prx";
-
 static int g_cur_place = 0;
+
 
 static int isRunlevelEnabled(char* line) {
 	return (paf_strncasecmp(line, "on", 2) == 0 || paf_strncasecmp(line, "1", 1) == 0 || paf_strncasecmp(line, "enabled", 7) == 0 || paf_strncasecmp(line, "true", 4) == 0);
@@ -339,7 +343,7 @@ void savePlugins() {
 	}
 }
 
-char* getPluginDisplayName(const Plugin *plugin, char *file) {
+char* getPluginDisplayName(const Plugin *plugin, char *file, int len) {
 	char *p = paf_strrchr(plugin->path, '/');
 	if (p == NULL) {
 		p = paf_strchr(plugin->path, ',');
@@ -351,22 +355,11 @@ char* getPluginDisplayName(const Plugin *plugin, char *file) {
 		p = strtrim(plugin->path);
 	}
 
-	int len = paf_strlen(p);
-	char *p2 = paf_strchr(p + 1, '.');
-
-	if (p2) {
-		len = (int)(p2 - p);
-	}
-
 	if (plugin->runlevel != NULL) {
-		int rlv_len = paf_strlen(plugin->runlevel);
-		paf_snprintf(file, len + rlv_len, "%s [%s]", p, plugin->runlevel);
-		file[len + rlv_len] = '\0';
+		paf_snprintf(file, len, "%s [%s]", p, plugin->runlevel);
 	} else {
 		paf_strncpy(file, p, len);
-		file[len] = '\0';
 	}
-
 
 	return file;
 }

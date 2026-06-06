@@ -342,12 +342,12 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 			if (paf_strncmp(name, "plugin_", 7) == 0) {
 				u32 i = paf_strtoul(name + 7, NULL, 10);
 				Plugin *plugin = (Plugin *)(g_plugins.table[i]);
-				int len = paf_strlen(plugin->path) + paf_strlen(plugin->runlevel) + 4;
+				int len = paf_strlen(plugin->path) + paf_strlen(plugin->runlevel) + 5;
 				char *file = paf_malloc(len);
 
 				if (file != NULL) {
 					paf_memset(file, 0, len);
-					utf8_to_unicode((wchar_t *)g_user_buffer, getPluginDisplayName(plugin, file));
+					utf8_to_unicode((wchar_t *)g_user_buffer, getPluginDisplayName(plugin, file, len));
 					paf_free(file);
 				} else {
 					logmsg("[ERROR]: Failed to allocate plugin display name");
