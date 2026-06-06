@@ -81,7 +81,7 @@ int readTitleIdFromPBP() {
 // 0 - Not able to get | 1 - Able to get
 int readTitleIdFromISO() {
 	int (*isoGetTitleId)(char title_id[10]) = NULL;
-	int boot_conf = g_rebootex_config.bootfileindex;
+
 	char * iso_mod_name = "INVALID";
 	switch (g_rebootex_config.bootfileindex){
 		case MODE_INFERNO:
