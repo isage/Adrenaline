@@ -44,11 +44,18 @@ jobs:
           echo "PSPDEV=/usr/local/pspdev" >> $GITHUB_ENV
           echo "/usr/local/pspdev/bin" >> $GITHUB_PATH
 
+        # FIXME: Return to this once TAI_CONTINUE is fixed with gcc 15
+        #   - name: Setup VITASDK
+        #     run: |
+        #       git clone https://github.com/vitasdk/vdpm
+        #       cd vdpm
+        #       ./bootstrap-vitasdk.sh
+        #       vdpm henkaku taihen libpng libjpeg-turbo freetype
+
       - name: Setup VITASDK
         run: |
-          git clone https://github.com/vitasdk/vdpm
-          cd vdpm
-          ./bootstrap-vitasdk.sh
+          wget -q https://github.com/vitasdk/autobuilds/releases/download/master-linux-v2.529/vitasdk-x86_64-linux-gnu-2025-03-11_15-12-52.tar.bz2
+          sudo tar -xjf vitasdk-x86_64-linux-gnu-2025-03-11_15-12-52.tar.bz2 -C /usr/local/
           vdpm henkaku taihen libpng libjpeg-turbo freetype
 
       - name: Setup PSPSDK
