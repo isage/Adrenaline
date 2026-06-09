@@ -21,10 +21,12 @@
 
 #include <pspkernel.h>
 #include <psppower.h>
+#include <psperror.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <systemctrl_adrenaline.h>
 
 
 typedef struct {
@@ -49,7 +51,19 @@ typedef struct {
 
 int scePowerRequestColdResetPatched(int a0) {
 	sctrlSESetBootConfFileIndex(MODE_UMD);
-	return sctrlKernelExitVSH(NULL);
+
+	if (a0 == 0) {
+		return sctrlKernelExitVSH(NULL);
+	}
+
+	// Expand `scePowerRequestColdReset` to cold reset the VITA if argument is 1.
+	// The only valid argument on PSP is zero, so official software will never
+	// use it, but homebrew software can use it.
+	if (a0 == 1) {
+		return sctrlRebootDevice();
+	}
+
+	return SCE_ERR_INMODE;
 }
 
 __attribute__((noinline)) int scePowerGetBatteryLifeTimePatched() {
