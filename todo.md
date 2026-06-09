@@ -1,5 +1,4 @@
 - Provide source for psp-packer
-- Implement ISO (and updates) version display
 - UMD Video
 - ADHOC shenenigans
 - Fix pspemu resampler on vita side (drop mic patches)

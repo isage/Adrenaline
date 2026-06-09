@@ -215,8 +215,9 @@ official settings, then apply the custom screen mode. On the other hand, if you 
 - [python3](https://www.python.org/downloads/)
 
 ## Building
-- `make -j1 -C cef`
-- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release`
+- `psp-cmake -S cef -B cef/build`
+- `cmake --build cef/build`
+- `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1`
 - `cmake --build build`
 - grab VKP from `build/bubble/`
 

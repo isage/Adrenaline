@@ -37,7 +37,7 @@ make install
 
 In the case of your homebrew already using CFW APIs, there is a very good chance that you won't need to modify a thing to support Epinephrine.
 
-The Epinephrine's `SystemCtrlForUser` and `KUBridge` have 100% API compatibility with the same libraries of M33, ME, PRO, and ARK custom firmwares. That means that if the API provided by the original targeted CFW is sufficient for your project, you won't need to change the stubs and header and create a build only targeted to Epinephrine. You will only need to change if you desire to access newly added APIs.
+The Epinephrine's `SystemCtrlForUser` and `KUBridge` have 100% API compatibility with the same libraries of M33, ME, PRO, and ARK custom firmwares. That means that if the API provided by the original targeted CFW is sufficient for your project, you won't need to change the stubs and header and create a build only targeted to Epinephrine.
 
 The Epinephrine's `SystemCtrlForKernel` is mostly compatible with M33, ME, PRO, and ARK custom firmwares. Make sure that any function you use from this library also exists for Epinephrine. If you couldn't find any, at worst, you will need to rebuild your kernel plugin project for the 6.61 PSP firmware version to support Epinephrine.
 

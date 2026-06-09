@@ -36,6 +36,8 @@
 - Add `Fake max free memory` advanced CFW option **\[[docs](./08-CfwConfiguration.md#fake-max-free-memory)\]**
 - Add `Hide CFW files in PSP games` general CFW option **\[[docs](./08-CfwConfiguration.md#hide-cfw-files-in-psp-games)\]**
 - Add `TTY redirection` advanced CFW option **\[[docs](./08-CfwConfiguration.md#tty-redirection)\]**
+- Add support to show app verion on XMB info for ISO games
+  - Support to show correct version with game updates (`PBOOT.PBP`)
 - Implement "Hold L while launching apps" to not load plugins **\[[docs](./04-HomebrewSupport/01-Plugin.md#launch-without-plugins)\]**
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN` **\[[docs](./08-CfwConfiguration.md#execute-bootbin-in-umdemu-iso)\]**
 - Implement PSP native music player and `SenseMe` to continue to play music after system suspend

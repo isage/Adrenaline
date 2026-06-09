@@ -67,13 +67,14 @@ Once everything is installed, you can build the project.
 First, you need to compile the eCFW (ePSP-side) code:
 
 ```sh
-make -C cef -j1
+psp-cmake -S cef -B cef/build
+cmake --build cef/build
 ```
 
 Then, you have to build the VITA-side part:
 
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1
 cmake --build build
 ```
 
@@ -99,16 +100,17 @@ Test things your code change affect.
 ## Logs
 ---
 
-On the **ePSP-side**, you can pass next the definition to the `make` call that enables logging on the subprojects that form the Adrenaline ePSP CFW. The ones available are:
+On the **ePSP-side**, you can pass next the definition to the `cmake` call that enables logging on the subprojects that form the Adrenaline ePSP CFW. The ones available are:
 
 - `GALAXY_DEBUG`: Enables logs only on the `cef/galaxy` module
 - `INFERNO_DEBUG`: Enables logs only on the `cef/inferno` module
 - `MARCH33_DEBUG`: Enables logs only on the `cef/march33` module
 - `KERMIT_IDSTORAGE_DEBUG`: Enables logs only on the `cef/kermit_idstorage` module
-- `RECOVERY_DEBUG`: Enables logs only on the `cef/newrecovery` module
+- `RECOVERY_DEBUG`: Enables logs only on the `cef/recovery` module
 - `POPCORN_DEBUG`: Enables logs only on the `cef/popcorn` module
 - `SATELITE_DEBUG`: Enables logs only on the `cef/satelite` module
-- `SCTRL_DEBUG`: Enables logs only on the `cef/systemctrl` module
+- `SYSTEMCTRL_DEBUG`: Enables logs only on the `cef/systemctrl` module
+- `PENTAZEMIN_DEBUG`: enables logs only on the `cef/pentazemin` module
 - `VSHCTRL_DEBUG`: Enables logs only on the `cef/vshctrl` module
 - `XMBCTRL_DEBUG`: Enables logs only on the `cef/xmbctrl` module
 - `DEBUG`: Enables logs to all subprojects with the same level
@@ -117,7 +119,7 @@ It is recommended to use the specific ones. Another recommendation is to avoid u
 
 > [!EXAMPLE]
 > ```sh
-> make -C cef -j1 SCTRL_DEBUG=2 VSHCTRL_DEBUG=1
+> psp-cmake -S cef -B cef/build -DSYSTEMCTRL_DEBUG=2 -DPENTAZEMIN_DEBUG=1
 > ```
 
 On the **VITA-side**, we don't have something super well stablished, you can use `sceClibPrintf` function, and the messages will show up in the `tty`, that you can access through log homebrews (we recommend [catlog](https://github.com/isage/catlog)).
@@ -125,6 +127,8 @@ On the **VITA-side**, we don't have something super well stablished, you can use
 ### Accessing the logs
 
 You can access in real-time and in your computer all logs by using logs homebrew such as [catlog](https://github.com/isage/catlog). This is the easiest way to access them.
+
+For **eCFW** modules to show logs on real-time you have to enable the [TTY redirection](./08-CfwConfiguration.md#tty-redirection) setting.
 
 For the **eCFW** modules, you can later access them by looking into log files at the `???0:/pspemu/` directory. They are all named using the following pattern: `log_⟨MODULE_NAME⟩.txt`.
 
