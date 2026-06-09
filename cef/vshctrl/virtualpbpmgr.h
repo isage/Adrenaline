@@ -70,6 +70,7 @@ typedef struct {
 	int filesize;//280
 	int filepointer;//284
 	ScePspDateTime mtime;//288
+	char app_ver[6];
 } VirtualPbp;
 
 typedef struct {

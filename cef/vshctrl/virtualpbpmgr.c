@@ -25,6 +25,7 @@
 #include <pspiofilemgr.h>
 #include <pspiofilemgr_kernel.h>
 
+#include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <pspextratypes.h>
 
@@ -44,7 +45,7 @@ static SceUID g_vpsema;
 static int g_index;
 
 // TODO: rewrite using virtualsfo?
-void GetSFOInfo(char *title, int n, char *discid, int m, char *system_version , int *opnssmp, int *parental, char *sfo) {
+void GetSFOInfo(char *title, int n, char *discid, int m, char *system_version , int *opnssmp, int *parental, char *app_ver, int app_ver_size, char *sfo) {
 	SFOHeader *header = (SFOHeader *)sfo;
 	SFODir *entries = (SFODir *)(sfo+0x14);
 
@@ -65,8 +66,11 @@ void GetSFOInfo(char *title, int n, char *discid, int m, char *system_version , 
 			*opnssmp = *(int *)(values_str);
 		} else if (strcmp( fields_str , "PSP_SYSTEM_VER" ) == 0) {
 			*(u32 *)system_version = *(u32 *)(values_str);
-		} else if( strcmp( fields_str ,"PARENTAL_LEVEL") == 0 ) {
+		} else if (strcmp( fields_str ,"PARENTAL_LEVEL") == 0 ) {
 			*parental = *(int *)(values_str);
+		} else if (strcmp( fields_str ,"APP_VER") == 0 ) {
+			memset(app_ver, 0, app_ver_size);
+			strncpy(app_ver, values_str , app_ver_size);
 		}
 	}
 }
@@ -161,6 +165,7 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 			(char*)&(g_vpbps[g_index].system_ver),
 			&(g_vpbps[g_index].opnssmp_type),
 			&(g_vpbps[g_index].parental_level),
+			g_vpbps[g_index].app_ver, sizeof(g_vpbps[g_index].app_ver),
 			buf
 		);
 
@@ -349,7 +354,28 @@ int virtualpbp_read(SceUID fd, void *data, SceSize size) {
 
 			sfo_set_int_param("PARENTAL_LEVEL", parental);
 
-			// TODO: Set APP_VER from PBOOT
+			if (g_vpbps[fd].discid[0]) {
+				char pboot_file[128] = {0};
+				char pboot_appver[6] = {0};
+				snprintf(pboot_file, sizeof(pboot_file), "ms0:PSP/GAME/%s/PBOOT.PBP", g_vpbps[fd].discid);
+				int res = sctrlGetSfoPARAM(pboot_file, "APP_VER", NULL, NULL, pboot_appver);
+
+				if (res != 0) {
+					if (g_vpbps[fd].app_ver[0] != 0) {
+						sfo_set_string_param("APP_VER", g_vpbps[fd].app_ver);
+					} else {
+						sfo_set_string_param("APP_VER", "01.00");
+					}
+				} else {
+					sfo_set_string_param("APP_VER", pboot_appver);
+				}
+
+			} else if (g_vpbps[fd].app_ver[0] != 0) {
+				sfo_set_string_param("APP_VER", g_vpbps[fd].app_ver);
+			} else {
+				sfo_set_string_param("APP_VER", "01.00");
+			}
+
 
 			base = g_vpbps[fd].filepointer - g_vpbps[fd].header[2];
 

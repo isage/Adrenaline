@@ -55,7 +55,7 @@ void* user_malloc(SceSize size) {
 	SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
 	pspSdkSetK1(k1);
 	int pid = ((size+sizeof(SceUID)) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
-	logmsg3("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
+	logmsg4("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
 	return malloc_impl(pid, size);
 }
 
@@ -75,7 +75,7 @@ void* user_memalign(SceSize align, SceSize size) {
 	SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
 	pspSdkSetK1(k1);
 	int pid = ((size+sizeof(SceUID)+align) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
-	logmsg3("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
+	logmsg4("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
 	return generic_memalign(pid, align, size);
 }
 
