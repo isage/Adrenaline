@@ -363,5 +363,6 @@ void isoSetUmdFile(const char* path) {
 	if (path != NULL && path[0] != 0) {
 		memset(g_iso_fn, 0, sizeof(g_iso_fn));
 		strncpy(g_iso_fn, path, sizeof(g_iso_fn)-1);
+		logmsg("[INFO]: %s: ISO file set to %s\n", __func__, g_iso_fn);
 	}
 }

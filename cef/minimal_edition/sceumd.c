@@ -55,7 +55,7 @@ int sceUmdCheckMedium(void) {
 	res = 1;
 
 exit:
-	logmsg("%s: () -> 0x%08X\n", __func__, res);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, res);
 	return res;
 }
 
@@ -74,7 +74,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: disc_info=0x%p -> 0x%08X\n", __func__, info, res);
+	logmsg3("[DEBUG]: %s: disc_info=0x%p -> 0x%08X\n", __func__, info, res);
 	return res;
 }
 
@@ -102,7 +102,7 @@ int sceUmdActivate(int unit, const char *drive) {
 
 exit:
 	pspSdkSetK1(k1);
-	logmsg("%s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, unit, drive, res);
+	logmsg3("[DEBUG]: %s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, unit, drive, res);
 	return res;
 }
 
@@ -117,7 +117,7 @@ int sceUmdDeactivate(int unit, const char *drive) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, unit, drive, res);
+	logmsg3("[DEBUG]: %s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, unit, drive, res);
 	return res;
 }
 
@@ -163,21 +163,21 @@ int WaitDriveStat(int stat , SceUInt timeout , int flag) {
 int sceUmdWaitDriveStat(int stat) {
 	int res =  WaitDriveStat(stat, 0, 0);
 
-	logmsg("%s: stat=0x%08X -> 0x%08X\n", __func__, stat, res);
+	logmsg3("[DEBUG]: %s: stat=0x%08X -> 0x%08X\n", __func__, stat, res);
 	return res;
 }
 
 int sceUmdWaitDriveStatWithTimer(int stat, unsigned int timeout) {
 	int res =  WaitDriveStat( stat, timeout , 0);
 
-	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, res);
+	logmsg3("[DEBUG]: %s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, res);
 	return res;
 }
 
 int sceUmdWaitDriveStatCB(int stat, unsigned int timeout) {
 	int res = WaitDriveStat(stat , timeout , 1);
 
-	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, res);
+	logmsg3("[DEBUG]: %s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, res);
 	return res;
 }
 
@@ -187,18 +187,18 @@ int sceUmdCancelWaitDriveStat(void) {
 	int r = sceKernelCancelSema( g_umd_sema_id , -1 /* UmdStatus */ , NULL);
 
 	pspSdkSetK1(k1);
-	logmsg("%s: () -> 0x%08X\n", __func__, r);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, r);
 	return r;
 
 }
 
 void sceUmdSetErrorStatus(int stat) {
-	logmsg("%s: 0x%08X SET.\n", __func__, stat);
+	logmsg3("[DEBUG]: %s: 0x%08X SET.\n", __func__, stat);
 	g_umd_error_stat = stat;
 }
 
 void sceUmdSetDriveStatus(int stat) {
-	logmsg("%s: status=0x%08X -> ()\n", __func__, stat);
+	logmsg3("[DEBUG]: %s: status=0x%08X -> ()\n", __func__, stat);
 	int intr = sceKernelCpuSuspendIntr();
 
 	if ( stat & PSP_UMD_NOT_PRESENT) {
@@ -231,7 +231,7 @@ void sceUmdSetDriveStatus(int stat) {
 }
 
 int sceUmdGetDriveStatus(void) {
-	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_status);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, g_umd_status);
 	return g_umd_status;
 }
 
@@ -239,12 +239,12 @@ int sceUmdGetDriveStat(void) {
 	int k1 = pspSdkSetK1(0);
 	int r = g_umd_status;
 	pspSdkSetK1(k1);
-	logmsg("%s: () -> 0x%08X\n", __func__, r);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, r);
 	return r;
 }
 
 int sceUmdGetErrorStatus(void) {
-	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_error_stat);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, g_umd_error_stat);
 	return g_umd_error_stat;
 }
 
@@ -254,7 +254,7 @@ int sceUmdGetErrorStat(void) {
 	int r = g_umd_error_stat;
 	pspSdkSetK1(k1);
 
-	logmsg("%s: () -> 0x%08X\n", __func__, r);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, r);
 	return r;
 }
 
@@ -274,7 +274,7 @@ int sceUmdRegisterUMDCallBack(int cbid) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
+	logmsg3("[DEBUG]: %s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
 	return res;
 }
 
@@ -292,7 +292,7 @@ int sceUmdUnRegisterUMDCallBack(int cbid) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
+	logmsg3("[DEBUG]: %s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
 	return res;
 }
 
@@ -303,7 +303,7 @@ int sceUmdClearDriveStatus(int clear) {
 	g_umd_status &= clear;
 
 	sceKernelCpuResumeIntr(intr);
-	logmsg("%s: clear=0x%08X -> g_drivestat=0x%08X\n", __func__, clear, g_umd_status);
+	logmsg3("[DEBUG]: %s: clear=0x%08X -> g_drivestat=0x%08X\n", __func__, clear, g_umd_status);
 	return g_umd_status;
 }
 
@@ -341,6 +341,6 @@ int sceUmd_040A7090(int error) {
 		}
 	}
 
-	logmsg3("%s: error=0x%08X -> 0x%08X\n", __func__, error, error);
+	logmsg3("[DEBUG]: %s: error=0x%08X -> 0x%08X\n", __func__, error, error);
 	return error;
 }

@@ -295,7 +295,7 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 	ret = retv;
 
 exit:
-	logmsg("%s: len 0x%08X -> 0x%08X\n", __func__, len, ret);
+	logmsg3("[DEBUG]: %s: len 0x%08X -> 0x%08X\n", __func__, len, ret);
 	return ret;
 }
 
@@ -345,7 +345,7 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 	ret = g_open_slot[idx].offset;
 
 exit:
-	logmsg("%s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
+	logmsg3("[DEBUG]: %s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
 
 	if (ret>=0) {
 		cur_offset = ret;
@@ -419,10 +419,10 @@ static int IoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inl
 		goto exit;
 	}
 
-	logmsg("%s: Unknown ioctl 0x%08X\n", __func__, cmd);
+	logmsg("[ERROR]: %s: Unknown ioctl 0x%08X\n", __func__, cmd);
 	ret = SCE_ENOSYS;
 exit:
-	logmsg("%s: cmd:0x%08X -> 0x%08X\n", __func__, cmd, ret);
+	logmsg3("[DEBUG]: %s: cmd:0x%08X -> 0x%08X\n", __func__, cmd, ret);
 	return ret;
 }
 
@@ -600,7 +600,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 		ret = 0;
 		goto exit;
 	} else {
-		logmsg("%s: Unknown cmd 0x%08X\n", __func__, cmd);
+		logmsg("[ERROR]: %s: Unknown cmd 0x%08X\n", __func__, cmd);
 		ret = SCE_ENOSYS;
 	}
 

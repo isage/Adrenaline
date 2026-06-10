@@ -16,19 +16,19 @@ int module_start(SceSize args, void *argp) {
 	logmsg("March33 driver started...\n")
 
 	int res = InitUmdMan();
-	logmsg("%s: InitUmdMan -> 0x%08X\n", __func__, res);
+	logmsg3("[DEBUG]: %s: InitUmdMan -> 0x%08X\n", __func__, res);
 	if (res < 0) {
 		return res;
 	}
 
 	res = InitUmd9660();
-	logmsg("%s: InitUmd9660 -> 0x%08X\n", __func__, res);
+	logmsg3("[DEBUG]: %s: InitUmd9660 -> 0x%08X\n", __func__, res);
 	if (res < 0) {
 		return res;
 	}
 
 	res = InitMediaMan();
-	logmsg("%s: InitMediaMan -> 0x%08X\n", __func__, res);
+	logmsg3("[DEBUG]: %s: InitMediaMan -> 0x%08X\n", __func__, res);
 	if (res < 0) {
 		return res;
 	}

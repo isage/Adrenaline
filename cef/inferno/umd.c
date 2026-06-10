@@ -73,19 +73,19 @@ int sceUmdCheckMedium(void) {
 	}
 
 	int ret = 1;
-	logmsg("%s: () -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmdReplacePermit(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmdReplaceProhibit(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -115,7 +115,7 @@ int sceUmdRegisterUMDCallBack(int cbid) {
 exit:
 	pspSdkSetK1(k1);
 
-	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, ret);
+	logmsg("[DEBUG]: %s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, ret);
 	return ret;
 }
 
@@ -164,7 +164,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	u32 k1 = pspSdkSetK1(0);
 
 	if (info != NULL && sizeof(*info) == info->size) {
-		logmsg4("[DEBUG]: %s: g_disc_type=0x%02X\n", __func__, g_disc_type);
+		logmsg4("[INFO]: %s: g_disc_type=0x%02X\n", __func__, g_disc_type);
 		info->type = g_disc_type;
 		ret = 0;
 	} else {
@@ -174,7 +174,7 @@ int sceUmdGetDiscInfo(pspUmdInfo *info) {
 	pspSdkSetK1(k1);
 
 exit:
-	logmsg("%s: disc_info=0x%p -> 0x%08X\n", __func__, info, ret);
+	logmsg3("[DEBUG]: %s: disc_info=0x%p -> 0x%08X\n", __func__, info, ret);
 	return ret;
 }
 
@@ -187,34 +187,34 @@ int sceUmdCancelWaitDriveStat(void) {
 }
 
 u32 sceUmdGetErrorStatus(void) {
-	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_error_status);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, g_umd_error_status);
 	return g_umd_error_status;
 }
 
 void sceUmdSetErrorStatus(u32 status) {
 	g_umd_error_status = status;
-	logmsg("%s: () -> 0x%08X\n", __func__, g_umd_error_status);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, g_umd_error_status);
 }
 
 int sceUmdGetDriveStat(void) {
-	logmsg2("%s: () -> 0x%08X\n", __func__, g_drive_status);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, g_drive_status);
 	return g_drive_status;
 }
 
 u32 sceUmdGetDriveStatus(u32 status) {
-	logmsg("%s: status=0x%08lX -> 0x%08X\n", __func__, status, g_drive_status);
+	logmsg3("[DEBUG]: %s: status=0x%08lX -> 0x%08X\n", __func__, status, g_drive_status);
 	return g_drive_status;
 }
 
 int sceUmdManRegisterImposeCallBack(void) {
 	int ret = 0;
-	logmsg("%s: () -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmdManUnRegisterImposeCallBack(void) {
 	int ret = 0;
-	logmsg("%s: () -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -233,7 +233,7 @@ int sceUmdManUnRegisterInsertEjectUMDCallBack(u32 id) {
 
 int sceUmdManIsDvdDrive(void) {
 	int ret = 0;
-	logmsg("%s: () -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -298,7 +298,7 @@ int sceUmdManRegisterInsertEjectUMDCallBack(u32 id, void* callback, void* arg) {
 	(*g_ie_callback)(g_ie_callback_id, g_ie_callback_arg, 1);
 
 exit:
-	logmsg("%s: id=0x%08lX, cb=0x%p, arg=0x%p -> 0x%08X\n", __func__, id, callback, arg, res);
+	logmsg3("[DEBUG]: %s: id=0x%08lX, cb=0x%p, arg=0x%p -> 0x%08X\n", __func__, id, callback, arg, res);
 	return res;
 }
 
@@ -313,19 +313,19 @@ void sceUmdClearDriveStatus(u32 mask) {
 
 int sceUmd9660_driver_63342C0F(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmd9660_driver_6FFFEE54(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
 int sceUmd9660_driver_7CB291E3(void) {
 	int ret = 0;
-	logmsg("%s: -> 0x%08X\n", __func__, ret);
+	logmsg3("[DEBUG]: %s: -> 0x%08X\n", __func__, ret);
 	return ret;
 }
 
@@ -342,7 +342,7 @@ int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timeout) {
 	pspSdkSetK1(k1);
 
 exit:
-	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, ret);
+	logmsg3("[DEBUG]: %s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, ret);
 	return ret;
 }
 
@@ -359,7 +359,7 @@ int sceUmdWaitDriveStatCB(int stat, SceUInt timeout) {
 	pspSdkSetK1(k1);
 
 exit:
-	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, ret);
+	logmsg3("[DEBUG]: %s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timeout, ret);
 	return ret;
 }
 
@@ -377,7 +377,7 @@ int sceUmdWaitDriveStat(int stat) {
 	pspSdkSetK1(k1);
 
 exit:
-	logmsg("%s: stat=0x%08X -> 0x%08X\n", __func__, stat, ret);
+	logmsg3("[DEBUG]: %s: stat=0x%08X -> 0x%08X\n", __func__, stat, ret);
 	return ret;
 }
 
@@ -425,7 +425,7 @@ int sceUmdActivate(int unit, const char* drive) {
 	pspSdkSetK1(k1);
 
 exit:
-	logmsg("%s: unit=0x%08X, drive=%s -> 0x%08X\n", __func__, unit, drive, res);
+	logmsg3("[DEBUG]: %s: unit=0x%08X, drive=%s -> 0x%08X\n", __func__, unit, drive, res);
 	return res;
 }
 

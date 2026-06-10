@@ -87,7 +87,7 @@ void isoSetUmdDelay(int seek, int speed) {
 
 static int umd_init(PspIoDrvArg* arg) {
 	int i;
-	logmsg("%s: start.\n", __func__);
+	logmsg4("[INFO]: %s: start.\n", __func__);
 
 	g_umdpvd = (u8 *)oe_malloc(SECTOR_SIZE);
 
@@ -102,7 +102,7 @@ static int umd_init(PspIoDrvArg* arg) {
 	}
 
 	while (!g_iso_opened) {
-		logmsg("%s: Attempting to open iso.\n", __func__);
+		logmsg4("[INFO]: %s: Attempting to open iso.\n", __func__);
 		iso_open();
 		sceKernelDelayThread(20000);
 	}
@@ -133,12 +133,12 @@ static int umd_init(PspIoDrvArg* arg) {
 		}
 	}
 
-	logmsg("%s: end.\n", __func__);
+	logmsg4("[INFO]: %s: end.\n", __func__);
 	return 0;
 }
 
 static int umd_exit(PspIoDrvArg* arg) {
-	logmsg("%s: start.\n", __func__);
+	logmsg4("[INFO]: %s: start.\n", __func__);
 	SceUInt timeout = 500000;
 
 	sceKernelWaitSema(g_umd_sema, 1, &timeout);
@@ -153,7 +153,7 @@ static int umd_exit(PspIoDrvArg* arg) {
 		g_umd_sema = -1;
 	}
 
-	logmsg("%s: end.\n", __func__);
+	logmsg4("[INFO]: %s: end.\n", __func__);
 	return 0;
 }
 
@@ -202,7 +202,7 @@ static int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 	UNLOCK();
 
 out:
-	logmsg("%s: arg=0x%p, file=%s, flags=0x%08X, mode=0x%08X -> 0x%08X\n", __func__, arg, file, flags, mode, res);
+	logmsg3("[DEBUG]: %s: arg=0x%p, file=%s, flags=0x%08X, mode=0x%08X -> 0x%08X\n", __func__, arg, file, flags, mode, res);
 	return res;
 }
 
@@ -220,7 +220,7 @@ static int umd_close(PspIoDrvFileArg *arg) {
 
 	UNLOCK();
 
-	logmsg("%s: arg=0x%p -> 0x%08X\n", __func__, arg, res);
+	logmsg3("[DEBUG]: %s: arg=0x%p -> 0x%08X\n", __func__, arg, res);
 	return res;
 }
 
@@ -247,7 +247,7 @@ static int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 		UNLOCK();
 	}
 
-	logmsg("%s: arg=0x%p, data=%s, len=0x%08X -> 0x%08X\n", __func__, arg, data, len, res);
+	logmsg3("[DEBUG]: %s: arg=0x%p, data=%s, len=0x%08X -> 0x%08X\n", __func__, arg, data, len, res);
 	return res;
 }
 
@@ -274,7 +274,7 @@ static SceOff umd_lseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 	int res = g_descriptors[i].discpointer;
 
 	UNLOCK();
-	logmsg("%s: arg=0x%p, ofs=0x%08llX, whence=0x%08X -> 0x%08X\n", __func__, arg, ofs, whence, res);
+	logmsg3("[DEBUG]: %s: arg=0x%p, ofs=0x%08llX, whence=0x%08X -> 0x%08X\n", __func__, arg, ofs, whence, res);
 	return res;
 }
 
@@ -329,7 +329,7 @@ static int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int i
 		}
 	}
 
-	logmsg("%s: Unknown ioctl 0x%08X\n", __func__, cmd);
+	logmsg("[ERROR]: %s: Unknown ioctl cmd 0x%08X\n", __func__, cmd);
 	return SCE_ENOSYS;
 }
 
@@ -461,7 +461,7 @@ static int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cm
 		}
 	}
 
-	logmsg("%s: Unknown devctl 0x%08X\n", __func__, cmd);
+	logmsg("[ERROR]: %s: Unknown devctl cmd 0x%08X\n", __func__, cmd);
 	//WriteFile("ms0:/unknown_devctl.bin", &cmd, 4);
 	//WriteFile("ms0:/unknown_devctl_indata.bin", indata, inlen);
 
@@ -560,7 +560,6 @@ int InitUmd9660() {
 
 	// Get ISO path
 	isoSetUmdFile(sctrlSEGetUmdFile());
-	logmsg3("[INFO] UMD File: %s\n", g_iso_fn);
 
 	// Leave NP9660 alone, we got no ISO
 	if(g_iso_fn[0] == 0) {

@@ -38,7 +38,6 @@ int module_start(SceSize args, void* argp) {
 
 	// Get ISO path
 	isoSetUmdFile(sctrlSEGetUmdFile());
-	logmsg3("[INFO] UMD File: %s\n", g_iso_fn);
 
 	// Leave NP9660 alone, we got no ISO
 	if(g_iso_fn[0] == 0) {

@@ -55,7 +55,7 @@ int sceUmdManRegisterInsertEjectUMDCallBack(int id, void *callback, void *arg) {
 	NotifyInsertEjectCallback(1);
 
 out:
-	logmsg("%s: id=0x%08X, cb=0x%p, arg=0x%p -> 0x%08X\n", __func__, id, callback, arg, res);
+	logmsg3("[DEBUG]: %s: id=0x%08X, cb=0x%p, arg=0x%p -> 0x%08X\n", __func__, id, callback, arg, res);
 	return res;
 }
 
@@ -72,7 +72,7 @@ int sceUmdManUnRegisterInsertEjectUMDCallBack(int id) {
 	g_iecallback = NULL;
 
 out:
-	logmsg("%s: id=0x%08X -> 0x%08X\n", __func__, id, res);
+	logmsg3("[DEBUG]: %s: id=0x%08X -> 0x%08X\n", __func__, id, res);
 	return res;
 }
 

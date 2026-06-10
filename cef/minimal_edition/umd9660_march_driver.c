@@ -70,7 +70,7 @@ static int umd9660_init(PspIoDrvArg * arg) {
 	}
 
 	while (!g_iso_opened) {
-		logmsg("%s: Attempting to open iso.\n", __func__);
+		logmsg4("[INFO]: %s: Attempting to open iso.\n", __func__);
 		iso_open();
 		sceKernelDelayThread(20000);
 	}

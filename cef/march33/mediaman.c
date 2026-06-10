@@ -53,7 +53,7 @@ int sceUmdActivate(const int mode, const char *aliasname) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, mode, aliasname, res);
+	logmsg3("[DEBUG]: %s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, mode, aliasname, res);
 	return res;
 }
 
@@ -68,7 +68,7 @@ int sceUmdDeactivate(const int mode, const char *aliasname) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, mode, aliasname, res);
+	logmsg3("[DEBUG]: %s: mode=0x%08X, aliasname=%s -> 0x%08X\n", __func__, mode, aliasname, res);
 	return res;
 }
 
@@ -83,7 +83,7 @@ int sceUmdGetDiscInfo(SceUmdDiscInfo *disc_info) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: disc_info=0x%p -> 0x%08X\n", __func__, disc_info, res);
+	logmsg3("[DEBUG]: %s: disc_info=0x%p -> 0x%08X\n", __func__, disc_info, res);
 	return res;
 }
 
@@ -99,7 +99,7 @@ int sceUmdRegisterUMDCallBack(SceUID cbid) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
+	logmsg3("[DEBUG]: %s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
 	return res;
 }
 
@@ -115,7 +115,7 @@ int sceUmdUnRegisterUMDCallBack(SceUID cbid) {
 	}
 
 	pspSdkSetK1(k1);
-	logmsg("%s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
+	logmsg3("[DEBUG]: %s: cbid=0x%08X -> 0x%08X\n", __func__, cbid, res);
 	return res;
 }
 
@@ -133,7 +133,7 @@ int sceUmdCheckMedium() {
 	res = 1;
 
 exit:
-	logmsg("%s: () -> 0x%08X\n", __func__, res);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, res);
 	return res;
 }
 
@@ -143,17 +143,17 @@ int sceUmdGetErrorStat() {
 	int res = g_errorstat;
 
 	pspSdkSetK1(k1);
-	logmsg("%s: () -> 0x%08X\n", __func__, res);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, res);
 	return res;
 }
 
 int sceUmdGetErrorStatus() {
-	logmsg("%s: () -> 0x%08X\n", __func__, g_errorstat);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, g_errorstat);
 	return g_errorstat;
 }
 
 void sceUmdSetErrorStatus(int error) {
-	logmsg("%s: 0x%08X SET.\n", __func__, error);
+	logmsg3("[DEBUG]: %s: 0x%08X SET.\n", __func__, error);
 	g_errorstat = error;
 }
 
@@ -168,17 +168,17 @@ int sceUmdGetDriveStat() {
 }
 
 int sceUmdGetDriveStatus(u32 status) {
-	logmsg("%s: status=0x%08lX -> 0x%08X\n", __func__, status, g_drivestat);
+	logmsg3("[DEBUG]: %s: status=0x%08lX -> 0x%08X\n", __func__, status, g_drivestat);
 	return g_drivestat;
 }
 
 void sceUmdClearDriveStatus(int clear) {
 	g_drivestat &= clear;
-	logmsg("%s: clear=0x%08X -> g_drivestat=0x%08X\n", __func__, clear, g_drivestat);
+	logmsg3("[DEBUG]: %s: clear=0x%08X -> g_drivestat=0x%08X\n", __func__, clear, g_drivestat);
 }
 
 void sceUmdSetDriveStatus(int status) {
-	logmsg("%s: status=0x%08X -> ()\n", __func__, status);
+	logmsg3("[DEBUG]: %s: status=0x%08X -> ()\n", __func__, status);
 
 	int intr = sceKernelCpuSuspendIntr();
 
@@ -245,21 +245,21 @@ static int WaitDriveStat(int stat, SceUInt timer, int cb) {
 int sceUmdWaitDriveStat(int stat) {
 	int res = WaitDriveStat(stat, 0, 0);
 
-	logmsg("%s: stat=0x%08X -> 0x%08X\n", __func__, stat, res);
+	logmsg3("[DEBUG]: %s: stat=0x%08X -> 0x%08X\n", __func__, stat, res);
 	return res;
 }
 
 int sceUmdWaitDriveStatCB(int stat, SceUInt timer) {
 	int res = WaitDriveStat(stat, timer, 1);
 
-	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timer, res);
+	logmsg3("[DEBUG]: %s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timer, res);
 	return res;
 }
 
 int sceUmdWaitDriveStatWithTimer(int stat, SceUInt timer) {
 	int res = WaitDriveStat(stat, timer, 0);
 
-	logmsg("%s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timer, res);
+	logmsg3("[DEBUG]: %s: stat=0x%08X, timeout=%d -> 0x%08X\n", __func__, stat, timer, res);
 	return res;
 }
 
@@ -269,7 +269,7 @@ int sceUmdCancelWaitDriveStat() {
 	int res = sceKernelCancelSema(g_mediaman_sema, -1, NULL);
 
 	pspSdkSetK1(k1);
-	logmsg("%s: () -> 0x%08X\n", __func__, res);
+	logmsg3("[DEBUG]: %s: () -> 0x%08X\n", __func__, res);
 	return res;
 }
 
@@ -321,7 +321,7 @@ int InitMediaMan() {
 		return g_mediaman_sema;
 	}
 
-	logmsg4("[DEBUG]: Media man inited.\n");
+	logmsg4("[INFO]: Media man inited.\n");
 
 	return 0;
 }
