@@ -64,7 +64,7 @@ static MissingNidList g_missing_nid_list[] = {
 	{ "LoadCoreForKernel", LoadCoreForKernel_nids, N_MISSING_NID(LoadCoreForKernel_nids) },
 };
 
-void *ResolveMissingNIDs(const char *libname, u32 nid) {
+static void *ResolveMissingNIDs(const char *libname, u32 nid) {
 	for (int i = 0; i < N_MISSING_NID_LIST; i++) {
 		if (strcmp(g_missing_nid_list[i].libname, libname) == 0) {
 			for (int j = 0; j < g_missing_nid_list[i].n_nid; j++) {
@@ -78,7 +78,7 @@ void *ResolveMissingNIDs(const char *libname, u32 nid) {
 	return NULL;
 }
 
-u32 ResolveOldNIDs(const char *libname, u32 nid) {
+static u32 ResolveOldNIDs(const char *libname, u32 nid) {
 	for (int i = 0; i < N_NID_TABLE; i++) {
 		if (strcmp(nid_table[i].libname, libname) == 0) {
 			for (int j = 0; j < nid_table[i].n_nid; j++) {
@@ -205,8 +205,9 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 
 		// Resolve old NIDs
 		u32 new_nid = ResolveOldNIDs(libname, nid);
-		if (new_nid)
+		if (new_nid) {
 			nid = new_nid;
+		}
 	}
 
 	int res = search_nid_in_entrytable(lib, nid, -1, 0);
@@ -270,8 +271,7 @@ u32 sctrlHENFindImportInMod(SceModule * mod, const char *library, u32 nid) {
 		if (stub->libname && strcmp(stub->libname, library) == 0) {
 			u32 *table = (u32 *)stub->nidtable;
 
-			int j;
-			for (j = 0; j < stub->stubcount; j++) {
+			for (int j = 0; j < stub->stubcount; j++) {
 				if (table[j] == nid) {
 					logmsg4("[DEBUG]: %s: %s — %s — 0x%08lX: FOUND\n", __func__, mod->modname, library, nid);
 					return ((u32)stub->stubtable + (j * 8));
@@ -346,10 +346,10 @@ int sctrlHookImportByNID(SceModule * mod, const char * library, u32 nid, void *f
 
 		// Stub not found again...
 		if (stub == 0) {
-			logmsg("[ERROR]: %s: %s — %s — 0x%08lX: Failed to find import with resolved nid\n", __func__, mod->modname, library, nid);
+			logmsg("[ERROR]: %s: %s — %s — 0x%08lX(->0x%08lX): Failed to find import with resolved nid\n", __func__, mod->modname, library, nid, new_nid);
 			return -3;
 		} else {
-			logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
+			logmsg3("[INFO]: %s: %s — %s — 0x%08lX(->0x%08lX): Import found\n", __func__, mod->modname, library, nid, new_nid);
 		}
 	} else {
 		logmsg3("[INFO]: %s: %s — %s — 0x%08lX: Import found\n", __func__, mod->modname, library, nid);
