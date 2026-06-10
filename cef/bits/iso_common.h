@@ -44,6 +44,7 @@ int iso_open(void);
 void iso_close(void);
 
 int isoGetTitleId(char title_id[10]);
+void isoSetUmdFile(const char* path);
 
 #ifdef __ISO_EXTRA__
 int iso_type_check(SceUID fd);

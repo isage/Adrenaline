@@ -358,3 +358,10 @@ int isoGetTitleId(char title_id[10]) {
 	title_id[9] = 0;
 	return 1;
 }
+
+void isoSetUmdFile(const char* path) {
+	if (path != NULL && path[0] != 0) {
+		memset(g_iso_fn, 0, sizeof(g_iso_fn));
+		strncpy(g_iso_fn, path, sizeof(g_iso_fn)-1);
+	}
+}

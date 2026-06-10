@@ -55,8 +55,7 @@ PspSysEventHandler g_power_event = {
 };
 
 int setup_umd_device(void) {
-	memset(g_iso_fn, 0, sizeof(g_iso_fn));
-	strncpy(g_iso_fn, GetUmdFile(), sizeof(g_iso_fn));
+	isoSetUmdFile(sctrlSEGetUmdFile());
 
 	infernoSetDiscType(sctrlSEGetDiscType());
 

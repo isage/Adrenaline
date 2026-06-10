@@ -506,8 +506,7 @@ int data2248[4] = { -1 , -1 , -1 , -1};
 //sub_00000090
 int march_init() {
 	// Get ISO path
-	memset(g_iso_fn, 0, sizeof(g_iso_fn));
-	strncpy(g_iso_fn, sctrlSEGetUmdFile(), sizeof(g_iso_fn)-1);
+	isoSetUmdFile(sctrlSEGetUmdFile());
 	logmsg3("[INFO] UMD File: %s\n", g_iso_fn);
 
 	int r = sceIoAddDrv( &umd9660_driver );

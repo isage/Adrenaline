@@ -559,8 +559,7 @@ int InitUmd9660() {
 	sceKernelRegisterSysEventHandler(&g_event_handler);
 
 	// Get ISO path
-	memset(g_iso_fn, 0, sizeof(g_iso_fn));
-	strncpy(g_iso_fn, sctrlSEGetUmdFile(), sizeof(g_iso_fn)-1);
+	isoSetUmdFile(sctrlSEGetUmdFile());
 	logmsg3("[INFO] UMD File: %s\n", g_iso_fn);
 
 	// Leave NP9660 alone, we got no ISO

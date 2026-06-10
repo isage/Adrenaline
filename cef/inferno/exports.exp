@@ -151,6 +151,8 @@ PSP_EXPORT_FUNC(isoGetTitleId)
 PSP_EXPORT_FUNC_NID(infernoSetUmdDelay, 0xFAEC97D6)
 # isoCtrl_driver_3F83B110
 PSP_EXPORT_FUNC(isoReadUmdFile)
+# isoCtrl_driver_2830271E
+PSP_EXPORT_FUNC(isoSetUmdFile)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS
