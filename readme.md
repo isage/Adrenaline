@@ -215,7 +215,7 @@ official settings, then apply the custom screen mode. On the other hand, if you 
 - [python3](https://www.python.org/downloads/)
 
 ## Building
-- `psp-cmake -S cef -B cef/build`
+- `psp-cmake -S cef -B cef/build -DCMAKE_BUILD_TYPE=Release`
 - `cmake --build cef/build`
 - `cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1`
 - `cmake --build build`
