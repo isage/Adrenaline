@@ -358,13 +358,42 @@ void sctrlHENPatchSyscall(void* addr, void *newaddr) {
 void SetUmdFile(const char *file) __attribute__((alias("sctrlSESetUmdFile")));
 void sctrlSESetUmdFile(const char *file) {
 	strncpy(g_rebootex_config.umdfilename, file, 255);
+
+	// If booted on a ISO mode, make sctrlSESetUmdFile also
+	// update the ISO filename buffer of the currently active ISO driver.
+	if (g_rebootex_config.bootfileindex != MODE_UMD) {
+		void (*_isoSetUmdFile)(const char*) = NULL;
+
+		char * iso_mod_name = "INVALID";
+		switch (g_rebootex_config.bootfileindex){
+			case MODE_INFERNO:
+				iso_mod_name = "EPI-InfernoDriver";
+				break;
+			case MODE_MARCH33:
+				iso_mod_name = "EPI-March33Driver";
+				break;
+			case MODE_ME:
+				iso_mod_name = "EPI-MEisoDriver";
+				break;
+			case MODE_NP9660:
+				iso_mod_name = "EPI-GalaxyController";
+				break;
+			default:
+				break;
+		}
+
+		_isoSetUmdFile = (void*)sctrlHENFindFunction(iso_mod_name, "isoCtrl_driver", 0x2830271E);
+
+		if (_isoSetUmdFile != NULL) {
+			_isoSetUmdFile(file);
+		}
+	}
 }
 
 void sctrlSESetUmdFileEx(const char *file, char *input) {
 	if (input != NULL) {
-		strncpy(input, g_rebootex_config.umdfilename, 255);
+		sctrlSESetUmdFile(file);
 	}
-	sctrlSESetUmdFile(file);
 }
 
 
