@@ -114,7 +114,7 @@ jobs:
 
       - name: Build eCFW
         run: |
-            psp-cmake -S cef -B cef/build -DNIGHTLY=1
+            psp-cmake -S cef -B cef/build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
             cmake --build cef/build -j
 
       - name: Build VPK
