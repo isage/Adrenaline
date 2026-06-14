@@ -28,12 +28,12 @@
 #include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
 
-#include "frame_xml.h"
-#include "template_xml.h"
-#include "adrenaline_vsh.h"
-#include "adrenaline_user.h"
-#include "adrenaline_kernel.h"
-#include "../../../adrenaline_version.h"
+#include "../frame_xml.h"
+#include "../template_xml.h"
+#include "../adrenaline_vsh.h"
+#include "../adrenaline_user.h"
+#include "../adrenaline_kernel.h"
+#include "../../../../adrenaline_version.h"
 
 PSP_MODULE_INFO("updater", 0x800, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_VSH);

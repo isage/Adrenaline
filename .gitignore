@@ -9,22 +9,22 @@ cef/**/*.elf
 
 cef/btcnf/**/pspbtcnf*.bin
 
-cef/systemctrl/binary.h
-cef/systemctrl/rebootex.h
+cef/core/systemctrl/binary.h
+cef/core/systemctrl/rebootex.h
 
 cef/lib/libpsp*.a
 
-cef/updater/version
-cef/updater/updater.elf
-cef/updater/adrenaline_kernel.h
-cef/updater/adrenaline_user.h
-cef/updater/adrenaline_vsh.h
-cef/updater/frame_xml.h
-cef/updater/template_xml.h
-cef/updater/main.o
-cef/updater/EBOOT.PBP
-cef/updater/updater.prx
-cef/updater/psp-updatelist.txt
+cef/extra/updater/version
+cef/extra/updater/updater.elf
+cef/extra/updater/adrenaline_kernel.h
+cef/extra/updater/adrenaline_user.h
+cef/extra/updater/adrenaline_vsh.h
+cef/extra/updater/frame_xml.h
+cef/extra/updater/template_xml.h
+cef/extra/updater/main.o
+cef/extra/updater/EBOOT.PBP
+cef/extra/updater/updater.prx
+cef/extra/updater/psp-updatelist.txt
 
 user/flash0
 
