@@ -31,22 +31,22 @@ add_dependencies(adrenaline_user "kernel_all")
 
 if(DEFINED CEF_CMAKE AND CEF_CMAKE EQUAL 1)
   set(CEF_UPDATER_BUILD_CMD cmake --build ${CMAKE_SOURCE_DIR}/cef/build --target updater)
-  set(CEF_UPDATER_PATH ${CMAKE_SOURCE_DIR}/cef/build/updater/EBOOT.PBP)
+  set(CEF_UPDATER_PATH ${CMAKE_SOURCE_DIR}/cef/build/extra/updater/EBOOT.PBP)
 else()
-  set(CEF_UPDATER_BUILD_CMD make -C ${CMAKE_SOURCE_DIR}/cef/updater)
-  set(CEF_UPDATER_PATH ${CMAKE_SOURCE_DIR}/cef/updater/EBOOT.PBP)
+  set(CEF_UPDATER_BUILD_CMD make -C ${CMAKE_SOURCE_DIR}/cef/extra/updater)
+  set(CEF_UPDATER_PATH ${CMAKE_SOURCE_DIR}/cef/extra/updater/EBOOT.PBP)
 endif()
 
 add_custom_target(updater
-  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/user/adrenaline_user.suprx ${CMAKE_SOURCE_DIR}/cef/updater/adrenaline_user.h adrenaline_user
-  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/kernel/adrenaline_kernel.skprx ${CMAKE_SOURCE_DIR}/cef/updater/adrenaline_kernel.h adrenaline_kernel
-  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/vsh/adrenaline_vsh.suprx ${CMAKE_SOURCE_DIR}/cef/updater/adrenaline_vsh.h adrenaline_vsh
-  COMMAND bin2c ${CMAKE_SOURCE_DIR}/bubble/pkg/frame.xml ${CMAKE_SOURCE_DIR}/cef/updater/frame_xml.h frame_xml
-  COMMAND bin2c ${CMAKE_SOURCE_DIR}/bubble/pkg/sce_sys/livearea/contents/template.xml ${CMAKE_SOURCE_DIR}/cef/updater/template_xml.h template_xml
+  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/user/adrenaline_user.suprx ${CMAKE_SOURCE_DIR}/cef/extra/updater/adrenaline_user.h adrenaline_user
+  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/kernel/adrenaline_kernel.skprx ${CMAKE_SOURCE_DIR}/cef/extra/updater/adrenaline_kernel.h adrenaline_kernel
+  COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/vsh/adrenaline_vsh.suprx ${CMAKE_SOURCE_DIR}/cef/extra/updater/adrenaline_vsh.h adrenaline_vsh
+  COMMAND bin2c ${CMAKE_SOURCE_DIR}/bubble/pkg/frame.xml ${CMAKE_SOURCE_DIR}/cef/extra/updater/frame_xml.h frame_xml
+  COMMAND bin2c ${CMAKE_SOURCE_DIR}/bubble/pkg/sce_sys/livearea/contents/template.xml ${CMAKE_SOURCE_DIR}/cef/extra/updater/template_xml.h template_xml
   COMMAND ${CEF_UPDATER_BUILD_CMD}
   COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/updater
   COMMAND cp ${CEF_UPDATER_PATH} ${CMAKE_CURRENT_BINARY_DIR}/updater
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/updater/psp-updatelist.txt ${CMAKE_CURRENT_BINARY_DIR}/updater
+  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/extra/updater/psp-updatelist.txt ${CMAKE_CURRENT_BINARY_DIR}/updater
   DEPENDS user_all kernel_all vsh_all
 )
 

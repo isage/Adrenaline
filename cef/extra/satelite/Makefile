@@ -1,0 +1,30 @@
+TARGET = satelite
+OBJS = src/main.o \
+	src/menu.o \
+	src/blit.o \
+	exports.o
+
+INCDIR = ../../include  include
+CFLAGS = -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+ASFLAGS = $(CFLAGS)
+PSP_FW_VERSION = 661
+
+BUILD_PRX = 1
+PRX_EXPORTS = exports.exp
+
+USE_PSPSDK_LIBS = 0
+USE_PSPSDK_LIBC = 0
+
+LIBDIR = ../../lib
+LIBS = -lpspdebug -lpsppower -lpspdisplay -lpspvshctrl -lpspsysc_user -lpspsystemctrl_user
+
+ifdef SATELITE_DEBUG
+CFLAGS += -DDEBUG=$(SATELITE_DEBUG)
+endif
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+endif
+
+include ../../lib/build_prx.mak

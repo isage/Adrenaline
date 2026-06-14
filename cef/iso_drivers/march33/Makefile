@@ -1,0 +1,35 @@
+TARGET = march33
+OBJS = src/main.o \
+	src/umdman.o \
+	src/umd9660.o \
+	src/mediaman.o \
+	../../bits/iso_common.o \
+	exports.o
+
+
+INCDIR = ../../include include
+CFLAGS = -O2 -G0 -Wall -Wno-array-bounds -fshort-wchar -fno-pic -mno-check-zero-division
+CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
+ASFLAGS = $(CFLAGS)
+PSP_FW_VERSION = 661
+
+BUILD_PRX = 1
+PRX_EXPORTS = exports.exp
+
+USE_KERNEL_LIBC = 1
+USE_KERNEL_LIBS = 1
+
+LIBDIR = ../../lib
+LIBS = -lcisoread -lpspsemaphore -lpspinit_kernel -lpsputils_kernel -lpspsysmem_kernel -lpspkernel_library -lpspsysclib_kernel -lpspsysevent_kernel -lpsploadcore_kernel -lpspiofilemgr_kernel -lpspthreadman_kernel -lpspsystemctrl_kernel
+
+ifdef MARCH33_DEBUG
+CFLAGS += -DDEBUG=$(MARCH33_DEBUG)
+LIBS += -lpspsysclib_kernel
+endif
+
+ifdef DEBUG
+CFLAGS += -DDEBUG=$(DEBUG)
+LIBS += -lpspsysclib_kernel
+endif
+
+include ../../lib/build_prx.mak

@@ -14,216 +14,217 @@ USER_STUBS = psppower pspreg psppaf pspvsh pspvshcommongui
 SYSTEM_STUBS = $(KERNEL_STUBS) $(USER_STUBS)
 
 _btcnf:
-	make -C btcnf/pspbtcnf_inferno clean
-	make -C btcnf/pspbtcnf_inferno
-	cp "btcnf/pspbtcnf_inferno/pspbtcnf.bin" "../user/flash0/kd/pspbtknf.bin"
-	make -C btcnf/pspbtcnf_inferno clean
+	make -C core/btcnf/pspbtcnf_inferno clean
+	make -C core/btcnf/pspbtcnf_inferno
+	cp "core/btcnf/pspbtcnf_inferno/pspbtcnf.bin" "../user/flash0/kd/pspbtknf.bin"
+	make -C core/btcnf/pspbtcnf_inferno clean
 
-	make -C btcnf/pspbtcnf_march33 clean
-	make -C btcnf/pspbtcnf_march33
-	cp "btcnf/pspbtcnf_march33/pspbtcnf.bin" "../user/flash0/kd/pspbtlnf.bin"
-	make -C btcnf/pspbtcnf_march33 clean
+	make -C core/btcnf/pspbtcnf_march33 clean
+	make -C core/btcnf/pspbtcnf_march33
+	cp "core/btcnf/pspbtcnf_march33/pspbtcnf.bin" "../user/flash0/kd/pspbtlnf.bin"
+	make -C core/btcnf/pspbtcnf_march33 clean
 
-	make -C btcnf/pspbtcnf_me clean
-	make -C btcnf/pspbtcnf_me
-	cp "btcnf/pspbtcnf_me/pspbtcnf.bin" "../user/flash0/kd/pspbtnnf.bin"
-	make -C btcnf/pspbtcnf_me clean
+	make -C core/btcnf/pspbtcnf_me clean
+	make -C core/btcnf/pspbtcnf_me
+	cp "core/btcnf/pspbtcnf_me/pspbtcnf.bin" "../user/flash0/kd/pspbtnnf.bin"
+	make -C core/btcnf/pspbtcnf_me clean
 
-	make -C btcnf/pspbtcnf_normal clean
-	make -C btcnf/pspbtcnf_normal
-	cp "btcnf/pspbtcnf_normal/pspbtcnf.bin" "../user/flash0/kd/pspbtjnf.bin"
-	make -C btcnf/pspbtcnf_normal clean
+	make -C core/btcnf/pspbtcnf_normal clean
+	make -C core/btcnf/pspbtcnf_normal
+	cp "core/btcnf/pspbtcnf_normal/pspbtcnf.bin" "../user/flash0/kd/pspbtjnf.bin"
+	make -C core/btcnf/pspbtcnf_normal clean
 
-	make -C btcnf/pspbtcnf_np9660 clean
-	make -C btcnf/pspbtcnf_np9660
-	cp "btcnf/pspbtcnf_np9660/pspbtcnf.bin" "../user/flash0/kd/pspbtmnf.bin"
-	make -C btcnf/pspbtcnf_np9660 clean
+	make -C core/btcnf/pspbtcnf_np9660 clean
+	make -C core/btcnf/pspbtcnf_np9660
+	cp "core/btcnf/pspbtcnf_np9660/pspbtcnf.bin" "../user/flash0/kd/pspbtmnf.bin"
+	make -C core/btcnf/pspbtcnf_np9660 clean
 
-	make -C btcnf/pspbtcnf_recovery clean
-	make -C btcnf/pspbtcnf_recovery
-	cp "btcnf/pspbtcnf_recovery/pspbtcnf.bin" "../user/flash0/kd/pspbtrnf.bin"
-	make -C btcnf/pspbtcnf_recovery clean
+	make -C core/btcnf/pspbtcnf_recovery clean
+	make -C core/btcnf/pspbtcnf_recovery
+	cp "core/btcnf/pspbtcnf_recovery/pspbtcnf.bin" "../user/flash0/kd/pspbtrnf.bin"
+	make -C core/btcnf/pspbtcnf_recovery clean
 
 _payloadex:
 ifdef USE_OLD_BOOTLOADEX
-	make -C payloadex_old clean
-	make -C payloadex_old -j
-	cp "payloadex_old/payloadex.bin" "../user/flash0/payloadex.bin"
-	make -C payloadex_old clean
+	make -C core/payloadex_old clean
+	make -C core/payloadex_old -j
+	cp "core/payloadex_old/payloadex.bin" "../user/flash0/payloadex.bin"
+	make -C core/payloadex_old clean
 else
-	make -C payloadex clean
-	make -C payloadex -j
-	cp "payloadex/payloadex.bin" "../user/flash0/payloadex.bin"
-	make -C payloadex clean
+	make -C core/payloadex clean
+	make -C core/payloadex -j
+	cp "core/payloadex/payloadex.bin" "../user/flash0/payloadex.bin"
+	make -C core/payloadex clean
 endif
 
 _payloadex_ark:
-	make -C payloadex_ark clean
-	make -C payloadex_ark -j
-	cp "payloadex_ark/payloadex_ark.bin" "../user/flash0/payloadex_ark.bin"
-	make -C payloadex_ark clean
+	make -C core/payloadex_ark clean
+	make -C core/payloadex_ark -j
+	cp "core/payloadex_ark/payloadex_ark.bin" "../user/flash0/payloadex_ark.bin"
+	make -C core/payloadex_ark clean
 
 _rebootex:
 ifdef USE_OLD_BOOTLOADEX
-	make -C rebootex_old clean
-	make -C rebootex_old -j
-	bin2c rebootex_old/rebootex.bin systemctrl/rebootex.h rebootex
-	make -C rebootex_old clean
+	make -C core/rebootex_old clean
+	make -C core/rebootex_old -j
+	bin2c core/rebootex_old/rebootex.bin core/systemctrl/rebootex.h rebootex
+	make -C core/rebootex_old clean
 else
-	make -C rebootex clean
-	make -C rebootex -j
-	bin2c rebootex/rebootex.bin systemctrl/rebootex.h rebootex
-	make -C rebootex clean
+	make -C core/rebootex clean
+	make -C core/rebootex -j
+	bin2c core/rebootex/rebootex.bin core/systemctrl/rebootex.h rebootex
+	make -C core/rebootex clean
 endif
 
 _binary:
-	make -C binary clean
-	make -C binary -j
-	bin2c binary/binary.bin pentazemin/binary.h binary
-	make -C binary clean
+	make -C core/binary clean
+	make -C core/binary -j
+	bin2c core/binary/binary.bin core/pentazemin/binary.h binary
+	make -C core/binary clean
 
 _systemctrl: | _rebootex _binary
-	make -C systemctrl clean
-	make -C systemctrl -j
+	make -C core/systemctrl clean
+	make -C core/systemctrl -j
 ifdef USE_PSP_PACKER
-	psp-packer systemctrl/systemctrl.prx -o ../user/flash0/kd/systemctrl.prx
+	psp-packer core/systemctrl/systemctrl.prx -o ../user/flash0/kd/systemctrl.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/systemctrl.prx $(KHDR) systemctrl/systemctrl.prx SystemControl 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/systemctrl.prx $(KHDR) core/systemctrl/systemctrl.prx SystemControl 0x3007
 endif
-	make -C systemctrl clean
+	make -C core/systemctrl clean
 
 _pentazemin: | _binary
-	make -C pentazemin clean
-	make -C pentazemin -j
+	make -C core/pentazemin clean
+	make -C core/pentazemin -j
 ifdef USE_PSP_PACKER
-	psp-packer pentazemin/pentazemin.prx -o ../user/flash0/kd/pentazemin.prx
+	psp-packer core/pentazemin/pentazemin.prx -o ../user/flash0/kd/pentazemin.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/pentazemin.prx $(KHDR) pentazemin/pentazemin.prx Pentazemin 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/pentazemin.prx $(KHDR) core/pentazemin/pentazemin.prx Pentazemin 0x3007
 endif
-	make -C pentazemin clean
+	make -C core/pentazemin clean
 
 _popcorn:
-	make -C popcorn clean
-	make -C popcorn -j
+	make -C core/popcorn clean
+	make -C core/popcorn -j
 ifdef USE_PSP_PACKER
-	psp-packer popcorn/popcorn.prx -o ../user/flash0/kd/popcorn.prx
+	psp-packer core/popcorn/popcorn.prx -o ../user/flash0/kd/popcorn.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/popcorn.prx $(KHDR) popcorn/popcorn.prx PopcornManager 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/popcorn.prx $(KHDR) core/popcorn/popcorn.prx PopcornManager 0x3007
 endif
-	make -C popcorn clean
+	make -C core/popcorn clean
 
 _galaxy:
-	make -C galaxy clean
-	make -C galaxy -j
+	make -C iso_drivers/galaxy clean
+	make -C iso_drivers/galaxy -j
 ifdef USE_PSP_PACKER
-	psp-packer galaxy/galaxy.prx -o ../user/flash0/kd/galaxy.prx
+	psp-packer iso_drivers/galaxy/galaxy.prx -o ../user/flash0/kd/galaxy.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/galaxy.prx $(KHDR) galaxy/galaxy.prx GalaxyController 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/galaxy.prx $(KHDR) iso_drivers/galaxy/galaxy.prx GalaxyController 0x3007
 endif
-	make -C galaxy clean
+	make -C iso_drivers/galaxy clean
 
 _march33:
-	make -C march33 clean
-	make -C march33 -j
+	make -C iso_drivers/march33 clean
+	make -C iso_drivers/march33 -j
 ifdef USE_PSP_PACKER
-	psp-packer march33/march33.prx -o ../user/flash0/kd/march33.prx
+	psp-packer iso_drivers/march33/march33.prx -o ../user/flash0/kd/march33.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/march33.prx $(KHDR) march33/march33.prx March33Driver 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/march33.prx $(KHDR) iso_drivers/march33/march33.prx March33Driver 0x3007
 endif
-	make -C march33 clean
+	make -C iso_drivers/march33 clean
 
 _inferno:
-	make -C inferno clean
-	make -C inferno -j
+	make -C iso_drivers/inferno clean
+	make -C iso_drivers/inferno -j
 ifdef USE_PSP_PACKER
-	psp-packer inferno/inferno.prx -o ../user/flash0/kd/inferno.prx
+	psp-packer iso_drivers/inferno/inferno.prx -o ../user/flash0/kd/inferno.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/inferno.prx $(KHDR) inferno/inferno.prx InfernoDriver 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/inferno.prx $(KHDR) iso_drivers/inferno/inferno.prx InfernoDriver 0x3007
 endif
-	make -C inferno clean
+	make -C iso_drivers/inferno clean
 
 _me:
-	make -C minimal_edition clean
-	make -C minimal_edition -j
+	make -C iso_drivers/minimal_edition clean
+	make -C iso_drivers/minimal_edition -j
 ifdef USE_PSP_PACKER
-	psp-packer minimal_edition/minimal_edition.prx -o ../user/flash0/kd/minimal_edition.prx
+	psp-packer iso_drivers/minimal_edition/minimal_edition.prx -o ../user/flash0/kd/minimal_edition.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/minimal_edition.prx $(KHDR) minimal_edition/minimal_edition.prx InfernoDriver 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/minimal_edition.prx $(KHDR) iso_drivers/minimal_edition/minimal_edition.prx InfernoDriver 0x3007
 endif
-	make -C minimal_edition clean
+	make -C iso_drivers/minimal_edition clean
 
 _vshctrl:
-	make -C vshctrl clean
-	make -C vshctrl -j
+	make -C core/vshctrl clean
+	make -C core/vshctrl -j
 ifdef USE_PSP_PACKER
-	psp-packer vshctrl/vshctrl.prx -o ../user/flash0/kd/vshctrl.prx
+	psp-packer core/vshctrl/vshctrl.prx -o ../user/flash0/kd/vshctrl.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/vshctrl.prx $(KHDR) vshctrl/vshctrl.prx VshControl 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/vshctrl.prx $(KHDR) core/vshctrl/vshctrl.prx VshControl 0x3007
 endif
-	make -C vshctrl clean
+	make -C core/vshctrl clean
 
 _kermit_idstorage:
-	make -C kermit_idstorage clean
-	make -C kermit_idstorage -j
+	make -C core/kermit_idstorage clean
+	make -C core/kermit_idstorage -j
 ifdef USE_PSP_PACKER
-	psp-packer kermit_idstorage/kermit_idstorage.prx -o ../user/flash0/kd/kermit_idstorage.prx
+	psp-packer core/kermit_idstorage/kermit_idstorage.prx -o ../user/flash0/kd/kermit_idstorage.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/kd/kermit_idstorage.prx $(KHDR) kermit_idstorage/kermit_idstorage.prx Kermit_IdStorage 0x3007
+	$(PY) $(PSPGZ) ../user/flash0/kd/kermit_idstorage.prx $(KHDR) core/kermit_idstorage/kermit_idstorage.prx Kermit_IdStorage 0x3007
 endif
-	make -C kermit_idstorage clean
+	make -C core/kermit_idstorage clean
 
 _xmbctrl:
-	make -C xmbctrl clean
-	make -C xmbctrl -j
+	make -C extra/xmbctrl clean
+	make -C extra/xmbctrl -j
 ifdef USE_PSP_PACKER
-	psp-packer xmbctrl/xmbctrl.prx -o ../user/flash0/vsh/module/xmbctrl.prx
+	psp-packer extra/xmbctrl/xmbctrl.prx -o ../user/flash0/vsh/module/xmbctrl.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/vsh/module/xmbctrl.prx $(UHDR) xmbctrl/xmbctrl.prx XmbControl 0x0000
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/xmbctrl.prx $(UHDR) extra/xmbctrl/xmbctrl.prx XmbControl 0x0000
 endif
-	make -C xmbctrl clean
+	make -C extra/xmbctrl clean
 
 _satelite:
-	make -C satelite clean
-	make -C satelite -j
+	make -C extra/satelite clean
+	make -C extra/satelite -j
 ifdef USE_PSP_PACKER
-	psp-packer satelite/satelite.prx -o ../user/flash0/vsh/module/satelite.prx
+	psp-packer extra/satelite/satelite.prx -o ../user/flash0/vsh/module/satelite.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/vsh/module/satelite.prx $(UHDR) satelite/satelite.prx Satelite 0x0000
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/satelite.prx $(UHDR) extra/satelite/satelite.prx Satelite 0x0000
 endif
-	make -C satelite clean
+	make -C extra/satelite clean
 
 _recovery:
-	make -C recovery clean
-	make -C recovery -j
+	make -C core/recovery clean
+	make -C core/recovery -j
 ifdef USE_PSP_PACKER
-	psp-packer recovery/recovery.prx -o ../user/flash0/vsh/module/recovery.prx
+	psp-packer core/recovery/recovery.prx -o ../user/flash0/vsh/module/recovery.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/vsh/module/recovery.prx $(UHDR) recovery/recovery.prx Recovery 0x0000
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/recovery.prx $(UHDR) core/recovery/recovery.prx Recovery 0x0000
 endif
-	make -C recovery clean
+	make -C core/recovery clean
 
 clean:
-	make -C btcnf/pspbtcnf_inferno clean
-	make -C btcnf/pspbtcnf_march33 clean
-	make -C btcnf/pspbtcnf_me clean
-	make -C btcnf/pspbtcnf_normal clean
-	make -C btcnf/pspbtcnf_np9660 clean
-	make -C btcnf/pspbtcnf_recovery clean
-	make -C payloadex clean
-	make -C rebootex clean
-	make -C payloadex_old clean
-	make -C rebootex_old clean
-	make -C payloadex_ark clean
-	make -C binary clean
-	make -C systemctrl clean
-	make -C pentazemin clean
-	make -C popcorn clean
-	make -C galaxy clean
-	make -C inferno clean
-	make -C minimal_edition clean
-	make -C vshctrl clean
-	make -C kermit_idstorage clean
-	make -C xmbctrl clean
-	make -C satelite clean
-	make -C recovery clean
+	make -C core/btcnf/pspbtcnf_inferno clean
+	make -C core/btcnf/pspbtcnf_march33 clean
+	make -C core/btcnf/pspbtcnf_me clean
+	make -C core/btcnf/pspbtcnf_normal clean
+	make -C core/btcnf/pspbtcnf_np9660 clean
+	make -C core/btcnf/pspbtcnf_recovery clean
+	make -C core/payloadex clean
+	make -C core/rebootex clean
+	make -C core/payloadex_old clean
+	make -C core/rebootex_old clean
+	make -C core/payloadex_ark clean
+	make -C core/binary clean
+	make -C core/systemctrl clean
+	make -C core/pentazemin clean
+	make -C core/popcorn clean
+	make -C core/vshctrl clean
+	make -C core/kermit_idstorage clean
+	make -C core/recovery clean
+	make -C iso_drivers/galaxy clean
+	make -C iso_drivers/march33 clean
+	make -C iso_drivers/inferno clean
+	make -C iso_drivers/minimal_edition clean
+	make -C extra/xmbctrl clean
+	make -C extra/satelite clean
 	rm -f pentazemin/binary.h systemctrl/rebootex.h
