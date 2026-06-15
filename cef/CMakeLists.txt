@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.28)
 
+
+if(NOT DEFINED ENV{PSPDEV})
+message(FATAL_ERROR "Please define PSPDEV to point to your PSPDEV path!")
+endif()
+
+set(CMAKE_TOOLCHAIN_FILE "$ENV{PSPDEV}/psp/share/pspdev.cmake" CACHE PATH "toolchain file")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(cef VERSION 1.0 LANGUAGES C ASM)
 
 include("cmake/cef-prx.cmake")
