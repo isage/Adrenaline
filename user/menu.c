@@ -156,6 +156,7 @@ static AdrenalineConfig old_config;
 static int tab_sel = 0;
 static int menu_sel = 0;
 int menu_open = 0;
+static int g_hide_menu = 0;
 
 static int changed = 0;
 static int open_official_settings = 0;
@@ -375,6 +376,14 @@ void ctrlMenu() {
 				menu_sel = 0;
 				tab_sel = 0;
 			}
+		}
+
+		// SQUARE on Settings tab when on graphical options (filter, screen scale).
+		if (pressed_pad[PAD_SQUARE] && tab_sel == 2 && menu_sel >= 1 && menu_sel <= 7) {
+			g_hide_menu = 1;
+		}
+		if (released_pad[PAD_SQUARE] || tab_sel != 2 || (tab_sel == 2 && (menu_sel < 1 || menu_sel > 7))) {
+			g_hide_menu = 0;
 		}
 	}
 
@@ -695,7 +704,7 @@ int AdrenalineDraw(SceSize args, void *argp) {
 
 
 		// Draw Menu
-		if (menu_open) {
+		if (menu_open && !g_hide_menu) {
 			drawMenu();
 		}
 
