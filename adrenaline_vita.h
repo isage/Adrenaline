@@ -47,6 +47,8 @@ enum AdrenalinePspCommands {
 	ADRENALINE_PSP_CMD_REINSERT_MS,
 	ADRENALINE_PSP_CMD_SAVESTATE,
 	ADRENALINE_PSP_CMD_LOADSTATE,
+	ADRENALINE_PSP_CMD_PAUSE_WORLD,
+	ADRENALINE_PSP_CMD_RESUME_WORLD,
 };
 
 enum AdrenalineVitaCommands {
@@ -90,6 +92,7 @@ typedef struct {
 	int vita_response;
 
 	char printbuf[1024];
+	int app_type;
 } SceAdrenaline;
 
 enum SEUmdModes
@@ -103,6 +106,22 @@ enum SEUmdModes
     MODE_VSHUMD,
     MODE_UPDATERUMD,
     MODE_RECOVERY,
+};
+
+/**
+ * Application types of an executable.
+ */
+enum SceApplicationType {
+    /** The application is a VSH application (i.e. VSH modules). */
+    SCE_APP_TYPE_VSH        = 0x100,
+    /** The application is an updater. */
+    SCE_APP_TYPE_UPDATER    = 0x110,
+    /** The application is a PSP game. */
+    SCE_APP_TYPE_GAME       = 0x200,
+    /** The application is a Playstation One game. */
+    SCE_APP_TYPE_POPS       = 0x300,
+    /** The application is a PSP application (i.e. Skype). */
+    SCE_APP_TYPE_APP        = 0x400,
 };
 
 

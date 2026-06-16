@@ -195,6 +195,9 @@ static int EnterAdrenalineMenu() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
 	if (adrenaline->pops_mode) {
 		ScePspemuPausePops(1);
+	} else if (adrenaline->app_type == SCE_APP_TYPE_GAME || adrenaline->app_type == SCE_APP_TYPE_APP) {
+		lockPower();
+		SendAdrenalineRequest(ADRENALINE_PSP_CMD_PAUSE_WORLD);
 	}
 
 	// Check if ARK is installed
@@ -221,6 +224,9 @@ int ExitAdrenalineMenu() {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
 	if (adrenaline->pops_mode) {
 		ScePspemuPausePops(0);
+	} else if (adrenaline->app_type == SCE_APP_TYPE_GAME || adrenaline->app_type == SCE_APP_TYPE_APP)  {
+		unlockPower();
+		SendAdrenalineRequest(ADRENALINE_PSP_CMD_RESUME_WORLD);
 	}
 
 	menu_open = 0;

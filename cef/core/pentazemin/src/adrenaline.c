@@ -81,7 +81,7 @@ int sctrlSendAdrenalineCmd(int cmd, u32 args) {
 	return resp;
 }
 
-int getSfoTitle(char *title, int n) {
+static int getSfoTitle(char *title, int n) {
 	return sctrlGetInitPARAM("TITLE", NULL, (u32 *)&n, title);
 }
 
@@ -107,16 +107,93 @@ void initAdrenalineInfo() {
 		strcpy(g_adrenaline->filename, filename);
 	}
 
-	g_adrenaline->pops_mode = sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS;
+	g_adrenaline->app_type = sceKernelApplicationType();
+	g_adrenaline->pops_mode = g_adrenaline->app_type == PSP_INIT_KEYCONFIG_POPS;
 }
 
-int adrenaline_interrupt() {
+#define MAX_THREADS 32
+#define USER_THREAD (0x80000000)
+SceUID g_threads[MAX_THREADS] = {-1};
+int g_thread_count = 0;
+int g_suspended_count = 0;
+
+static int pauseWorld() {
+	int res = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, g_threads, MAX_THREADS, &g_thread_count);
+
+	if (res < 0) {
+		logmsg("[ERROR]: %s: `sceKernelGetThreadmanIdList` failed with 0x%08X\n", __func__, res);
+		return res;
+	}
+
+	if (g_thread_count > MAX_THREADS) {
+		logmsg("[WARN]: %s: `sceKernelGetThreadmanIdList` got more threads than we can hold\n", __func__);
+	}
+
+	for (int i = 0; i < g_thread_count; i++) {
+		SceKernelThreadInfo info = {0};
+		info.size = sizeof(SceKernelThreadInfo);
+		res = sceKernelReferThreadStatus(g_threads[i], &info);
+
+		if (res == 0
+			&& (info.attr & USER_THREAD) == USER_THREAD
+			&& (info.status & PSP_THREAD_RUNNING) == 0
+			&& (info.status & PSP_THREAD_SUSPEND) == 0) {
+
+			continue;
+		}
+
+		g_threads[i] = -1;
+	}
+
+	for (int i = g_thread_count; i > 0; i--) {
+		if (g_threads[i] >= 0) {
+			res = sceKernelSuspendThread(g_threads[i]);
+
+			if (res < 0) {
+				logmsg("[ERROR]: %s: `sceKernelSuspendThread(0x%08X)` failed with 0x%08X\n", __func__, g_threads[i], res);
+			} else {
+				g_suspended_count += 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static int resumeWorld() {
+	if (g_suspended_count <= 0) {
+		return 0;
+	}
+
+	int repeated = 0;
+repeat_resume:
+	for (int i = 0; i < g_thread_count; i++) {
+		if (g_threads[i] >= 0) {
+			int res = sceKernelResumeThread(g_threads[i]);
+
+			if (res >= 0) {
+				g_suspended_count -= 1;
+			} else {
+				logmsg("[ERROR]: %s: `sceKernelResumeThread` failed with 0x%08X\n", __func__, res);
+			}
+		}
+	}
+
+	if (g_suspended_count > 0 && repeated == 0) {
+		repeated = 1;
+		goto repeat_resume;
+	}
+
+	return 0;
+}
+
+static int adrenaline_interrupt() {
 	// Signal adrenaline semaphore
 	sceKernelSignalSema(adrenaline_semaid, 1);
 	return 0;
 }
 
-int adrenaline_thread(SceSize args, void *argp) {
+static int adrenaline_thread(SceSize args, void *argp) {
 	while (1) {
 		// Wait for semaphore signal
 		sceKernelWaitSema(adrenaline_semaid, 1, NULL);
@@ -135,6 +212,17 @@ int adrenaline_thread(SceSize args, void *argp) {
 				g_adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
 				_scePowerSuspendOperation(0x202);
 				break;
+
+			case ADRENALINE_PSP_CMD_PAUSE_WORLD:
+				g_adrenaline->psp_cmd = ADRENALINE_PSP_CMD_NONE;
+				pauseWorld();
+				break;
+
+			case ADRENALINE_PSP_CMD_RESUME_WORLD:
+				g_adrenaline->psp_cmd = ADRENALINE_PSP_CMD_NONE;
+				resumeWorld();
+				break;
+
 		}
 	}
 
