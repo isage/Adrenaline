@@ -507,17 +507,19 @@ void MenuCtrl() {
 		ChangeValue(-1);
 	}
 
-	if (key & PSP_CTRL_UP) {
+	if ((key & PSP_CTRL_UP) && g_pages[g_sel_page].n_entries > 0) {
 		g_sel = (g_pages[g_sel_page].n_entries + g_sel - 1) % g_pages[g_sel_page].n_entries;
 		// skip empty lines
-		if (strcmp(g_pages[g_sel_page].entries[g_sel].name,"")==0)
+		if (strcmp(g_pages[g_sel_page].entries[g_sel].name,"")==0) {
 			g_sel = (g_pages[g_sel_page].n_entries + g_sel - 1) % g_pages[g_sel_page].n_entries;
+		}
 	}
-	if (key & PSP_CTRL_DOWN) {
+	if ((key & PSP_CTRL_DOWN) && g_pages[g_sel_page].n_entries > 0) {
 		g_sel = (g_pages[g_sel_page].n_entries + g_sel + 1) % g_pages[g_sel_page].n_entries;
 		// skip empty lines
-		if (strcmp(g_pages[g_sel_page].entries[g_sel].name,"")==0)
+		if (strcmp(g_pages[g_sel_page].entries[g_sel].name,"")==0) {
 			g_sel = (g_pages[g_sel_page].n_entries + g_sel + 1) % g_pages[g_sel_page].n_entries;
+		}
 	}
 
 	if (key & PSP_CTRL_LTRIGGER) {
