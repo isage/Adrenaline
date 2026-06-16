@@ -28,21 +28,24 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 
 **Core parts:**
 
-- `cef/systemctrl`: The heart of the eCFW, therefore it's name `SystemControl`. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW module and third-party plugins.
-- `cef/pentazemin`: The `Pentazemin` module patches the necessary system modules and old homebrew modules to make the vPSP environment to work. It also works as a compatibility layer for other PSP CFW to run on Adrenaline more easily (like ARK).
-- `cef/vshctrl`: The `VshControl` module handles the main patches for the `XMB`/`VSH` to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on `XMB`/`VSH` contexts.
-- `cef/galaxy`: The `GalaxyController` module provide patches to use ISO and Compressed ISO with the Sony's NP9660 driver.
-- `cef/inferno`: The `InfernoDriver` module is the custom driver that allows executing ISO and Compressed ISO.
-- `cef/march33`: The `March33Driver` module is the custom driver that allows executing ISO and Compressed ISO.
-- `cef/popcorn`: The `PopcornManager` module allows the PS1 emulator (POPS) to launch custom PS1 images.
-- `cef/recovery`: The `Recovery Menu` module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.
-- `cef/kermit_idstorage`: A custom implementation of `sceIdStorage_driver` that enables the vPSP environment to work properly.
-- `cef/payloadex` and `cef/rebootex`: Handles the actual injection of the CFW in the (re)boot process. `Payloadex` is used by `user` to launch Adrenaline CFW, while `Rebootex` is set to relaunch it during a ePSP reboot.
+- `cef/core/systemctrl`: The heart of the eCFW, therefore it's name `SystemControl`. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW modules and third-party plugins.
+- `cef/core/pentazemin`: The `Pentazemin` module patches the necessary system modules and old homebrew modules to make the vPSP environment to work. It also works as a compatibility layer for other PSP CFW to run on Adrenaline more easily (like ARK).
+- `cef/core/vshctrl`: The `VshControl` module handles the main patches for the `XMB`/`VSH` to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on `XMB`/`VSH` contexts.
+- `cef/core/popcorn`: The `PopcornManager` module allows the PS1 emulator (POPS) to launch custom PS1 images.
+- `cef/core/recovery`: The `Recovery Menu` module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.
+- `cef/core/kermit_idstorage`: A custom implementation of `sceIdStorage_driver` that enables the vPSP environment to work properly.
+- `cef/core/payloadex` and `cef/core/rebootex`: Handles the actual injection of the CFW in the (re)boot process. `Payloadex` is used by `user` to launch EPI CFW, while `Rebootex` is set to relaunch it during a ePSP reboot.
+- `cef/core/payloadex_ark`: Handles the actual injection of the CFW in the boot process. `Payloadex_ARK` is used by `user` to launch ARK CFW.
+- `cef/iso_drivers/galaxy`: The `GalaxyController` module provide patches to use ISO and Compressed ISO with the Sony's NP9660 driver.
+- `cef/iso_drivers/inferno`: The `InfernoDriver` module is the custom driver that allows executing ISO and Compressed ISO.
+- `cef/iso_drivers/march33`: The `March33Driver` module is the custom driver that allows executing ISO and Compressed ISO.
+- `cef/iso_drivers/minimal_edition`: The `MEisoDriver` module is the custom driver that allows executing ISO and Compressed ISO.
 
 **Extra Parts:**
 
-- `cef/satelite`: Provides the `VSH Menu` to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.
-- `cef/xmbctrl`: The `XMB Control` module provides access to CFW configuration and plugin management directly from the XMB `Settings` section.
+- `cef/extra/satelite`: Provides the `VSH Menu` to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.
+- `cef/extra/xmbctrl`: The `XMB Control` module provides access to CFW configuration and plugin management directly from the XMB `Settings` section.
+- `cef/extra/updater`: the `UPDATER` application that allows to update Adrenaline and EPI from the vPSP environment.
 
 
 ## Setting up the development environment
@@ -52,7 +55,7 @@ To be able to build the project, you will need to setup the necessary developmen
 
 For the [VITASDK](https://vitasdk.org/) and [PSPSDK](https://pspdev.github.io/), follow their instructions to install it in your system.
 
-For the [PSP CFW SDK](https://github.com/pspdev/psp-cfw-sdk), prefer to install from source, as CFW development and updates to the CFW SDK move hand-in-hand.
+For the [PSP CFW SDK](https://github.com/pspdev/psp-cfw-sdk), prefer to install from source, as CFW development and updates to the CFW SDK move hand-in-hand. If using CMAKE, it downloads and uses and compiles the latest commit.
 
 [Python3](https://www.python.org/downloads/) installation will depend on your system and setup. Google is your friend on this one.
 
@@ -102,17 +105,18 @@ Test things your code change affect.
 
 On the **ePSP-side**, you can pass next the definition to the `cmake` call that enables logging on the subprojects that form the Adrenaline ePSP CFW. The ones available are:
 
-- `GALAXY_DEBUG`: Enables logs only on the `cef/galaxy` module
-- `INFERNO_DEBUG`: Enables logs only on the `cef/inferno` module
-- `MARCH33_DEBUG`: Enables logs only on the `cef/march33` module
-- `KERMIT_IDSTORAGE_DEBUG`: Enables logs only on the `cef/kermit_idstorage` module
-- `RECOVERY_DEBUG`: Enables logs only on the `cef/recovery` module
-- `POPCORN_DEBUG`: Enables logs only on the `cef/popcorn` module
-- `SATELITE_DEBUG`: Enables logs only on the `cef/satelite` module
-- `SYSTEMCTRL_DEBUG`: Enables logs only on the `cef/systemctrl` module
-- `PENTAZEMIN_DEBUG`: enables logs only on the `cef/pentazemin` module
-- `VSHCTRL_DEBUG`: Enables logs only on the `cef/vshctrl` module
-- `XMBCTRL_DEBUG`: Enables logs only on the `cef/xmbctrl` module
+- `SYSTEMCTRL_DEBUG`: Enables logs only on the `cef/core/systemctrl` module
+- `PENTAZEMIN_DEBUG`: enables logs only on the `cef/core/pentazemin` module
+- `RECOVERY_DEBUG`: Enables logs only on the `cef/core/recovery` module
+- `POPCORN_DEBUG`: Enables logs only on the `cef/core/popcorn` module
+- `VSHCTRL_DEBUG`: Enables logs only on the `cef/core/vshctrl` module
+- `KERMIT_IDSTORAGE_DEBUG`: Enables logs only on the `cef/core/kermit_idstorage` module
+- `GALAXY_DEBUG`: Enables logs only on the `cef/iso_drivers/galaxy` module
+- `INFERNO_DEBUG`: Enables logs only on the `cef/iso_drivers/inferno` module
+- `MARCH33_DEBUG`: Enables logs only on the `cef/iso_drivers/march33` module
+- `MINIMAL_EDITION_DEBUG`: Enables logs only on the `cef/iso_drivers/minimal_edition` module
+- `XMBCTRL_DEBUG`: Enables logs only on the `cef/extra/xmbctrl` module
+- `SATELITE_DEBUG`: Enables logs only on the `cef/extra/satelite` module
 - `DEBUG`: Enables logs to all subprojects with the same level
 
 It is recommended to use the specific ones. Another recommendation is to avoid using more than level `2` unless really necessary, as the excessive logging message can make the vPSP system very slow.

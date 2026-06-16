@@ -44,9 +44,15 @@ It offers these options:
 > [!IMPORTANT]
 > When the **Original** option is selected, all graphics-related options will not take effect.
 
+> [!TIP]
+> You can hide the Adrenaline Menu to better see the effects of this options by holding the **SQUARE** button.
+
 ## Smooth Graphics
 
 When enabled, apply a stronger smooth effect filter on top of the filter selected on [Graphical Filtering](#graphics-filtering) configuration.
+
+> [!TIP]
+> You can hide the Adrenaline Menu to better see the effects of this options by holding the **SQUARE** button.
 
 ## f.lux Filter Color
 
@@ -59,13 +65,22 @@ The available options are:
 - **Blue**
 - **Black**
 
+> [!TIP]
+> You can hide the Adrenaline Menu to better see the effects of this options by holding the **SQUARE** button.
+
 ## Screen Scale X/Y (PSP)
 
 Allows to adjust the horizontal (X) and vertical (Y) scaling of the PSP screen within Adrenaline on XMB/VSH and PSP games/homebrew/applications. This allows you to change the size and aspect ratio of the application display to better fit your Vita/PSTV screen and/or the users' preferences.
 
+> [!TIP]
+> You can hide the Adrenaline Menu to better see the effects of this options by holding the **SQUARE** button.
+
 ## Screen Scale X/Y (PS1)
 
 Same as [Screen Scale X/Y (PSP)](#screen-scale-xy-psp), but exclusively on PS1 games/homebrew.
+
+> [!TIP]
+> You can hide the Adrenaline Menu to better see the effects of this options by holding the **SQUARE** button.
 
 > [!TIP] GrayJack Personal Preference
 > For this config, I like to set it to `1.215` on both X and Y axis. Maximizes the size while maintaining the original game proportions.
@@ -81,6 +96,7 @@ The options are:
 - `imc0:pspemu`
 - `xmc0:pspemu`
 - `uma0:pspemu`
+- `uma0:`
 
 ## USB device
 

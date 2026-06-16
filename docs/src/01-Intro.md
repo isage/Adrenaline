@@ -49,22 +49,23 @@ Adrenaline is two software projects in one: **Adrenaline Application** (1) and *
 ## Adrenaline Key Combos Cheat Sheet
 ---
 
-| Key Combo         | Event                                 | Availability                                  |
-|-------------------|---------------------------------------|-----------------------------------------------|
-| PS button 2x      | Return to Vita live area              | Anytime                                       |
-| Hold R            | Start CFW on Recovery mode            | On Adrenaline App bubble start                |
-| L+Select          | Toggle PS1 Fast Forward               | PS1/POPS titles                               |
+| Key Combo         | Event                                 | Availability                                                |
+|-------------------|---------------------------------------|-------------------------------------------------------------|
+| PS button 2x      | Return to Vita live area              | Anytime                                                     |
+| Hold R            | Start CFW on Recovery mode            | On Adrenaline App bubble start                              |
+| L+Select          | Toggle PS1 Fast Forward               | PS1/POPS titles                                             |
+| Hold Square       | Hide Adrenaline Menu                  | When Adrenaline Menu is open with graphic settings selected |
 
 
 ## Epinephrine CFW Key Combos Cheat Sheet
 ---
 
-| Key Combo         | Event                                 | Availability                                  |
-|-------------------|---------------------------------------|-----------------------------------------------|
-| L+R+Down+Select   | Fast exit to XMB/VSH                  | Anytime on XMB or PSP title                   |
-| L+R+Down+Start    | Fast exit to XMB/VSH                  | Anytime on XMB or PSP title                   |
-| L2+R2+Down+Select | Fast exit to XMB/VSH                  | Anytime on PS1 title on Vita                  |
-| L2+R2+Down+Start  | Fast exit to XMB/VSH                  | Anytime on PS1 title on Vita                  |
-| Select            | Open VSH Menu                         | XMB/VSH                                       |
-| Hold L            | Plugins disabled                      | On PSP/PS1 title Reset/Power-on/launch        |
-| Hold R            | Execute BOOT.BIN in UMDemu ISO        | On PSP ISO title and games launch             |
+| Key Combo         | Event                                 | Availability                                                |
+|-------------------|---------------------------------------|-------------------------------------------------------------|
+| L+R+Down+Select   | Fast exit to XMB/VSH                  | Anytime on XMB or PSP title                                 |
+| L+R+Down+Start    | Fast exit to XMB/VSH                  | Anytime on XMB or PSP title                                 |
+| L2+R2+Down+Select | Fast exit to XMB/VSH                  | Anytime on PS1 title on Vita                                |
+| L2+R2+Down+Start  | Fast exit to XMB/VSH                  | Anytime on PS1 title on Vita                                |
+| Select            | Open VSH Menu                         | XMB/VSH                                                     |
+| Hold L            | Plugins disabled                      | On PSP/PS1 title Reset/Power-on/launch                      |
+| Hold R            | Execute BOOT.BIN in UMDemu ISO        | On PSP ISO title and games launch                           |
