@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/general-0392ca55.css">
+        <link rel="stylesheet" href="css/chrome-fc474251.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4a8c9325.js";
+            window.path_to_searchindex_js = "searchindex-ff899ff8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-06adaeb4.js"></script>
+        <script src="toc-cc1a0f18.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -436,37 +436,41 @@
 <p>The <code>core</code> parts are essential to support the most basic functionality of a CFW. The <code>extra</code> parts are not necessary for the CFW, but might provide quality of life features for end-users.</p>
 <p><strong>Core parts:</strong></p>
 <ul>
-<li><code>cef/systemctrl</code>: The heart of the eCFW, therefore it’s name <code>SystemControl</code>. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW module and third-party plugins.</li>
-<li><code>cef/pentazemin</code>: The <code>Pentazemin</code> module patches the necessary system modules and old homebrew modules to make the vPSP environment to work. It also works as a compatibility layer for other PSP CFW to run on Adrenaline more easily (like ARK).</li>
-<li><code>cef/vshctrl</code>: The <code>VshControl</code> module handles the main patches for the <code>XMB</code>/<code>VSH</code> to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on <code>XMB</code>/<code>VSH</code> contexts.</li>
-<li><code>cef/galaxy</code>: The <code>GalaxyController</code> module provide patches to use ISO and Compressed ISO with the Sony’s NP9660 driver.</li>
-<li><code>cef/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
-<li><code>cef/march33</code>: The <code>March33Driver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
-<li><code>cef/popcorn</code>: The <code>PopcornManager</code> module allows the PS1 emulator (POPS) to launch custom PS1 images.</li>
-<li><code>cef/recovery</code>: The <code>Recovery Menu</code> module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.</li>
-<li><code>cef/kermit_idstorage</code>: A custom implementation of <code>sceIdStorage_driver</code> that enables the vPSP environment to work properly.</li>
-<li><code>cef/payloadex</code> and <code>cef/rebootex</code>: Handles the actual injection of the CFW in the (re)boot process. <code>Payloadex</code> is used by <code>user</code> to launch Adrenaline CFW, while <code>Rebootex</code> is set to relaunch it during a ePSP reboot.</li>
+<li><code>cef/core/systemctrl</code>: The heart of the eCFW, therefore it’s name <code>SystemControl</code>. It provide patches for unsigned code execution, handles anti-CFW protection in games, and provides extra libraries API that serves the rest of the eCFW modules and third-party plugins.</li>
+<li><code>cef/core/pentazemin</code>: The <code>Pentazemin</code> module patches the necessary system modules and old homebrew modules to make the vPSP environment to work. It also works as a compatibility layer for other PSP CFW to run on Adrenaline more easily (like ARK).</li>
+<li><code>cef/core/vshctrl</code>: The <code>VshControl</code> module handles the main patches for the <code>XMB</code>/<code>VSH</code> to allow launching unsigned applications from the XMB. It also provides extra API for plugins meant to be run on <code>XMB</code>/<code>VSH</code> contexts.</li>
+<li><code>cef/core/popcorn</code>: The <code>PopcornManager</code> module allows the PS1 emulator (POPS) to launch custom PS1 images.</li>
+<li><code>cef/core/recovery</code>: The <code>Recovery Menu</code> module. It provides the Recovery Menu, that can be used to configure the eCFW, or reset it in case of bad configuration/plugins making the system not boot-up correctly.</li>
+<li><code>cef/core/kermit_idstorage</code>: A custom implementation of <code>sceIdStorage_driver</code> that enables the vPSP environment to work properly.</li>
+<li><code>cef/core/payloadex</code> and <code>cef/core/rebootex</code>: Handles the actual injection of the CFW in the (re)boot process. <code>Payloadex</code> is used by <code>user</code> to launch EPI CFW, while <code>Rebootex</code> is set to relaunch it during a ePSP reboot.</li>
+<li><code>cef/core/payloadex_ark</code>: Handles the actual injection of the CFW in the boot process. <code>Payloadex_ARK</code> is used by <code>user</code> to launch ARK CFW.</li>
+<li><code>cef/iso_drivers/galaxy</code>: The <code>GalaxyController</code> module provide patches to use ISO and Compressed ISO with the Sony’s NP9660 driver.</li>
+<li><code>cef/iso_drivers/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
+<li><code>cef/iso_drivers/march33</code>: The <code>March33Driver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
+<li><code>cef/iso_drivers/minimal_edition</code>: The <code>MEisoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
 </ul>
 <p><strong>Extra Parts:</strong></p>
 <ul>
-<li><code>cef/satelite</code>: Provides the <code>VSH Menu</code> to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.</li>
-<li><code>cef/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section.</li>
+<li><code>cef/extra/satelite</code>: Provides the <code>VSH Menu</code> to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.</li>
+<li><code>cef/extra/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section.</li>
+<li><code>cef/extra/updater</code>: the <code>UPDATER</code> application that allows to update Adrenaline and EPI from the vPSP environment.</li>
 </ul>
 <h2 id="setting-up-the-development-environment"><a class="header" href="#setting-up-the-development-environment">Setting up the development environment</a></h2>
 <hr>
 <p>To be able to build the project, you will need to setup the necessary development environment parts. Adrenaline depends on four thing: <strong>VITASDK</strong>, <strong>PSPSDK</strong>, <strong>PSP CFW SDK</strong>, <strong>Python3</strong> and <strong>psp-packer</strong>.</p>
 <p>For the <a href="https://vitasdk.org/">VITASDK</a> and <a href="https://pspdev.github.io/">PSPSDK</a>, follow their instructions to install it in your system.</p>
-<p>For the <a href="https://github.com/pspdev/psp-cfw-sdk">PSP CFW SDK</a>, prefer to install from source, as CFW development and updates to the CFW SDK move hand-in-hand.</p>
+<p>For the <a href="https://github.com/pspdev/psp-cfw-sdk">PSP CFW SDK</a>, prefer to install from source, as CFW development and updates to the CFW SDK move hand-in-hand. If using CMAKE, it downloads and uses and compiles the latest commit.</p>
 <p><a href="https://www.python.org/downloads/">Python3</a> installation will depend on your system and setup. Google is your friend on this one.</p>
 <p>For <a href="https://github.com/VitaArchive/psp-packer">psp-packer</a>, either install via <code>cargo</code> or install from source.</p>
 <p>Once everything is installed, you can build the project.</p>
 <h2 id="building-the-project"><a class="header" href="#building-the-project">Building the project</a></h2>
 <hr>
 <p>First, you need to compile the eCFW (ePSP-side) code:</p>
-<pre><code class="language-sh">make -C cef -j1
+<pre><code class="language-sh">psp-cmake -S cef -B cef/build
+cmake --build cef/build
 </code></pre>
 <p>Then, you have to build the VITA-side part:</p>
-<pre><code class="language-sh">cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+<pre><code class="language-sh">cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1
 cmake --build build
 </code></pre>
 <p>For every change, you must recompile the project for the changes to take effect. This may be obvious for many programmers, but absolute novice in compiled languages may not understand this right away.</p>
@@ -496,18 +500,20 @@ cmake --build build
 <p>Test things your code change affect.</p>
 <h2 id="logs"><a class="header" href="#logs">Logs</a></h2>
 <hr>
-<p>On the <strong>ePSP-side</strong>, you can pass next the definition to the <code>make</code> call that enables logging on the subprojects that form the Adrenaline ePSP CFW. The ones available are:</p>
+<p>On the <strong>ePSP-side</strong>, you can pass next the definition to the <code>cmake</code> call that enables logging on the subprojects that form the Adrenaline ePSP CFW. The ones available are:</p>
 <ul>
-<li><code>GALAXY_DEBUG</code>: Enables logs only on the <code>cef/galaxy</code> module</li>
-<li><code>INFERNO_DEBUG</code>: Enables logs only on the <code>cef/inferno</code> module</li>
-<li><code>MARCH33_DEBUG</code>: Enables logs only on the <code>cef/march33</code> module</li>
-<li><code>KERMIT_IDSTORAGE_DEBUG</code>: Enables logs only on the <code>cef/kermit_idstorage</code> module</li>
-<li><code>RECOVERY_DEBUG</code>: Enables logs only on the <code>cef/newrecovery</code> module</li>
-<li><code>POPCORN_DEBUG</code>: Enables logs only on the <code>cef/popcorn</code> module</li>
-<li><code>SATELITE_DEBUG</code>: Enables logs only on the <code>cef/satelite</code> module</li>
-<li><code>SCTRL_DEBUG</code>: Enables logs only on the <code>cef/systemctrl</code> module</li>
-<li><code>VSHCTRL_DEBUG</code>: Enables logs only on the <code>cef/vshctrl</code> module</li>
-<li><code>XMBCTRL_DEBUG</code>: Enables logs only on the <code>cef/xmbctrl</code> module</li>
+<li><code>SYSTEMCTRL_DEBUG</code>: Enables logs only on the <code>cef/core/systemctrl</code> module</li>
+<li><code>PENTAZEMIN_DEBUG</code>: enables logs only on the <code>cef/core/pentazemin</code> module</li>
+<li><code>RECOVERY_DEBUG</code>: Enables logs only on the <code>cef/core/recovery</code> module</li>
+<li><code>POPCORN_DEBUG</code>: Enables logs only on the <code>cef/core/popcorn</code> module</li>
+<li><code>VSHCTRL_DEBUG</code>: Enables logs only on the <code>cef/core/vshctrl</code> module</li>
+<li><code>KERMIT_IDSTORAGE_DEBUG</code>: Enables logs only on the <code>cef/core/kermit_idstorage</code> module</li>
+<li><code>GALAXY_DEBUG</code>: Enables logs only on the <code>cef/iso_drivers/galaxy</code> module</li>
+<li><code>INFERNO_DEBUG</code>: Enables logs only on the <code>cef/iso_drivers/inferno</code> module</li>
+<li><code>MARCH33_DEBUG</code>: Enables logs only on the <code>cef/iso_drivers/march33</code> module</li>
+<li><code>MINIMAL_EDITION_DEBUG</code>: Enables logs only on the <code>cef/iso_drivers/minimal_edition</code> module</li>
+<li><code>XMBCTRL_DEBUG</code>: Enables logs only on the <code>cef/extra/xmbctrl</code> module</li>
+<li><code>SATELITE_DEBUG</code>: Enables logs only on the <code>cef/extra/satelite</code> module</li>
 <li><code>DEBUG</code>: Enables logs to all subprojects with the same level</li>
 </ul>
 <p>It is recommended to use the specific ones. Another recommendation is to avoid using more than level <code>2</code> unless really necessary, as the excessive logging message can make the vPSP system very slow.</p>
@@ -517,13 +523,14 @@ cmake --build build
   example
 </p>
 
-<pre><code class="language-sh">make -C cef -j1 SCTRL_DEBUG=2 VSHCTRL_DEBUG=1
+<pre><code class="language-sh">psp-cmake -S cef -B cef/build -DSYSTEMCTRL_DEBUG=2 -DPENTAZEMIN_DEBUG=1
 </code></pre>
 </div>
 
 <p>On the <strong>VITA-side</strong>, we don’t have something super well stablished, you can use <code>sceClibPrintf</code> function, and the messages will show up in the <code>tty</code>, that you can access through log homebrews (we recommend <a href="https://github.com/isage/catlog">catlog</a>).</p>
 <h3 id="accessing-the-logs"><a class="header" href="#accessing-the-logs">Accessing the logs</a></h3>
 <p>You can access in real-time and in your computer all logs by using logs homebrew such as <a href="https://github.com/isage/catlog">catlog</a>. This is the easiest way to access them.</p>
+<p>For <strong>eCFW</strong> modules to show logs on real-time you have to enable the <a href="./08-CfwConfiguration.html#tty-redirection">TTY redirection</a> setting.</p>
 <p>For the <strong>eCFW</strong> modules, you can later access them by looking into log files at the <code>???0:/pspemu/</code> directory. They are all named using the following pattern: <code>log_⟨MODULE_NAME⟩.txt</code>.</p>
 
                     </main>
@@ -570,11 +577,11 @@ cmake --build build
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-c2a407aa.js"></script>
+        <script src="searcher-09f2665d.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-a0b12cfe.js"></script>
+        <script src="book-c22b7243.js"></script>
 
         <!-- Custom JS scripts -->
 

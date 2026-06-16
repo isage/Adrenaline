@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/general-0392ca55.css">
+        <link rel="stylesheet" href="css/chrome-fc474251.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4a8c9325.js";
+            window.path_to_searchindex_js = "searchindex-ff899ff8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-06adaeb4.js"></script>
+        <script src="toc-cc1a0f18.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -425,6 +425,8 @@
 <li>Add image overlay filter for PS1 game/apps <strong>[<a href="./06-PS1Playback.html#overlay-image">docs</a>]</strong></li>
 <li>“Fix” manual double launch on first install</li>
 <li>Improve frame pacing on Original graphics filtering</li>
+<li>Implement hold <code>Square</code> to hide Adrenaline Menu on graphics-related settings</li>
+<li>Pauses PSP game when Adrenaline Menu is opened.</li>
 </ul>
 <h3 id="epinephrine-cfw"><a class="header" href="#epinephrine-cfw">Epinephrine CFW</a></h3>
 <ul>
@@ -485,6 +487,12 @@
 </li>
 <li>
 <p>Add <code>TTY redirection</code> advanced CFW option <strong>[<a href="./08-CfwConfiguration.html#tty-redirection">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add support to show app verion on XMB info for ISO games</p>
+<ul>
+<li>Support to show correct version with game updates (<code>PBOOT.PBP</code>)</li>
+</ul>
 </li>
 <li>
 <p>Implement “Hold L while launching apps” to not load plugins <strong>[<a href="./04-HomebrewSupport/01-Plugin.html#launch-without-plugins">docs</a>]</strong></p>
@@ -565,6 +573,9 @@
 </li>
 <li>
 <p><strong>DEV:</strong> Split patches to make vPSP possible to it’s own module: <code>Pentazemin</code></p>
+</li>
+<li>
+<p><strong>DEV:</strong> Load user plugins to extra memory if possible</p>
 </li>
 <li>
 <p><strong>Internal:</strong> Some code reorganization</p>
@@ -854,11 +865,11 @@ select ‘Original’ screen mode in Adrenaline settings. On a PS TV this will f
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-c2a407aa.js"></script>
+        <script src="searcher-09f2665d.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-a0b12cfe.js"></script>
+        <script src="book-c22b7243.js"></script>
 
         <!-- Custom JS scripts -->
 
