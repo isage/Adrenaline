@@ -985,8 +985,6 @@ OldNewNid scePaf_nid[] = {
 	{ 0x1F43B8A2, 0x95692855 }, // _ZNK3paf5Image17GetOriginalExtentEv earliest
 	{ 0xE8CCC611, 0x95692855 }, // _ZNK3paf5Image17GetOriginalExtentEv 5.00
 	{ 0x48BB05D5, 0x5E909060 },
-	{ 0x545FE2DA, 0x412B2F09 }, // sce_paf_private_free earliest
-	{ 0x22FB4177, 0x412B2F09 }, // sce_paf_private_free 5.00
 	{ 0xD27DE19A, 0xD590412B }, // _ZN3paf8DateTime3NowEv earliest
 	{ 0xBC8DC92B, 0xD590412B }, // _ZN3paf8DateTime3NowEv 5.00
 	{ 0x66FE90D7, 0x4CF09BA2 }, // sce_paf_private_strcmp earliest
