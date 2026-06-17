@@ -441,13 +441,13 @@ void ctrlMenu() {
 				}
 			}
 
-			if (hold_pad[PAD_UP] || hold_pad[PAD_LEFT_ANALOG_UP]) {
+			if ((hold_pad[PAD_UP] || hold_pad[PAD_LEFT_ANALOG_UP]) && !g_hide_menu) {
 				if (menu_sel > 0) {
 					menu_sel--;
 				}
 			}
 
-			if (hold_pad[PAD_DOWN] || hold_pad[PAD_LEFT_ANALOG_DOWN]) {
+			if ((hold_pad[PAD_DOWN] || hold_pad[PAD_LEFT_ANALOG_DOWN]) && !g_hide_menu) {
 				if (menu_sel < tab_entries[tab_sel].n_entries-1) {
 					menu_sel++;
 				}
