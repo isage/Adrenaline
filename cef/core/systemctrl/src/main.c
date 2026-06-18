@@ -22,6 +22,7 @@
 #include <pspusbcam.h>
 #include <pspdisplay.h>
 #include <psperror.h>
+// #include <psploadexec.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
@@ -221,11 +222,11 @@ static int OnModuleStart(SceModule *mod) {
 	} else if (strcmp(modname, "sceLoadExec") == 0) {
 		PatchLoadExec(mod);
 
-		#if defined(DEBUG) && DEBUG >= 4
-		extern int (* _runExec)(RunExecParams*);
-		extern int runExecPatched(RunExecParams* args);
-		HIJACK_FUNCTION(text_addr+0x2148, runExecPatched, _runExec);
-		#endif // defined(DEBUG) && DEBUG >= 3
+		// #if defined(DEBUG) && DEBUG >= 4
+		// extern int (* _runExec)(RunExecParams*);
+		// extern int runExecPatched(RunExecParams* args);
+		// HIJACK_FUNCTION(text_addr+0x2148, runExecPatched, _runExec);
+		// #endif // defined(DEBUG) && DEBUG >= 3
 
 		// Hijack all execute calls
 		extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
@@ -316,7 +317,7 @@ static int OnModuleStart(SceModule *mod) {
 		}
 	}
 
-	logmsg4("[DEBUG]: %s: mod_name=%s — text_addr=0x%08X\n", __func__, modname, text_addr);
+	logmsg4("[DEBUG]: %s: mod_name=%s — text_addr=0x%08lX\n", __func__, modname, text_addr);
 
 	return 0;
 }

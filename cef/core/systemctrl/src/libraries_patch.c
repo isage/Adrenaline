@@ -415,7 +415,7 @@ int sctrlPatchModule(char *modname, u32 inst, u32 offset) {
 
 	pspSdkSetK1(k1);
 
-	logmsg4("%s: modname=%s, inst=0x%08X, offset=0x%08X -> 0x%08X", __func__, modname, inst, offset);
+	logmsg4("%s: modname=%s, inst=0x%08X, offset=0x%08lX -> 0x%08X", __func__, modname, inst, offset);
 	return ret;
 }
 

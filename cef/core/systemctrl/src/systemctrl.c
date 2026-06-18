@@ -230,28 +230,28 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	return res;
 }
 
-#if defined(DEBUG) && DEBUG >= 4
-int (* _runExec)(RunExecParams* args) = NULL;
-int runExecPatched(RunExecParams* args) {
-	if (args->args == 0) {
-		logmsg4("[INFO]: %s: apitype=0x%04lX, file=%s, param=0x%p\n", __func__, args->api_type, (char *)args->argp, args->vsh_param);
-	} else {
-		logmsg4("[INFO]: %s: apitype=0x%04lX, param=0x%p\n", __func__, args->api_type, args->vsh_param);
-	}
+// #if defined(DEBUG) && DEBUG >= 4
+// int (* _runExec)(RunExecParams* args) = NULL;
+// int runExecPatched(RunExecParams* args) {
+// 	if (args->args == 0) {
+// 		logmsg4("[INFO]: %s: apitype=0x%04lX, file=%s, param=0x%p\n", __func__, args->api_type, (char *)args->argp, args->vsh_param);
+// 	} else {
+// 		logmsg4("[INFO]: %s: apitype=0x%04lX, param=0x%p\n", __func__, args->api_type, args->vsh_param);
+// 	}
 
-	u32 k1 = pspSdkSetK1(0);
+// 	u32 k1 = pspSdkSetK1(0);
 
-	if (!_runExec) {
-		SceModule *mod = sceKernelFindModuleByName("sceLoadExec");
-		_runExec = (void*) mod->text_addr + 0x2148;
-	}
+// 	if (!_runExec) {
+// 		SceModule *mod = sceKernelFindModuleByName("sceLoadExec");
+// 		_runExec = (void*) mod->text_addr + 0x2148;
+// 	}
 
-	int res = _runExec(args);
+// 	int res = _runExec(args);
 
-	pspSdkSetK1(k1);
-	return res;
-}
-#endif // defined(DEBUG) && DEBUG >= 4
+// 	pspSdkSetK1(k1);
+// 	return res;
+// }
+// #endif // defined(DEBUG) && DEBUG >= 4
 
 int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int) = NULL;
 int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLoadExecVSHParam *param) {
