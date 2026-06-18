@@ -38,6 +38,8 @@ extern u8 g_is_plugin_loading;
 extern SceSize g_plugins_loaded_mem;
 extern SceSize g_last_plugin_mem_size;
 
+extern int g_licensed_eboot;
+
 void lowerString(char* orig, char* ret, int strSize);
 
 int LoadExecForKernel_AA2029EC();

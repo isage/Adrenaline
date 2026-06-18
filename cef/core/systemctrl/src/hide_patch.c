@@ -44,6 +44,8 @@ static char *g_blacklist[] = {
 ////////////////////////////////////////////////////////////////////////////////
 
 static inline int is_in_blacklist(const char *dname) {
+	logmsg4("[DEBUG]: %s: dname=%s\n", __func__, dname);
+
     // lower string
     char temp[255];
 	memset(temp, 0, sizeof(temp));
@@ -84,12 +86,11 @@ SceUID sceIoDopenHidePatched(const char *dirname) {
 	res = sceIoDopen(dirname);
 
 exit:
-	logmsg4("[DEBUG]: %s: dirname=%s -> 0x%08lX\n", __func__, dirname, res);
+	logmsg4("[DEBUG]: %s: dirname=%s -> 0x%08X\n", __func__, dirname, res);
     return res;
 }
 
 int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
-    int k1 = pspSdkSetK1(0);
     int res = sceIoDread(fd, dir);
 
     if (res > 0 && is_in_blacklist(dir->d_name)) {
@@ -97,7 +98,6 @@ int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
         res = sceIoDread(fd, dir);
     }
 
-    pspSdkSetK1(k1);
     return res;
 }
 
@@ -113,60 +113,64 @@ SceUID sceIoOpenHidePatched(const char *path, int flags, SceMode mode) {
 	res = _sceIoOpen(path, flags, mode);
 
 exit:
-	logmsg4("[DEBUG]: %s: path=%s, flags=0x%08X, mode=0x%08X -> 0x%08lX\n", __func__, path, flags, mode, res);
+	logmsg4("[DEBUG]: %s: path=%s, flags=0x%08X, mode=0x%08X -> 0x%08X\n", __func__, path, flags, mode, res);
 	return res;
 }
 
 int sceIoRemoveHidePatched(const char *path) {
-	int k1 = pspSdkSetK1(0);
+	int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(strrchr(path,'/')+1)) {
+	if (is_in_blacklist(path)) {
 		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		return SCE_KERR_ILLEGAL_ACCESS;
+		goto exit;
 	}
 
-	int res = sceIoRemove(path);
-	pspSdkSetK1(k1);
+	res = sceIoRemove(path);
+
+exit:
 	return res;
 }
 
 int sceIoGetstatHidePatched(const char *path, SceIoStat *stat) {
-	int k1 = pspSdkSetK1(0);
+	int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(strrchr(path,'/')+1)) {
+	logmsg("[INFO]: %s: path=%s\n", __func__, path);
+	if (is_in_blacklist(path)) {
 		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		return SCE_KERR_ILLEGAL_ACCESS;
+		goto exit;
 	}
 
-	int res = sceIoGetstat(path, stat);
-	pspSdkSetK1(k1);
+	res = sceIoGetstat(path, stat);
+
+exit:
 	return res;
 }
 
 int sceIoChstatHidePatched(const char *path, SceIoStat *stat, int bits) {
-	int k1 = pspSdkSetK1(0);
+	int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(strrchr(path,'/')+1)) {
+	if (is_in_blacklist(path)) {
 		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		return SCE_KERR_ILLEGAL_ACCESS;
+		goto exit;
 	}
 
-	int res = sceIoChstat(path, stat, bits);
-	pspSdkSetK1(k1);
+	res = sceIoChstat(path, stat, bits);
+
+exit:
 	return res;
 }
 
 int sceIoRmdirHidePatched(const char *path) {
-	int k1 = pspSdkSetK1(0);
+	int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(strrchr(path,'/')+1)) {
+	if (is_in_blacklist(path)) {
 		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		return SCE_KERR_ILLEGAL_ACCESS;
+		goto exit;
 	}
 
-	int res = sceIoRmdir(path);
+	res = sceIoRmdir(path);
 
-	pspSdkSetK1(k1);
+exit:
 	return res;
 }
 
@@ -191,8 +195,9 @@ void PatchHideCfwFiles(SceModule* mod) {
 	// The hide CFW files overwrite the hook to `sceIoOpen` made by the DRM
 	// patch if both are active. So we use the `sceIoOpenDrmPatched` if that
 	// option is enabled
-	if (!g_cfw_config.no_nodrm_engine) {
+	if (!g_cfw_config.no_nodrm_engine && g_licensed_eboot ) {
 		_sceIoOpen = sceIoOpenDrmPatched;
+		logmsg3("[INFO]: Using `sceIoOpenDrmPatched` for HideCFWFiles\n");
 	}
 
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, sceIoDreadHidePatched);

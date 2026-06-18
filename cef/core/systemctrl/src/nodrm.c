@@ -42,10 +42,10 @@ static char g_ebootpath[256];
 static char g_pgd_path[256];
 static u8 g_pgdbuf[0x90];
 static u8 g_eboot_key[16];
-static int g_licensed_eboot = 0;
 static int g_is_key = 0;
+int g_licensed_eboot = 0;
 
-int IsPlainDrmFd(SceUID fd) {
+static int IsPlainDrmFd(SceUID fd) {
 	int k1 = pspSdkSetK1(0);
 
 	int pos = sceIoLseek32(fd, 0, PSP_SEEK_CUR);
