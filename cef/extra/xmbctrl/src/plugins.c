@@ -188,6 +188,7 @@ static void ProcessPluginFile(char* path, int (process_line)(char*, char*, char*
 		}
 		// Close Plugin Config
 		sceIoClose(fd);
+		paf_free(buf);
 	}
 }
 
@@ -286,11 +287,11 @@ void loadPlugins(){
 		paf_strcpy(plugin->path, sample_plugin_path);
 		add_list(&g_plugins, plugin);
 	}
-	logmsg("[DEBUG]: Plugin Manager: Plugin file loaded\n");
+	logmsg4("[DEBUG]: Plugin Manager: Plugin file loaded\n");
 }
 
 void savePlugins() {
-	logmsg("[DEBUG]: Plugin Manager: Plugin file saved\n");
+	logmsg4("[DEBUG]: Plugin Manager: Plugin file saved\n");
 	if (g_plugins.count == 0) {
 		return;
 	}
