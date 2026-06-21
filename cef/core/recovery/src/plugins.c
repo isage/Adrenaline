@@ -222,7 +222,7 @@ static void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*
 		}
 		// Close Plugin Config
 		sceIoClose(fd);
-		free(buf)
+		free(buf);
 	}
 }
 
