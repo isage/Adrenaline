@@ -149,6 +149,24 @@ typedef struct pthread_mlock_t MLOCK_T;
 
 static MLOCK_T lock;
 
+#ifdef _ADRENALINE_LOG_USE_PAF_
+
+int sce_paf_private_vsnprintf(char *buf, int size, char *fmt, va_list args);
+char *sce_paf_private_strcpy(char *, const char *);
+void *sce_paf_private_memset(void *, char, int);
+void *sce_paf_private_memcpy(void *, void *, int);
+char *sce_paf_private_strcat(char *, const char *);
+int sce_paf_private_snprintf(char *, SceSize, const char *, ...);
+
+#define _vsnprintf sce_paf_private_vsnprintf
+#define strcpy sce_paf_private_strcpy
+#define memset sce_paf_private_memset
+#define memcpy sce_paf_private_memcpy
+#define strcat sce_paf_private_strcat
+#define snprintf sce_paf_private_snprintf
+
+#else
+
 static int itostr(char *buf, int in_data, int base, int upper, int sign) {
 	int res, len, i;
 	unsigned int data;
@@ -382,6 +400,8 @@ exit:
 	return str-buf;
 }
 
+#endif // _ADRENALINE_LOG_USE_PAF_
+
 static char log_buf[256];
 static const char *log_output_fn;
 static char default_path[256] = {0};
@@ -602,6 +622,15 @@ int _logSync(void) {
 
 	return 0;
 }
+
+#ifdef _ADRENALINE_LOG_USE_PAF_
+#undef _vsnprintf
+#undef strcpy
+#undef memset
+#undef memcpy
+#undef strcat
+#undef snprintf
+#endif // _ADRENALINE_LOG_USE_PAF_
 
 #endif // DEBUG
 

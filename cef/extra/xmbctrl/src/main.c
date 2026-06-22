@@ -28,6 +28,7 @@
 #include <cfwmacros.h>
 
 #define _ADRENALINE_LOG_IMPL_
+#define _ADRENALINE_LOG_USE_PAF_
 #include <adrenaline_log.h>
 
 #include "xmbctrl.h"
