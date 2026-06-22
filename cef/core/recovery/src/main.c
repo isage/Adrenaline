@@ -23,8 +23,11 @@
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-
 #include <systemctrl_adrenaline.h>
+
+#define _ADRENALINE_LOG_IMPL_
+#include <adrenaline_log.h>
+
 #include "main.h"
 #include "menu.h"
 #include "installer.h"
@@ -124,6 +127,9 @@ void Exit() {
 }
 
 int main(int argc, char *argv[]) {
+	logInit("ms0:/log_recovery.txt");
+	logmsg("RecoveryMenu started...\n");
+
 	SceIoStat stat;
 	memset(&stat, 0, sizeof(SceIoStat));
 	if (sceIoGetstat("ms0:/__ADRENALINE__/flash0", &stat) < 0) {

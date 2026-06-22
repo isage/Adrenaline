@@ -23,6 +23,7 @@
 #include <pspiofilemgr.h>
 
 #include <systemctrl_se.h>
+#include <adrenaline_log.h>
 
 #include "main.h"
 #include "menu.h"
@@ -107,16 +108,15 @@ static int readLine(char* source, char *str) {
 			return n;
 		}
 
+		n++;
+		i++;
+
 		if(ch < 0x20) {
-			if(n != 0){
-				*str = 0;
-				return n;
-			}
+			*str = 0;
+			return n;
 		} else {
 			*str++ = ch;
-			n++;
 		}
-		i++;
 	}
 }
 
@@ -179,7 +179,7 @@ static int processLine(char * line, int (process_line)(char*, char*, char*)) {
 	return process_line(runlevel, path, enabled);
 }
 
-static void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*), void (*process_custom)(char*)) {
+static void ProcessPluginFile(char* path, int (process_line)(char*, char*, char*), void (*process_custom)(char*)) {
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
 	// Opened Plugin Config
@@ -228,10 +228,12 @@ static void ProcessConfigFile(char* path, int (process_line)(char*, char*, char*
 
 // Ignore ill formed line
 static void processCustomLine(char* line) {
+	logmsg4("[DEBUG]: %s: Processing plugin custom line `%s`\n", __func__, line);
 	return;
 }
 
 static void processPlugin(char* runlevel, char* path, char* enabled) {
+	logmsg4("[DEBUG]: %s: Processing plugin line `%s, %s, %s`\n", __func__, runlevel, path, enabled);
 	int idx = findEmpySlot();
 
 	int path_len = strlen(path) + 10;
@@ -288,9 +290,9 @@ void readPlugins() {
 	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
 
 	if (epiplugins_exists) {
-		ProcessConfigFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
+		ProcessPluginFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
 	} else {
-		ProcessConfigFile("ms0:/seplugins/plugins.txt", &processPlugin, &processCustomLine);
+		ProcessPluginFile("ms0:/seplugins/plugins.txt", &processPlugin, &processCustomLine);
 	}
 }
 

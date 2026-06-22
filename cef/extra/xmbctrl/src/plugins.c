@@ -71,16 +71,15 @@ static int readLine(char* source, char *str) {
 			return n;
 		}
 
+		n++;
+		i++;
+
 		if(ch < 0x20) {
-			if(n != 0){
-				*str = 0;
-				return n;
-			}
+			*str = 0;
+			return n;
 		} else {
 			*str++ = ch;
-			n++;
 		}
-		i++;
 	}
 }
 
@@ -172,7 +171,7 @@ static void ProcessPluginFile(char* path, int (process_line)(char*, char*, char*
 
 			while ((nread=readLine((char*)buf+total_read, line)) > 0) {
 				total_read += nread;
-				if (line[0] == 0) continue; // empty line
+				// if (line[0] == 0) continue; // empty line
 				int dup_line_len = paf_strlen(line)+1;
 				char* dupline = paf_malloc(dup_line_len);
 				paf_memset(dupline, 0, dup_line_len);
@@ -206,6 +205,7 @@ static void list_cleaner(void* item) {
 }
 
 static void processCustomLine(char* line) {
+	logmsg4("[DEBUG]: %s: Processing plugin custom line `%s`", __func__, line);
 	Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
 	paf_memset(plugin, 0, sizeof(Plugin));
 	plugin->path = line;
@@ -214,6 +214,7 @@ static void processCustomLine(char* line) {
 }
 
 static void processPlugin(char* runlevel, char* path, char* enabled) {
+	logmsg4("[DEBUG]: %s: Processing plugin line `%s, %s, %s`", __func__, runlevel, path, enabled);
 	int n = g_plugins.count;
 	char* name = paf_malloc(20);
 	if (name == NULL) {
@@ -330,12 +331,13 @@ void savePlugins() {
 			static char buf[256] = {0};
 			char *enabled = (plugin->active) ? "on" : "off";
 			paf_memset(buf, 0, 256);
-			paf_snprintf(buf, 256, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
+			paf_snprintf(buf, 255, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
 			sceIoWrite(fd, buf, paf_strlen(buf));
 
 		  // Custom line
 		} else {
 			sceIoWrite(fd, plugin->path, paf_strlen(plugin->path));
+			sceIoWrite(fd, "\n", 1);
 		}
 	}
 

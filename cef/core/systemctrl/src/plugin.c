@@ -329,13 +329,17 @@ static int readLine(char* source, char *str) {
 	u8 ch = 0;
 	int n = 0;
 	int i = 0;
+
 	while (1) {
-		if ( (ch = source[i]) == 0) {
+		if ((ch = source[i]) == 0) {
 			*str = 0;
 			return n;
 		}
-		n++; i++;
-		if (ch < 0x20) {
+
+		n++;
+		i++;
+
+		if(ch < 0x20) {
 			*str = 0;
 			return n;
 		} else {
@@ -424,7 +428,7 @@ static void processLine(const char* parent, char* line, void (*enabler)(const ch
 }
 
 // Load Plugins
-static int ProcessConfigFile(const char* parent, const char* path, void (*enabler)(const char*), void (*disabler)(const char*)) {
+static int ProcessPluginFile(const char* parent, const char* path, void (*enabler)(const char*), void (*disabler)(const char*)) {
 	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
 	// Opened Plugin Config
@@ -486,9 +490,9 @@ void loadPlugins() {
 	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
 
 	if (epiplugins_exists) {
-		ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/EPIplugins.txt", addPlugin, removePlugin);
+		ProcessPluginFile("ms0:/seplugins/", "ms0:/seplugins/EPIplugins.txt", addPlugin, removePlugin);
 	} else {
-		ProcessConfigFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
+		ProcessPluginFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
 	}
 
 

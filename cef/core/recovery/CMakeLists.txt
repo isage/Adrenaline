@@ -13,6 +13,7 @@ add_cef_prx(recovery USER
     -nostdlib
     gcc
     z
+	pspsdk
     pspge
     pspreg
     pspuser
