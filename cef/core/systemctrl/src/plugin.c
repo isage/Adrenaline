@@ -79,11 +79,13 @@ static void addPlugin(const char* path) {
 			cmp2 = (char*)path;
 		}
 		if (strcasecmp(cmp1, cmp2) == 0) {
+			logmsg4("[DEBUG]: %s: Plugin `%s` already added\n", __func__, path);
 			return; // plugin already added
 		}
 	}
 	if (g_plugins->count < MAX_PLUGINS) {
 		strcpy(g_plugins->paths[g_plugins->count++], path);
+		logmsg4("[DEBUG]: %s: Plugin `%s` added\n", __func__, path);
 	}
 }
 
@@ -145,6 +147,8 @@ static void startPlugins() {
 			} else {
 				logmsg3("[INFO]: Loaded plugin: %s\n", path);
 			}
+		} else {
+			logmsg("[ERROR]: %s: Failed to load %s -> 0x%08X\n", __func__, path, uid);
 		}
 	}
 }
@@ -494,7 +498,6 @@ void loadPlugins() {
 	} else {
 		ProcessPluginFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
 	}
-
 
 	// start all loaded plugins
 	startPlugins();

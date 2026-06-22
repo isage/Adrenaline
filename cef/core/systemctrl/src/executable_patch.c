@@ -26,6 +26,7 @@
 #include <cfwmacros.h>
 #include <pspextratypes.h>
 #include <systemctrl_adrenaline.h>
+#include <adrenaline_log.h>
 
 #include "externs.h"
 #include "init_patch.h"
@@ -188,7 +189,9 @@ int PartitionCheckPatched(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo 
 	sceIoLseek32(fd, pos, PSP_SEEK_SET);
 
 	// Patch to use p11 to load user plugins when possible
-	if (!execInfo->is_kernel_mod && sctrlIsLoadingPlugins() && g_is_plugin_loading) {
+	// VSH doesn't like we doing this
+	int not_vsh = sceKernelApplicationType() != PSP_INIT_KEYCONFIG_VSH;
+	if (!execInfo->is_kernel_mod && sctrlIsLoadingPlugins() && g_is_plugin_loading && not_vsh) {
 		// Use p2 is ram2 size `> 24` (normal user mem) and ram11 `< 4` (arbitrary), or force high mem turned on
 
 		if (mod_param->mpid_data == PSP_MEMORY_PARTITION_UNKNOWN) {
@@ -200,7 +203,7 @@ int PartitionCheckPatched(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo 
 		}
 	}
 
-
+	logmsg4("[DEBUG]: %s: is_kernel=%d mpid_data=%d mpid_text=%d\n", __func__, execInfo->is_kernel_mod, mod_param->mpid_data, mod_param->mpid_text);
 	return PartitionCheck(mod_param, execInfo);
 }
 

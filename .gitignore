@@ -1,5 +1,6 @@
 .vscode
 cef/.vscode
+.DS_Store
 
 build
 cef/build
@@ -8,7 +9,7 @@ cef/**/*.o
 cef/**/*.prx
 cef/**/*.elf
 
-cef/btcnf/**/pspbtcnf*.bin
+cef/core/btcnf/**/pspbtcnf*.bin
 
 cef/core/systemctrl/binary.h
 cef/core/systemctrl/rebootex.h
