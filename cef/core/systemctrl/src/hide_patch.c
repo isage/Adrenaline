@@ -37,6 +37,10 @@ static char *g_blacklist[] = {
 	"seplugins",
 	"isocache",
 	"irshell",
+	".cso",
+	".dax",
+	".jso",
+	".zso",
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,9 +97,14 @@ exit:
 int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
     int res = sceIoDread(fd, dir);
 
-    if (res > 0 && is_in_blacklist(dir->d_name)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, dir->d_name);
-        res = sceIoDread(fd, dir);
+    if (res >= 0 && is_in_blacklist(dir->d_name)) {
+		memset(dir, 0, sizeof(SceIoDirent));
+		if (res == 0) {
+			res = SCE_KERR_ILLEGAL_ACCESS;
+		} else {
+			logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, dir->d_name);
+			res = sceIoDreadHidePatched(fd, dir);
+		}
     }
 
     return res;
