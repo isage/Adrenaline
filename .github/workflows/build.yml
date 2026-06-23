@@ -228,6 +228,8 @@ jobs:
           tag_name: nightly-release
           name: "Adrenaline Nightly: ${{ steps.vars.outputs.sha_short }}"
           prerelease: true
+          generate_release_notes: true
+          previous_tag: nightly-release
           files: |
               build/epi-vpk/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
               build/epi-vpk-debug/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
