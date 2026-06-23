@@ -50,6 +50,7 @@ SEConfigEPI g_cfw_config;
 SceAdrenaline *g_adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 static int g_idle = 0;
+static int g_is_tty_redir_init = 0;
 
 static int g_cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
 static int g_bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
@@ -181,6 +182,11 @@ static int OnModuleStart(SceModule *mod) {
 				.me_type = g_cfw_config.use_me2,
 			};
 			sctrlPentazeminConfigure(&penconfig);
+
+			// Only start the redirection it configured
+			if (g_cfw_config.tty_redirection && !g_is_tty_redir_init) {
+				g_is_tty_redir_init = tty_init() == 0;
+			}
 		}
 
 		// If it reached title module and still ENOENT, no point in continue trying
@@ -344,8 +350,8 @@ int module_start(SceSize args, void *argp) {
 	memcpy(&g_rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
 
 	// Only start the redirection it configured
-	if (g_cfw_config.tty_redirection) {
-		tty_init();
+	if (g_cfw_config.tty_redirection && !g_is_tty_redir_init) {
+		g_is_tty_redir_init = tty_init() == 0;
 	}
 
 	return 0;
