@@ -501,7 +501,9 @@ int _logCached(char *fmt, ...) {
 	va_start(args, fmt);
 	printed_len = _vsnprintf(log_buf+printed_len, sizeof(log_buf)-printed_len, fmt, args);
 	va_end(args);
+	#ifndef _ADRENALINE_LOG_USE_PAF_
 	printed_len--;
+	#endif
 	appendToMemoryLog(printed_len);
 
 	pspSdkSetK1(k1);
@@ -522,7 +524,9 @@ int _logmsg(char *fmt, ...) {
 		va_start(args, fmt);
 		printed_len += _vsnprintf(log_buf+printed_len, sizeof(log_buf)-printed_len, fmt, args);
 		va_end(args);
+		#ifndef _ADRENALINE_LOG_USE_PAF_
 		printed_len--;
+		#endif
 		appendToMemoryLog(printed_len);
 	} else {
 		logLock();
@@ -530,7 +534,9 @@ int _logmsg(char *fmt, ...) {
 		va_start(args, fmt);
 		printed_len += _vsnprintf(log_buf+printed_len, sizeof(log_buf)-printed_len, fmt, args);
 		va_end(args);
+		#ifndef _ADRENALINE_LOG_USE_PAF_
 		printed_len--;
+		#endif
 		logOutput(printed_len);
 		logUnlock();
 	}
