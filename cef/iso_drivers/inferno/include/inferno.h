@@ -43,10 +43,8 @@ extern SceUID g_drive_status_evf;
 extern void *g_sector_buf;
 extern SceUID g_umd9660_sema_id;
 extern int g_disc_type;
-extern unsigned char umd_seek;
-extern unsigned char umd_speed;
-extern u32 last_read_offset;
-extern u32 cur_offset;
+extern u8 g_umd_seek;
+extern u8 g_umd_speed;
 
 extern void sceUmdSetDriveStatus(int status);
 

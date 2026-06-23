@@ -8,6 +8,7 @@
 typedef struct UmdFD {
 	int busy;
 	int discpointer;
+	u32 last_read_byte_pos;
 } UmdFD;
 
 int  InitUmd9660();

@@ -23,11 +23,12 @@ static u8 *g_umdpvd = NULL;
 
 static u8 g_umd_seek = 0;
 static u8 g_umd_speed = 0;
-static u32 g_cur_offset = 0;
-static u32 g_last_read_offset = 0;
+
+static u32 g_head_pos = 0;
 
 #define N_GAME_GROUP1	4
 #define N_GAME_GROUP2	1
+#define N_GAME_GROUP3	9
 
 static char *g_game_group1[N_GAME_GROUP1] = {
 	"ULES-00124", "ULUS-10019", "ULJM-05024", "ULAS-42009" // Coded Arms
@@ -35,6 +36,19 @@ static char *g_game_group1[N_GAME_GROUP1] = {
 
 static char *g_game_group2[N_GAME_GROUP2] = {
 	"TERTURADOR" // NPUG-80086 (flow PSN)
+};
+
+// DJ MAX
+static const char *g_game_group3[N_GAME_GROUP3] = {
+	"ULKS-46116",
+	"ULKS-46189",
+	"ULJM-06034",
+	"ULKS-46190",
+	"ULKS-46191",
+	"ULKS-46240",
+	"ULKS-46236",
+	"ULUS-10538",
+	"ULJM-05836",
 };
 
 #define LOCK() \
@@ -57,25 +71,6 @@ int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
 	int res = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
 
 	UNLOCK();
-
-
-	if (g_umd_seek){
-		// simulate seek time
-		u32 diff = 0;
-		g_last_read_offset = offset+outsize;
-		if (g_cur_offset > g_last_read_offset) {
-			diff = g_cur_offset-g_last_read_offset;
-		} else {
-			diff = g_last_read_offset-g_cur_offset;
-		}
-		g_cur_offset = g_last_read_offset;
-		u32 seek_time = (diff*g_umd_seek)/1024;
-		sceKernelDelayThread(seek_time);
-	}
-	if (g_umd_speed){
-		// simulate read time
-		sceKernelDelayThread(outsize*g_umd_speed);
-	}
 
 	return res;
 }
@@ -128,6 +123,15 @@ static int umd_init(PspIoDrvArg* arg) {
 		for (i = 0; i < N_GAME_GROUP2; i++) {
 			if (memcmp(gamecode, g_game_group2[i], 10) == 0) {
 				g_game_group = 2;
+				break;
+			}
+		}
+	}
+
+	if (g_game_group == 0) {
+		for (i = 0; i < N_GAME_GROUP3; i++) {
+			if (memcmp(gamecode, g_game_group3[i], 10) == 0) {
+				g_game_group = 3;
 				break;
 			}
 		}
@@ -198,6 +202,7 @@ static int umd_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
 	arg->arg = (void *)i;
 	g_descriptors[i].busy = 1;
 	g_descriptors[i].discpointer = 0;
+	g_descriptors[i].last_read_byte_pos = g_head_pos;
 
 	UNLOCK();
 
@@ -237,6 +242,24 @@ static int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 		len = g_discsize - discpointer;
 	}
 
+	// per-fd seek delay
+	if (g_umd_seek) {
+		u32 read_byte_pos = discpointer * ISO_SECTOR_SIZE;
+		u32 last = g_descriptors[i].last_read_byte_pos;
+		u32 diff = 0;
+		if (last > read_byte_pos) {
+			diff = last - read_byte_pos;
+		} else {
+			diff = read_byte_pos - last;
+		}
+		sceKernelDelayThread((diff * g_umd_seek) / 1024);
+	}
+
+	// per-fd speed delay
+	if (g_umd_speed) {
+		sceKernelDelayThread(len * ISO_SECTOR_SIZE * g_umd_speed);
+	}
+
 	int res = isoReadUmdFile(discpointer*SECTOR_SIZE, data, len*SECTOR_SIZE); //***
 
 	if (res > 0) {
@@ -244,6 +267,8 @@ static int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 
 		LOCK();
 		g_descriptors[i].discpointer += res;
+		g_head_pos = (discpointer + res) * ISO_SECTOR_SIZE;
+		g_descriptors[i].last_read_byte_pos = g_head_pos;
 		UNLOCK();
 	}
 
@@ -312,7 +337,13 @@ static int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int i
 
 			SceUmdSeekParam *seekparam = (SceUmdSeekParam *)indata;
 
-			return (int)umd_lseek(arg, seekparam->sk_off, seekparam->sk_whence);
+			SceOff res = umd_lseek(arg, seekparam->sk_off, seekparam->sk_whence);
+
+			if (res >= 0) {
+				res = 0;
+			}
+
+			return (int)res;
 		}
 
 		case 0x01f30003: // SCE_UMD_UNCACHED_READ
@@ -325,7 +356,13 @@ static int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int i
 				return SCE_EINVAL;
 			}
 
-			return umd_read(arg, outdata, indata32[0]);
+			int res = umd_read(arg, outdata, indata32[0]);
+
+			if (g_game_group == 3) {
+				sceKernelDelayThread(55000);
+			}
+
+			return res;
 		}
 	}
 
