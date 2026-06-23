@@ -121,27 +121,27 @@ jobs:
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1 -DNIGHTLY=1
           cmake --build build
-          mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
+          mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-nightly.vpk
 
       - name: Upload VPK
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v7
         with:
           name: epi-vpk
-          path: build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
+          path: build/bubble/Adrenaline-nightly.vpk
           compression-level: 0
 
       - name: Build UPDATER
         run: |
           cmake --build build --target updater -j
-          zip -r build/updater-${{ steps.vars.outputs.sha_short }}.zip build/updater
+          zip -r build/updater-nightly.zip build/updater
 
       - name: Upload UPDATER
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v7
         with:
           name: epi-updater
-          path: build/updater-${{ steps.vars.outputs.sha_short }}.zip
+          path: build/updater-nightly.zip
           compression-level: 0
 
 
@@ -186,13 +186,13 @@ jobs:
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1 -DNIGHTLY=1
           cmake --build build
-          mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
+          mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-nightly-DEBUG.vpk
 
       - name: Upload VPK
         uses: actions/upload-artifact@v7
         with:
           name: epi-vpk-debug
-          path: build/bubble/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
+          path: build/bubble/Adrenaline-nightly-DEBUG.vpk
           compression-level: 0
 
   release-nightly:
@@ -208,6 +208,7 @@ jobs:
         id: vars
         run: |
           echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo git_log=$(git log -10 --format="%s") >> $GITHUB_OUTPUT
 
       - name: Download Artifacts
         uses: actions/download-artifact@v8
@@ -227,10 +228,9 @@ jobs:
         with:
           tag_name: nightly-release
           name: "Adrenaline Nightly: ${{ steps.vars.outputs.sha_short }}"
+          body: "${{ steps.vars.outputs.git_log }}"
           prerelease: true
-          generate_release_notes: true
-          previous_tag: nightly-release
           files: |
-              build/epi-vpk/Adrenaline-${{ steps.vars.outputs.sha_short }}.vpk
-              build/epi-vpk-debug/Adrenaline-${{ steps.vars.outputs.sha_short }}-DEBUG.vpk
-              build/epi-updater/updater-${{ steps.vars.outputs.sha_short }}.zip
+              build/epi-vpk/Adrenaline-nightly.vpk
+              build/epi-vpk-debug/Adrenaline-nightly-DEBUG.vpk
+              build/epi-updater/updater-nightly.zip
