@@ -68,6 +68,26 @@ SceSize g_last_plugin_mem_size = 0;
 // If the CFW is currently doing plugin loading.
 static int g_is_plugins_loading = 0;
 
+// Plugins that don't work in certain conditions.
+static char* g_blocklist_plugins[] = {
+	"npdrm_free"
+};
+
+static int is_in_blocklist(const char* path) {
+
+	for (int i = 0; i < sizeof(g_blocklist_plugins); i++) {
+		// Found
+		if (strstr(path, g_blocklist_plugins[i]) != NULL) {
+			if (i == 0 && g_cfw_config.no_nodrm_engine) {
+				return 0;
+			}
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 static void addPlugin(const char* path) {
 	for (int i=0; i<g_plugins->count; i++) {
 		char* cmp1 = strchr(g_plugins->paths[i], ':');
@@ -120,7 +140,13 @@ static void startPlugins() {
 		int res = 0;
 		char* path = g_plugins->paths[i];
 		// Load Module
-		logmsg4("[DEBUG]: Processing plugin: %s\n", path);
+		logmsg4("[DEBUG]: %s: Processing plugin: %s\n", __func__, path);
+
+		if (is_in_blocklist(path)) {
+			logmsg("[ERROR]: %s: `%s` is blocked in this context\n", __func__, path);
+			continue;
+		}
+
 		int uid = loadPlugin(path);
 		if (uid >= 0) {
 			// Call handler
