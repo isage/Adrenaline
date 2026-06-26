@@ -26,6 +26,7 @@
 #include <stddef.h>
 
 #include <psptypes.h>
+#include <psploadcore.h>
 
 #include <systemctrl_se.h>
 
@@ -76,14 +77,42 @@ extern GetItem g_menu_items[];
 extern int g_num_items;
 extern ItemOptions g_item_opts[];
 extern int g_psp_model;
+extern int g_is_ef_drive;
+extern int g_game_plugin;
+extern int g_needs_unload;
 
 #define sysconf_console_id 4
 #define sysconf_console_action 2
 #define sysconf_console_action_arg 2
+#define ms_camera_action 5
+#define ms_music_action 6
+#define ms_video_action 10
+#define ms_game_action 0xF
 
 enum {
+	default_ms0_game_action_arg = 2,
 	sysconf_cfwconfig_action_arg = 0x1010,
 	sysconf_plugins_action_arg = 0x1012,
+	fake_ef0_game_action_arg = 0x1014,
+	fake_ef0_camera_action_arg = 0x1018,
+	fake_ef0_music_action_arg = 0x1020,
+	fake_ef0_video_action_arg = 0x1022,
+};
+
+enum FakeEf {
+	FAKE_EF_CAMERA = 0,
+	FAKE_EF_MUSIC = 1,
+	FAKE_EF_VIDEO = 2,
+	FAKE_EF_GAME = 3,
+};
+
+enum CustomId {
+	CUSTOM_ID_PLUGIN_MNG = 91,
+	CUSTOM_ID_CFW_CONFIG = 92,
+	CUSTOM_ID_FAKE_EF_CAMERA = 93,
+	CUSTOM_ID_FAKE_EF_MUSIC = 94,
+	CUSTOM_ID_FAKE_EF_VIDEO = 95,
+	CUSTOM_ID_FAKE_EF_GAME = 96,
 };
 
 typedef struct {
@@ -151,6 +180,7 @@ typedef struct {
 #define paf_strtoul sce_paf_private_strtoul
 #define paf_malloc sce_paf_private_malloc
 #define paf_free sce_paf_private_free
+#define paf_strstr sce_paf_private_strstr
 
 int sce_paf_private_wcslen(wchar_t *);
 int sce_paf_private_sprintf(char *, const char *, ...);
@@ -170,6 +200,7 @@ int sce_paf_private_strpbrk(const char *, const char *);
 int sce_paf_private_strtoul(const char *, char **, int);
 void *sce_paf_private_malloc(int);
 void sce_paf_private_free(void *);
+char* sce_paf_private_strstr(const char *, const char *);
 
 wchar_t *scePafGetText(void *, char *);
 int PAF_Resource_GetPageNodeByID(void *, char *, SceRcoEntry **);
@@ -187,5 +218,7 @@ void loadSettings(void);
 void PatchVshMain(u32 text_addr, u32 text_size);
 void PatchAuthPlugin(u32 text_addr, u32 text_size);
 void PatchSysconfPlugin(u32 text_addr, u32 text_size);
+void PatchGamePlugin(SceModule *mod);
+void PatchIo(SceModule *mod);
 
 #endif // __XMBCTRL_H__

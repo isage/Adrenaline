@@ -71,10 +71,11 @@ GetItem g_menu_items[] = {
 	{26, 0, "Inferno ISO cache size", 0, 1, &g_cfw_config.iso_cache_size},
 	{27, 0, "UMDemu ISO seek time delay factor", 0, 1, &g_cfw_config.umd_seek},
 	{28, 0, "UMDemu ISO read speed delay factor", 0, 1, &g_cfw_config.umd_speed},
-	{29, 0, "TTY redirection", 1, 1, &g_cfw_config.tty_redirection },
-	{30, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
-	{31, 1, "Game Plugins", 0, 1, &g_cfw_config.no_game_plugins},
-	{32, 1, "POPS Plugins", 0, 1, &g_cfw_config.no_pops_plugins},
+	{29, 0, "UMDemu ISO seek/read delay strategy", 0, 1, &g_cfw_config.umd_sim_strat},
+	{30, 0, "TTY redirection", 1, 1, &g_cfw_config.tty_redirection },
+	{31, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
+	{32, 1, "Game Plugins", 0, 1, &g_cfw_config.no_game_plugins},
+	{33, 1, "POPS Plugins", 0, 1, &g_cfw_config.no_pops_plugins},
 };
 
 #define N_ITEMS (sizeof(g_menu_items) / sizeof(GetItem))
@@ -109,6 +110,7 @@ ItemOptions g_item_opts[] = {
 	{NELEMS(g_iso_cache_size_options), g_iso_cache_size_options}, // ISO cache size
 	{NELEMS(g_iso_umd_seek_read_options), g_iso_umd_seek_read_options}, // ISO UMD seek delay
 	{NELEMS(g_iso_umd_seek_read_options), g_iso_umd_seek_read_options}, // ISO UMD read speed delay
+	{NELEMS(g_iso_umd_seek_read_strat_options), g_iso_umd_seek_read_strat_options}, // ISO UMD read/seek strategy
 	{2, g_boolean_options},           // TTY redirection
 	{2, g_boolean_options},           // VSH/XMB Plugins
 	{2, g_boolean_options},           // Game Plugins
