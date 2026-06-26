@@ -5,6 +5,7 @@
 #include <pspkernel.h>
 #include <pspthreadman_kernel.h>
 
+#include <isoctrl.h>
 #include <psperror.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
@@ -23,6 +24,9 @@ static u8 *g_sectorbuf = NULL;	//data2484
 
 static u8 g_umd_seek = 0;
 static u8 g_umd_speed = 0;
+static u8 g_umd_delay_strat = UMD_DELAY_STRAT_PER_FD;
+static u32 g_cur_offset = 0;
+static u32 g_last_read_offset = 0;
 
 typedef struct {
 	int flag;
@@ -176,7 +180,7 @@ static int umd9660_read(PspIoDrvFileArg *arg, char *data, int sector) {
 	}
 
 	// per-fd seek delay
-	if (g_umd_seek) {
+	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
 		u32 read_byte_pos = offset * ISO_SECTOR_SIZE;
 		u32 last = g_io_status[i].last_read_byte_pos;
 		u32 diff = 0;
@@ -189,7 +193,7 @@ static int umd9660_read(PspIoDrvFileArg *arg, char *data, int sector) {
 	}
 
 	// per-fd speed delay
-	if (g_umd_speed) {
+	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
 		sceKernelDelayThread(i * ISO_SECTOR_SIZE * g_umd_speed);
 	}
 
@@ -266,6 +270,10 @@ static SceOff umd9660_lseek(PspIoDrvFileArg *arg ,SceOff offset,int whence) {
 
 	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
 		return -1;
+	}
+
+	if (umd_cur_offset >= 0 && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		g_cur_offset = umd_cur_offset;
 	}
 
 	return umd_cur_offset;
@@ -488,6 +496,24 @@ int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
 
 	int ret = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
 
+	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate seek time
+		u32 diff = 0;
+		g_last_read_offset = offset+outsize;
+		if (g_cur_offset > g_last_read_offset) {
+			diff = g_cur_offset - g_last_read_offset;
+		} else {
+			diff = g_last_read_offset - g_cur_offset;
+		}
+		g_cur_offset = g_last_read_offset;
+		u32 seek_time = (diff * g_umd_seek)/1024;
+		sceKernelDelayThread(seek_time);
+	}
+	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate read time
+		sceKernelDelayThread(outsize * g_umd_speed);
+	}
+
 	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
 		return -1;
 	}
@@ -495,9 +521,10 @@ int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
 	return ret;
 }
 
-void isoSetUmdDelay(int seek, int speed) {
+void isoSetUmdDelay(int seek, int speed, int strategy) {
 	g_umd_seek = seek;
 	g_umd_speed = speed;
+	g_umd_delay_strat = strategy;
 }
 
 PspIoDrvFuncs umd9660_funcs = {

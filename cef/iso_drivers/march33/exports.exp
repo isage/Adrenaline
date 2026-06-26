@@ -67,17 +67,6 @@ PSP_EXPORT_FUNC_NID(sceNp9660_driver_8EF69DC6, 0x8EF69DC6)
 PSP_EXPORT_FUNC_NID(sceNp9660_driver_B925CA6C, 0xB925CA6C)
 PSP_EXPORT_END
 
-PSP_EXPORT_START(march33_driver, 0x0011, 0x0001)
-# march33_driver_FAEC97D6
-PSP_EXPORT_FUNC(isoSetUmdDelay)
-# Compat with inferno 2
-PSP_EXPORT_FUNC_NID(isoSetUmdDelay, 0xB6522E93)
-# march33_driver_D4FAB33F
-PSP_EXPORT_FUNC(isoGetTitleId)
-# march33_driver_3F83B110
-PSP_EXPORT_FUNC(isoReadUmdFile)
-PSP_EXPORT_END
-
 # Common API between UMDemu ISO drivers
 PSP_EXPORT_START(isoCtrl_driver, 0x0011, 0x0001)
 # isoCtrl_driver_D4FAB33F

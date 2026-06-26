@@ -24,6 +24,7 @@
 #include <psperror.h>
 // #include <psploadexec.h>
 
+#include <isoctrl.h>
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <infernoctrl.h>
@@ -69,66 +70,64 @@ static void OnSystemStatusIdle() {
 		sctrlMsCacheInit("ms", MSCACHE_BUFSIZE_MIN);
 	}
 
-	// March33 UMD seek/speed simulation
-	SceModule* march33_mod = sceKernelFindModuleByName("EPI-March33Driver");
+	// ISO UMD seek/speed simulation
+	SceModule* mod = NULL;
+	char *iso_driver_name = NULL;
+	switch (g_rebootex_config.bootfileindex) {
+		case MODE_INFERNO:
+			mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+			iso_driver_name = "Inferno";
+			break;
 
-	if (march33_mod != NULL) {
-		// Handle March33's UMD seek and UMD speed setting
-		if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
-			g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
+		case MODE_MARCH33:
+			mod = sceKernelFindModuleByName("EPI-March33Driver");
+			iso_driver_name = "March33";
+			break;
 
-			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(march33_mod, "march33_driver", 0xFAEC97D6);
+		case MODE_ME:
+			mod = sceKernelFindModuleByName("EPI-MEisoDriver");
+			iso_driver_name = "Mininal Edition";
+			break;
 
-			if (SetUmdDelay != NULL) {
-				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed);
-				logmsg3("[INFO]: March33 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
-			}
-		}
+		case MODE_NP9660:
+			mod = sceKernelFindModuleByName("EPI-GalaxyController");
+			iso_driver_name = "NP9660";
+			break;
+
+		default:
+			mod = NULL;
+			iso_driver_name = NULL;
 	}
 
-	// NP9660 UMD seek/speed simulation
-	SceModule* galaxy_mod = sceKernelFindModuleByName("EPI-GalaxyController");
-
-	if (galaxy_mod != NULL) {
-		// Handle March33's UMD seek and UMD speed setting
+	if (mod != NULL) {
 		if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
 			g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
 
-			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(galaxy_mod, "galaxy_driver", 0xFAEC97D6);
+			void (*SetUmdDelay)(int, int, int) = (void*)sctrlHENFindFunctionInMod(mod, "isoCtrl_driver", 0xFAEC97D6);
 
 			if (SetUmdDelay != NULL) {
-				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed);
-				logmsg3("[INFO]: NP9660 ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
+				int strategy = UMD_DELAY_STRAT_PER_FD;
+				if (g_cfw_config.umd_sim_strat == SIM_UMD_STRAT_PER_FD) {
+					strategy = UMD_DELAY_STRAT_PER_FD;
+				} else if (g_cfw_config.umd_sim_strat == SIM_UMD_STRAT_GLOBAL) {
+					strategy = UMD_DELAY_STRAT_GLOBAL;
+				}
+
+				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed, strategy);
+				logmsg3("[INFO]: %s ISO UMD seek/speed factor: %s strategy; %d seek factor; %d speed factor\n", iso_driver_name, (strategy == UMD_DELAY_STRAT_PER_FD) ? "Per FD" : "Global", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
 			}
 		}
-	}
 
-	// Inferno cache config and UMD seek/speed simulation
-	SceModule* inferno_mod = sceKernelFindModuleByName("EPI-InfernoDriver");
-
-	// Inferno driver is loaded
-	if (inferno_mod != NULL) {
-		// Handle Inferno's UMD seek and UMD speed setting
-		if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
-			g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
-
-			void (*SetUmdDelay)(int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xB6522E93);
-
-			if (SetUmdDelay != NULL) {
-				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed);
-				logmsg3("[INFO]: Inferno ISO UMD seek/speed factor: %d seek factor; %d speed factor\n", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
-			}
-		}
 
 		// Handle Inferno Iso cache
-		if (g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
+		if (g_rebootex_config.bootfileindex == MODE_INFERNO && g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
 			if (g_rebootex_config.ram2 > 24 || g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) {
 				g_cfw_config.iso_cache_partition = 2;
 			} else {
 				g_cfw_config.iso_cache_partition = 11;
 			}
 
-			int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0x8CDE7F95);
+			int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(mod, "inferno_driver", 0x8CDE7F95);
 			if (CacheInit != NULL) {
 				u32 cache_size = (g_cfw_config.iso_cache_size == ISO_CACHE_SIZE_AUTO) ? 32*1024 : g_cache_size_list[g_cfw_config.iso_cache_size%N_CACHE_SIZE];
 				u8 cache_num = (g_cfw_config.iso_cache_num == ISO_CACHE_NUM_AUTO) ? 32 : g_cache_num_list[g_cfw_config.iso_cache_num%N_CACHE_NUM];
@@ -136,7 +135,7 @@ static void OnSystemStatusIdle() {
 				logmsg3("[INFO]: Inferno ISO cache: %d caches of %ld KiB in partition %d — Total: %ld KiB\n", cache_num, cache_size/1024, g_cfw_config.iso_cache_partition, (cache_num*cache_size)/1024);
 			}
 
-			int (*CacheSetPolicy)(int) = (void*)sctrlHENFindFunctionInMod(inferno_mod, "inferno_driver", 0xC0736FD6);
+			int (*CacheSetPolicy)(int) = (void*)sctrlHENFindFunctionInMod(mod, "inferno_driver", 0xC0736FD6);
 			if (CacheSetPolicy != NULL) {
 				if (g_cfw_config.iso_cache == CACHE_CONFIG_LRU) {
 					CacheSetPolicy(INFERNO_CACHE_LRU);
@@ -148,6 +147,7 @@ static void OnSystemStatusIdle() {
 			}
 		}
 	}
+
 
 	// Set CPU/BUS speed on apps/games
 	int medium_type = sceKernelBootFrom();

@@ -45,13 +45,15 @@ extern SceUID g_umd9660_sema_id;
 extern int g_disc_type;
 extern u8 g_umd_seek;
 extern u8 g_umd_speed;
+extern u8 g_umd_delay_strat;
+extern u32 g_cur_offset;
+extern u32 g_last_read_offset;
 
 extern void sceUmdSetDriveStatus(int status);
 
 extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
 extern int iso_cache_read(struct IoReadArg *args);
-extern int isoReadUmdFile(u32 offset, void *ptr, u32 data_len);
 
 extern int infernoSetDiscType(int type);
 extern int infernoCacheInit(int cache_size, int cache_num, int partition);

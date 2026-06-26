@@ -26,6 +26,7 @@
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
 
+#include <isoctrl.h>
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
@@ -296,7 +297,7 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 	}
 
 	// per-fd seek delay
-	if (g_umd_seek) {
+	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
 		u32 read_byte_pos = offset * ISO_SECTOR_SIZE;
 		u32 last = g_open_slot[idx].last_read_byte_pos;
 		u32 diff = 0;
@@ -309,7 +310,7 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 	}
 
 	// per-fd speed delay
-	if (g_umd_speed) {
+	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
 		sceKernelDelayThread(read_len * ISO_SECTOR_SIZE * g_umd_speed);
 	}
 
@@ -393,6 +394,10 @@ static SceOff IoLseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 
 exit:
 	logmsg3("[DEBUG]: %s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
+
+	if (ret >= 0 && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		g_cur_offset = ret;
+	}
 
 	return ret;
 }

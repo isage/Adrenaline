@@ -95,7 +95,7 @@ static int open_iso(void) {
 // CFW API (That depends on this file globals/statics)
 ////////////////////////////////////////////////////////////////////////////////
 
-void isoSetUmdDelay(int seek, int speed) {
+void isoSetUmdDelay(int seek, int speed, int _strategy) {
 	g_umd_seek = seek;
 	g_umd_speed = speed;
 }

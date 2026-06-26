@@ -23,6 +23,7 @@
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
 
+#include <isoctrl.h>
 #include <cfwmacros.h>
 #include <systemctrl.h>
 // #include <systemctrl_se.h>
@@ -34,6 +35,9 @@
 
 u8 g_umd_seek = 0;
 u8 g_umd_speed = 0;
+u8 g_umd_delay_strat = UMD_DELAY_STRAT_PER_FD;
+u32 g_cur_offset = 0;
+u32 g_last_read_offset = 0;
 
 int (*iso_reader)(IoReadArg *args) = &iso_read;
 int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
@@ -49,6 +53,24 @@ int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
 
 	int retv = sceKernelExtendKernelStack(0x2000, (void*)iso_reader, &g_read_arg);
 
+	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate seek time
+		u32 diff = 0;
+		g_last_read_offset = offset+data_len;
+		if (g_cur_offset > g_last_read_offset) {
+			diff = g_cur_offset - g_last_read_offset;
+		} else {
+			diff = g_last_read_offset - g_cur_offset;
+		}
+		g_cur_offset = g_last_read_offset;
+		u32 seek_time = (diff * g_umd_seek)/1024;
+		sceKernelDelayThread(seek_time);
+	}
+	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate read time
+		sceKernelDelayThread(data_len * g_umd_speed);
+	}
+
 	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 
 	if (ret < 0) {
@@ -61,4 +83,9 @@ int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
 void infernoSetUmdDelay(int seek, int speed) {
 	g_umd_seek = seek;
 	g_umd_speed = speed;
+}
+
+void isoSetUmdDelay(int seek, int speed, int strategy) {
+	infernoSetUmdDelay(seek, speed);
+	g_umd_delay_strat = strategy;
 }

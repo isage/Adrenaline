@@ -6,6 +6,7 @@
 #include <pspsysevent.h>
 #include <pspthreadman_kernel.h>
 
+#include <isoctrl.h>
 #include <systemctrl_se.h>
 #include <adrenaline_log.h>
 
@@ -23,6 +24,9 @@ static u8 *g_umdpvd = NULL;
 
 static u8 g_umd_seek = 0;
 static u8 g_umd_speed = 0;
+static u8 g_umd_delay_strat = UMD_DELAY_STRAT_PER_FD;
+static u32 g_cur_offset = 0;
+static u32 g_last_read_offset = 0;
 
 static u32 g_head_pos = 0;
 
@@ -70,14 +74,33 @@ int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
 
 	int res = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
 
+	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate seek time
+		u32 diff = 0;
+		g_last_read_offset = offset+outsize;
+		if (g_cur_offset > g_last_read_offset) {
+			diff = g_cur_offset - g_last_read_offset;
+		} else {
+			diff = g_last_read_offset - g_cur_offset;
+		}
+		g_cur_offset = g_last_read_offset;
+		u32 seek_time = (diff * g_umd_seek)/1024;
+		sceKernelDelayThread(seek_time);
+	}
+	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate read time
+		sceKernelDelayThread(outsize * g_umd_speed);
+	}
+
 	UNLOCK();
 
 	return res;
 }
 
-void isoSetUmdDelay(int seek, int speed) {
+void isoSetUmdDelay(int seek, int speed, int strategy) {
 	g_umd_seek = seek;
 	g_umd_speed = speed;
+	g_umd_delay_strat = strategy;
 }
 
 static int umd_init(PspIoDrvArg* arg) {
@@ -243,7 +266,7 @@ static int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 	}
 
 	// per-fd seek delay
-	if (g_umd_seek) {
+	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
 		u32 read_byte_pos = discpointer * ISO_SECTOR_SIZE;
 		u32 last = g_descriptors[i].last_read_byte_pos;
 		u32 diff = 0;
@@ -256,7 +279,7 @@ static int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 	}
 
 	// per-fd speed delay
-	if (g_umd_speed) {
+	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
 		sceKernelDelayThread(len * ISO_SECTOR_SIZE * g_umd_speed);
 	}
 
@@ -299,6 +322,11 @@ static SceOff umd_lseek(PspIoDrvFileArg *arg, SceOff ofs, int whence) {
 	int res = g_descriptors[i].discpointer;
 
 	UNLOCK();
+
+	if (res >= 0 && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		g_cur_offset = res;
+	}
+
 	logmsg3("[DEBUG]: %s: arg=0x%p, ofs=0x%08llX, whence=0x%08X -> 0x%08X\n", __func__, arg, ofs, whence, res);
 	return res;
 }

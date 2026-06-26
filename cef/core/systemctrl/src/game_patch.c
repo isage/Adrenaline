@@ -23,6 +23,7 @@
 #include <pspkermit.h>
 #include <psputility.h>
 
+#include <isoctrl.h>
 #include <cfwmacros.h>
 #include <systemctrl_adrenaline.h>
 
@@ -45,8 +46,8 @@ static SceSize g_fake_max_free_mem = FAKE_MAX_FREE_DISABLED;
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
 
-static void SetUmdEmuSpeed(u8 seek, u8 read) {
-	void (*SetUmdDelay)(int, int) = NULL;
+static void SetUmdEmuSpeed(u8 seek, u8 read, u8 strategy) {
+	void (*SetUmdDelay)(int, int, int) = NULL;
 	int (*CacheInit)(int, int, int) = NULL;
 
 	// Config in `Auto` mode
@@ -79,7 +80,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read) {
 		}
 
 		if (SetUmdDelay != NULL) {
-			SetUmdDelay(seek, read);
+			SetUmdDelay(seek, read, strategy);
 		}
 
 		if (CacheInit != NULL && g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
@@ -285,7 +286,7 @@ void PatchGameByTitleId() {
 
 	} else if (strcasecmp("ULES00590", title_id) == 0 || strcasecmp("ULJM05075", title_id) == 0) {
 		// Patch `Aces of War` anti-CFW check (UMD speed)
-		SetUmdEmuSpeed(1, 1);
+		SetUmdEmuSpeed(1, 1, UMD_DELAY_STRAT_PER_FD);
 
 	} else if (strcasecmp("ULUS10201", title_id) == 0 || strcasecmp("ULUS10328", title_id) == 0 || strcasecmp("ULES00968", title_id) == 0) {
 		// Patch `Luxor - The Wrath of Set` and `Flat-Out Head On` (US/EU) as they
@@ -370,7 +371,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "BAMG") == 0) {
 		// Fix freeze on `Bust-A-Move Deluxe`
-		SetUmdEmuSpeed(2, 2);
+		SetUmdEmuSpeed(2, 2, UMD_DELAY_STRAT_GLOBAL);
 
 	} else if (strcmp(modname, "starwars_psp") == 0) {
 		// Fix `Lego Star Wars 2` WLAN switch state returning `off` due to cache syncronization issues on ePSP implementation.
@@ -378,7 +379,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "Megpoid") == 0) {
 		// Fix sound and sync issues on `Megpoid the Music#`
-		SetUmdEmuSpeed(0, 1);
+		SetUmdEmuSpeed(0, 1, UMD_DELAY_STRAT_GLOBAL);
 
 		// Disable ms cache as well.
 		sctrlMsCacheInit(NULL, 0);
