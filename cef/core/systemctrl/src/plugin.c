@@ -25,6 +25,7 @@
 #include <pspiofilemgr.h>
 #include <psperror.h>
 
+#include <cfwmacros.h>
 #include <systemctrl_se.h>
 #include <rebootexconfig.h>
 
@@ -76,7 +77,7 @@ static char* g_blocklist_plugins[] = {
 
 static int is_in_blocklist(const char* path) {
 
-	for (int i = 0; i < sizeof(g_blocklist_plugins); i++) {
+	for (int i = 0; i < NELEMS(g_blocklist_plugins); i++) {
 		// Found
 		if (strstr(path, g_blocklist_plugins[i]) != NULL) {
 			if (i == 0 && g_cfw_config.no_nodrm_engine) {
