@@ -23,6 +23,7 @@
 #include <pspsysmem.h>
 #include <pspmodulemgr.h>
 #include <pspiofilemgr.h>
+#include <psperror.h>
 
 #include <systemctrl_se.h>
 #include <rebootexconfig.h>
@@ -128,7 +129,17 @@ static SceUID loadPlugin(char *path) {
 		.mpiddata = 0, //default
 		.mpidtext = 0, //default
 	};
-	int res = sceKernelLoadModule(path, 0, &opt);
+	SceUID res = sceKernelLoadModule(path, 0, &opt);
+
+	if (res == SCE_KERR_PARTITION_MISMATCH) {
+		logmsg("[ERROR]: Failed to load plugin due to partition mismatch\n");
+		logmsg("[WARN]: Attempting to load plugin on user memory partition\n");
+		opt.position = PSP_SMEM_Low;
+		opt.mpiddata = 2;
+		opt.mpidtext = 2;
+		res = sceKernelLoadModule(path, 0, &opt);
+	}
+
 	g_is_plugin_loading = 0;
 
 	return res;
