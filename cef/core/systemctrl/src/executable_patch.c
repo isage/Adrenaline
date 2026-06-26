@@ -214,6 +214,8 @@ int PrologueModulePatched(SceModuleMgrParam *mod_param, SceModule *mod) {
 		SceSize stack_size = (mod_param->stack_size == 0) ? DEFAULT_USER_STACK_SIZE_BYTES : mod_param->stack_size;
 		g_last_plugin_mem_size = mod->text_size + mod->data_size + stack_size;
 		g_plugins_loaded_mem += g_last_plugin_mem_size;
+	} else {
+		g_last_plugin_mem_size = 0;
 	}
 
 	if (res >= 0 && g_module_handler) {
