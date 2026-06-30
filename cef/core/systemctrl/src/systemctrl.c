@@ -265,6 +265,44 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 		_sceLoadExecVSHWithApitype = (void *)text_addr + 0x23D0;
 	}
 
+	// This allows homebrew to launch using PSP Go style apitypes
+	// reuse space of this variable
+	g_adrenaline->fake_api_type = apitype;
+	switch (apitype) {
+		case PSP_INIT_APITYPE_EF2:
+			apitype = PSP_INIT_APITYPE_MS2;
+			break;
+
+		case PSP_INIT_APITYPE_UMD_EMU_EF1:
+			apitype = PSP_INIT_APITYPE_UMD_EMU_MS1;
+			break;
+
+		case PSP_INIT_APITYPE_UMD_EMU_EF2:
+			apitype = PSP_INIT_APITYPE_UMD_EMU_MS2;
+			break;
+
+		case PSP_INIT_APITYPE_EF5:
+			apitype = PSP_INIT_APITYPE_MS5;
+			break;
+	}
+
+	// Homebrew API not using ISO driver
+	if (apitype == PSP_INIT_APITYPE_MS2 && sctrlSEGetBootConfFileIndex() == MODE_UMD) {
+		// Force selected UMDemu ISO driver to simulate UMD drive
+		if (g_cfw_config.umd_mode == ISO_MODE_INFERNO) {
+			sctrlSESetBootConfFileIndex(MODE_INFERNO);
+		} else if (g_cfw_config.umd_mode == ISO_MODE_MARCH33) {
+			sctrlSESetBootConfFileIndex(MODE_MARCH33);
+		} else if (g_cfw_config.umd_mode == ISO_MODE_ME) {
+			sctrlSESetBootConfFileIndex(MODE_ME);
+		} else if (g_cfw_config.umd_mode == ISO_MODE_NP9660) {
+			sctrlSESetBootConfFileIndex(MODE_NP9660);
+		}
+
+		// Empty UMD drive (makes sceUmdCheckMedium return false)
+        sctrlSESetUmdFile("");
+    }
+
 	// obtain game id
     u32 gameid_size = sizeof(g_rebootex_config.title_id);
     memset(g_rebootex_config.title_id, 0, gameid_size);
@@ -751,11 +789,17 @@ PspSysMemPartition* sctrlGetMemoryPartition(int partition) {
     static PspSysMemPartition *(* GetPartition)(int partition) = NULL;
     if (GetPartition == NULL){
         for (u32 addr = SYSMEM_TEXT; ; addr+=4){
-            if (_lw(addr) == 0x2C85000D){
+            if (VREAD32(addr) == 0x2C85000D){
                 GetPartition = (void*)(addr-4);
                 break;
             }
         }
     }
     return GetPartition(partition);
+}
+
+int sctrlKernelMsIsEf() {
+    int apitype = g_adrenaline->fake_api_type;
+    int res = (apitype == PSP_INIT_APITYPE_EF5 || apitype == PSP_INIT_APITYPE_UMD_EMU_EF1 || apitype == PSP_INIT_APITYPE_EF2 || apitype ==  PSP_INIT_APITYPE_VSH2);
+    return res;
 }
