@@ -317,6 +317,21 @@ char *getPspemuMemoryStickLocation() {
 	}
 }
 
+char *getPspemuEfLocation() {
+	switch (config.ef_location) {
+		case EF_LOCATION_UMA0:
+			return "uma0:pspemu";
+		case EF_LOCATION_XMC0:
+			return "xmc0:pspemu";
+		case EF_LOCATION_UX0:
+			return "ux0:pspemu";
+		case EF_LOCATION_UMA0_PSP:
+			return "uma0:";
+		default:
+			return NULL;
+	}
+}
+
 char *getPspemuMemoryStickDevice() {
 	switch (config.ms_location) {
 		case MEMORY_STICK_LOCATION_UR0:
@@ -331,6 +346,20 @@ char *getPspemuMemoryStickDevice() {
 			return "uma0:";
 		default:
 			return "ux0:";
+	}
+}
+
+char *getPspemuEfDevice() {
+	switch (config.ef_location) {
+		case EF_LOCATION_UX0:
+			return "ux0:";
+		case EF_LOCATION_XMC0:
+			return "xmc0:";
+		case EF_LOCATION_UMA0:
+		case EF_LOCATION_UMA0_PSP:
+			return "uma0:";
+		default:
+			return NULL;
 	}
 }
 

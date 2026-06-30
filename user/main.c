@@ -112,6 +112,7 @@ SceUID usbdevice_modid = -1;
 AdrenalineConfig config;
 
 extern int menu_open;
+extern int g_devctl_use_ef;
 
 extern SceInt32 sceLiveAreaUpdateFrameSync(const char *formatVer,const char *frameXmlStr,SceInt32 frameXmlLen,const char *dirpathTop,SceUInt32 flag);
 
@@ -429,6 +430,19 @@ int AdrenalineCompat(SceSize args, void *argp) {
 
 		} else if (request->cmd == ADRENALINE_VITA_CMD_POWER_TICK) {
 			res = sceKernelPowerTick(*request->args);
+
+		} else if (request->cmd == ADRENALINE_VITA_CMD_IS_EF_ENABLED) {
+			if (config.ef_location == EF_LOCATION_DISABLED) {
+				res = 0;
+			} else if (strcmp(getPspemuEfLocation(), getPspemuMemoryStickLocation()) == 0) {
+				res = 0;
+			} else {
+				res = 1;
+			}
+
+		} else if (request->cmd == ADRENALINE_VITA_CMD_EF_DEVINFO) {
+			g_devctl_use_ef = 1;
+			res = 0;
 		}
 
 		ScePspemuKermitSendResponse(KERMIT_MODE_EXTRA_2, request, (uint64_t)res);

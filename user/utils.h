@@ -73,6 +73,8 @@ void SetPspemuFrameBuffer(void *base);
 
 char *getPspemuMemoryStickLocation();
 char *getPspemuMemoryStickDevice();
+char *getPspemuEfLocation();
+char *getPspemuEfDevice();
 
 uint32_t encode_movw(uint8_t rd, uint16_t imm16);
 uint32_t encode_movt(uint8_t rd, uint16_t imm16);

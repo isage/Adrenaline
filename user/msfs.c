@@ -21,6 +21,7 @@
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
 #include <psp2/kernel/sysmem.h>
+#include <psp2/kernel/clib.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -29,6 +30,8 @@
 #include "main.h"
 #include "utils.h"
 #include "msfs.h"
+
+int g_devctl_use_ef = 0;
 
 static ScePspemuMsfsDescriptor descriptor_list[MAX_DESCRIPTORS];
 
@@ -39,6 +42,13 @@ static void buildPspemuMsfsPath(char *out_path, const char *in_path) {
 
 	if (strncmp(in_path, "__ADRENALINE__", 14) == 0) {
 		snprintf(out_path, MAX_PATH_LENGTH, "ux0:app/" ADRENALINE_TITLEID "/%s", in_path+14);
+	} else if (strncmp(in_path, "__ef0__", 7) == 0 && config.ef_location != EF_LOCATION_DISABLED) {
+		char *ef0_base = getPspemuEfLocation();
+		if (ef0_base != NULL) {
+			snprintf(out_path, MAX_PATH_LENGTH, "%s/%s", ef0_base, in_path+7);
+		} else {
+			sceClibPrintf("[ERROR]: %s: EF location set but failed to get path base\n", __func__);
+		}
 	} else {
 		snprintf(out_path, MAX_PATH_LENGTH, "%s/%s", getPspemuMemoryStickLocation(), in_path);
 	}
@@ -645,8 +655,14 @@ static int ScePspemuMsfsDevctl(const char *dev, unsigned int cmd, void *indata, 
 		SceIoDevInfo devinfo;
 		memset(&devinfo, 0, sizeof(SceIoDevInfo));
 
-		char *path = getPspemuMemoryStickDevice();
+		char *path = (g_devctl_use_ef) ? getPspemuEfDevice() : getPspemuMemoryStickDevice();
+
+		if (g_devctl_use_ef) {
+			g_devctl_use_ef = 0;
+		}
+
 		int res = sceIoDevctl(path, 0x3001, NULL, 0, &devinfo, sizeof(SceIoDevInfo));
+
 		if (res < 0) {
 			return res;
 		}

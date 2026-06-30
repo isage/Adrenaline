@@ -50,6 +50,14 @@ enum MemoryStickLocations {
 	MEMORY_STICK_LOCATION_UMA0_PSP,
 };
 
+enum EfLocations {
+	EF_LOCATION_DISABLED,
+	EF_LOCATION_UMA0,
+	EF_LOCATION_XMC0,
+	EF_LOCATION_UX0,
+	EF_LOCATION_UMA0_PSP,
+};
+
 enum UsbDevices {
 	USBDEVICE_MODE_MEMORY_CARD,
 	USBDEVICE_MODE_INTERNAL_STORAGE,
@@ -104,6 +112,7 @@ typedef struct {
 	float ps1_screen_scale_x;
 	float ps1_screen_scale_y;
 	uint8_t cfw_type;
+	uint8_t ef_location;
 } AdrenalineConfig;
 
 extern AdrenalineConfig config;
