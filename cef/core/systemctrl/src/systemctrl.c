@@ -314,6 +314,16 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 
 	PatchGameByTitleIdOnLoadExec();
 
+	// Handle ef-aware homebrew
+    if (apitype == PSP_INIT_APITYPE_EF2){
+        u32 psize = sizeof(int);
+        int efaware = 0;
+        if (sctrlGetSfoPARAM(file, "EFAWARE", NULL, &psize, &efaware)>=0 && efaware){
+            apitype = PSP_INIT_APITYPE_MS2;
+            g_adrenaline->fake_api_type = PSP_INIT_APITYPE_MS2;
+        }
+    }
+
 	int res = _sceLoadExecVSHWithApitype(apitype, file, param, 0x10000);
 	pspSdkSetK1(k1);
 
