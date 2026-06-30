@@ -34,3 +34,7 @@ int sctrlRebootDevice() {
 	sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_UPDATE, 0);
 	return sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_POWER_REBOOT, 0);
 }
+
+int sctrlIsEfEnable() {
+	return sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_IS_EF_ENABLED, 0);
+}

@@ -27,6 +27,7 @@
 #include <pspiofilemgr_kernel.h>
 
 #include <cfwmacros.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
@@ -36,8 +37,11 @@
 
 static PspIoDrv *g_ms_drv;
 static PspIoDrv *g_flashfat_drv;
+static PspIoDrv g_ef_drv;
+static PspIoDrv g_fatef_drv;
 
 static PspIoDrvFuncs g_ms_funcs;
+static PspIoDrvFuncs g_ef_funcs;
 static PspIoDrvFuncs g_flash_funcs;
 
 static int (* _sceIoAddDrv)(PspIoDrv *drv);
@@ -225,6 +229,268 @@ static int msIoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cm
 	args[6] = (u32)outlen;
 
 	return sceKernelExtendKernelStack(0x4000, (void *)_msIoDevctl, args);
+}
+
+__attribute__((noinline)) static int BuildMsPathForEf(PspIoDrvFileArg *arg, const char *name, char *ms_path) {
+
+	// Already __ef0__
+	if (strncmp(name, "__ef0__", 7) == 0 || strncmp(name, "/__ef0__", 8) == 0) {
+		sprintf(ms_path, "%s", name);
+	} else {
+		sprintf(ms_path, "/__ef%d__%s", (int)arg->fs_num, name);
+	}
+
+	int fs_num = arg->fs_num;
+	arg->fs_num = 0;
+	return fs_num;
+}
+
+static int _efIoOpen(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	char *file = (char *)args[1];
+	int flags = args[2];
+	SceMode mode = (SceMode)args[3];
+
+	char ms_path[128];
+	BuildMsPathForEf(arg, file, ms_path);
+	int res = msIoOpen(arg, ms_path, flags, mode);
+	// int res = g_ms_funcs.IoOpen(arg, ms_path, flags, mode);
+
+	return res;
+}
+
+static int _efIoRename(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *oldname = (const char *)args[1];
+	const char *newname = (const char *)args[2];
+
+	char oldpath[128];
+	BuildMsPathForEf(arg, oldname, oldpath);
+	char newpath[128];
+	BuildMsPathForEf(arg, newname, newpath);
+
+	int res = g_ms_funcs.IoRename(arg, oldpath, newpath);
+	return res;
+}
+
+static int _efIoRemove(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+
+	char ms_file[128];
+	BuildMsPathForEf(arg, file, ms_file);
+	int res = g_ms_funcs.IoRemove(arg, ms_file);
+
+	return res;
+}
+
+static int _efIoMkdir(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+	SceMode mode = (SceMode)args[2];
+
+	char ms_file[128];
+	BuildMsPathForEf(arg, file, ms_file);
+	int res = g_ms_funcs.IoMkdir(arg, ms_file, mode);
+
+	return res;
+}
+
+static int _efIoRmDir(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+
+	char ms_file[128];
+	BuildMsPathForEf(arg, file, ms_file);
+	int res = g_ms_funcs.IoRmdir(arg, ms_file);
+
+	return res;
+}
+
+static int _efIoDopen(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+
+	char ms_file[128];
+	BuildMsPathForEf(arg, file, ms_file);
+	int res = g_ms_funcs.IoDopen(arg, ms_file);
+
+	return res;
+}
+
+static int _efIoGetstat(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+	SceIoStat *stat = (SceIoStat *)args[2];
+
+	char ms_file[128];
+	BuildMsPathForEf(arg, file, ms_file);
+	int res = g_ms_funcs.IoGetstat(arg, ms_file, stat);
+
+	return res;
+}
+
+static int _efIoChstat(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *file = (const char *)args[1];
+	SceIoStat *stat = (SceIoStat *)args[2];
+	int bits = (int)args[3];
+
+	char ms_file[128];
+	BuildMsPathForEf(arg, file, ms_file);
+	int res = g_ms_funcs.IoChstat(arg, ms_file, stat, bits);
+
+	return res;
+}
+
+static int _efIoChdir(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	const char *dir = (const char *)args[1];
+
+	char ms_dir[128];
+	BuildMsPathForEf(arg, dir, ms_dir);
+	int res = g_ms_funcs.IoChdir(arg, ms_dir);
+
+	return res;
+}
+
+static int _efIoIoctl(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	u32 cmd = (u32)args[1];
+	void *indata = (void *)args[2];
+	int inlen = args[3];
+	void *outdata = (void *)args[4];
+	int outlen = args[5];
+
+	int res = msIoIoctl(arg, cmd, indata, inlen, outdata, outlen);
+
+	return res;
+}
+
+static int _efIoDevctl(u32 *args) {
+	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
+	u32 cmd = (u32)args[2];
+	const char *devname = (cmd == 0x02425818) ? "ef0:" : "ms0:";
+	void *indata = (void *)args[3];
+	int inlen = args[4];
+	void *outdata = (void *)args[5];
+	int outlen = args[6];
+
+	if (cmd == 0x02025801) {
+		devname = "mscmhc0:";
+	}
+
+	if (cmd == 0x02425818) {
+		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_EF_DEVINFO, 0);
+	}
+
+	int res = msIoDevctl(arg, devname, cmd, indata, inlen, outdata, outlen);
+
+	return res;
+}
+
+static int efIoOpen(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
+	u32 args[4];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+	args[2] = (u32)flags;
+	args[3] = (u32)mode;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoOpen, args);
+}
+
+static int efIoRename(PspIoDrvFileArg *arg, const char *oldname, const char *newname) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)oldname;
+	args[2] = (u32)newname;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoRename, args);
+}
+
+static int efIoRemove(PspIoDrvFileArg * arg, char * file) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoRemove, args);
+}
+
+static int efIoMkdir(PspIoDrvFileArg * arg, char * file, SceMode mode) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+	args[2] = (u32)mode;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoMkdir, args);
+}
+
+static int efIoRmDir(PspIoDrvFileArg * arg, char * file) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoRmDir, args);
+}
+
+static int efIoDopen(PspIoDrvFileArg * arg, char * file) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoDopen, args);
+}
+
+static int efIoGetstat(PspIoDrvFileArg * arg, char * file, SceIoStat *stat) {
+	u32 args[3];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+	args[2] = (u32)stat;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoGetstat, args);
+}
+
+static int efIoChstat(PspIoDrvFileArg * arg, char * file, SceIoStat* stat, int bits) {
+	u32 args[4];
+	args[0] = (u32)arg;
+	args[1] = (u32)file;
+	args[2] = (u32)stat;
+	args[3] = (u32)bits;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoChstat, args);
+}
+
+static int efIoChdir(PspIoDrvFileArg * arg, const char *dir) {
+	u32 args[2];
+	args[0] = (u32)arg;
+	args[1] = (u32)dir;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoChdir, args);
+}
+
+static int efIoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
+	u32 args[7];
+	args[0] = (u32)arg;
+	args[1] = (u32)devname;
+	args[2] = (u32)cmd;
+	args[3] = (u32)indata;
+	args[4] = (u32)inlen;
+	args[5] = (u32)outdata;
+	args[6] = (u32)outlen;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoDevctl, args);
+}
+
+static int efIoIoctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
+	u32 args[6];
+	args[0] = (u32)arg;
+	args[1] = (u32)cmd;
+	args[2] = (u32)indata;
+	args[3] = (u32)inlen;
+	args[4] = (u32)outdata;
+	args[5] = (u32)outlen;
+
+	return sceKernelExtendKernelStack(0x4000, (void *)_efIoIoctl, args);
 }
 
 __attribute__((noinline)) static int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg, const char *name, char *ms_path) {
@@ -601,7 +867,44 @@ int sceIoAddDrvPatched(PspIoDrv *drv) {
 
 		// Add ms driver
 		g_ms_drv->funcs = drv->funcs;
+
+		// Add ef driver
+		memcpy(&g_ef_funcs, drv->funcs, sizeof(PspIoDrvFuncs));
+		g_ef_funcs.IoOpen = (void*)efIoOpen;
+		g_ef_funcs.IoRemove = (void*)efIoRemove;
+		g_ef_funcs.IoMkdir = (void*)efIoMkdir;
+		g_ef_funcs.IoRmdir = (void*)efIoRmDir;
+		g_ef_funcs.IoDopen = (void*)efIoDopen;
+		g_ef_funcs.IoGetstat = (void*)efIoGetstat;
+		g_ef_funcs.IoChstat = (void*)efIoChstat;
+		g_ef_funcs.IoRename = (void*)efIoRename;
+		g_ef_funcs.IoChdir = (void*)efIoChdir;
+		g_ef_funcs.IoDevctl = (void*)efIoDevctl;
+		g_ef_funcs.IoIoctl = (void*)efIoIoctl;
+
+		memcpy(&g_ef_drv, g_ms_drv, sizeof(PspIoDrv));
+		g_ef_drv.name = "ef";
+		g_ef_drv.name2 = "EF";
+		g_ef_drv.funcs = &g_ef_funcs;
+
+		memcpy(&g_fatef_drv, g_ms_drv, sizeof(PspIoDrv));
+		g_fatef_drv.name = "fatef";
+		g_fatef_drv.name2 = "FATEF";
+		g_fatef_drv.funcs = &g_ef_funcs;
+
+		// Redirect `ms0:` to `ef0:`
+		// int apitype = g_adrenaline->fake_api_type;
+		// if (apitype == PSP_INIT_APITYPE_EF2
+		// 	|| apitype == PSP_INIT_APITYPE_UMD_EMU_EF1
+		// 	|| apitype == PSP_INIT_APITYPE_UMD_EMU_EF2
+		// 	|| apitype == PSP_INIT_APITYPE_EF5)
+		// {
+		// 	memcpy(g_ms_drv->funcs, &g_ef_funcs, sizeof(PspIoDrvFuncs));
+		// }
+
 		_sceIoAddDrv(g_ms_drv);
+		_sceIoAddDrv(&g_ef_drv);
+		_sceIoAddDrv(&g_fatef_drv);
 	} else if (strcmp(drv->name, "flash") == 0) {
 		memcpy(&g_flash_funcs, drv->funcs, sizeof(PspIoDrvFuncs));
 
@@ -645,7 +948,7 @@ int sceIoDelDrvPatched(const char *drv_name) {
 int sceIoUnassignPatched(const char *dev) {
 	int k1 = pspSdkSetK1(0);
 
-	if (strncmp(dev, "ms", 2) == 0 || strncmp(dev, "flash", 5) == 0) {
+	if (strncmp(dev, "ms", 2) == 0 || strncmp(dev, "ef", 2) == 0 || strncmp(dev, "flash", 5) == 0) {
 		pspSdkSetK1(k1);
 		return 0;
 	}
@@ -657,7 +960,7 @@ int sceIoUnassignPatched(const char *dev) {
 int sceIoAssignPatched(const char *dev1, const char *dev2, const char *dev3, int mode, void* unk1, long unk2) {
 	int k1 = pspSdkSetK1(0);
 
-	if (strncmp(dev1, "ms", 2) == 0 || strncmp(dev1, "flash", 5) == 0) {
+	if (strncmp(dev1, "ms", 2) == 0  || strncmp(dev1, "ef", 2) == 0 || strncmp(dev1, "flash", 5) == 0) {
 		pspSdkSetK1(k1);
 		return 0;
 	}

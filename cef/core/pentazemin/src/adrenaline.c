@@ -109,6 +109,7 @@ void initAdrenalineInfo() {
 
 	g_adrenaline->app_type = sceKernelApplicationType();
 	g_adrenaline->pops_mode = g_adrenaline->app_type == PSP_INIT_KEYCONFIG_POPS;
+	g_adrenaline->api_type = sceKernelInitApitype();
 }
 
 #define MAX_THREADS 32
@@ -201,6 +202,10 @@ static int adrenaline_thread(SceSize args, void *argp) {
 		switch (g_adrenaline->psp_cmd) {
 			case ADRENALINE_PSP_CMD_REINSERT_MS:
 				sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
+				break;
+
+			case ADRENALINE_PSP_CMD_REINSERT_EF:
+				sceIoDevctl("fatef0:", 0x0240D81E, NULL, 0, NULL, 0);
 				break;
 
 			case ADRENALINE_PSP_CMD_SAVESTATE:
