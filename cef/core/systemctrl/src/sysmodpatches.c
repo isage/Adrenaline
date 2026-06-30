@@ -123,10 +123,12 @@ void UnprotectExtraMemory() {
 	}
 
 	// Allow user to allocate on extra ram
-	PspSysMemPartition* partition = sctrlGetMemoryPartition(11);
-	if (partition){
-		partition->address &= 0x7FFFFFFF;
-	}
+	for (int i=8; i<12; i++){
+        PspSysMemPartition* partition = (void*)sctrlGetMemoryPartition(i);
+        if (partition){
+            partition->address &= 0x7FFFFFFF;
+        }
+    }
 }
 
 static int exitToVsh(SceSize args, void *argp) {
@@ -412,7 +414,13 @@ SceUID sceKernelAllocPartitionMemoryPluginPatched(SceUID partitionid, const char
 		logmsg2("[INFO]: %s: `partition_id` 11 -> 2\n", __func__);
 	}
 
-	return sceKernelAllocPartitionMemory(partitionid, name, type, size, addr);
+	u32 k1 = pspSdkSetK1(0);
+
+	SceUID res = sceKernelAllocPartitionMemory(partitionid, name, type, size, addr);
+
+	pspSdkSetK1(k1);
+
+	return res;
 }
 
 SceUID sceKernelCreateThreadPluginPatched(const char *name, SceKernelThreadEntry entry, int init_priority, int stack_size, SceUInt attr, SceKernelThreadOptParam *option) {
@@ -421,7 +429,13 @@ SceUID sceKernelCreateThreadPluginPatched(const char *name, SceKernelThreadEntry
 		logmsg2("[INFO]: %s: `stack_mpid` 11 -> 2\n", __func__);
 	}
 
-	return sceKernelCreateThread(name, entry, init_priority, stack_size, attr, option);
+	u32 k1 = pspSdkSetK1(0);
+
+	SceUID res = sceKernelCreateThread(name, entry, init_priority, stack_size, attr, option);
+
+	pspSdkSetK1(k1);
+
+	return res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
