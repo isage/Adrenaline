@@ -205,7 +205,7 @@ static void list_cleaner(void* item) {
 }
 
 static void processCustomLine(char* line) {
-	logmsg4("[DEBUG]: %s: Processing plugin custom line `%s`", __func__, line);
+	logmsg4("[DEBUG]: %s: Processing plugin custom line `%s`\n", __func__, line);
 	Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
 	paf_memset(plugin, 0, sizeof(Plugin));
 	plugin->path = line;
@@ -214,7 +214,7 @@ static void processCustomLine(char* line) {
 }
 
 static void processPlugin(char* runlevel, char* path, char* enabled) {
-	logmsg4("[DEBUG]: %s: Processing plugin line `%s, %s, %s`", __func__, runlevel, path, enabled);
+	logmsg4("[DEBUG]: %s: Processing plugin line `%s, %s, %s`\n", __func__, runlevel, path, enabled);
 	int n = g_plugins.count;
 	char* name = paf_malloc(20);
 	if (name == NULL) {

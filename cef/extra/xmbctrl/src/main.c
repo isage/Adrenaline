@@ -120,17 +120,59 @@ ItemOptions g_item_opts[] = {
 static STMOD_HANDLER previous = NULL;
 int g_num_items = N_ITEMS;
 
+int g_needs_unload = 0;
+
+// Modules that needs to unload
+char *g_modules[] = {
+	"game_plugin_module",
+	"msvideo_plugin_module",
+	"sceVshSDPlugin_Module",
+	"photo_browser_module",
+	"photo_main_plugin_module",
+	"photo_player_module",
+	"visualizer_module",
+	"music_parser_module",
+	"sceASFParser",
+	"music_player_module",
+	"sceFileParserBase_Module",
+	"content_browser_module",
+	"launcher_plugin_module",
+	"sceMGVideo_Service",
+	"mcore",
+	"sceFont_Library_ARIB",
+	"mp4msv_module",
+	"msvideo_main_plugin_module",
+};
+
 int OnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
 	u32 text_addr = mod->text_addr;
 	u32 text_size = mod->text_size;
 
-	if (paf_strcmp(modname, "vsh_module") == 0)
+
+	if (paf_strcmp(modname, "vsh_module") == 0) {
 		PatchVshMain(text_addr, text_size);
-	else if (paf_strcmp(modname, "sceVshAuthPlugin_Module") == 0)
+		PatchIo(mod);
+
+	} else if (paf_strcmp(modname, "sceVshAuthPlugin_Module") == 0) {
 		PatchAuthPlugin(text_addr, text_size);
-	else if (paf_strcmp(modname, "sysconf_plugin_module") == 0)
+
+	} else if (paf_strcmp(modname, "sysconf_plugin_module") == 0) {
 		PatchSysconfPlugin(text_addr, text_size);
+
+	} else if (paf_strcmp(modname, "game_plugin_module") == 0) {
+		PatchGamePlugin(mod);
+
+	} else if (paf_strcmp(modname, "sceVshSDPlugin_Module") == 0) {
+		PatchSavedataPlugin(mod);
+
+	}
+
+	for (int i = 0; i < NELEMS(g_modules); i++) {
+		if (paf_strcmp(modname, g_modules[i]) == 0) {
+			PatchIo(mod);
+		}
+	}
 
 	if (previous) {
 		previous(mod);

@@ -4,7 +4,10 @@ OBJS = src/main.o \
 	src/plugins.o \
 	src/utils.o \
 	src/config.o \
+	src/patch_io.o \
 	src/patch_vsh.o \
+	src/patch_game_plugin.o \
+	src/patch_savedata_plugin.o \
 	exports.o
 
 CFLAGS = -std=c99 -Os -G0 -Wall -fshort-wchar -fno-pic -mno-check-zero-division

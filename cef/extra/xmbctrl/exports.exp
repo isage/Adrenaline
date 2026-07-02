@@ -5,4 +5,17 @@ PSP_EXPORT_FUNC(module_start)
 PSP_EXPORT_VAR(module_info)
 PSP_EXPORT_END
 
+PSP_EXPORT_START(XmbControlPrivate, 0, 0x0001)
+PSP_EXPORT_FUNC(ReturnBasePathPatched)
+PSP_EXPORT_FUNC(sceIoDopenPatched)
+PSP_EXPORT_FUNC(sceIoOpenPatched)
+PSP_EXPORT_FUNC(sceIoGetstatPatched)
+PSP_EXPORT_FUNC(sceIoChstatPatched)
+PSP_EXPORT_FUNC(sceIoRemovePatched)
+PSP_EXPORT_FUNC(sceIoRmdirPatched)
+PSP_EXPORT_FUNC(sceIoMkdirPatched)
+PSP_EXPORT_FUNC(sceIoDevctlPatched)
+PSP_EXPORT_FUNC(checkOrGetSavedataPathPatched)
+PSP_EXPORT_END
+
 PSP_END_EXPORTS

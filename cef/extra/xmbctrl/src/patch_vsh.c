@@ -20,6 +20,7 @@
 
 #include <vshctrl.h>
 #include <cfwmacros.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
@@ -39,8 +40,9 @@ static int g_unload = 0;
 static int g_context_mode = 0;
 static u32 g_backup[4];
 
-static SceVshItem *g_new_item = NULL;
-static SceVshItem *g_new_item2 = NULL;
+static SceVshItem *g_plugin_mgr_item = NULL;
+static SceVshItem *g_cfw_conf_item = NULL;
+static SceVshItem *g_ef_item[5] = {NULL};
 static void *g_xmb_arg0 = NULL;
 static void *g_xmb_arg1 = NULL;
 
@@ -69,6 +71,19 @@ static unsigned char g_usb_item[] __attribute__((aligned(16))) = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
+static SceVshItem *g_ef_camera_item = NULL;
+static SceVshItem *g_ef_music_item = NULL;
+static SceVshItem *g_ef_video_item = NULL;
+static SceVshItem *g_ef_game_item = NULL;
+static SceVshItem *g_ef_savedata_item = NULL;
+
+static int g_ef_drv_id[5] = {-1};
+static int g_ef_drv_arg[5] = {-1};
+int g_is_ef_drive = 0;
+
+static u32 g_last_action_arg = ms_game_action;
+static u32 g_unk_strukt_addr = 0;
+
 #define PLUGINS_CONTEXT 1
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,6 +96,9 @@ static int (*ExecuteAction)(int action, int action_arg) = NULL;
 static int (*UnloadModule)(int skip) = NULL;
 static int (*OnXmbPush)(void *arg0, void *arg1) = NULL;
 static int (*OnXmbContextMenu)(void *arg0, void *arg1) = NULL;
+SceVshItem *(*GetBackupVshItem)(int topitem, u32 unk, SceVshItem *item) = NULL;
+static int (*RegisterDriveCallbacks)(u32 drives, int unk0, int unk2, int unk3) = NULL;
+
 
 static void (*LoadStartAuth)() = NULL;
 static int (*auth_handler)(int a0) = NULL;
@@ -181,12 +199,16 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 	static int cfw_conf_added = 0;
 	static int plugin_mgr_added = 0;
 
+	if (topitem != 0) {
+		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", item->text, topitem, item->id, item->action, item->action_arg, item->subtitle, item->relocate, item->unk, item->memstick, item->umd_icon, item->context->text);
+	}
+
 	if (paf_strcmp(item->text, "msgtop_sysconf_console") == 0) {
 		g_sysconf_action = item->action;
 
 		// Plugin Manager is added before the `msgtop_sysconf_console`
 		// So apply re-patch the action for it
-		g_new_item->action = g_sysconf_action;
+		g_plugin_mgr_item->action = g_sysconf_action;
 	}
 
 	// prevent adding more than once
@@ -204,8 +226,8 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		}
 
 		// Add Plugins Manager
-		g_new_item = addCustomVshItem(91, "msgtop_sysconf_pluginsmgr", sysconf_plugins_action_arg, (cur_icon) ? item : (SceVshItem*)g_usb_item);
-		AddVshItem(a0, topitem, g_new_item);
+		g_plugin_mgr_item = addCustomVshItem(CUSTOM_ID_PLUGIN_MNG, "msgtop_sysconf_pluginsmgr", sysconf_plugins_action_arg, (cur_icon) ? item : (SceVshItem*)g_usb_item);
+		AddVshItem(a0, topitem, g_plugin_mgr_item);
 	}
 
 	// prevent adding more than once
@@ -223,11 +245,92 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		}
 
 		// Add CFW Settings
-		g_new_item2 = addCustomVshItem(92, "msgtop_sysconf_cfwconfig", sysconf_cfwconfig_action_arg, (cur_icon) ? item : (SceVshItem*)g_console_item);
-		AddVshItem(a0, topitem, g_new_item2);
+		g_cfw_conf_item = addCustomVshItem(CUSTOM_ID_CFW_CONFIG, "msgtop_sysconf_cfwconfig", sysconf_cfwconfig_action_arg, (cur_icon) ? item : (SceVshItem*)g_console_item);
+		AddVshItem(a0, topitem, g_cfw_conf_item);
 	}
 
-	return AddVshItem(a0, topitem, item);
+	int is_ef_enable = sctrlIsEfEnable();
+
+	if (is_ef_enable && topitem == 5 && paf_strcmp(item->text, "msgtop_game_savedata") == 0) {
+		g_ef_drv_id[FAKE_EF_SAVEDATA] = g_ef_savedata_item->id;
+		g_ef_drv_arg[FAKE_EF_SAVEDATA] = g_ef_savedata_item->action_arg;
+
+		// g_ef_item[FAKE_EF_SAVEDATA] = addCustomVshItem(CUSTOM_ID_FAKE_EF_SAVEDATA, "msgtop_game_savedata", fake_ef0_savedata_action_arg, item);
+		g_ef_item[FAKE_EF_SAVEDATA] = addCustomVshItem(g_ef_savedata_item->id, "msgtop_game_savedata", g_ef_savedata_item->action_arg, item);
+		g_ef_item[FAKE_EF_SAVEDATA]->action = g_ef_savedata_item->action;
+		g_ef_item[FAKE_EF_SAVEDATA]->unk = g_ef_savedata_item->unk;
+		g_ef_item[FAKE_EF_SAVEDATA]->memstick = g_ef_savedata_item->memstick;
+		// g_ef_item[FAKE_EF_SAVEDATA]->context = g_ef_savedata_item->context;
+
+		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_savedata_item->text, topitem, g_ef_savedata_item->id, g_ef_savedata_item->action, g_ef_savedata_item->action_arg, g_ef_savedata_item->subtitle, g_ef_savedata_item->relocate, g_ef_savedata_item->unk, g_ef_savedata_item->memstick, g_ef_savedata_item->umd_icon, g_ef_savedata_item->context->text);
+		// logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_SAVEDATA]->text, topitem, g_ef_item[FAKE_EF_SAVEDATA]->id, g_ef_item[FAKE_EF_SAVEDATA]->action, g_ef_item[FAKE_EF_SAVEDATA]->action_arg, g_ef_item[FAKE_EF_SAVEDATA]->subtitle, g_ef_item[FAKE_EF_SAVEDATA]->relocate, g_ef_item[FAKE_EF_SAVEDATA]->unk, g_ef_item[FAKE_EF_SAVEDATA]->memstick, g_ef_item[FAKE_EF_SAVEDATA]->umd_icon);
+
+		AddVshItem(a0, topitem, g_ef_item[FAKE_EF_SAVEDATA]);
+		// AddVshItem(a0, topitem, g_ef_savedata_item);
+	}
+
+	int ret = AddVshItem(a0, topitem, item);
+
+	if (is_ef_enable && topitem == 2 && paf_strcmp(item->text, "msgshare_ms") == 0) {
+		logmsg4("[SAVEDATA]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_savedata_item->text, topitem, g_ef_savedata_item->id, g_ef_savedata_item->action, g_ef_savedata_item->action_arg, g_ef_savedata_item->subtitle, g_ef_savedata_item->relocate, g_ef_savedata_item->unk, g_ef_savedata_item->memstick, g_ef_savedata_item->umd_icon, g_ef_savedata_item->context->text);
+		g_ef_drv_id[FAKE_EF_PHOTO] = g_ef_camera_item->id;
+		g_ef_drv_arg[FAKE_EF_PHOTO] = g_ef_camera_item->action_arg;
+		g_ef_item[FAKE_EF_PHOTO] = addCustomVshItem(g_ef_camera_item->id, "msg_em", g_ef_camera_item->action_arg, item);
+		// g_ef_item[FAKE_EF_PHOTO] = addCustomVshItem(CUSTOM_ID_FAKE_EF_PHOTO, "msg_em", fake_ef0_photo_action_arg, item);
+		g_ef_item[FAKE_EF_PHOTO]->action = g_ef_camera_item->action;
+		g_ef_item[FAKE_EF_PHOTO]->unk = g_ef_camera_item->unk;
+		// g_ef_item[FAKE_EF_PHOTO]->context = g_ef_camera_item->context;
+
+		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_camera_item->text, topitem, g_ef_camera_item->id, g_ef_camera_item->action, g_ef_camera_item->action_arg, g_ef_camera_item->subtitle, g_ef_camera_item->relocate, g_ef_camera_item->unk, g_ef_camera_item->memstick, g_ef_camera_item->umd_icon, g_ef_camera_item->context->text);
+		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_PHOTO]->text, topitem, g_ef_item[FAKE_EF_PHOTO]->id, g_ef_item[FAKE_EF_PHOTO]->action, g_ef_item[FAKE_EF_PHOTO]->action_arg, g_ef_item[FAKE_EF_PHOTO]->subtitle, g_ef_item[FAKE_EF_PHOTO]->relocate, g_ef_item[FAKE_EF_PHOTO]->unk, g_ef_item[FAKE_EF_PHOTO]->memstick, g_ef_item[FAKE_EF_PHOTO]->umd_icon);
+		AddVshItem(a0, topitem, g_ef_item[FAKE_EF_PHOTO]);
+	}
+
+	if (is_ef_enable && topitem == 3 && paf_strcmp(item->text, "msgshare_ms") == 0) {
+		g_ef_drv_id[FAKE_EF_MUSIC] = g_ef_music_item->id;
+		g_ef_drv_arg[FAKE_EF_MUSIC] = g_ef_music_item->action_arg;
+		g_ef_item[FAKE_EF_MUSIC] = addCustomVshItem(g_ef_music_item->id, "msg_em",  g_ef_music_item->action_arg, item);
+		// g_ef_item[FAKE_EF_MUSIC] = addCustomVshItem(CUSTOM_ID_FAKE_EF_MUSIC, "msg_em", fake_ef0_music_action_arg, item);
+		g_ef_item[FAKE_EF_MUSIC]->action = g_ef_music_item->action;
+		g_ef_item[FAKE_EF_MUSIC]->unk = g_ef_music_item->unk;
+		// g_ef_item[FAKE_EF_MUSIC]->context = g_ef_music_item->context;
+
+		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_music_item->text, topitem, g_ef_music_item->id, g_ef_music_item->action, g_ef_music_item->action_arg, g_ef_music_item->subtitle, g_ef_music_item->relocate, g_ef_music_item->unk, g_ef_music_item->memstick, g_ef_music_item->umd_icon, g_ef_music_item->context->text);
+		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_MUSIC]->text, topitem, g_ef_item[FAKE_EF_MUSIC]->id, g_ef_item[FAKE_EF_MUSIC]->action, g_ef_item[FAKE_EF_MUSIC]->action_arg, g_ef_item[FAKE_EF_MUSIC]->subtitle, g_ef_item[FAKE_EF_MUSIC]->relocate, g_ef_item[FAKE_EF_MUSIC]->unk, g_ef_item[FAKE_EF_MUSIC]->memstick, g_ef_item[FAKE_EF_MUSIC]->umd_icon);
+		AddVshItem(a0, topitem, g_ef_item[FAKE_EF_MUSIC]);
+	}
+
+	if (is_ef_enable && topitem == 4 && paf_strcmp(item->text, "msgshare_ms") == 0) {
+		g_ef_drv_id[FAKE_EF_VIDEO] = g_ef_video_item->id;
+		g_ef_drv_arg[FAKE_EF_VIDEO] = g_ef_video_item->action_arg;
+		g_ef_item[FAKE_EF_VIDEO] = addCustomVshItem(g_ef_video_item->id, "msg_em", g_ef_video_item->action_arg, item);
+		// g_ef_item[FAKE_EF_VIDEO] = addCustomVshItem(CUSTOM_ID_FAKE_EF_VIDEO, "msg_em", fake_ef0_video_action_arg, item);
+		g_ef_item[FAKE_EF_VIDEO]->action = g_ef_video_item->action;
+		g_ef_item[FAKE_EF_VIDEO]->unk = g_ef_video_item->unk;
+		// g_ef_item[FAKE_EF_VIDEO]->context = g_ef_video_item->context;
+
+		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_video_item->text, topitem, g_ef_video_item->id, g_ef_video_item->action, g_ef_video_item->action_arg, g_ef_video_item->subtitle, g_ef_video_item->relocate, g_ef_video_item->unk, g_ef_video_item->memstick, g_ef_video_item->umd_icon, g_ef_video_item->context->text);
+		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_VIDEO]->text, topitem, g_ef_item[FAKE_EF_VIDEO]->id, g_ef_item[FAKE_EF_VIDEO]->action, g_ef_item[FAKE_EF_VIDEO]->action_arg, g_ef_item[FAKE_EF_VIDEO]->subtitle, g_ef_item[FAKE_EF_VIDEO]->relocate, g_ef_item[FAKE_EF_VIDEO]->unk, g_ef_item[FAKE_EF_VIDEO]->memstick, g_ef_item[FAKE_EF_VIDEO]->umd_icon);
+		AddVshItem(a0, topitem, g_ef_item[FAKE_EF_VIDEO]);
+	}
+
+	if (is_ef_enable && topitem == 5 && (paf_strcmp(item->text, "msgshare_ms") == 0 || paf_strcmp(item->text, "gc4") == 0 || paf_strstr(item->text, "gcv_") != NULL || paf_strstr(item->text, "gcw_") != NULL)) {
+		g_ef_drv_id[FAKE_EF_GAME] = g_ef_game_item->id;
+		g_ef_drv_arg[FAKE_EF_GAME] = g_ef_game_item->action_arg;
+		// g_ef_item[FAKE_EF_GAME] = addCustomVshItem(CUSTOM_ID_FAKE_EF_GAME, "msg_em", fake_ef0_game_action_arg, item);
+		// g_ef_item[FAKE_EF_GAME] = addCustomVshItem(g_ef_game_item->id, "msg_em", fake_ef0_game_action_arg, item);
+		g_ef_item[FAKE_EF_GAME] = addCustomVshItem(g_ef_game_item->id, "msg_em", g_ef_game_item->action_arg, item);
+		g_ef_item[FAKE_EF_GAME]->action = g_ef_game_item->action;
+		g_ef_item[FAKE_EF_GAME]->unk = g_ef_game_item->unk;
+		g_ef_item[FAKE_EF_GAME]->context = g_ef_game_item->context;
+
+		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_game_item->text, topitem, g_ef_game_item->id, g_ef_game_item->action, g_ef_game_item->action_arg, g_ef_game_item->subtitle, g_ef_game_item->relocate, g_ef_game_item->unk, g_ef_game_item->memstick, g_ef_game_item->umd_icon, g_ef_game_item->context->text);
+		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_GAME]->text, topitem, g_ef_item[FAKE_EF_GAME]->id, g_ef_item[FAKE_EF_GAME]->action, g_ef_item[FAKE_EF_GAME]->action_arg, g_ef_item[FAKE_EF_GAME]->subtitle, g_ef_item[FAKE_EF_GAME]->relocate, g_ef_item[FAKE_EF_GAME]->unk, g_ef_item[FAKE_EF_GAME]->memstick, g_ef_item[FAKE_EF_GAME]->umd_icon);
+		AddVshItem(a0, topitem, g_ef_item[FAKE_EF_GAME]);
+
+	}
+
+	return ret;
 }
 
 int OnXmbPushPatched(void *arg0, void *arg1) {
@@ -237,13 +340,26 @@ int OnXmbPushPatched(void *arg0, void *arg1) {
 }
 
 int OnXmbContextMenuPatched(void *arg0, void *arg1) {
-	g_new_item->context = NULL;
-	g_new_item2->context = NULL;
+	g_plugin_mgr_item->context = NULL;
+	g_cfw_conf_item->context = NULL;
+	// g_ef_item[FAKE_EF_PHOTO]->context = NULL;
+	// g_ef_item[FAKE_EF_MUSIC]->context = NULL;
+	// g_ef_item[FAKE_EF_VIDEO]->context = NULL;
+	// g_ef_item[FAKE_EF_GAME]->context = NULL;
+	// g_ef_item[FAKE_EF_SAVEDATA]->context = NULL;
 	return OnXmbContextMenu(arg0, arg1);
 }
 
 int ExecuteActionPatched(int action, int action_arg) {
 	int old_is_cfw_config = g_is_cfw_config;
+
+	if (g_game_plugin || g_savedata_plugin) {
+		if (action_arg != g_last_action_arg) {
+			g_unload = 1;
+		}
+	}
+
+	g_last_action_arg = action_arg;
 
 	if (action == sysconf_console_action) {
 		if (action_arg == sysconf_cfwconfig_action_arg) {
@@ -258,6 +374,67 @@ int ExecuteActionPatched(int action, int action_arg) {
 			g_is_cfw_config = 0;
 		}
 	}
+
+	if (action == ms_savedata_action) {
+		if (action_arg == fake_ef0_savedata_action_arg) {
+			g_is_ef_drive = 1;
+			action_arg = g_ef_drv_arg[FAKE_EF_SAVEDATA];
+		} else if (action_arg == g_ef_drv_arg[FAKE_EF_SAVEDATA]) {
+			g_is_ef_drive = 1;
+		} else {
+			g_last_action_arg = action_arg;
+			g_is_ef_drive = 0;
+		}
+	}
+
+	if (action == ms_game_action) {
+		if (action_arg == fake_ef0_game_action_arg) {
+			g_is_ef_drive = 1;
+			action_arg = default_ms0_game_action_arg;
+		} else if (action_arg == g_ef_drv_arg[FAKE_EF_GAME]) {
+			g_is_ef_drive = 1;
+			action_arg = default_ms0_game_action_arg;
+		} else {
+			g_last_action_arg = action_arg;
+			g_is_ef_drive = 0;
+		}
+
+	}
+
+	if (action == ms_photo_action) {
+		if (action_arg == fake_ef0_photo_action_arg) {
+			g_is_ef_drive = 1;
+			action_arg = g_ef_drv_arg[FAKE_EF_PHOTO];
+		} else if (action_arg == g_ef_drv_arg[FAKE_EF_PHOTO]) {
+			g_is_ef_drive = 1;
+		} else {
+			g_is_ef_drive = 0;
+		}
+	}
+
+	if (action == ms_video_action) {
+		if (action_arg == fake_ef0_video_action_arg) {
+			g_is_ef_drive = 1;
+			action_arg = g_ef_drv_arg[FAKE_EF_VIDEO];
+		} else if (action_arg == g_ef_drv_arg[FAKE_EF_VIDEO]) {
+			g_is_ef_drive = 1;
+		} else {
+			g_is_ef_drive = 0;
+		}
+	}
+
+	if (action == ms_music_action) {
+		if (action_arg == fake_ef0_music_action_arg) {
+			g_is_ef_drive = 1;
+			action_arg = g_ef_drv_arg[FAKE_EF_MUSIC];
+		} else if (action_arg == g_ef_drv_arg[FAKE_EF_MUSIC]) {
+			g_is_ef_drive = 1;
+		} else {
+			g_is_ef_drive = 0;
+		}
+	}
+
+
 	if (old_is_cfw_config != g_is_cfw_config) {
 		paf_memset(g_backup, 0, sizeof(g_backup));
 		g_context_mode = 0;
@@ -271,6 +448,8 @@ int ExecuteActionPatched(int action, int action_arg) {
 int UnloadModulePatched(int skip) {
 	if (g_unload) {
 		skip = -1;
+		g_game_plugin = 0;
+		g_savedata_plugin = 0;
 		g_unload = 0;
 	}
 	return UnloadModule(skip);
@@ -295,7 +474,7 @@ void OnInitMenuPspConfigPatched() {
 				Plugin *plugin = (Plugin *)(g_plugins.table[i]);
 				if (plugin->name != NULL && plugin->surname != NULL) {
 					AddSysconfContextItem(plugin->name, plugin->surname, plugin->name);
-					logmsg("[DEBUG]: Plugin Manager: Registered %s\n", plugin->name);
+					logmsg4("[DEBUG]: Plugin Manager: Registered %s\n", plugin->name);
 				}
 			}
 		}
@@ -350,7 +529,7 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 					utf8_to_unicode((wchar_t *)g_user_buffer, getPluginDisplayName(plugin, file, len));
 					paf_free(file);
 				} else {
-					logmsg("[ERROR]: Failed to allocate plugin display name");
+					logmsg("[ERROR]: Failed to allocate plugin display name\n");
 				}
 
 				return (wchar_t *)g_user_buffer;
@@ -405,6 +584,7 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 }
 
 int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
+	logmsg4("[DEBUG]: %s: name=%s\n", __func__, name);
 	if (name) {
 		if (g_is_cfw_config == 1) {
 			for (int i = 0; i < g_num_items; i++) {
@@ -467,6 +647,43 @@ int sceVshCommonGuiBottomDialogPatched(void *a0, void *a1, void *a2, int (*cance
 		t0, t1, handler, t3);
 }
 
+SceVshItem *GetBackupVshItemPatched(u32 unk, int topitem, SceVshItem *item) {
+	SceVshItem *res = GetBackupVshItem(unk, topitem, item);
+
+	if (item->id == CUSTOM_ID_FAKE_EF_GAME) {
+		item->id = g_ef_drv_id[FAKE_EF_GAME];
+		return item;
+	} else if (item->id == CUSTOM_ID_FAKE_EF_PHOTO) {
+		item->id = g_ef_drv_id[FAKE_EF_PHOTO];
+		return item;
+	} else if (item->id == CUSTOM_ID_FAKE_EF_MUSIC) {
+		item->id = g_ef_drv_id[FAKE_EF_MUSIC];
+		return item;
+	} else if (item->id == CUSTOM_ID_FAKE_EF_VIDEO) {
+		item->id = g_ef_drv_id[FAKE_EF_VIDEO];
+		return item;
+	} else if (item->id == CUSTOM_ID_FAKE_EF_SAVEDATA) {
+		item->id = g_ef_drv_id[FAKE_EF_SAVEDATA];
+		return item;
+	}
+
+	return res;
+}
+
+static int RegisterDriveCallbacksPatched(u32 drives, int unk0, int unk2, int unk3) {
+	logmsg4("[DEBUG]: %s: og drives=0x%08d\n", __func__, drives);
+
+	// Forces to register the callback to check the `ef0:`
+	int flags = drives;
+	if ((flags & 0x8) != 0) {
+		flags &= ~0x8;
+	}
+
+	int res = RegisterDriveCallbacks(flags, unk0, unk2, unk3);
+
+	return res;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -475,24 +692,43 @@ void PatchVshMain(u32 text_addr, u32 text_size) {
 	int patches = 13;
 	u32 scePafGetText_call = VREAD32((u32)&scePafGetText);
 
+	g_ef_camera_item = (void *)text_addr+0x55cfc;
+	g_ef_music_item = (void *)text_addr+0x55dec;
+	g_ef_video_item = (void *)text_addr+0x55f2c;
+	g_ef_game_item = (void *)text_addr+0x5615c;
+	g_ef_savedata_item = (void *)text_addr+0x5606c;
+	g_unk_strukt_addr = text_addr+0x5b84c;
+
+	GetBackupVshItem = (void *)U_EXTRACT_CALL(text_addr+0x22598);
+	MAKE_CALL(text_addr+0x22598, GetBackupVshItemPatched);
+
+	HIJACK_FUNCTION(text_addr+0x16A70, ExecuteActionPatched, ExecuteAction);
+	HIJACK_FUNCTION(text_addr+0x22648, AddVshItemPatched, AddVshItem);
+	HIJACK_FUNCTION(text_addr+0x169B4, OnXmbPushPatched, OnXmbPush);
+	HIJACK_FUNCTION(text_addr+0x16468, OnXmbContextMenuPatched, OnXmbContextMenu);
+	HIJACK_FUNCTION(text_addr+0x16E64, UnloadModulePatched, UnloadModule);
+
+	RegisterDriveCallbacks = (void*)text_addr+0x37f34;
+	MAKE_CALL(text_addr+0x14c64, RegisterDriveCallbacksPatched);
+
 	for (u32 addr = text_addr; addr < text_addr + text_size && patches; addr += 4) {
 		u32 data = VREAD32(addr);
 		if (data == 0x00063100) {
-			AddVshItem = (int (*)(void *, int,  SceVshItem *))U_EXTRACT_CALL(addr + 12);
+			// AddVshItem = (int (*)(void *, int,  SceVshItem *))U_EXTRACT_CALL(addr + 12);
 			MAKE_CALL(addr + 12, AddVshItemPatched);
 			patches--;
 		} else if (data == 0x3A14000F) {
-			ExecuteAction = (void *)addr - 72;
+			// ExecuteAction = (void *)addr - 72;
 			MAKE_CALL(addr - 72 - 36, ExecuteActionPatched);
 			patches--;
 		} else if (data == 0xA0C3019C) {
-			UnloadModule = (void *)addr - 52;
+			// UnloadModule = (void *)addr - 52;
 			patches--;
 		} else if (data == 0x9042001C) {
-			OnXmbPush = (void *)addr - 124;
+			// OnXmbPush = (void *)addr - 124;
 			patches--;
 		} else if (data == 0x00021202 && OnXmbContextMenu == NULL) {
-			OnXmbContextMenu = (void *)addr - 24;
+			// OnXmbContextMenu = (void *)addr - 24;
 			patches--;
 		} else if (data == 0x34420080 && LoadStartAuth == NULL) {
 			LoadStartAuth = (void *)addr - 208;
