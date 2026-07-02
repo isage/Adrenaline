@@ -72,31 +72,44 @@ static void OnSystemStatusIdle() {
 
 	// ISO UMD seek/speed simulation
 	SceModule* mod = NULL;
+	#if defined(DEBUG) && DEBUG >= 3
 	char *iso_driver_name = NULL;
+	#endif
 	switch (g_rebootex_config.bootfileindex) {
 		case MODE_INFERNO:
 			mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+			#if defined(DEBUG) && DEBUG >= 3
 			iso_driver_name = "Inferno";
+			#endif
 			break;
 
 		case MODE_MARCH33:
 			mod = sceKernelFindModuleByName("EPI-March33Driver");
+			#if defined(DEBUG) && DEBUG >= 3
 			iso_driver_name = "March33";
+			#endif
 			break;
 
 		case MODE_ME:
 			mod = sceKernelFindModuleByName("EPI-MEisoDriver");
+			#if defined(DEBUG) && DEBUG >= 3
 			iso_driver_name = "Mininal Edition";
+			#endif
 			break;
 
 		case MODE_NP9660:
 			mod = sceKernelFindModuleByName("EPI-GalaxyController");
+			#if defined(DEBUG) && DEBUG >= 3
 			iso_driver_name = "NP9660";
+			#endif
 			break;
 
 		default:
 			mod = NULL;
+			#if defined(DEBUG) && DEBUG >= 3
 			iso_driver_name = NULL;
+			#endif
+			break;
 	}
 
 	if (mod != NULL) {
@@ -323,7 +336,7 @@ static int OnModuleStart(SceModule *mod) {
 		}
 	}
 
-	logmsg4("[DEBUG]: %s: mod_name=%s — text_addr=0x%08lX\n", __func__, modname, text_addr);
+	logmsg3("[DEBUG]: %s: mod_name=%s — text_addr=0x%08lX\n", __func__, modname, text_addr);
 
 	return 0;
 }
