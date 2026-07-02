@@ -8,6 +8,18 @@ PSP_EXPORT_END
 # For new syscalls
 PSP_EXPORT_START(PopcornPrivate, 0x0011, 0x4001)
 PSP_EXPORT_FUNC(scePopsManExitVSHKernelPatched)
+PSP_EXPORT_FUNC(sceIoDopenPatched)
+PSP_EXPORT_FUNC(sceIoOpenPatched)
+PSP_EXPORT_FUNC(sceIoGetstatPatched)
+
+PSP_EXPORT_FUNC(sceIoDopenEfPatched)
+PSP_EXPORT_FUNC(sceIoOpenEfPatched)
+PSP_EXPORT_FUNC(sceIoGetstatEfPatched)
+PSP_EXPORT_FUNC(sceIoRemoveEfPatched)
+PSP_EXPORT_FUNC(sceIoRenameEfPatched)
+PSP_EXPORT_FUNC(sceIoRmdirEfPatched)
+PSP_EXPORT_FUNC(sceIoMkdirEfPatched)
+PSP_EXPORT_FUNC(sceIoReadEfPatched)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

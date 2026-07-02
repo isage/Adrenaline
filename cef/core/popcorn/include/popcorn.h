@@ -36,5 +36,7 @@ int initGlobals();
 
 void PatchScePopsMgr(void);
 void PatchPops(SceModule *mod);
+void PatchVshSDAuto(SceModule *mod);
+void PatchForceEf0Io(SceModule *mod);
 
 #endif // __POPCORN_H__

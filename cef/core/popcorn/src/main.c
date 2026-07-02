@@ -41,8 +41,19 @@ static void setPsxCompiledFwVersion(u32 version) {
 }
 
 int OnModuleStart(SceModule *mod) {
+	static int user_mod_start = 0;
+
+	// Do not patch the game PBP itself
+	// "simple" official POPS game module
+	// "complex" custom POPS game module
+	if (user_mod_start && strcmp(mod->modname, "simple") != 0 && strcmp(mod->modname, "complex") != 0) {
+		PatchForceEf0Io(mod);
+	}
+
 	if (strcmp(mod->modname, "pops") == 0) {
 		PatchPops(mod);
+	} else if (strcmp(mod->modname, "sceKernelLibrary") == 0) {
+		user_mod_start = 1;
 	}
 
 	if (!previous){
