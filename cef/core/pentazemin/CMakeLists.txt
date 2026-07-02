@@ -14,7 +14,10 @@ add_cef_prx(pentazemin
     src/utility_patch.c
     ../../bits/ttystdio.c
     binary.h
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
+  LINK_STUBS
     pspusb_driver
     pspinit_kernel
     pspstdio_kernel

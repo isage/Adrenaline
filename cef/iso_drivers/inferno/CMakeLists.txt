@@ -6,8 +6,11 @@ add_cef_prx(inferno
     src/isoread.c
     src/isocache.c
     ../../bits/iso_common.c
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
     cisoread
+  LINK_STUBS
     pspsemaphore
     pspinit_kernel
     psputils_kernel

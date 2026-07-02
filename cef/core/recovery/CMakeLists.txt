@@ -9,17 +9,18 @@ add_cef_prx(recovery USER
     src/utils.c
     src/vgraph.c
     imports.S
-  LINK_LIBS
+  LINK_STATICS
     -nostdlib
     gcc
     z
 	pspsdk
+	pspmodinfo
+  LINK_STUBS
     pspge
     pspreg
     pspuser
     psppsar
     pspctrl
-    pspmodinfo
     pspdisplay
     pspkubridge
     pspsysc_user

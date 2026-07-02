@@ -5,8 +5,11 @@ add_cef_prx(minimal_edition
     src/sceumdman.c
     src/umd9660_march_driver.c
     ../../bits/iso_common.c
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
     cisoread
+  LINK_STUBS
     pspsemaphore
     pspinit_kernel
     psputils_kernel

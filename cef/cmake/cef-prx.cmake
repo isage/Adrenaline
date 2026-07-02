@@ -1,7 +1,7 @@
 function(add_cef_prx NAME)
   set(options USER)
   set(oneValueArgs "")
-  set(multiValueArgs SRC_FILES LINK_LIBS COMPILE_OPS)
+  set(multiValueArgs SRC_FILES LINK_STATICS LINK_STUBS COMPILE_OPS)
 
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -12,10 +12,10 @@ function(add_cef_prx NAME)
   target_include_directories(${NAME} PRIVATE include)
 
   if(ARG_USER)
-    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_LIBS} )
+    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_STATICS} ${ARG_LINK_STUBS} )
   else()
     target_compile_definitions(${NAME} PRIVATE __KERNEL__)
-    target_link_libraries(${NAME} PRIVATE pspsdk pspmodinfo ${ARG_LINK_LIBS})
+    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_STATICS} ${ARG_LINK_STUBS} )
     target_link_options(${NAME} PRIVATE -nostdlib)
   endif()
 

@@ -3,8 +3,11 @@ add_cef_prx(galaxy
     src/main.c
     src/syspatches.c
     ../../bits/iso_common.c
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
     cisoread
+  LINK_STUBS
     pspinit_kernel
     psputils_kernel
     pspsysmem_kernel

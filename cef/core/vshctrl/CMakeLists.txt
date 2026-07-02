@@ -10,8 +10,11 @@ add_cef_prx(vshctrl
     src/vshctrl.c
     imports.S
     ../../bits/iso_common.c
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
     cisoread
+  LINK_STUBS
     pspsystemctrl_kernel
     adrenalinectrl
     psppower_driver

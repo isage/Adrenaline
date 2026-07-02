@@ -23,8 +23,11 @@ add_cef_prx(systemctrl
     rebootex.h
   COMPILE_OPS
     -Wno-builtin-declaration-mismatch
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
     microlz
+  LINK_STUBS
     adrenalinectrl
     pspsemaphore
     pspinit_kernel

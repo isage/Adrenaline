@@ -3,7 +3,10 @@ add_cef_prx(satelite USER
     src/main.c
     src/menu.c
     src/blit.c
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
+  LINK_STUBS
     pspdebug
     psppower
     pspdisplay

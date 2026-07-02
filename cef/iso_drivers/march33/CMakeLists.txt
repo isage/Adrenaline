@@ -5,8 +5,11 @@ add_cef_prx(march33
     src/mediaman.c
     src/umd9660.c
     ../../bits/iso_common.c
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
     cisoread
+  LINK_STUBS
     pspsemaphore
     pspinit_kernel
     psputils_kernel

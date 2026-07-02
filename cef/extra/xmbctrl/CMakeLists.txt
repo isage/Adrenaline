@@ -12,7 +12,10 @@ add_cef_prx(xmbctrl USER
     # exports.c
   COMPILE_OPS
     -std=c99
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
+  LINK_STUBS
     psppaf
     pspvsh
     pspvshctrl

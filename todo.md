@@ -3,3 +3,9 @@
 - ADHOC shenenigans
 - Fix pspemu resampler on vita side (drop mic patches)
 - Apply custom color on initial setup
+
+- Show correct free size on `ef0:` in the XMB
+- Find a way to complete POPS title boot from `ef0:`
+- Add a working `ef0:` savedata item on XMB
+- Context menu not showing for `ef0:` items
+- Rework on TotalFreeMemSize

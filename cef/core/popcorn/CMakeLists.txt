@@ -3,7 +3,10 @@ add_cef_prx(popcorn
     src/main.c
     src/syspatches.c
     src/libcrypt.c
-  LINK_LIBS
+  LINK_STATICS
+    pspsdk
+	pspmodinfo
+  LINK_STUBS
     pspsemaphore
     pspinit_kernel
     psputils_kernel
