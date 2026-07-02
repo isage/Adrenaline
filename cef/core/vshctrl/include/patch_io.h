@@ -26,6 +26,7 @@
 #include <pspiofilemgr_stat.h>
 
 int GetIsoIndex(const char *file);
+char *GetPathDrive(const char *path);
 
 SceUID sceIoDopenPatched(const char *dirname);
 int sceIoDreadPatched(SceUID fd, SceIoDirent *dir);

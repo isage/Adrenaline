@@ -220,7 +220,7 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 	if (res) {
 		memcpy(res, &g_vpbps[g_index], sizeof(VirtualPbp));
 	}
-	logmsg("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", g_vpbps[g_index].isofile);
+	logmsg3("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", g_vpbps[g_index].isofile);
 
 	g_index++;
 
@@ -237,7 +237,7 @@ int virtualpbp_fastadd(VirtualPbp *pbp) {
 	}
 
 	memcpy(&g_vpbps[g_index], pbp, sizeof(VirtualPbp));
-	logmsg2("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", g_vpbps[g_index].isofile);
+	logmsg3("[INFO]: ISO file was added to VirtualPBP list: `%s`\n", g_vpbps[g_index].isofile);
 
 	g_index++;
 

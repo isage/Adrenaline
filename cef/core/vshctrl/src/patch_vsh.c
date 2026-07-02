@@ -70,6 +70,19 @@ static void CheckControllerInput() {
 	}
 }
 
+static const char* fix_path_on_ef(const char *file) {
+	if (strncmp(file, "ef0:", 4) == 0) {
+		static char fixed[256] = {0};
+
+		// When the system reboots to launch the game, `ef0:` is not yet available, so we use the ms0 magic path to ef0 driver
+		memset(fixed, 0, 256);
+		snprintf(fixed, 255, "ms0:/__ef0__%s", file+4);
+		return fixed;
+	} else {
+		return file;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -177,16 +190,21 @@ int sceUpdateDownloadSetVersionPatched(int version) {
 	return res;
 }
 
-int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam *param, int unk2) {
+int LoadExecVSHCommonPatched(int apitype, const char *file, SceKernelLoadExecVSHParam *param, int unk2) {
+	logmsg3("[DEBUG]: %s: received apitype=0x%03X file=%s\n", __func__, apitype, file);
 	int k1 = pspSdkSetK1(0);
 
 	VshCtrlSetUmdFile("");
+
+	int is_ef_path = strcmp(GetPathDrive(file), "ef0:") == 0;
 
 	int index = GetIsoIndex(file);
 	if (index >= 0) {
 		int has_pboot = 0;
 		CheckControllerInput();
-		VshCtrlSetUmdFile(virtualpbp_getfilename(index));
+		logmsg4("[DEBUG]: %s: ISO filename `%s`\n", __func__, virtualpbp_getfilename(index));
+		logmsg4("[DEBUG]: %s: ISO filename fixed `%s`\n", __func__, fix_path_on_ef(virtualpbp_getfilename(index)));
+		VshCtrlSetUmdFile(fix_path_on_ef(virtualpbp_getfilename(index)));
 
 		// Set UMD type on ISO
 		sctrlSESetDiscType(PSP_UMD_TYPE_GAME);
@@ -254,15 +272,24 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		}
 
 		if (has_pboot) {
-			apitype = PSP_INIT_APITYPE_UMD_EMU_MS2;
+			if (is_ef_path) {
+				apitype = PSP_INIT_APITYPE_UMD_EMU_EF2;
+			} else {
+				apitype = PSP_INIT_APITYPE_UMD_EMU_MS2;
+			}
 		} else {
-			apitype = PSP_INIT_APITYPE_UMD_EMU_MS1;
+			if (is_ef_path) {
+				apitype = PSP_INIT_APITYPE_UMD_EMU_EF1;
+			} else {
+				apitype = PSP_INIT_APITYPE_UMD_EMU_MS1;
+			}
 		}
 
 		param->args = strlen(param->argp) + 1; //Update length
 
 		pspSdkSetK1(k1);
 
+		logmsg3("[DEBUG]: %s: will execute apitype=0x%03X file=%s\n", __func__, apitype, file);
 		return sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
 	}
 
@@ -274,8 +301,13 @@ int LoadExecVSHCommonPatched(int apitype, char *file, SceKernelLoadExecVSHParam 
 		param->args = strlen(param->argp) + 1; //Update length
 	}
 
+	if (is_ef_path) {
+		file = fix_path_on_ef(file);
+	}
+
 	pspSdkSetK1(k1);
 
+	logmsg3("[DEBUG]: %s: will execute apitype=0x%03X file=%s\n", __func__, apitype, file);
 	return sctrlKernelLoadExecVSHWithApitype(apitype, file, param);
 }
 
@@ -391,9 +423,17 @@ void PatchLoadExec() {
 	SceModule *mod = sceKernelFindModuleByName("sceLoadExec");
 	u32 text_addr = mod->text_addr;
 
-	MAKE_CALL(text_addr + 0x1DC0, LoadExecVSHCommonPatched); //sceKernelLoadExecVSHMs2
-	MAKE_CALL(text_addr + 0x1BE0, LoadExecVSHCommonPatched); //sceKernelLoadExecVSHMsPboot
-	MAKE_CALL(text_addr + 0x1BB8, LoadExecVSHCommonPatched); //sceKernelLoadExecVSHUMDEMUPboot
+	u32 withApiType = text_addr+0x23D0;
+
+	int patches = 23;
+	for (u32 addr = text_addr; addr < text_addr + mod->text_size && patches; addr += 4) {
+		u32 data = VREAD32(addr);
+
+		if (data == JAL(withApiType)) {
+			MAKE_CALL(addr, LoadExecVSHCommonPatched);
+			patches--;
+		}
+	}
 
 	sctrlFlushCache();
 }

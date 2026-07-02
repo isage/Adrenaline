@@ -37,6 +37,7 @@
 
 #define DUMMY_CAT_ISO_EXTENSION "     "
 #define MAX_FILES 128
+#define ISO_FOLDER_PREFIX "EPI__ISO"
 
 
 static char g_categorypath[256];
@@ -45,11 +46,15 @@ static SceUID g_categorydfd = -1;
 static SceUID g_gamedfd = -1;
 static SceUID g_isodfd = -1;
 static SceUID g_overiso = 0;
+static int g_ef_iso_fd = 0;
 
 static int g_vpbpinited = 0;
 static int g_isoindex = 0;
 static int g_cachechanged = 0;
 static VirtualPbp *g_cache = NULL;
+
+static const char *g_game_dir_list[] = { "ms0:/PSP/GAME/", "ef0:/PSP/GAME/" };
+static const char* g_dlc_files[] = { "PARAM.PBP", "PBOOT.PBP" };
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -62,30 +67,19 @@ static int CorruptIconPatch(char *name) {
 		return 1;
 	}
 
-	char path[256];
-	sprintf(path, "ms0:/PSP/GAME/%s%%/EBOOT.PBP", name);
-
-	SceIoStat stat;
-	memset(&stat, 0, sizeof(stat));
-	if (sceIoGetstat(path, &stat) >= 0) {
-		strcpy(name, "__SCE"); // hide icon
-		return 1;
+	// Ignore `.` `..` and already hidden folders.
+	if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0 || strcmp(name, "__SCE") == 0) {
+		return 0;
 	}
 
-	return 0;
-}
+	for (int i = 0; i < NELEMS(g_game_dir_list); i++) {
+		char path[256];
+		sprintf(path, "%s/%s%%/EBOOT.PBP", g_game_dir_list[i], name);
+		logmsg4("[DEBUG]: %s: path=%s\n", __func__, path);
 
-static int HideDlc(char *name) {
-	char path[256];
-	sprintf(path, "ms0:/PSP/GAME/%s/PARAM.PBP", name);
-
-	SceIoStat stat;
-	memset(&stat, 0, sizeof(stat));
-	if (sceIoGetstat(path, &stat) >= 0) {
-		sprintf(path, "ms0:/PSP/GAME/%s/EBOOT.PBP", name);
-
+		SceIoStat stat;
 		memset(&stat, 0, sizeof(stat));
-		if (sceIoGetstat(path, &stat) < 0) {
+		if (sceIoGetstat(path, &stat) >= 0) {
 			strcpy(name, "__SCE"); // hide icon
 			return 1;
 		}
@@ -94,14 +88,46 @@ static int HideDlc(char *name) {
 	return 0;
 }
 
+static int HideDlc(char *name) {
+	char path[256] = {0};
+	SceIoStat stat;
+
+	// Ignore `.` `..` and already hidden folders.
+	if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0 || strcmp(name, "__SCE") == 0) {
+		return 0;
+	}
+
+	for (int i = 0; i < NELEMS(g_game_dir_list); i++) {
+		for (int j = 0; j < NELEMS(g_dlc_files); j++) {
+			sprintf(path, "%s%s/%s", g_game_dir_list[i], name, g_dlc_files[j]);
+			logmsg4("[DEBUG]: %s: path=%s\n", __func__, path);
+
+			memset(&stat, 0, sizeof(stat));
+			if (sceIoGetstat(path, &stat) >= 0) {
+				sprintf(path, "%s%s/EBOOT.PBP", g_game_dir_list[i], name);
+				logmsg4("[DEBUG]: %s: path=%s\n", __func__, path);
+
+				memset(&stat, 0, sizeof(stat));
+				if (sceIoGetstat(path, &stat) < 0) {
+					strcpy(name, "__SCE"); // hide icon
+					return 1;
+				}
+			}
+		}
+	}
+
+
+	return 0;
+}
+
 static void ApplyIsoNamePatch(SceIoDirent *dir) {
 	if (dir->d_name[0] != '.') {
 		memset(dir->d_name, 0, 256);
-		sprintf(dir->d_name, "MMMMMISO%d", g_isoindex++);
+		sprintf(dir->d_name, ISO_FOLDER_PREFIX"%d", g_isoindex++);
 	}
 }
 
-static int ReadCache() {
+static int ReadCache(int is_ef) {
 	SceUID fd;
 	int i;
 
@@ -111,8 +137,10 @@ static int ReadCache() {
 
 	memset(g_cache, 0, sizeof(VirtualPbp) * MAX_FILES);
 
+	char *cache_file = (is_ef) ? "ef0:/PSP/SYSTEM/isocache2.bin" : "ms0:/PSP/SYSTEM/isocache2.bin";
+
 	for (i = 0; i < 0x10; i++) {
-		fd = sceIoOpen("ms0:/PSP/SYSTEM/isocache2.bin", PSP_O_RDONLY, 0);
+		fd = sceIoOpen(cache_file, PSP_O_RDONLY, 0);
 		if (fd >= 0) {
 			break;
 		}
@@ -128,7 +156,7 @@ static int ReadCache() {
 	return 0;
 }
 
-static int SaveCache() {
+static int SaveCache(int is_ef) {
 	SceUID fd;
 	int i;
 
@@ -153,11 +181,19 @@ static int SaveCache() {
 
 	g_cachechanged = 0;
 
-	sceIoMkdir("ms0:/PSP", 0777);
-	sceIoMkdir("ms0:/PSP/SYSTEM", 0777);
+	char * cache_file;
+	if (is_ef) {
+		sceIoMkdir("ef0:/PSP", 0777);
+		sceIoMkdir("ef0:/PSP/SYSTEM", 0777);
+		cache_file = "ef0:/PSP/SYSTEM/isocache2.bin";
+	} else {
+		sceIoMkdir("ms0:/PSP", 0777);
+		sceIoMkdir("ms0:/PSP/SYSTEM", 0777);
+		cache_file = "ms0:/PSP/SYSTEM/isocache2.bin";
+	}
 
 	for (i = 0; i < 0x10; i++) {
-		fd = sceIoOpen("ms0:/PSP/SYSTEM/isocache2.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		fd = sceIoOpen(cache_file, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 		if (fd >= 0) {
 			break;
 		}
@@ -203,6 +239,8 @@ static int Cache(VirtualPbp *pbp) {
 static int AddIsoDirent(char *path, SceUID fd, SceIoDirent *dir, int readcategories) {
 	int res;
 
+	logmsg3("[DEBUG]: %s: path=%s, dir.d_name=%s, readcategories=%d\n", __func__, path, dir->d_name, readcategories);
+
 NEXT:
 	if ((res = sceIoDread(fd, dir)) > 0) {
 		static VirtualPbp vpbp;
@@ -211,9 +249,9 @@ NEXT:
 		int docache;
 
 		if (!FIO_S_ISDIR(dir->d_stat.st_mode)) {
-			strcpy(fullpath, path);
-			strcat(fullpath, "/");
-			strcat(fullpath, dir->d_name);
+			snprintf(fullpath, 255, "%s/%s", path, dir->d_name);
+
+			logmsg3("[DEBUG]: %s: fullpath=%s\n", __func__, fullpath);
 
 			if (IsCached(fullpath, &dir->d_stat.sce_st_mtime, &vpbp)) {
 				res2 = virtualpbp_fastadd(&vpbp);
@@ -225,6 +263,7 @@ NEXT:
 
 			if (res2 >= 0) {
 				ApplyIsoNamePatch(dir);
+				logmsg4("[DEBUG]: %s: Patched dir.d_name to %s\n", __func__, dir->d_name);
 
 				// Fake the entry from file to directory
 				dir->d_stat.st_mode = 0x11FF;
@@ -239,6 +278,8 @@ NEXT:
 				}
 			}
 		} else {
+			logmsg4("[DEBUG]: %s: %s is directory\n", __func__, dir->d_name);
+
 			if (readcategories && dir->d_name[0] != '.' && strcmp(dir->d_name, "VIDEO") != 0) {
 				strcat(dir->d_name, DUMMY_CAT_ISO_EXTENSION);
 			} else {
@@ -246,14 +287,17 @@ NEXT:
 			}
 		}
 
+		logmsg3("[DEBUG]: %s: res=0x%08X\n", __func__, res);
 		return res;
 	}
+
+	logmsg3("[DEBUG]: %s: failed Dread\n", __func__);
 
 	return -1;
 }
 
 int GetIsoIndex(const char *file) {
-	char *p = strstr(file, "/MMMMMISO");
+	char *p = strstr(file, "/"ISO_FOLDER_PREFIX);
 	if (!p) {
 		return -1;
 	}
@@ -268,6 +312,23 @@ int GetIsoIndex(const char *file) {
 	strncpy(number, p + 9, q - (p + 9));
 
 	return strtol(number, NULL, 10);
+}
+
+char *GetPathDrive(const char *path) {
+	static char buf[10] = {0};
+
+	memset(buf, 0, 10);
+	for (int i = 0; i < 10; i++) {
+		if (path[i] == '.' || path[i] == '\0') {
+			break;
+		}
+		buf[i] = path[i];
+		if (path[i] == ':') {
+			break;
+		}
+	}
+
+	return buf;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -285,14 +346,15 @@ SceUID sceIoDopenPatched(const char *dirname) {
 		return res;
 	}
 
-	if (strcmp(dirname, "ms0:/PSP/GAME") == 0) {
+	if (strcmp(dirname, "ms0:/PSP/GAME") == 0 || strcmp(dirname, "ef0:/PSP/GAME") == 0) {
 		game = 1;
 	}
 
 	if (strstr(dirname, DUMMY_CAT_ISO_EXTENSION)) {
 		char *p = strrchr(dirname, '/');
 		if (p) {
-			strcpy(g_categorypath, "ms0:/ISO");
+			strcpy(g_categorypath, GetPathDrive(dirname));
+			strcat(g_categorypath, "/ISO");
 			strcat(g_categorypath, p);
 			g_categorypath[8 + strlen(p) - 5] = '\0';
 
@@ -307,6 +369,13 @@ SceUID sceIoDopenPatched(const char *dirname) {
 	pspSdkSetK1(0);
 
 	if (game) {
+		char* drive = GetPathDrive(dirname);
+
+		if (strcmp(drive, "ef0:") == 0) {
+			g_ef_iso_fd = 1;
+		} else {
+			g_ef_iso_fd = 0;
+		}
 		g_gamedfd = res;
 		g_overiso = 0;
 	}
@@ -322,15 +391,17 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 	if (g_vpbpinited) {
 		res = virtualpbp_dread(fd, dir);
 		if (res >= 0) {
-			pspSdkSetK1(k1);
-			return res;
+			goto exit;
 		}
 	}
 
 	if (fd >= 0) {
 		if (fd == g_gamedfd) {
+			char *iso_dir = (g_ef_iso_fd) ? "ef0:/ISO" : "ms0:/ISO";
+			logmsg4("[DEBUG]: %s: iso_dir=%s\n", __func__, iso_dir);
+
 			if (g_isodfd < 0 && !g_overiso) {
-				g_isodfd = sceIoDopen("ms0:/ISO");
+				g_isodfd = sceIoDopen(iso_dir);
 				if (g_isodfd >= 0) {
 					if (!g_vpbpinited) {
 						virtualpbp_init();
@@ -339,7 +410,7 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 						virtualpbp_reset();
 					}
 
-					ReadCache();
+					ReadCache(g_ef_iso_fd);
 					g_isoindex = 0;
 				} else {
 					g_overiso = 1;
@@ -347,17 +418,15 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 			}
 
 			if (g_isodfd >= 0) {
-				res = AddIsoDirent("ms0:/ISO", g_isodfd, dir, 1);
+				res = AddIsoDirent(iso_dir, g_isodfd, dir, 1);
 				if (res > 0) {
-					pspSdkSetK1(k1);
-					return res;
+					goto exit;
 				}
 			}
 		} else if (fd == g_categorydfd) {
 			res = AddIsoDirent(g_categorypath, g_categorydfd, dir, 0);
 			if (res > 0) {
-				pspSdkSetK1(k1);
-				return res;
+				goto exit;
 			}
 		}
 	}
@@ -374,7 +443,9 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 		}
 	}
 
+exit:
 	pspSdkSetK1(k1);
+	logmsg3("[DEBUG]: %s: fd=0x%08X, dir.d_name=%s -> 0x%08X\n", __func__, fd, dir->d_name, res);
 	return res;
 }
 
@@ -397,7 +468,8 @@ int sceIoDclosePatched(SceUID fd) {
 		g_isodfd = -1;
 		g_gamedfd = -1;
 		g_overiso = 0;
-		SaveCache();
+		SaveCache(g_ef_iso_fd);
+		g_ef_iso_fd = 0;
 	}
 
 	res = sceIoDclose(fd);
@@ -613,8 +685,9 @@ int sceIoRmdirPatched(const char *path) {
 int sceIoMkdirPatched(const char *dir, SceMode mode) {
 	int k1 = pspSdkSetK1(0);
 
-	if (strcmp(dir, "ms0:/PSP/GAME") == 0) {
+	if (strcmp(dir, "ms0:/PSP/GAME") == 0 || strcmp(dir, "ef0:/PSP/GAME") == 0) {
 		sceIoMkdir("ms0:/ISO", mode);
+		sceIoMkdir("ms0:/seplugins", mode);
 	}
 
 	int res = sceIoMkdir(dir, mode);
