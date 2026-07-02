@@ -203,7 +203,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", item->text, topitem, item->id, item->action, item->action_arg, item->subtitle, item->relocate, item->unk, item->memstick, item->umd_icon, item->context->text);
 	}
 
-	if (paf_strcmp(item->text, "msgtop_sysconf_console") == 0) {
+	if (g_cfw_config.no_xmb_cfw_items == 0 && paf_strcmp(item->text, "msgtop_sysconf_console") == 0) {
 		g_sysconf_action = item->action;
 
 		// Plugin Manager is added before the `msgtop_sysconf_console`
@@ -213,7 +213,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 
 	// prevent adding more than once
 	// Add the item just after "msgtop_sysconf_usb" (that is also just before "msgtop_sysconf_video")
-	if (!plugin_mgr_added && paf_strcmp(item->text, "msgtop_sysconf_video") == 0) {
+	if (g_cfw_config.no_xmb_cfw_items == 0 && !plugin_mgr_added && paf_strcmp(item->text, "msgtop_sysconf_video") == 0) {
 		plugin_mgr_added = 1;
 		g_startup = 0;
 
@@ -232,7 +232,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 
 	// prevent adding more than once
 	// Add the item just after "msgtop_sysconf_console" (that is also just before "msgtop_sysconf_theme")
-	if (!cfw_conf_added && paf_strcmp(item->text, "msgtop_sysconf_theme") == 0) {
+	if (g_cfw_config.no_xmb_cfw_items == 0 && !cfw_conf_added && paf_strcmp(item->text, "msgtop_sysconf_theme") == 0) {
 		cfw_conf_added = 1;
 		g_startup = 0;
 

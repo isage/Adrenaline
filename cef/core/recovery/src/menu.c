@@ -300,7 +300,7 @@ static Entry g_general_entries[] = {
 	{ "Use Sony PSP OSK", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_sony_psposk },
 	{ "Memory Stick Cache", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_ms_cache },
 	{ "NoDRM engine", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_nodrm_engine },
-	{ "XMB Control", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_xmbctrl },
+	{ "XMB CFW Settings", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_xmb_cfw_items },
 	{ "", NULL, NULL, 0, NULL },
 	{ "Toggle USB", ToggleUSB, NULL, 0, NULL },
 	{ "", NULL, NULL, 0, NULL },

@@ -47,6 +47,7 @@ $/kd/vaudio.prx VU
 $/kd/impose_01g.prx VGUPAEM
 $/kd/vshbridge_msapp.prx A
 $/kd/avcodec.prx V
+$/vsh/module/xmbctrl.prx V
 $/kd/mediasync.prx VGUPAEM
 $/kd/vshbridge.prx VU
 $/kd/mlnbridge.prx M

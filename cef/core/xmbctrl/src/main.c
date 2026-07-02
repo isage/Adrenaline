@@ -60,7 +60,7 @@ GetItem g_menu_items[] = {
 	{15, 0, "Use Sony PSP OSK", 1, 0, &g_cfw_config.use_sony_psposk},
 	{16, 1, "Memory Stick Cache", 1, 0, &g_cfw_config.no_ms_cache},
 	{17, 1, "NoDRM engine", 1, 0, &g_cfw_config.no_nodrm_engine},
-	{18, 1, "XMB Control", 1, 0, &g_cfw_config.no_xmbctrl},
+	{18, 1, "XMB CFW Settings", 1, 0, &g_cfw_config.no_xmb_cfw_items},
 	{19, 0, "Force high memory layout", 0, 1, &g_cfw_config.force_high_memory},
 	{20, 0, "Fake max free memory", 0, 1, &g_cfw_config.fake_max_free_mem},
 	{21, 0, "Use Graphic Engine 2", 0, 1, &g_cfw_config.use_ge2},

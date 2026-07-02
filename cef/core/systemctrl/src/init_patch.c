@@ -45,18 +45,6 @@ static int g_plugindone = 0;
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
 
-static void loadXmbControl(){
-	int apitype = sceKernelInitApitype();
-	if (apitype == 0x200 || apitype ==  0x210 || apitype ==  0x220 || apitype == 0x300){
-		// load XMB Control Module
-		int modid = sceKernelLoadModule("ms0:/__ADRENALINE__/flash0/vsh/module/xmbctrl.prx", 0, NULL);
-		if (modid < 0) {
-		  	modid = sceKernelLoadModule("flash0:/vsh/module/xmbctrl.prx", 0, NULL);
-		}
-		sceKernelStartModule(modid, 0, NULL, NULL, NULL);
-	}
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,10 +122,6 @@ int sceKernelStartModulePatched(SceUID modid, SceSize argsize, void *argp, int *
 			g_plugindone = 1;
 
 			int type = sceKernelApplicationType();
-
-			if (type == PSP_INIT_KEYCONFIG_VSH && !g_cfw_config.no_xmbctrl) {
-				loadXmbControl();
-			}
 
 			if (type == PSP_INIT_KEYCONFIG_VSH && !sceKernelFindModuleByName("scePspNpDrm_Driver")) {
 				goto START_MODULE;
