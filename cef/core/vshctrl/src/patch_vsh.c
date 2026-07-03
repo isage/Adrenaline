@@ -114,7 +114,7 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 
 	if (g_vshmenu_running) {
 		if (g_vshmenu_ctrl) {
-			g_vshmenu_ctrl(pad_data, count);
+			res = g_vshmenu_ctrl(pad_data, count);
 		} else {
 			g_vshmenu_running = 0;
 			if (g_satelite_mod_id >= 0) {
@@ -150,14 +150,19 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 
 		g_vshmenu_running = 1;
 
-		modid = sceKernelLoadModule("flash0:/vsh/module/satelite.prx", 0, NULL);
+		modid = sceKernelLoadModule("flash0:/vsh/module/new_satelite.prx", 0, NULL);
 
 		if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
 			// Start XMBControl VSH overlay, unless the classical VSH is loaded
-			int (*xmbctrlEnterVshMenuMode)() = (void*) sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0xBE8D19DA);
-			if (xmbctrlEnterVshMenuMode != NULL) {
-				xmbctrlEnterVshMenuMode();
+			int (*xmbctrlEnableClockVshInfo)() = (void*) sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0x3595CB69);
+			if (xmbctrlEnableClockVshInfo != NULL) {
+				xmbctrlEnableClockVshInfo();
 			}
+		}
+
+		int (*xmbctrlEnterVshMenuMode)() = (void*) sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0xBE8D19DA);
+		if (xmbctrlEnterVshMenuMode != NULL) {
+			xmbctrlEnterVshMenuMode();
 		}
 
 
@@ -168,38 +173,6 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 			pad_data->Buttons &= ~PSP_CTRL_SELECT;
 		}
 	}
-
-	// if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
-	// 	if (pad_data->Buttons & PSP_CTRL_SELECT) {
-	// 		if (!sceKernelFindModuleByName("htmlviewer_plugin_module")
-	// 			&& !sceKernelFindModuleByName("sceVshOSK_Module")
-	// 			&& !sceKernelFindModuleByName("camera_plugin_module")) {
-
-	// 			modid = sceKernelLoadModule("flash0:/vsh/module/satelites.prx", 0, NULL);
-
-	// 			if (modid >= 0) {
-	// 				g_satelite_mod_id = modid;
-	// 				sceKernelDelayThread(4000);
-	// 				sceKernelStartModule(modid, 0, NULL, NULL, NULL);
-	// 				pad_data->Buttons &= ~PSP_CTRL_SELECT;
-	// 			} else {
-	// 				// Start XMBControl VSH overlay
-	// 				int (*xmbctrlEnterVshMenuMode)() = (void*) sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0xBE8D19DA);
-	// 				if (xmbctrlEnterVshMenuMode != NULL) {
-	// 					xmbctrlEnterVshMenuMode();
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// } else {
-	// 	if (g_vshmenu_ctrl) {
-	// 		g_vshmenu_ctrl(pad_data, count);
-	// 	} else if (modid >= 0) {
-	// 		if (sceKernelStopModule(modid, 0, NULL, NULL, NULL) >= 0) {
-	// 			sceKernelUnloadModule(modid);
-	// 		}
-	// 	}
-	// }
 
 exit:
 	pspSdkSetK1(k1);

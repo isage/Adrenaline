@@ -40,58 +40,56 @@ static void* g_list = NULL;
 static void gu_sync();
 
 static int vshDisplaySetFrameBuf(void *frameBuf, int bufferwidth, int pixelformat, int sync) {
-    void* frame = (void*)(0x1fffffff & (u32)frameBuf);
+	void* frame = (void*)(0x1fffffff & (u32)frameBuf);
 
-    if (frame && g_vshmenu_running){
-        int intr = sceKernelCpuSuspendIntr();
-        // save context
-        PspGeContext* gectx = paf_memalign(64, sizeof(PspGeContext));
-		if (g_list == NULL) {
+	if (frame && g_vshmenu_running){
+		int intr = sceKernelCpuSuspendIntr();
+		// save context
+		PspGeContext* gectx = paf_memalign(64, sizeof(PspGeContext));
+		if (gectx == NULL) {
 			logmsg("[ERROR]: %s: Failed to allocate `PspGeContext`\n", __func__);
 			return SCE_ENOMEM;
 		}
-        int state = sceKernelSuspendDispatchThread();
-        sceGeSaveContext(gectx);
-        // draw
-        g_list = paf_memalign(64, 2048);
+		int state = sceKernelSuspendDispatchThread();
+		sceGeSaveContext(gectx);
+		// draw
+		g_list = paf_memalign(64, 2048);
 		if (g_list == NULL) {
 			logmsg("[ERROR]: %s: Failed to allocate `g_list`\n", __func__);
 			return SCE_ENOMEM;
 		}
-        sceGuStart(GU_DIRECT, g_list);
-        sceGuDrawBuffer(GU_PSM_8888, frame, BUF_WIDTH);
-        if (g_vshmenu_draw){
-            g_vshmenu_draw(frame);
-        }
+		sceGuStart(GU_DIRECT, g_list);
+		sceGuDrawBuffer(GU_PSM_8888, frame, BUF_WIDTH);
+		if (g_vshmenu_draw){
+			g_vshmenu_draw(frame);
+		}
 
 		// sync
-        gu_sync();
-        sceGuFinish();
-        sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
-        // restore context
-        sceKernelResumeDispatchThread(state);
-        sceGeRestoreContext(gectx);
-        paf_free(gectx);
-        paf_free(g_list);
-        sceKernelCpuResumeIntrWithSync(intr);
-    }
+		{
+			u32 a = 0xffff;
+			while(--a) {
+				__asm__("nop" /*; sync"*/);
+			}
+		}
+		sceGuFinish();
+		sceGuSync(GU_SYNC_FINISH, GU_SYNC_WHAT_DONE);
+		// restore context
+		sceKernelResumeDispatchThread(state);
+		sceGeRestoreContext(gectx);
+		paf_free(gectx);
+		paf_free(g_list);
+		sceKernelCpuResumeIntrWithSync(intr);
+	}
 
-    return prevDisplaySetFrameBuf(frameBuf, bufferwidth, pixelformat, sync);
+	return prevDisplaySetFrameBuf(frameBuf, bufferwidth, pixelformat, sync);
 }
 
 int vshgu_init() {
-    sceGuInit();
-    sceGuDisplay(GU_FALSE);
+	sceGuInit();
+	sceGuDisplay(GU_FALSE);
 
-    void* func_addr = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
-    sctrlHENHijackFunction(&g_display_patch, func_addr, vshDisplaySetFrameBuf, (void**)&prevDisplaySetFrameBuf);
+	void* func_addr = (void*)sctrlHENFindFunction("sceDisplay_Service", "sceDisplay", 0x289D82FE);
+	sctrlHENHijackFunction(&g_display_patch, func_addr, vshDisplaySetFrameBuf, (void**)&prevDisplaySetFrameBuf);
 
-    return 0;
-}
-
-static inline void gu_sync() {
-	u32 a = 0xffff;
-	while(--a) {
-		__asm__("nop; sync");
-	}
+	return 0;
 }
