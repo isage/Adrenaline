@@ -689,7 +689,7 @@ static int RegisterDriveCallbacksPatched(u32 drives, int unk0, int unk2, int unk
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchVshMain(u32 text_addr, u32 text_size) {
-	int patches = 13;
+	int patches = 14;
 	u32 scePafGetText_call = VREAD32((u32)&scePafGetText);
 
 	g_ef_camera_item = (void *)text_addr+0x55cfc;
@@ -742,6 +742,9 @@ void PatchVshMain(u32 text_addr, u32 text_size) {
 		} else if (data == 0xAC520124) {
 			MAKE_CALL(addr + 4, UnloadModulePatched);
 			patches--;
+        } else if (data == 0x24060064){
+            patchVshClock(addr);
+            patches--;
 		} else if (data == 0x24040010 && VREAD32(addr + 20) == 0x0040F809) {
 			MAKE_INSTRUCTION(addr + 16, 0x8C48000C); // lw $t0, 12($v0)
 			MAKE_CALL(addr + 20, OnInitAuthPatched);

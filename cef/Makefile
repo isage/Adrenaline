@@ -173,14 +173,14 @@ endif
 	make -C core/kermit_idstorage clean
 
 _xmbctrl:
-	make -C extra/xmbctrl clean
-	make -C extra/xmbctrl -j
+	make -C core/xmbctrl clean
+	make -C core/xmbctrl -j
 ifdef USE_PSP_PACKER
-	psp-packer extra/xmbctrl/xmbctrl.prx -o ../user/flash0/vsh/module/xmbctrl.prx
+	psp-packer core/xmbctrl/xmbctrl.prx -o ../user/flash0/vsh/module/xmbctrl.prx
 else
-	$(PY) $(PSPGZ) ../user/flash0/vsh/module/xmbctrl.prx $(UHDR) extra/xmbctrl/xmbctrl.prx XmbControl 0x0000
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/xmbctrl.prx $(UHDR) core/xmbctrl/xmbctrl.prx XmbControl 0x0000
 endif
-	make -C extra/xmbctrl clean
+	make -C core/xmbctrl clean
 
 _satelite:
 	make -C extra/satelite clean

@@ -149,6 +149,10 @@ int OnModuleStart(SceModule *mod) {
 	u32 text_addr = mod->text_addr;
 	u32 text_size = mod->text_size;
 
+	if (previous) {
+		previous(mod);
+	}
+
 
 	if (paf_strcmp(modname, "vsh_module") == 0) {
 		PatchVshMain(text_addr, text_size);
@@ -174,10 +178,6 @@ int OnModuleStart(SceModule *mod) {
 		}
 	}
 
-	if (previous) {
-		previous(mod);
-	}
-
 	return 0;
 }
 
@@ -197,6 +197,8 @@ int module_start(SceSize args, void *argp) {
 	}
 
 	previous = sctrlHENSetStartModuleHandler(OnModuleStart);
+
+	vshgu_init();
 
 	return 0;
 }

@@ -82,6 +82,9 @@ extern int g_game_plugin;
 extern int g_savedata_plugin;
 extern int g_needs_unload;
 
+extern int g_vshmenu_running;
+extern void (*g_vshmenu_draw)(void* frame);
+
 #define sysconf_console_id 4
 #define sysconf_console_action 2
 #define sysconf_console_action_arg 2
@@ -186,6 +189,7 @@ typedef struct {
 #define paf_malloc sce_paf_private_malloc
 #define paf_free sce_paf_private_free
 #define paf_strstr sce_paf_private_strstr
+#define paf_memalign sce_paf_private_memalign
 
 int sce_paf_private_wcslen(wchar_t *);
 int sce_paf_private_sprintf(char *, const char *, ...);
@@ -204,6 +208,7 @@ char *sce_paf_private_strrchr(const char *, int);
 int sce_paf_private_strpbrk(const char *, const char *);
 int sce_paf_private_strtoul(const char *, char **, int);
 void *sce_paf_private_malloc(int);
+void *sce_paf_private_memalign(int, int);
 void sce_paf_private_free(void *);
 char* sce_paf_private_strstr(const char *, const char *);
 
@@ -226,5 +231,8 @@ void PatchSysconfPlugin(u32 text_addr, u32 text_size);
 void PatchGamePlugin(SceModule *mod);
 void PatchSavedataPlugin(SceModule *mod);
 void PatchIo(SceModule *mod);
+void patchVshClock(u32 addr);
+
+int vshgu_init();
 
 #endif // __XMBCTRL_H__

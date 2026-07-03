@@ -9,15 +9,21 @@ add_cef_prx(xmbctrl USER
     src/patch_vsh.c
     src/patch_game_plugin.c
     src/patch_savedata_plugin.c
+	src/vshgu.c
+	src/vshmenu.c
     # exports.c
   COMPILE_OPS
     -std=c99
   LINK_STATICS
     pspsdk
 	pspmodinfo
+	pspgum
+    pspgu
   LINK_STUBS
+    pspge
     psppaf
     pspvsh
+    pspdisplay
     pspvshctrl
     pspkubridge
     pspsysc_user

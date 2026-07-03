@@ -48,7 +48,6 @@ $/kd/vaudio.prx VU
 $/kd/impose_01g.prx VGUPAEM
 $/kd/vshbridge_msapp.prx A
 $/kd/avcodec.prx V
-$/vsh/module/xmbctrl.prx V
 $/kd/mediasync.prx VGUPAEM
 $/kd/vshbridge.prx VU
 $/kd/mlnbridge.prx M
@@ -66,4 +65,5 @@ $%/vsh/module/common_gui.prx V
 $%/vsh/module/common_util.prx VP
 $%/vsh/module/libpspvmc.prx P
 %%/kd/dummy_anchor_IhariUafaayk98.prx P
+$/vsh/module/xmbctrl.prx V
 $%%/vsh/module/vshmain.prx V

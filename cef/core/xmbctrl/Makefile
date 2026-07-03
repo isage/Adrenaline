@@ -1,9 +1,11 @@
 TARGET = xmbctrl
 OBJS = src/main.o \
 	src/list.o \
-	src/plugins.o \
+	src/vshgu.o \
 	src/utils.o \
 	src/config.o \
+	src/plugins.o \
+	src/vshmenu.o \
 	src/patch_io.o \
 	src/patch_vsh.o \
 	src/patch_game_plugin.o \
@@ -24,7 +26,7 @@ LIBDIR = ../../lib
 USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
-LIBS = -lpsppaf -lpspvsh -lpspvshctrl -lpspkubridge -lpspvshcommongui -lpspsystemctrl_user
+LIBS = -lpspgum -lpspgu -lpspge -lpspdisplay -lpsppaf -lpspvsh -lpspvshctrl -lpspkubridge -lpspvshcommongui -lpspsystemctrl_user
 
 ifdef XMBCTRL_DEBUG
 CFLAGS += -DDEBUG=$(XMBCTRL_DEBUG)
