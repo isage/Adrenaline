@@ -36,6 +36,7 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 - `cef/core/kermit_idstorage`: A custom implementation of `sceIdStorage_driver` that enables the vPSP environment to work properly.
 - `cef/core/payloadex` and `cef/core/rebootex`: Handles the actual injection of the CFW in the (re)boot process. `Payloadex` is used by `user` to launch EPI CFW, while `Rebootex` is set to relaunch it during a ePSP reboot.
 - `cef/core/payloadex_ark`: Handles the actual injection of the CFW in the boot process. `Payloadex_ARK` is used by `user` to launch ARK CFW.
+- `cef/extra/xmbctrl`: The `XMB Control` module provides access to CFW configuration and plugin management directly from the XMB `Settings` section and the required API to use GU in XMB/VSH.
 - `cef/iso_drivers/galaxy`: The `GalaxyController` module provide patches to use ISO and Compressed ISO with the Sony's NP9660 driver.
 - `cef/iso_drivers/inferno`: The `InfernoDriver` module is the custom driver that allows executing ISO and Compressed ISO.
 - `cef/iso_drivers/march33`: The `March33Driver` module is the custom driver that allows executing ISO and Compressed ISO.
@@ -44,7 +45,6 @@ The `core` parts are essential to support the most basic functionality of a CFW.
 **Extra Parts:**
 
 - `cef/extra/satelite`: Provides the `VSH Menu` to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.
-- `cef/extra/xmbctrl`: The `XMB Control` module provides access to CFW configuration and plugin management directly from the XMB `Settings` section.
 - `cef/extra/updater`: the `UPDATER` application that allows to update Adrenaline and EPI from the vPSP environment.
 
 

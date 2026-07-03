@@ -10,6 +10,9 @@
 - Add `Scale2x Plus` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add `Scale3x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add image overlay filter for PS1 game/apps **\[[docs](./06-PS1Playback.md#overlay-image)\]**
+- Add option to select a System Storage location to expose `ef0:` to the chosen CFW.
+- Implement a GPU-rendered VSH Menu
+  - The classical version is still available through configuration
 - "Fix" manual double launch on first install
 - Improve frame pacing on Original graphics filtering
 - Implement hold `Square` to hide Adrenaline Menu on graphics-related settings
@@ -27,8 +30,11 @@
 - Introduce MinimalEdition Driver v2: An evolution of the ME ISO driver **\[[docs](./05-PSPPlayback/04-MinimalEdition.md)\]**
 - Introduce an improved implementation of the GalaxyController **\[[docs](./05-PSPPlayback/05-Galaxy.md)\]**
 - Add support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver. **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
+- Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.
+- Add CFW file hidder in games.
 - Introduce CFW Settings on the XMB **\[[docs](./10-XmbCfwMenus.md#-adrenaline-cfw-settings)\]**
 - Introduce Plugin Manager on the XMB **\[[docs](./10-XmbCfwMenus.md#-plugins-manager)\]**
+- Add support to show the `System Storage` on the XMB.
 - Improve stability of the `Force High Memory` CFW option. **\[[docs](./08-CfwConfiguration.md#force-high-memory-layout)\]**
 - Improve the speed and efficiency of all UMDemu ISO drivers **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
 - Add Custom POPS Configuration injection for custom or converted PS1 game/apps **\[[docs](./06-PS1Playback.md#custom-pops-configuration)\]**
@@ -46,6 +52,7 @@
 - Add quick exit to VSH key combos **\[[docs](./01-Intro.md#key-combos-cheat-sheet)\]**
   - PSP games/homebrew: `L+R+Down+Select` or `L+R+Down+Start`
   - PS1 games: `L2+R2+Down+Select` or `L2+R2+Down+Start`
+- Fix recovery menu crashing on empty plugin list when d-pad is clicked.
 - Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews
   - Fix `SenseMe` launch error
   - Fix potential issues related to privilege level to other official apps
@@ -69,12 +76,15 @@
 	- Fix `Assassin's Creed: Bloodlines` instabilities with Stable high memory layout
 	- Fix `PaRappa The Rapper` instabilities with Stable high memory layout
 	- Fix `Tony Hawk's Underground 2: Remix` (US) erroring with lack of space on save
+	- Fix `DJ Max` by bypassing anti-CFW checks
 
 
 - **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size
 - **DEV:** Expand CFW libraries API
 - **DEV:** Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel`, and `SysclibForUser`
+- **DEV:** Introduce CFW API to use `sceGU` on XMB/VSH: `guglue`
 - **DEV:** Add support for `MEMSIZE=2` (to request only stable extra RAM)
+- **DEV:** Add support for `EFAWARE=1`
 - **DEV:** Make PSPemu `sceKernelPowerTick` to behave as the VITA `sceKernelPowerTick`
 - **DEV:** Introduce `Adrenaline Log`, a C header library that developers can use even outside of Adrenaline (i.e. your project)
 - **DEV:** Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use

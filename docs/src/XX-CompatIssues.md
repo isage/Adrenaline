@@ -34,3 +34,14 @@ Games that use GameMode API - partial list of games here.
 - `Sega Rally Revo`: Game disconnects after it starts in infrastructure mode only.
 
 Some network issues may be fixed with the updated [PRO Online](https://github.com/Kethen/aemu).
+
+
+## VITA Plugins
+
+Some vita user plugins can cause issues with Adrenaline and Epinephrine (e.g. ThreadOptmizer). For that reason, we recommend you to avoid enabling plugins.
+
+```
+*!PSPEMUCFW
+*ALL
+ur0:tai/my_awesome_plugins.suprx
+```

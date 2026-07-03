@@ -51,6 +51,7 @@ Configures the UMDemu driver to use with `ISO` and `Compressed ISO` games.
 
 - `Inferno`
 - `March33`
+- `Minimal Edition`
 - `Sony NP9660`
 
 ### Skip Sony logo on coldboot
@@ -147,11 +148,19 @@ Controls whether to patch the DRM engine of the PSP system.
 
 When enabled, the system will allow to launch application, homebrews and games without a valid license.
 
-### XMB Control
+### XMB CFW Settings
 
 Controls whether to load the extra CFW menus on XMB/VSH.
 
 When enabled, the menus will show up in the XMB in the `Settings` section.
+
+### VSH Menu
+
+Controls what VSH Menu implementation to use.
+
+#### Options:
+- `Modern`: A new implementation, GPU rendered version of the menu.
+- `Classic`: The classic implementation.
 
 ### Recovery color
 
@@ -351,6 +360,17 @@ This can be used to bypass the anti-CFW checks in some games and fix desynchroni
 > When using the `Inferno` driver, setting **any** of the **UMDemu ISO seek time delay factor** and the **UMDemu ISO read speed delay factor** settings to any value other than `Auto` will consequently disable the `Inferno Cache` feature of the driver.
 >
 > This can reduce greatly the performance of executing ISO games/apps that do not need them configured if you forget to return them to `Auto`.
+
+### UMDemu ISO seek/read delay strategy
+
+Controls the strategy for the physical UMD seek/read delays simulations.
+
+#### Option:
+
+- `Auto`: Disabled by default, but also can change based on automatic game patches and fixes.
+- `Per FD`: The delays occurs per file descriptor
+- `Global`: The delays occurs for every ready of any file descriptor
+
 
 ### TTY redirection
 

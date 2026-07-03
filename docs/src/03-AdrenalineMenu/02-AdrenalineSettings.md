@@ -98,6 +98,32 @@ The options are:
 - `uma0:pspemu`
 - `uma0:`
 
+The `uma0:` option can be used to facilitate PS3<->PSVITA data share (e.g. savedata files) for people that does that frequently.
+
+## System Storage Location
+
+Chooses the drive Adrenaline App shows up fot the chosen CFW as the System Storage drive (`ef0:`).
+
+The options are:
+
+- `Disabled`
+- `uma0:pspemu`
+- `xmc0:pspemu`
+- `ux0:pspemu`
+- `uma0:`
+
+The Epinephrine CFW has support to show the System Storage drive on the XMB/VSH and able to use it on the XMB with some limitation (currently):
+
+- Unable to boot PS1 titles from `ef0:`
+- The XMB is not showing the System Storage free space
+- The Saved Data Utility for the system storage doesn't work on the XMB
+- The XMB context menu doesn't open in the System Storage items
+
+> [!INFO]
+> The System Storage will not show in the XMB/VSH when using ARK, but software is able to see and handle the drive. Launching titles can be done by using the ARK's Custom Launcher.
+>
+> The same limitations apply to using Adrenaline with ARK, although the most affected for ARK is the boot of  PS1 titles.
+
 ## USB device
 
 Selects the device that will show up when connecting the Vita to a system via USB.
