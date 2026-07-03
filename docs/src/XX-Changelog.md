@@ -16,7 +16,8 @@
 - "Fix" manual double launch on first install
 - Improve frame pacing on Original graphics filtering
 - Implement hold `Square` to hide Adrenaline Menu on graphics-related settings
-- Pauses PSP game when Adrenaline Menu is opened.
+- Pauses PSP game when Adrenaline Menu is opened
+- Implement ability to hide the Adrenaline Menu to better look at the screen to look up for diferecnce
 
 ### Epinephrine CFW
 - **Breaking change:** New plugin configuration format **\[[docs](./04-HomebrewSupport/02-PluginConfigFormat.md)\]**

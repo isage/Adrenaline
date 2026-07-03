@@ -172,6 +172,12 @@ static int EnterStandbyMode() {
 	return 0;
 }
 
+static int SaveAdrSetting() {
+	config.magic[0] = ADRENALINE_CFG_MAGIC_1;
+	config.magic[1] = ADRENALINE_CFG_MAGIC_2;
+	WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+}
+
 static int OpenOfficialSettings() {
 	open_official_settings = 1;
 	ExitAdrenalineMenu();
@@ -218,9 +224,7 @@ static int EnterAdrenalineMenu() {
 
 int ExitAdrenalineMenu() {
 	if (changed) {
-		config.magic[0] = ADRENALINE_CFG_MAGIC_1;
-		config.magic[1] = ADRENALINE_CFG_MAGIC_2;
-		WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+		SaveAdrSetting();
 	}
 
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
@@ -371,6 +375,10 @@ void ctrlMenu() {
 		}
 
 		if (pressed_pad[PAD_LTRIGGER]) {
+			if (tab_sel == 2 && changed) {
+				SaveAdrSetting();
+			}
+
 			if (tab_sel > 0) {
 				menu_sel = 0;
 				tab_sel--;
@@ -378,9 +386,14 @@ void ctrlMenu() {
 				menu_sel = 0;
 				tab_sel = N_TABS-1;
 			}
+
+
 		}
 
 		if (pressed_pad[PAD_RTRIGGER]) {
+			if (tab_sel == 2 && changed) {
+				SaveAdrSetting();
+			}
 			if (tab_sel < N_TABS-1) {
 				menu_sel = 0;
 				tab_sel++;
