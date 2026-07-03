@@ -46,10 +46,10 @@ void patchVshClock(u32 addr) {
 	#ifdef NIGHTLY
 	paf_snprintf(g_info_string, 127, "\n\n\n"
 		"CFW: Epinephrine v" ADRENALINE_VERSION_MAJOR_STR "." ADRENALINE_VERSION_MINOR_STR "." ADRENALINE_VERSION_MICRO_STR "-"EPI_NIGHTLY_VER"\n"
-		"Built: %s-%s-%s " __TIME__ "\n"
+		"Built: %c%c-%s-%s " __TIME__ "\n"
 		"Console: PS Vita (01g) FW%d%d%d\n"
 		"Bootloader: Adrenaline v" ADRENALINE_VERSION_MAJOR_STR,
-		DAY_STR, MONTH_STR, YEAR_STR,
+		DAY_CHAR1, DAY_CHAR2, MONTH_STR, YEAR_STR,
 		major, minor, micro
 	);
 	#else
