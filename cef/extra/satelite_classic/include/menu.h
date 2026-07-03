@@ -30,7 +30,9 @@ typedef struct {
 	int exit;
 } Entry;
 
-#define MAIN_HEADER "EPINEPHRINE VSH MENU"
-#define GAME_OPT_HEADER "ADVANCED GAME OPTIONS"
+void MenuReset(Entry *entries, int size_entries);
+void MenuExitFunction(int exit_mode);
+int MenuCtrl();
+int MenuDisplay();
 
 #endif

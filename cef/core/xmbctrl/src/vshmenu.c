@@ -123,6 +123,7 @@ int xmbctrlEnterVshMenuMode() {
 
 int xmbctrlExitVshMenuMode() {
 	g_vshmenu_running = 0;
+	g_vshmenu_draw = NULL;
 
 	return 0;
 }

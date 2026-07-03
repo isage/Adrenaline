@@ -51,6 +51,7 @@ INCLUDE_EXTERN_RESOURCE(kd_vshctrl_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_xmbctrl_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_recovery_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_satelite_prx);
+INCLUDE_EXTERN_RESOURCE(vsh_module_satelite_classic_prx);
 
 typedef struct {
 	char *name;
@@ -78,6 +79,7 @@ static ScePspemuFlash0Package custom_package[] = {
 	FLASH0_FILE("/vsh/module/xmbctrl.prx",  vsh_module_xmbctrl_prx),
 	FLASH0_FILE("/vsh/module/recovery.prx", vsh_module_recovery_prx),
 	FLASH0_FILE("/vsh/module/satelite.prx", vsh_module_satelite_prx),
+	FLASH0_FILE("/vsh/module/satelite_classic.prx", vsh_module_satelite_classic_prx),
 };
 
 #define SCE_PSPEMU_TEMP_SIZE 1 * 1024 * 1024

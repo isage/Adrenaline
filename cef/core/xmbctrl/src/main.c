@@ -61,21 +61,22 @@ GetItem g_menu_items[] = {
 	{16, 1, "Memory Stick Cache", 1, 0, &g_cfw_config.no_ms_cache},
 	{17, 1, "NoDRM engine", 1, 0, &g_cfw_config.no_nodrm_engine},
 	{18, 1, "XMB CFW Settings", 1, 0, &g_cfw_config.no_xmb_cfw_items},
-	{19, 0, "Force high memory layout", 0, 1, &g_cfw_config.force_high_memory},
-	{20, 0, "Fake max free memory", 0, 1, &g_cfw_config.fake_max_free_mem},
-	{21, 0, "Use Graphic Engine 2", 0, 1, &g_cfw_config.use_ge2},
-	{22, 0, "Use Media Engine 2", 0, 1, &g_cfw_config.use_me2},
-	{23, 0, "Execute BOOT.BIN in UMDemu ISO", 0, 1, &g_cfw_config.execute_boot_bin},
-	{24, 0, "Inferno ISO cache policy", 0, 1, &g_cfw_config.iso_cache},
-	{25, 0, "Inferno ISO cache number", 0, 1, &g_cfw_config.iso_cache_num},
-	{26, 0, "Inferno ISO cache size", 0, 1, &g_cfw_config.iso_cache_size},
-	{27, 0, "UMDemu ISO seek time delay factor", 0, 1, &g_cfw_config.umd_seek},
-	{28, 0, "UMDemu ISO read speed delay factor", 0, 1, &g_cfw_config.umd_speed},
-	{29, 0, "UMDemu ISO seek/read delay strategy", 0, 1, &g_cfw_config.umd_sim_strat},
-	{30, 0, "TTY redirection", 1, 1, &g_cfw_config.tty_redirection },
-	{31, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
-	{32, 1, "Game Plugins", 0, 1, &g_cfw_config.no_game_plugins},
-	{33, 1, "POPS Plugins", 0, 1, &g_cfw_config.no_pops_plugins},
+	{19, 0, "VSH Menu", 1, 0, &g_cfw_config.vsh_menu},
+	{20, 0, "Force high memory layout", 0, 1, &g_cfw_config.force_high_memory},
+	{21, 0, "Fake max free memory", 0, 1, &g_cfw_config.fake_max_free_mem},
+	{22, 0, "Use Graphic Engine 2", 0, 1, &g_cfw_config.use_ge2},
+	{23, 0, "Use Media Engine 2", 0, 1, &g_cfw_config.use_me2},
+	{24, 0, "Execute BOOT.BIN in UMDemu ISO", 0, 1, &g_cfw_config.execute_boot_bin},
+	{25, 0, "Inferno ISO cache policy", 0, 1, &g_cfw_config.iso_cache},
+	{26, 0, "Inferno ISO cache number", 0, 1, &g_cfw_config.iso_cache_num},
+	{27, 0, "Inferno ISO cache size", 0, 1, &g_cfw_config.iso_cache_size},
+	{28, 0, "UMDemu ISO seek time delay factor", 0, 1, &g_cfw_config.umd_seek},
+	{29, 0, "UMDemu ISO read speed delay factor", 0, 1, &g_cfw_config.umd_speed},
+	{30, 0, "UMDemu ISO seek/read delay strategy", 0, 1, &g_cfw_config.umd_sim_strat},
+	{31, 0, "TTY redirection", 1, 1, &g_cfw_config.tty_redirection },
+	{32, 1, "XMB Plugins", 1, 1, &g_cfw_config.no_xmb_plugins},
+	{33, 1, "Game Plugins", 0, 1, &g_cfw_config.no_game_plugins},
+	{34, 1, "POPS Plugins", 0, 1, &g_cfw_config.no_pops_plugins},
 };
 
 #define N_ITEMS (sizeof(g_menu_items) / sizeof(GetItem))
@@ -100,6 +101,7 @@ ItemOptions g_item_opts[] = {
 	{2, g_boolean_options},           // Memory Stick Cache
 	{2, g_boolean_options},           // Use NoDRM Engine
 	{2, g_boolean_options},           // XMB Control
+	{2, g_vsh_menu_opt},              // VSH Menu
 	{3, g_highmem_options},           // Force high memory layout
 	{NELEMS(g_fake_free_mem), g_fake_free_mem}, // Fake max free memory
 	{2, g_boolean_options},           // Use Graphic Engine 2

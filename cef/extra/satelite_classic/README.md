@@ -1,10 +1,12 @@
-# Adrenaline Satelite
+# Adrenaline Satelite Classic
 
 A menu Adrenaline CFW plugin.
 
-The plugin that provides the new VSH Menu to the CFW.
+The plugin that provides the Classic VSH Menu to the CFW.
 
-This implementation uses recently developed VSH-GU, making this VSH Menu GPU-rendered.
+## Credits
+
+ - TheFl0w for starting Adrenaline
 
 ## License
 

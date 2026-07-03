@@ -150,7 +150,11 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 
 		g_vshmenu_running = 1;
 
-		modid = sceKernelLoadModule("flash0:/vsh/module/new_satelite.prx", 0, NULL);
+		char *satelite = (g_cfw_config.vsh_menu == VSH_MENU_CLASSIC)
+			? "flash0:/vsh/module/satelite_classic.prx"
+			: "flash0:/vsh/module/satelite.prx";
+
+		modid = sceKernelLoadModule(satelite, 0, NULL);
 
 		if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
 			// Start XMBControl VSH overlay, unless the classical VSH is loaded

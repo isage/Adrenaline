@@ -301,6 +301,7 @@ static Entry g_general_entries[] = {
 	{ "Memory Stick Cache", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_ms_cache },
 	{ "NoDRM engine", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_nodrm_engine },
 	{ "XMB CFW Settings", NULL, g_endisabled, sizeof(g_endisabled), &g_cfw_config.no_xmb_cfw_items },
+	{ "VSH Menu", NULL, g_vsh_menu_opt, sizeof(g_vsh_menu_opt), &g_cfw_config.vsh_menu },
 	{ "", NULL, NULL, 0, NULL },
 	{ "Toggle USB", ToggleUSB, NULL, 0, NULL },
 	{ "", NULL, NULL, 0, NULL },
