@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ff899ff8.js";
+            window.path_to_searchindex_js = "searchindex-1bb516a2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -1765,6 +1765,34 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 <li><code>uma0:pspemu</code></li>
 <li><code>uma0:</code></li>
 </ul>
+<p>The <code>uma0:</code> option can be used to facilitate PS3&lt;-&gt;PSVITA data share (e.g. savedata files) for people that does that frequently.</p>
+<h2 id="system-storage-location"><a class="header" href="#system-storage-location">System Storage Location</a></h2>
+<p>Chooses the drive Adrenaline App shows up fot the chosen CFW as the System Storage drive (<code>ef0:</code>).</p>
+<p>The options are:</p>
+<ul>
+<li><code>Disabled</code></li>
+<li><code>uma0:pspemu</code></li>
+<li><code>xmc0:pspemu</code></li>
+<li><code>ux0:pspemu</code></li>
+<li><code>uma0:</code></li>
+</ul>
+<p>The Epinephrine CFW has support to show the System Storage drive on the XMB/VSH and able to use it on the XMB with some limitation (currently):</p>
+<ul>
+<li>Unable to boot PS1 titles from <code>ef0:</code></li>
+<li>The XMB is not showing the System Storage free space</li>
+<li>The Saved Data Utility for the system storage doesn’t work on the XMB</li>
+<li>The XMB context menu doesn’t open in the System Storage items</li>
+</ul>
+<div class="mdbook-callouts mdbook-callouts-info">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  info
+</p>
+
+<p>The System Storage will not show in the XMB/VSH when using ARK, but software is able to see and handle the drive. Launching titles can be done by using the ARK’s Custom Launcher.</p>
+<p>The same limitations apply to using Adrenaline with ARK, although the most affected for ARK is the boot of  PS1 titles.</p>
+</div>
+
 <h2 id="usb-device"><a class="header" href="#usb-device">USB device</a></h2>
 <p>Selects the device that will show up when connecting the Vita to a system via USB.</p>
 <p>The options are:</p>
@@ -4049,6 +4077,7 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <li><strong><code>Support for other compressed formats</code></strong>: The new reader was also made to be easily configurable and expandable to support other formats, having been given support for not only <code>CSO</code> and <code>ZSO</code> as seen on <code>Inferno 1.5</code>, but also adds support for <code>DAX</code> as seen on ME’s Inferno update as well as early SE/OE CFW, as well as the rarely seen before <code>JSO</code> and <code>CSOv2</code> formats. The driver also supports different block sizes, with 2K and 8K being more common (the higher the block size, the better the compression, but also the more memory used by the driver and thus less available for plugins). All formats benefit equally from the speedup hacks, meaning that performance is mainly left to the decompression algorithm they use.</li>
 <li><strong><code>Improved Inferno Cache compatibility</code></strong>: Issues between Inferno Cache and Force Extra RAM have been resolved, including being able to use it with PRO Online, as well as allowing the use of Inferno Cache on PS Vita and PSP 1K.</li>
 <li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.</li>
+<li><strong><code>Native Patches for DJ Max Anti-CFW speed check</code></strong>: Adds a in-driver patches that bypass the infamous anti-CFW measures of the DJ Max franchise related to driver speed.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
@@ -4310,6 +4339,7 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <li><strong><code>Emulation of Empty UMD Drive</code></strong>: On older versions of March33, as well as other ISO Drivers except Inferno 2, it was never intended for the driver to run without an ISO file to be mounted, thus several bugs existed that caused malfunction when the driver was used without an ISO file specified, this prevented emulation of an empty UMD drive, which was needed on PS Vita to run certain homebrew that checked for a UMD. The main bug was in the implementation of the function <code>sceUmdCheckMedium</code>, a boolean function used to check if a UMD is inserted in the drive, on ISO driver this function was hardcoded to always return true, except if an ISO driver is not specified, then it was hardcoded to wait in an infinite loop until one is (which never happens). The solution used by eCFW such as ARK (up to ARK-3) and TN-CEF (including Adrenaline) was to include a small dummy fake.cso file to mount when no ISO file is specified. On the new <code>March33 2</code> driver, among other things, this function has been corrected to behave exactly like the original, simply returning False if no ISO has been specified, thus allowing the ISO driver to simulate an empty UMD drive by loading it without an ISO file specified.</li>
 <li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks.</li>
 <li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.</li>
+<li><strong><code>Native Patches for DJ Max Anti-CFW speed check</code></strong>: Adds a in-driver patches that bypass the infamous anti-CFW measures of the DJ Max franchise related to driver speed.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
@@ -4572,6 +4602,7 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <li><strong><code>Emulation of Empty UMD Drive</code></strong>: On older versions of ME Driver, as well as other ISO Drivers except Inferno 2, it was never intended for the driver to run without an ISO file to be mounted, thus several bugs existed that caused malfunction when the driver was used without an ISO file specified, this prevented emulation of an empty UMD drive, which was needed on PS Vita to run certain homebrew that checked for a UMD. The main bug was in the implementation of the function <code>sceUmdCheckMedium</code>, a boolean function used to check if a UMD is inserted in the drive, on ISO driver this function was hardcoded to always return true, except if an ISO driver is not specified, then it was hardcoded to wait in an infinite loop until one is (which never happens). The solution used by eCFW such as ARK (up to ARK-3) and TN-CEF (including Adrenaline) was to include a small dummy fake.cso file to mount when no ISO file is specified. On the new <code>ME Driver 2</code> driver, among other things, this function has been corrected to behave exactly like the original, simply returning False if no ISO has been specified, thus allowing the ISO driver to simulate an empty UMD drive by loading it without an ISO file specified.</li>
 <li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks.</li>
 <li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.</li>
+<li><strong><code>Native Patches for DJ Max Anti-CFW speed check</code></strong>: Adds a in-driver patches that bypass the infamous anti-CFW measures of the DJ Max franchise related to driver speed.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
@@ -5398,11 +5429,21 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <hr>
 <p>VSH Menu is a menu that can be accessed while on XMB/VSH. It contains the most common CFW configurations that users of Epinephrine change with more frequency and quick commands.</p>
 <p>To access this menu, click the <code>Select</code> button while on XMB/VSH.</p>
+<p>Epinephrine comes with two flavours of the VSH Menu: <code>Modern</code> and <code>Classic</code>.</p>
+<p>The <code>Modern</code> is a re-implementation from scratch that uses GU on VSH, a recently developed way to GPU render graphics while on XMB/VSH. Yes, that means this implementation is GPU rendered. It also contais some quality-of-life improvements, like following the defined button to function as enter/back. Besides that, this new implementation also extends the functionality to provide a quick access to advanced game options; this were made to make testing configuration on game titles not working faster.</p>
+<p>Initially this implementation was developed to demonstrate the usage of the VSH-GU.</p>
 <p align="center">
-<img src="assets/07-vsh-menu.png" width="60%" />
+<img src="assets/07-vsh-menu-modern.png" width="33%" />
+<img src="assets/07-vsh-menu-modern-adv1.png" width="33%" />
+<img src="assets/07-vsh-menu-modern-adv2.png" width="33%" />
 </p>
 
-<h2 id="available-features"><a class="header" href="#available-features">Available features</a></h2>
+<p>The <code>Classic</code> is more basic, but nostalgic-looking implementation. It has less features but good enough for day-to-day.</p>
+<p align="center">
+<img src="assets/07-vsh-menu-classic.png" width="60%" />
+</p>
+
+<h2 id="available-common-features"><a class="header" href="#available-common-features">Available common features</a></h2>
 <ul>
 <li>Modify the CPU/BUS speed for the XMB/VSH</li>
 <li>Modify the CPU/BUS speed for PSP Games</li>
@@ -5410,6 +5451,11 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <li>Quick option to suspend the device</li>
 <li>Quick option to restart the system in the <a href="#epinephrine-recovery-menu">Recovery Menu</a></li>
 <li>Quick option to restart XMB/VSH</li>
+</ul>
+<h2 id="modern-specific"><a class="header" href="#modern-specific">Modern-specific</a></h2>
+<ul>
+<li>Considers the assigned enter button for the inputs</li>
+<li>Quick advanced game options to help test configuration for not-working titles</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
@@ -5697,6 +5743,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <ul>
 <li><code>Inferno</code></li>
 <li><code>March33</code></li>
+<li><code>Minimal Edition</code></li>
 <li><code>Sony NP9660</code></li>
 </ul>
 <h3 id="skip-sony-logo-on-coldboot"><a class="header" href="#skip-sony-logo-on-coldboot">Skip Sony logo on coldboot</a></h3>
@@ -5768,9 +5815,16 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <h3 id="nodrm-engine"><a class="header" href="#nodrm-engine">NoDRM engine</a></h3>
 <p>Controls whether to patch the DRM engine of the PSP system.</p>
 <p>When enabled, the system will allow to launch application, homebrews and games without a valid license.</p>
-<h3 id="xmb-control"><a class="header" href="#xmb-control">XMB Control</a></h3>
+<h3 id="xmb-cfw-settings"><a class="header" href="#xmb-cfw-settings">XMB CFW Settings</a></h3>
 <p>Controls whether to load the extra CFW menus on XMB/VSH.</p>
 <p>When enabled, the menus will show up in the XMB in the <code>Settings</code> section.</p>
+<h3 id="vsh-menu"><a class="header" href="#vsh-menu">VSH Menu</a></h3>
+<p>Controls what VSH Menu implementation to use.</p>
+<h4 id="options-6"><a class="header" href="#options-6">Options:</a></h4>
+<ul>
+<li><code>Modern</code>: A new implementation, GPU rendered version of the menu.</li>
+<li><code>Classic</code>: The classic implementation.</li>
+</ul>
 <h3 id="recovery-color"><a class="header" href="#recovery-color">Recovery color</a></h3>
 <p>Configures the color of the Recovery Menu.</p>
 <h2 id="advanced-settings"><a class="header" href="#advanced-settings">Advanced Settings</a></h2>
@@ -5788,7 +5842,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h3 id="force-high-memory-layout"><a class="header" href="#force-high-memory-layout">Force high memory layout</a></h3>
 <p>Controls whether to force the unlock extra RAM space for the user-space RAM partition, that can be used by games and apps.</p>
-<h4 id="options-6"><a class="header" href="#options-6">Options:</a></h4>
+<h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
 <ul>
 <li><code>Disabled</code>: With this option, no specific memory layout is forced.
 <ul>
@@ -5820,7 +5874,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <h3 id="fake-max-free-memory"><a class="header" href="#fake-max-free-memory">Fake max free memory</a></h3>
 <p>Controls wether to limit the reported maximum free memory and how much to limit from <code>sceKernelMaxFreeMemSize</code> on a title.</p>
 <p>Any option other than <code>Auto</code> will always use that value, regardless of existent game patches and fixes.</p>
-<h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
+<h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes (often related to high memory layout instabilities)</li>
 <li><code>16MB</code>: Set the maximum value to 16MB</li>
@@ -5910,7 +5964,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h3 id="inferno-iso-cache-policy"><a class="header" href="#inferno-iso-cache-policy">Inferno ISO cache policy</a></h3>
 <p>Configures what cache policy the <code>Inferno</code> UMDemu driver will use for its overall cache (also known as <code>Inferno Cache</code>).</p>
-<h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
+<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
 <ul>
 <li><code>LRU</code>: Least Recently Used policy. Uses less cpu cycles because it will discards the cache slot from the queue that have not been used in a timeframe when new cache item needs to be added.</li>
 <li><code>RR</code>: Random Replacement policy. Uses slightly less memory as it doesn’t need to keep track of data related to cache slots usage. It can be beneficial for uniform or streaming reading patterns.</li>
@@ -5928,7 +5982,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Configures how many caches the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
+<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1</code></li>
@@ -5944,7 +5998,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Configures the size of cache the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This also could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
+<h4 id="options-11"><a class="header" href="#options-11">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32KB</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1KB</code></li>
@@ -6017,6 +6071,14 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>This can reduce greatly the performance of executing ISO games/apps that do not need them configured if you forget to return them to <code>Auto</code>.</p>
 </div>
 
+<h3 id="umdemu-iso-seekread-delay-strategy"><a class="header" href="#umdemu-iso-seekread-delay-strategy">UMDemu ISO seek/read delay strategy</a></h3>
+<p>Controls the strategy for the physical UMD seek/read delays simulations.</p>
+<h4 id="option-2"><a class="header" href="#option-2">Option:</a></h4>
+<ul>
+<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
+<li><code>Per FD</code>: The delays occurs per file descriptor</li>
+<li><code>Global</code>: The delays occurs for every ready of any file descriptor</li>
+</ul>
 <h3 id="tty-redirection"><a class="header" href="#tty-redirection">TTY redirection</a></h3>
 <p>Controls whether to redirect TTY stdout to VITA-side.</p>
 <p>If enabled, the stdout of the vPSP-side is redirected to the VITA-side. There, they can be used for remote logging (CatLog and similar homebrews), for example.</p>
@@ -6304,7 +6366,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h3 id="button-assign"><a class="header" href="#button-assign">Button assign</a></h3>
 <p>Configures what button is used for confirmation/enter system-wide.</p>
-<h4 id="options-11"><a class="header" href="#options-11">Options:</a></h4>
+<h4 id="options-12"><a class="header" href="#options-12">Options:</a></h4>
 <ul>
 <li><code>⭕️ is enter</code></li>
 <li><code>❌ is enter</code></li>
@@ -6863,6 +6925,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <li><code>cef/core/kermit_idstorage</code>: A custom implementation of <code>sceIdStorage_driver</code> that enables the vPSP environment to work properly.</li>
 <li><code>cef/core/payloadex</code> and <code>cef/core/rebootex</code>: Handles the actual injection of the CFW in the (re)boot process. <code>Payloadex</code> is used by <code>user</code> to launch EPI CFW, while <code>Rebootex</code> is set to relaunch it during a ePSP reboot.</li>
 <li><code>cef/core/payloadex_ark</code>: Handles the actual injection of the CFW in the boot process. <code>Payloadex_ARK</code> is used by <code>user</code> to launch ARK CFW.</li>
+<li><code>cef/extra/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section and the required API to use GU in XMB/VSH.</li>
 <li><code>cef/iso_drivers/galaxy</code>: The <code>GalaxyController</code> module provide patches to use ISO and Compressed ISO with the Sony’s NP9660 driver.</li>
 <li><code>cef/iso_drivers/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
 <li><code>cef/iso_drivers/march33</code>: The <code>March33Driver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
@@ -6871,7 +6934,6 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p><strong>Extra Parts:</strong></p>
 <ul>
 <li><code>cef/extra/satelite</code>: Provides the <code>VSH Menu</code> to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.</li>
-<li><code>cef/extra/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section.</li>
 <li><code>cef/extra/updater</code>: the <code>UPDATER</code> application that allows to update Adrenaline and EPI from the vPSP environment.</li>
 </ul>
 <h2 id="setting-up-the-development-environment"><a class="header" href="#setting-up-the-development-environment">Setting up the development environment</a></h2>
@@ -7756,6 +7818,12 @@ cmake --build build
 <li><code>Sega Rally Revo</code>: Game disconnects after it starts in infrastructure mode only.</li>
 </ul>
 <p>Some network issues may be fixed with the updated <a href="https://github.com/Kethen/aemu">PRO Online</a>.</p>
+<h2 id="vita-plugins"><a class="header" href="#vita-plugins">VITA Plugins</a></h2>
+<p>Some vita user plugins can cause issues with Adrenaline and Epinephrine (e.g. ThreadOptmizer). For that reason, we recommend you to avoid enabling plugins.</p>
+<pre><code>*!PSPEMUCFW
+*ALL
+ur0:tai/my_awesome_plugins.suprx
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
   padding: 8px 16px;
@@ -8323,10 +8391,17 @@ cmake --build build
 <li>Add <code>Scale2x Plus</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
 <li>Add <code>Scale3x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
 <li>Add image overlay filter for PS1 game/apps <strong>[<a href="#overlay-image">docs</a>]</strong></li>
+<li>Add option to select a System Storage location to expose <code>ef0:</code> to the chosen CFW.</li>
+<li>Implement a GPU-rendered VSH Menu
+<ul>
+<li>The classical version is still available through configuration</li>
+</ul>
+</li>
 <li>“Fix” manual double launch on first install</li>
 <li>Improve frame pacing on Original graphics filtering</li>
 <li>Implement hold <code>Square</code> to hide Adrenaline Menu on graphics-related settings</li>
-<li>Pauses PSP game when Adrenaline Menu is opened.</li>
+<li>Pauses PSP game when Adrenaline Menu is opened</li>
+<li>Implement ability to hide the Adrenaline Menu to better look at the screen to look up for diferecnce</li>
 </ul>
 <h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
 <ul>
@@ -8356,10 +8431,19 @@ cmake --build build
 <p>Add support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver. <strong>[<a href="#umdemu-iso-drivers">docs</a>]</strong></p>
 </li>
 <li>
+<p>Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.</p>
+</li>
+<li>
+<p>Add CFW file hidder in games.</p>
+</li>
+<li>
 <p>Introduce CFW Settings on the XMB <strong>[<a href="#-adrenaline-cfw-settings">docs</a>]</strong></p>
 </li>
 <li>
 <p>Introduce Plugin Manager on the XMB <strong>[<a href="#-plugins-manager">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add support to show the <code>System Storage</code> on the XMB.</p>
 </li>
 <li>
 <p>Improve stability of the <code>Force High Memory</code> CFW option. <strong>[<a href="#force-high-memory-layout">docs</a>]</strong></p>
@@ -8411,6 +8495,9 @@ cmake --build build
 </ul>
 </li>
 <li>
+<p>Fix recovery menu crashing on empty plugin list when d-pad is clicked.</p>
+</li>
+<li>
 <p>Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews</p>
 <ul>
 <li>Fix <code>SenseMe</code> launch error</li>
@@ -8439,6 +8526,7 @@ cmake --build build
 <li>Fix <code>Assassin's Creed: Bloodlines</code> instabilities with Stable high memory layout</li>
 <li>Fix <code>PaRappa The Rapper</code> instabilities with Stable high memory layout</li>
 <li>Fix <code>Tony Hawk's Underground 2: Remix</code> (US) erroring with lack of space on save</li>
+<li>Fix <code>DJ Max</code> by bypassing anti-CFW checks</li>
 </ul>
 </li>
 <li>
@@ -8451,7 +8539,13 @@ cmake --build build
 <p><strong>DEV:</strong> Improve CFW API compatibility with other CFWs’ API (M33, ME, PRO, and ARK): <code>KUBridge</code>, <code>SystemCtrlForUser</code>, <code>SystemCtrlForKernel</code>, and <code>SysclibForUser</code></p>
 </li>
 <li>
+<p><strong>DEV:</strong> Introduce CFW API to use <code>sceGU</code> on XMB/VSH: <code>guglue</code></p>
+</li>
+<li>
 <p><strong>DEV:</strong> Add support for <code>MEMSIZE=2</code> (to request only stable extra RAM)</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Add support for <code>EFAWARE=1</code></p>
 </li>
 <li>
 <p><strong>DEV:</strong> Make PSPemu <code>sceKernelPowerTick</code> to behave as the VITA <code>sceKernelPowerTick</code></p>

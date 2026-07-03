@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-ff899ff8.js";
+            window.path_to_searchindex_js = "../searchindex-1bb516a2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-cc1a0f18.js"></script>
@@ -436,6 +436,7 @@
 <li><strong><code>Emulation of Empty UMD Drive</code></strong>: On older versions of ME Driver, as well as other ISO Drivers except Inferno 2, it was never intended for the driver to run without an ISO file to be mounted, thus several bugs existed that caused malfunction when the driver was used without an ISO file specified, this prevented emulation of an empty UMD drive, which was needed on PS Vita to run certain homebrew that checked for a UMD. The main bug was in the implementation of the function <code>sceUmdCheckMedium</code>, a boolean function used to check if a UMD is inserted in the drive, on ISO driver this function was hardcoded to always return true, except if an ISO driver is not specified, then it was hardcoded to wait in an infinite loop until one is (which never happens). The solution used by eCFW such as ARK (up to ARK-3) and TN-CEF (including Adrenaline) was to include a small dummy fake.cso file to mount when no ISO file is specified. On the new <code>ME Driver 2</code> driver, among other things, this function has been corrected to behave exactly like the original, simply returning False if no ISO has been specified, thus allowing the ISO driver to simulate an empty UMD drive by loading it without an ISO file specified.</li>
 <li><strong><code>Improved Compressed ISO Read Speeds</code></strong>: Not only is the algorithm written with efficiency in mind, it also implements a more aggressive form of the speedup hacks.</li>
 <li><strong><code>Physical UMD seek and read time simulation</code></strong>: Configurable option to simulate the seek time and read time of reading a physical UMD to bypass the anti-CFW checks of some games, or fix games with synchronization issues due to faster read times.</li>
+<li><strong><code>Native Patches for DJ Max Anti-CFW speed check</code></strong>: Adds a in-driver patches that bypass the infamous anti-CFW measures of the DJ Max franchise related to driver speed.</li>
 </ul>
 
                     </main>

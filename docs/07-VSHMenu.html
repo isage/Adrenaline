@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ff899ff8.js";
+            window.path_to_searchindex_js = "searchindex-1bb516a2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -416,11 +416,21 @@
 <hr>
 <p>VSH Menu is a menu that can be accessed while on XMB/VSH. It contains the most common CFW configurations that users of Epinephrine change with more frequency and quick commands.</p>
 <p>To access this menu, click the <code>Select</code> button while on XMB/VSH.</p>
+<p>Epinephrine comes with two flavours of the VSH Menu: <code>Modern</code> and <code>Classic</code>.</p>
+<p>The <code>Modern</code> is a re-implementation from scratch that uses GU on VSH, a recently developed way to GPU render graphics while on XMB/VSH. Yes, that means this implementation is GPU rendered. It also contais some quality-of-life improvements, like following the defined button to function as enter/back. Besides that, this new implementation also extends the functionality to provide a quick access to advanced game options; this were made to make testing configuration on game titles not working faster.</p>
+<p>Initially this implementation was developed to demonstrate the usage of the VSH-GU.</p>
 <p align="center">
-<img src="./assets/07-vsh-menu.png" width="60%" />
+<img src="./assets/07-vsh-menu-modern.png" width="33%" />
+<img src="./assets/07-vsh-menu-modern-adv1.png" width="33%" />
+<img src="./assets/07-vsh-menu-modern-adv2.png" width="33%" />
 </p>
 
-<h2 id="available-features"><a class="header" href="#available-features">Available features</a></h2>
+<p>The <code>Classic</code> is more basic, but nostalgic-looking implementation. It has less features but good enough for day-to-day.</p>
+<p align="center">
+<img src="./assets/07-vsh-menu-classic.png" width="60%" />
+</p>
+
+<h2 id="available-common-features"><a class="header" href="#available-common-features">Available common features</a></h2>
 <ul>
 <li>Modify the CPU/BUS speed for the XMB/VSH</li>
 <li>Modify the CPU/BUS speed for PSP Games</li>
@@ -428,6 +438,11 @@
 <li>Quick option to suspend the device</li>
 <li>Quick option to restart the system in the <a href="./09-RecoveryMenu.html">Recovery Menu</a></li>
 <li>Quick option to restart XMB/VSH</li>
+</ul>
+<h2 id="modern-specific"><a class="header" href="#modern-specific">Modern-specific</a></h2>
+<ul>
+<li>Considers the assigned enter button for the inputs</li>
+<li>Quick advanced game options to help test configuration for not-working titles</li>
 </ul>
 
                     </main>

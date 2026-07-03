@@ -36,7 +36,7 @@
             const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-ff899ff8.js";
+            window.path_to_searchindex_js = "../searchindex-1bb516a2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-cc1a0f18.js"></script>
@@ -549,6 +549,34 @@
 <li><code>uma0:pspemu</code></li>
 <li><code>uma0:</code></li>
 </ul>
+<p>The <code>uma0:</code> option can be used to facilitate PS3&lt;-&gt;PSVITA data share (e.g. savedata files) for people that does that frequently.</p>
+<h2 id="system-storage-location"><a class="header" href="#system-storage-location">System Storage Location</a></h2>
+<p>Chooses the drive Adrenaline App shows up fot the chosen CFW as the System Storage drive (<code>ef0:</code>).</p>
+<p>The options are:</p>
+<ul>
+<li><code>Disabled</code></li>
+<li><code>uma0:pspemu</code></li>
+<li><code>xmc0:pspemu</code></li>
+<li><code>ux0:pspemu</code></li>
+<li><code>uma0:</code></li>
+</ul>
+<p>The Epinephrine CFW has support to show the System Storage drive on the XMB/VSH and able to use it on the XMB with some limitation (currently):</p>
+<ul>
+<li>Unable to boot PS1 titles from <code>ef0:</code></li>
+<li>The XMB is not showing the System Storage free space</li>
+<li>The Saved Data Utility for the system storage doesn’t work on the XMB</li>
+<li>The XMB context menu doesn’t open in the System Storage items</li>
+</ul>
+<div class="mdbook-callouts mdbook-callouts-info">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  info
+</p>
+
+<p>The System Storage will not show in the XMB/VSH when using ARK, but software is able to see and handle the drive. Launching titles can be done by using the ARK’s Custom Launcher.</p>
+<p>The same limitations apply to using Adrenaline with ARK, although the most affected for ARK is the boot of  PS1 titles.</p>
+</div>
+
 <h2 id="usb-device"><a class="header" href="#usb-device">USB device</a></h2>
 <p>Selects the device that will show up when connecting the Vita to a system via USB.</p>
 <p>The options are:</p>

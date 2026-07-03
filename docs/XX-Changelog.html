@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ff899ff8.js";
+            window.path_to_searchindex_js = "searchindex-1bb516a2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -423,10 +423,17 @@
 <li>Add <code>Scale2x Plus</code> graphical filter options <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">docs</a>]</strong></li>
 <li>Add <code>Scale3x</code> graphical filter options <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">docs</a>]</strong></li>
 <li>Add image overlay filter for PS1 game/apps <strong>[<a href="./06-PS1Playback.html#overlay-image">docs</a>]</strong></li>
+<li>Add option to select a System Storage location to expose <code>ef0:</code> to the chosen CFW.</li>
+<li>Implement a GPU-rendered VSH Menu
+<ul>
+<li>The classical version is still available through configuration</li>
+</ul>
+</li>
 <li>“Fix” manual double launch on first install</li>
 <li>Improve frame pacing on Original graphics filtering</li>
 <li>Implement hold <code>Square</code> to hide Adrenaline Menu on graphics-related settings</li>
-<li>Pauses PSP game when Adrenaline Menu is opened.</li>
+<li>Pauses PSP game when Adrenaline Menu is opened</li>
+<li>Implement ability to hide the Adrenaline Menu to better look at the screen to look up for diferecnce</li>
 </ul>
 <h3 id="epinephrine-cfw"><a class="header" href="#epinephrine-cfw">Epinephrine CFW</a></h3>
 <ul>
@@ -456,10 +463,19 @@
 <p>Add support for launching <code>JSO</code>, <code>ZSO</code>, <code>CSOv2</code>, and <code>DAX</code> compressed ISO formats using any ISO driver. <strong>[<a href="./05-PSPPlayback.html#umdemu-iso-drivers">docs</a>]</strong></p>
 </li>
 <li>
+<p>Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.</p>
+</li>
+<li>
+<p>Add CFW file hidder in games.</p>
+</li>
+<li>
 <p>Introduce CFW Settings on the XMB <strong>[<a href="./10-XmbCfwMenus.html#-adrenaline-cfw-settings">docs</a>]</strong></p>
 </li>
 <li>
 <p>Introduce Plugin Manager on the XMB <strong>[<a href="./10-XmbCfwMenus.html#-plugins-manager">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add support to show the <code>System Storage</code> on the XMB.</p>
 </li>
 <li>
 <p>Improve stability of the <code>Force High Memory</code> CFW option. <strong>[<a href="./08-CfwConfiguration.html#force-high-memory-layout">docs</a>]</strong></p>
@@ -511,6 +527,9 @@
 </ul>
 </li>
 <li>
+<p>Fix recovery menu crashing on empty plugin list when d-pad is clicked.</p>
+</li>
+<li>
 <p>Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews</p>
 <ul>
 <li>Fix <code>SenseMe</code> launch error</li>
@@ -539,6 +558,7 @@
 <li>Fix <code>Assassin's Creed: Bloodlines</code> instabilities with Stable high memory layout</li>
 <li>Fix <code>PaRappa The Rapper</code> instabilities with Stable high memory layout</li>
 <li>Fix <code>Tony Hawk's Underground 2: Remix</code> (US) erroring with lack of space on save</li>
+<li>Fix <code>DJ Max</code> by bypassing anti-CFW checks</li>
 </ul>
 </li>
 <li>
@@ -551,7 +571,13 @@
 <p><strong>DEV:</strong> Improve CFW API compatibility with other CFWs’ API (M33, ME, PRO, and ARK): <code>KUBridge</code>, <code>SystemCtrlForUser</code>, <code>SystemCtrlForKernel</code>, and <code>SysclibForUser</code></p>
 </li>
 <li>
+<p><strong>DEV:</strong> Introduce CFW API to use <code>sceGU</code> on XMB/VSH: <code>guglue</code></p>
+</li>
+<li>
 <p><strong>DEV:</strong> Add support for <code>MEMSIZE=2</code> (to request only stable extra RAM)</p>
+</li>
+<li>
+<p><strong>DEV:</strong> Add support for <code>EFAWARE=1</code></p>
 </li>
 <li>
 <p><strong>DEV:</strong> Make PSPemu <code>sceKernelPowerTick</code> to behave as the VITA <code>sceKernelPowerTick</code></p>

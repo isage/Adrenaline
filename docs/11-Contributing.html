@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ff899ff8.js";
+            window.path_to_searchindex_js = "searchindex-1bb516a2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -444,6 +444,7 @@
 <li><code>cef/core/kermit_idstorage</code>: A custom implementation of <code>sceIdStorage_driver</code> that enables the vPSP environment to work properly.</li>
 <li><code>cef/core/payloadex</code> and <code>cef/core/rebootex</code>: Handles the actual injection of the CFW in the (re)boot process. <code>Payloadex</code> is used by <code>user</code> to launch EPI CFW, while <code>Rebootex</code> is set to relaunch it during a ePSP reboot.</li>
 <li><code>cef/core/payloadex_ark</code>: Handles the actual injection of the CFW in the boot process. <code>Payloadex_ARK</code> is used by <code>user</code> to launch ARK CFW.</li>
+<li><code>cef/extra/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section and the required API to use GU in XMB/VSH.</li>
 <li><code>cef/iso_drivers/galaxy</code>: The <code>GalaxyController</code> module provide patches to use ISO and Compressed ISO with the Sony’s NP9660 driver.</li>
 <li><code>cef/iso_drivers/inferno</code>: The <code>InfernoDriver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
 <li><code>cef/iso_drivers/march33</code>: The <code>March33Driver</code> module is the custom driver that allows executing ISO and Compressed ISO.</li>
@@ -452,7 +453,6 @@
 <p><strong>Extra Parts:</strong></p>
 <ul>
 <li><code>cef/extra/satelite</code>: Provides the <code>VSH Menu</code> to the eCFW, allowing to quick access the most basic configurations in any place of the XMB.</li>
-<li><code>cef/extra/xmbctrl</code>: The <code>XMB Control</code> module provides access to CFW configuration and plugin management directly from the XMB <code>Settings</code> section.</li>
 <li><code>cef/extra/updater</code>: the <code>UPDATER</code> application that allows to update Adrenaline and EPI from the vPSP environment.</li>
 </ul>
 <h2 id="setting-up-the-development-environment"><a class="header" href="#setting-up-the-development-environment">Setting up the development environment</a></h2>

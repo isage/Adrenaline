@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-ff899ff8.js";
+            window.path_to_searchindex_js = "searchindex-1bb516a2.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -461,6 +461,7 @@
 <ul>
 <li><code>Inferno</code></li>
 <li><code>March33</code></li>
+<li><code>Minimal Edition</code></li>
 <li><code>Sony NP9660</code></li>
 </ul>
 <h3 id="skip-sony-logo-on-coldboot"><a class="header" href="#skip-sony-logo-on-coldboot">Skip Sony logo on coldboot</a></h3>
@@ -532,9 +533,16 @@
 <h3 id="nodrm-engine"><a class="header" href="#nodrm-engine">NoDRM engine</a></h3>
 <p>Controls whether to patch the DRM engine of the PSP system.</p>
 <p>When enabled, the system will allow to launch application, homebrews and games without a valid license.</p>
-<h3 id="xmb-control"><a class="header" href="#xmb-control">XMB Control</a></h3>
+<h3 id="xmb-cfw-settings"><a class="header" href="#xmb-cfw-settings">XMB CFW Settings</a></h3>
 <p>Controls whether to load the extra CFW menus on XMB/VSH.</p>
 <p>When enabled, the menus will show up in the XMB in the <code>Settings</code> section.</p>
+<h3 id="vsh-menu"><a class="header" href="#vsh-menu">VSH Menu</a></h3>
+<p>Controls what VSH Menu implementation to use.</p>
+<h4 id="options-6"><a class="header" href="#options-6">Options:</a></h4>
+<ul>
+<li><code>Modern</code>: A new implementation, GPU rendered version of the menu.</li>
+<li><code>Classic</code>: The classic implementation.</li>
+</ul>
 <h3 id="recovery-color"><a class="header" href="#recovery-color">Recovery color</a></h3>
 <p>Configures the color of the Recovery Menu.</p>
 <h2 id="advanced-settings"><a class="header" href="#advanced-settings">Advanced Settings</a></h2>
@@ -552,7 +560,7 @@
 
 <h3 id="force-high-memory-layout"><a class="header" href="#force-high-memory-layout">Force high memory layout</a></h3>
 <p>Controls whether to force the unlock extra RAM space for the user-space RAM partition, that can be used by games and apps.</p>
-<h4 id="options-6"><a class="header" href="#options-6">Options:</a></h4>
+<h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
 <ul>
 <li><code>Disabled</code>: With this option, no specific memory layout is forced.
 <ul>
@@ -584,7 +592,7 @@
 <h3 id="fake-max-free-memory"><a class="header" href="#fake-max-free-memory">Fake max free memory</a></h3>
 <p>Controls wether to limit the reported maximum free memory and how much to limit from <code>sceKernelMaxFreeMemSize</code> on a title.</p>
 <p>Any option other than <code>Auto</code> will always use that value, regardless of existent game patches and fixes.</p>
-<h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
+<h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes (often related to high memory layout instabilities)</li>
 <li><code>16MB</code>: Set the maximum value to 16MB</li>
@@ -674,7 +682,7 @@
 
 <h3 id="inferno-iso-cache-policy"><a class="header" href="#inferno-iso-cache-policy">Inferno ISO cache policy</a></h3>
 <p>Configures what cache policy the <code>Inferno</code> UMDemu driver will use for its overall cache (also known as <code>Inferno Cache</code>).</p>
-<h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
+<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
 <ul>
 <li><code>LRU</code>: Least Recently Used policy. Uses less cpu cycles because it will discards the cache slot from the queue that have not been used in a timeframe when new cache item needs to be added.</li>
 <li><code>RR</code>: Random Replacement policy. Uses slightly less memory as it doesn’t need to keep track of data related to cache slots usage. It can be beneficial for uniform or streaming reading patterns.</li>
@@ -692,7 +700,7 @@
 <p>Configures how many caches the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
+<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1</code></li>
@@ -708,7 +716,7 @@
 <p>Configures the size of cache the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This also could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
+<h4 id="options-11"><a class="header" href="#options-11">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32KB</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1KB</code></li>
@@ -781,6 +789,14 @@
 <p>This can reduce greatly the performance of executing ISO games/apps that do not need them configured if you forget to return them to <code>Auto</code>.</p>
 </div>
 
+<h3 id="umdemu-iso-seekread-delay-strategy"><a class="header" href="#umdemu-iso-seekread-delay-strategy">UMDemu ISO seek/read delay strategy</a></h3>
+<p>Controls the strategy for the physical UMD seek/read delays simulations.</p>
+<h4 id="option-2"><a class="header" href="#option-2">Option:</a></h4>
+<ul>
+<li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes.</li>
+<li><code>Per FD</code>: The delays occurs per file descriptor</li>
+<li><code>Global</code>: The delays occurs for every ready of any file descriptor</li>
+</ul>
 <h3 id="tty-redirection"><a class="header" href="#tty-redirection">TTY redirection</a></h3>
 <p>Controls whether to redirect TTY stdout to VITA-side.</p>
 <p>If enabled, the stdout of the vPSP-side is redirected to the VITA-side. There, they can be used for remote logging (CatLog and similar homebrews), for example.</p>
