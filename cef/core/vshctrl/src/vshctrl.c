@@ -39,6 +39,8 @@ int (* g_vshmenu_ctrl)(SceCtrlData *pad_data, int count);
 int g_cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
 int g_bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
 
+static int (*xmbctrlRegisterVshMenu)(void*) = NULL;
+
 int vctrlVSHRegisterVshMenu(int (* ctrl)(SceCtrlData *, int)) {
 	int k1 = pspSdkSetK1(0);
 	g_vshmenu_ctrl = (void *)((u32)ctrl | 0x80000000);
@@ -62,6 +64,12 @@ int vctrlVSHExitVSHMenu(SEConfig *conf, char *videoiso, int disctype) {
 				sctrlHENSetSpeed(222, 111);
 			}
 		}
+	}
+
+	// stop XMBControl VSH overlay
+    int (*xmbctrlExitVshMenuMode)() = (void*)sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0x43377808);
+    if (xmbctrlExitVshMenuMode != NULL) {
+		xmbctrlExitVshMenuMode();
 	}
 
 	pspSdkSetK1(k1);
@@ -179,4 +187,18 @@ int vctrlVSHUpdateConfig(SEConfig* config) {
 	int res = sctrlSESetConfig(config);
 	pspSdkSetK1(k1);
 	return res;
+}
+
+int vctrlVSHRegisterVshGuMenu(void (*vshmenu_draw)(void*)) {
+	if (xmbctrlRegisterVshMenu == NULL) {
+		xmbctrlRegisterVshMenu = (void *)sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0x9CD59D6A);
+
+		if (xmbctrlRegisterVshMenu == NULL) {
+			return -1;
+		}
+	}
+
+	xmbctrlRegisterVshMenu(vshmenu_draw);
+
+    return 0;
 }

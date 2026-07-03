@@ -40,6 +40,15 @@
 
 #include "../../adrenaline_version.h"
 
+#define ALL_ALLOW    (PSP_CTRL_UP|PSP_CTRL_RIGHT|PSP_CTRL_DOWN|PSP_CTRL_LEFT)
+#define ALL_BUTTON   (PSP_CTRL_TRIANGLE|PSP_CTRL_CIRCLE|PSP_CTRL_CROSS|PSP_CTRL_SQUARE)
+#define ALL_TRIGGER  (PSP_CTRL_LTRIGGER|PSP_CTRL_RTRIGGER)
+#define ALL_FUNCTION (PSP_CTRL_SELECT|PSP_CTRL_START|PSP_CTRL_HOME|PSP_CTRL_HOLD|PSP_CTRL_NOTE)
+#define ALL_CTRL     (ALL_ALLOW|ALL_BUTTON|ALL_TRIGGER|ALL_FUNCTION)
+
+static int g_vshmenu_running = 0;
+static SceUID g_satelite_mod_id = -1;
+
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,30 +112,96 @@ int sceCtrlReadBufferPositivePatched(SceCtrlData *pad_data, int count) {
 		}
 	}
 
-	if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
-		if (pad_data->Buttons & PSP_CTRL_SELECT) {
-			if (!sceKernelFindModuleByName("htmlviewer_plugin_module")
-				&& !sceKernelFindModuleByName("sceVshOSK_Module")
-				&& !sceKernelFindModuleByName("camera_plugin_module")) {
-				modid = sceKernelLoadModule("flash0:/vsh/module/satelite.prx", 0, NULL);
-
-				if (modid >= 0) {
-					sceKernelDelayThread(4000);
-					sceKernelStartModule(modid, 0, NULL, NULL, NULL);
-					pad_data->Buttons &= ~PSP_CTRL_SELECT;
+	if (g_vshmenu_running) {
+		if (g_vshmenu_ctrl) {
+			g_vshmenu_ctrl(pad_data, count);
+		} else {
+			g_vshmenu_running = 0;
+			if (g_satelite_mod_id >= 0) {
+				if (sceKernelStopModule(g_satelite_mod_id, 0, NULL, NULL, NULL) >= 0) {
+					sceKernelUnloadModule(g_satelite_mod_id);
+					g_satelite_mod_id = -1;
+				} else {
+					g_vshmenu_running = 1;
 				}
 			}
 		}
 	} else {
-		if (g_vshmenu_ctrl) {
-			g_vshmenu_ctrl(pad_data, count);
-		} else if (modid >= 0) {
-			if (sceKernelStopModule(modid, 0, NULL, NULL, NULL) >= 0) {
-				sceKernelUnloadModule(modid);
+
+		if ((pad_data->Buttons & ALL_CTRL) != PSP_CTRL_SELECT) {
+			goto exit;
+		}
+
+		if (sceKernelFindModuleByName("htmlviewer_plugin_module")
+			|| sceKernelFindModuleByName("sceVshOSK_Module")
+			|| sceKernelFindModuleByName("camera_plugin_module")
+			|| sceKernelFindModuleByName("Skyhost")
+			|| sceKernelFindModuleByName("sceUSB_Stor_Driver")
+			|| sctrlGetThreadUIDByName("SceNpSignupEvent") >= 0
+			|| sctrlGetThreadUIDByName("VshCacheIoPrefetchThread") >= 0
+			|| sctrlGetThreadUIDByName("VideoDecoder") >= 0
+			|| sctrlGetThreadUIDByName("AudioDecoder") >= 0
+			|| sctrlGetThreadUIDByName("ScePafJob") >= 0
+			|| sctrlGetThreadUIDByName("ScePSStoreBrowser2") >= 0
+			|| sctrlGetThreadUIDByName("SceNetDhcpClient") >= 0)
+		{
+			goto exit;
+		}
+
+		g_vshmenu_running = 1;
+
+		modid = sceKernelLoadModule("flash0:/vsh/module/satelite.prx", 0, NULL);
+
+		if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
+			// Start XMBControl VSH overlay, unless the classical VSH is loaded
+			int (*xmbctrlEnterVshMenuMode)() = (void*) sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0xBE8D19DA);
+			if (xmbctrlEnterVshMenuMode != NULL) {
+				xmbctrlEnterVshMenuMode();
 			}
+		}
+
+
+		if (modid >= 0) {
+			g_satelite_mod_id = modid;
+			// sceKernelDelayThread(4000);
+			sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+			pad_data->Buttons &= ~PSP_CTRL_SELECT;
 		}
 	}
 
+	// if (!sceKernelFindModuleByName("EPI-VshCtrlSatelite")) {
+	// 	if (pad_data->Buttons & PSP_CTRL_SELECT) {
+	// 		if (!sceKernelFindModuleByName("htmlviewer_plugin_module")
+	// 			&& !sceKernelFindModuleByName("sceVshOSK_Module")
+	// 			&& !sceKernelFindModuleByName("camera_plugin_module")) {
+
+	// 			modid = sceKernelLoadModule("flash0:/vsh/module/satelites.prx", 0, NULL);
+
+	// 			if (modid >= 0) {
+	// 				g_satelite_mod_id = modid;
+	// 				sceKernelDelayThread(4000);
+	// 				sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+	// 				pad_data->Buttons &= ~PSP_CTRL_SELECT;
+	// 			} else {
+	// 				// Start XMBControl VSH overlay
+	// 				int (*xmbctrlEnterVshMenuMode)() = (void*) sctrlHENFindFunction("EPI-XmbControl", "XmbCtrlLib", 0xBE8D19DA);
+	// 				if (xmbctrlEnterVshMenuMode != NULL) {
+	// 					xmbctrlEnterVshMenuMode();
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// } else {
+	// 	if (g_vshmenu_ctrl) {
+	// 		g_vshmenu_ctrl(pad_data, count);
+	// 	} else if (modid >= 0) {
+	// 		if (sceKernelStopModule(modid, 0, NULL, NULL, NULL) >= 0) {
+	// 			sceKernelUnloadModule(modid);
+	// 		}
+	// 	}
+	// }
+
+exit:
 	pspSdkSetK1(k1);
 	return res;
 }
