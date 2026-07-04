@@ -118,9 +118,10 @@ jobs:
             psp-cmake -S cef -B cef/build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
             cmake --build cef/build -j
 
+      # FIXME: re-add -DCEF_CMAKE=1
       - name: Build VPK
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1 -DNIGHTLY=1
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
           cmake --build build
           mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-nightly.vpk
 

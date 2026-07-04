@@ -92,7 +92,7 @@ int main(void) {
 		ErrorExit(5000, "This update or a higher one was already applied.\n");
 	}
 	#else
-	if (sctrlSEGetVersion() >= ADRENALINE_VERSION) {
+	if (sctrlSEGetVersion() > ADRENALINE_VERSION) {
 		ErrorExit(5000, "This update or a higher one was already applied.\n");
 	}
 	#endif
