@@ -1,6 +1,13 @@
 # Changelog
 ---
 
+## v8.0.1
+
+### Epinephrine CFW
+
+- Fixed `Categories Lite` not able to find the categorized ISO files
+
+
 ## v8.0.0
 ---
 
