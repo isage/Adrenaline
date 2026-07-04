@@ -10,14 +10,14 @@
 - Add `Scale2x Plus` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add `Scale3x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add image overlay filter for PS1 game/apps **\[[docs](./06-PS1Playback.md#overlay-image)\]**
-- Add option to select a System Storage location to expose `ef0:` to the chosen CFW.
+- Add an option to select a System Storage location to expose `ef0:` to the chosen CFW.
 - Implement a GPU-rendered VSH Menu
   - The classical version is still available through configuration
 - "Fix" manual double launch on first install
 - Improve frame pacing on Original graphics filtering
 - Implement hold `Square` to hide Adrenaline Menu on graphics-related settings
 - Pauses PSP game when Adrenaline Menu is opened
-- Implement ability to hide the Adrenaline Menu to better look at the screen to look up for diferecnce
+- Implement the ability to hide the Adrenaline Menu to better look at the screen for differences
 
 ### Epinephrine CFW
 - **Breaking change:** New plugin configuration format **\[[docs](./04-HomebrewSupport/02-PluginConfigFormat.md)\]**
@@ -32,7 +32,7 @@
 - Introduce an improved implementation of the GalaxyController **\[[docs](./05-PSPPlayback/05-Galaxy.md)\]**
 - Add support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver. **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
 - Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.
-- Add CFW file hidder in games.
+- Add CFW file hider in games.
 - Introduce CFW Settings on the XMB **\[[docs](./10-XmbCfwMenus.md#-adrenaline-cfw-settings)\]**
 - Introduce Plugin Manager on the XMB **\[[docs](./10-XmbCfwMenus.md#-plugins-manager)\]**
 - Add support to show the `System Storage` on the XMB.
@@ -45,8 +45,8 @@
 - Add `Fake max free memory` advanced CFW option **\[[docs](./08-CfwConfiguration.md#fake-max-free-memory)\]**
 - Add `Hide CFW files in PSP games` general CFW option **\[[docs](./08-CfwConfiguration.md#hide-cfw-files-in-psp-games)\]**
 - Add `TTY redirection` advanced CFW option **\[[docs](./08-CfwConfiguration.md#tty-redirection)\]**
-- Add support to show app verion on XMB info for ISO games
-  - Support to show correct version with game updates (`PBOOT.PBP`)
+- Add support to show app version on XMB info for ISO games
+  - Support to show the correct version with game updates (`PBOOT.PBP`)
 - Implement "Hold L while launching apps" to not load plugins **\[[docs](./04-HomebrewSupport/01-Plugin.md#launch-without-plugins)\]**
 - Implement "Hold R while launching ISO apps/games" to execute `BOOT.BIN` instead of `EBOOT.BIN` **\[[docs](./08-CfwConfiguration.md#execute-bootbin-in-umdemu-iso)\]**
 - Implement PSP native music player and `SenseMe` to continue to play music after system suspend
@@ -54,9 +54,9 @@
   - PSP games/homebrew: `L+R+Down+Select` or `L+R+Down+Start`
   - PS1 games: `L2+R2+Down+Select` or `L2+R2+Down+Start`
 - Fix recovery menu crashing on empty plugin list when d-pad is clicked.
-- Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews
+- Fix module privilege level reset on official apps wrongly and set it to the user privilege level on homebrews
   - Fix `SenseMe` launch error
-  - Fix potential issues related to privilege level to other official apps
+  - Fix potential issues related to privilege level for other official apps
   - Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
 - **Game Compatibility:**
 	- Fix PBP collection games (e.g. `Ys I&II`, `Sega Genesis Collection`) crashing after game selection
@@ -76,11 +76,11 @@
 	- Fix `Rainbow Six: Vegas` instabilities with high memory layout options
 	- Fix `Assassin's Creed: Bloodlines` instabilities with Stable high memory layout
 	- Fix `PaRappa The Rapper` instabilities with Stable high memory layout
-	- Fix `Tony Hawk's Underground 2: Remix` (US) erroring with lack of space on save
+	- Fix `Tony Hawk's Underground 2: Remix` (US) erroring with a lack of space on save
 	- Fix `DJ Max` by bypassing anti-CFW checks
 
 
-- **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size
+- **DEV:** Introduce the CFW library `SysclibForUser`: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reduce binary size
 - **DEV:** Expand CFW libraries API
 - **DEV:** Improve CFW API compatibility with other CFWs' API (M33, ME, PRO, and ARK): `KUBridge`, `SystemCtrlForUser`, `SystemCtrlForKernel`, and `SysclibForUser`
 - **DEV:** Introduce CFW API to use `sceGU` on XMB/VSH: `guglue`
@@ -91,8 +91,8 @@
 - **DEV:** Fix homebrew software not able to call some `sceKernelLoadModule*` functions that they should be able to use
 - **DEV:** Add stubs for the UMDemu ISO drivers
 - **DEV:** Add NID translation table to `sceAudioRouting_driver` (Improve plugin compatibility)
-- **DEV:** Create, use and share with ARK a PSP CFW SDK
-- **DEV:** Split patches to make vPSP possible to it's own module: `Pentazemin`
+- **DEV:** Create, use, and share with ARK a PSP CFW SDK
+- **DEV:** Split patches to make vPSP possible in its own module: `Pentazemin`
 - **DEV:** Load user plugins to extra memory if possible
 
 - **Internal:** Some code reorganization
