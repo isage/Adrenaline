@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-a2d32a8d.js";
+            window.path_to_searchindex_js = "searchindex-509df70e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -8382,6 +8382,11 @@ ur0:tai/my_awesome_plugins.suprx
 </style>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <hr>
+<h2 id="v801"><a class="header" href="#v801">v8.0.1</a></h2>
+<h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
+<ul>
+<li>Fixed <code>Categories Lite</code> not able to find the categorized ISO files</li>
+</ul>
 <h2 id="v800"><a class="header" href="#v800">v8.0.0</a></h2>
 <hr>
 <h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
@@ -8391,7 +8396,7 @@ ur0:tai/my_awesome_plugins.suprx
 <li>Add <code>Scale2x Plus</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
 <li>Add <code>Scale3x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
 <li>Add image overlay filter for PS1 game/apps <strong>[<a href="#overlay-image">docs</a>]</strong></li>
-<li>Add option to select a System Storage location to expose <code>ef0:</code> to the chosen CFW.</li>
+<li>Add an option to select a System Storage location to expose <code>ef0:</code> to the chosen CFW.</li>
 <li>Implement a GPU-rendered VSH Menu
 <ul>
 <li>The classical version is still available through configuration</li>
@@ -8401,9 +8406,9 @@ ur0:tai/my_awesome_plugins.suprx
 <li>Improve frame pacing on Original graphics filtering</li>
 <li>Implement hold <code>Square</code> to hide Adrenaline Menu on graphics-related settings</li>
 <li>Pauses PSP game when Adrenaline Menu is opened</li>
-<li>Implement ability to hide the Adrenaline Menu to better look at the screen to look up for diferecnce</li>
+<li>Implement the ability to hide the Adrenaline Menu to better look at the screen for differences</li>
 </ul>
-<h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
+<h3 id="epinephrine-cfw-1-1"><a class="header" href="#epinephrine-cfw-1-1">Epinephrine CFW</a></h3>
 <ul>
 <li>
 <p><strong>Breaking change:</strong> New plugin configuration format <strong>[<a href="#plugin-configuration-format">docs</a>]</strong></p>
@@ -8434,7 +8439,7 @@ ur0:tai/my_awesome_plugins.suprx
 <p>Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.</p>
 </li>
 <li>
-<p>Add CFW file hidder in games.</p>
+<p>Add CFW file hider in games.</p>
 </li>
 <li>
 <p>Introduce CFW Settings on the XMB <strong>[<a href="#-adrenaline-cfw-settings">docs</a>]</strong></p>
@@ -8473,9 +8478,9 @@ ur0:tai/my_awesome_plugins.suprx
 <p>Add <code>TTY redirection</code> advanced CFW option <strong>[<a href="#tty-redirection">docs</a>]</strong></p>
 </li>
 <li>
-<p>Add support to show app verion on XMB info for ISO games</p>
+<p>Add support to show app version on XMB info for ISO games</p>
 <ul>
-<li>Support to show correct version with game updates (<code>PBOOT.PBP</code>)</li>
+<li>Support to show the correct version with game updates (<code>PBOOT.PBP</code>)</li>
 </ul>
 </li>
 <li>
@@ -8498,10 +8503,10 @@ ur0:tai/my_awesome_plugins.suprx
 <p>Fix recovery menu crashing on empty plugin list when d-pad is clicked.</p>
 </li>
 <li>
-<p>Fix wrongly module privilege level reset on official apps and set it to user privilege level on homebrews</p>
+<p>Fix module privilege level reset on official apps wrongly and set it to the user privilege level on homebrews</p>
 <ul>
 <li>Fix <code>SenseMe</code> launch error</li>
-<li>Fix potential issues related to privilege level to other official apps</li>
+<li>Fix potential issues related to privilege level for other official apps</li>
 <li>Fix homebrew software not able to call some <code>sceKernelLoadModule*</code> functions that they should be able to use</li>
 </ul>
 </li>
@@ -8525,12 +8530,12 @@ ur0:tai/my_awesome_plugins.suprx
 <li>Fix <code>Rainbow Six: Vegas</code> instabilities with high memory layout options</li>
 <li>Fix <code>Assassin's Creed: Bloodlines</code> instabilities with Stable high memory layout</li>
 <li>Fix <code>PaRappa The Rapper</code> instabilities with Stable high memory layout</li>
-<li>Fix <code>Tony Hawk's Underground 2: Remix</code> (US) erroring with lack of space on save</li>
+<li>Fix <code>Tony Hawk's Underground 2: Remix</code> (US) erroring with a lack of space on save</li>
 <li>Fix <code>DJ Max</code> by bypassing anti-CFW checks</li>
 </ul>
 </li>
 <li>
-<p><strong>DEV:</strong> Introduce the CFW library <code>SysclibForUser</code>: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reducing binary size</p>
+<p><strong>DEV:</strong> Introduce the CFW library <code>SysclibForUser</code>: Export many C-lib functions for app and user-level plugins developers to use to help avoid linking to newlibc and reduce binary size</p>
 </li>
 <li>
 <p><strong>DEV:</strong> Expand CFW libraries API</p>
@@ -8563,10 +8568,10 @@ ur0:tai/my_awesome_plugins.suprx
 <p><strong>DEV:</strong> Add NID translation table to <code>sceAudioRouting_driver</code> (Improve plugin compatibility)</p>
 </li>
 <li>
-<p><strong>DEV:</strong> Create, use and share with ARK a PSP CFW SDK</p>
+<p><strong>DEV:</strong> Create, use, and share with ARK a PSP CFW SDK</p>
 </li>
 <li>
-<p><strong>DEV:</strong> Split patches to make vPSP possible to it’s own module: <code>Pentazemin</code></p>
+<p><strong>DEV:</strong> Split patches to make vPSP possible in its own module: <code>Pentazemin</code></p>
 </li>
 <li>
 <p><strong>DEV:</strong> Load user plugins to extra memory if possible</p>
