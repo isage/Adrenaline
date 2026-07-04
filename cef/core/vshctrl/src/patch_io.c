@@ -583,6 +583,23 @@ int sceIoLseek32Patched(SceUID fd, int offset, int whence) {
 
 int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 	int k1 = pspSdkSetK1(0);
+
+	if (strstr(file, DUMMY_CAT_ISO_EXTENSION)) {
+		char *p = strrchr(file, '/');
+		if (p) {
+			char categoty_path[256] = {0};
+
+			strcpy(categoty_path, GetPathDrive(file));
+			strcat(categoty_path, "/ISO");
+			strcat(categoty_path, p);
+			categoty_path[8 + strlen(p) - 5] = '\0';
+
+			int res = sceIoGetstatPatched(categoty_path, stat);
+			pspSdkSetK1(k1);
+			return res;
+		}
+	}
+
 	int index = GetIsoIndex(file);
 	if (index >= 0) {
 		if (strcmp(strrchr(file,'/')+1, "DOCUMENT.DAT") == 0) {
