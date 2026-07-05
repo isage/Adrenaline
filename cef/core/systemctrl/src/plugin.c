@@ -125,6 +125,7 @@ static void removePlugin(const char* path) {
 static SceUID loadPlugin(char *path) {
 	g_is_plugin_loading = 1;
 	SceKernelLMOption opt = {
+		.size = sizeof(SceKernelLMOption),
 		.position = PSP_SMEM_High,
 		.access = 1, //default
 		.mpiddata = 0, //default
