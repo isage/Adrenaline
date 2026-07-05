@@ -25,6 +25,7 @@
 
 #include <vshctrl.h>
 #include <systemctrl.h>
+#include <systemctrl_adrenaline.h>
 #include <cfwmacros.h>
 
 #define _ADRENALINE_LOG_IMPL_
@@ -128,7 +129,6 @@ int g_needs_unload = 0;
 char *g_modules[] = {
 	"game_plugin_module",
 	"msvideo_plugin_module",
-	"sceVshSDPlugin_Module",
 	"photo_browser_module",
 	"photo_main_plugin_module",
 	"photo_player_module",
@@ -169,8 +169,9 @@ int OnModuleStart(SceModule *mod) {
 	} else if (paf_strcmp(modname, "game_plugin_module") == 0) {
 		PatchGamePlugin(mod);
 
-	} else if (paf_strcmp(modname, "sceVshSDPlugin_Module") == 0) {
+	} else if (paf_strcmp(modname, "sceVshSDPlugin_Module") == 0 && sctrlIsEfEnable()) {
 		PatchSavedataPlugin(mod);
+		PatchIo(mod);
 
 	}
 
