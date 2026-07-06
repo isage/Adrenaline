@@ -1,5 +1,5 @@
 release: all
-	pack-pbp EBOOT.PBP UPDATE.SFO ICON0.PNG NULL NULL NULL NULL updater.prx NULL
+	pack-pbp EBOOT.PBP UPDATE.SFO assets/ICON0.PNG NULL NULL assets/PIC1.PNG assets/SND0.AT3 updater.prx NULL
 
 version:
 	gcc src/version.c -o version
