@@ -5,6 +5,7 @@ A Updater App for Adrenaline.
 ## Credits
 
  - TheFl0w for starting Adrenaline
+ - Blue for creating the updater assets
 
 ## License
 

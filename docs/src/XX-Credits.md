@@ -19,3 +19,4 @@
 - Every other giant shoulder we are standing on.
 - `n̶u̶l̸l̵` for relentlessly testing many different configurations to improve the performance of the patches for `Megpoid the Music#` and being a great tester in general.
 - `Sotico` for doing a bunch of tests to help to fix game instabilities with high memory layout. Also for finding and reporting bugs.
+- `Blue`  for creating the updater assets.
