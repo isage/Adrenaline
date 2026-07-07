@@ -261,7 +261,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		g_ef_item[FAKE_EF_SAVEDATA]->unk = g_ef_savedata_item->unk;
 		g_ef_item[FAKE_EF_SAVEDATA]->memstick = g_ef_savedata_item->memstick;
 		g_ef_item[FAKE_EF_SAVEDATA]->relocate = item->relocate;
-		// g_ef_item[FAKE_EF_SAVEDATA]->context = g_ef_savedata_item->context;
+		g_ef_item[FAKE_EF_SAVEDATA]->context = item->context;
 
 		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_savedata_item->text, topitem, g_ef_savedata_item->id, g_ef_savedata_item->action, g_ef_savedata_item->action_arg, g_ef_savedata_item->subtitle, g_ef_savedata_item->relocate, g_ef_savedata_item->unk, g_ef_savedata_item->memstick, g_ef_savedata_item->umd_icon, g_ef_savedata_item->context->text);
 		// logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_SAVEDATA]->text, topitem, g_ef_item[FAKE_EF_SAVEDATA]->id, g_ef_item[FAKE_EF_SAVEDATA]->action, g_ef_item[FAKE_EF_SAVEDATA]->action_arg, g_ef_item[FAKE_EF_SAVEDATA]->subtitle, g_ef_item[FAKE_EF_SAVEDATA]->relocate, g_ef_item[FAKE_EF_SAVEDATA]->unk, g_ef_item[FAKE_EF_SAVEDATA]->memstick, g_ef_item[FAKE_EF_SAVEDATA]->umd_icon);
@@ -280,7 +280,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		// g_ef_item[FAKE_EF_PHOTO] = addCustomVshItem(CUSTOM_ID_FAKE_EF_PHOTO, "msg_em", fake_ef0_photo_action_arg, item);
 		g_ef_item[FAKE_EF_PHOTO]->action = g_ef_camera_item->action;
 		g_ef_item[FAKE_EF_PHOTO]->unk = g_ef_camera_item->unk;
-		// g_ef_item[FAKE_EF_PHOTO]->context = g_ef_camera_item->context;
+		g_ef_item[FAKE_EF_PHOTO]->context = item->context;
 
 		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_camera_item->text, topitem, g_ef_camera_item->id, g_ef_camera_item->action, g_ef_camera_item->action_arg, g_ef_camera_item->subtitle, g_ef_camera_item->relocate, g_ef_camera_item->unk, g_ef_camera_item->memstick, g_ef_camera_item->umd_icon, g_ef_camera_item->context->text);
 		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_PHOTO]->text, topitem, g_ef_item[FAKE_EF_PHOTO]->id, g_ef_item[FAKE_EF_PHOTO]->action, g_ef_item[FAKE_EF_PHOTO]->action_arg, g_ef_item[FAKE_EF_PHOTO]->subtitle, g_ef_item[FAKE_EF_PHOTO]->relocate, g_ef_item[FAKE_EF_PHOTO]->unk, g_ef_item[FAKE_EF_PHOTO]->memstick, g_ef_item[FAKE_EF_PHOTO]->umd_icon);
@@ -294,7 +294,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		// g_ef_item[FAKE_EF_MUSIC] = addCustomVshItem(CUSTOM_ID_FAKE_EF_MUSIC, "msg_em", fake_ef0_music_action_arg, item);
 		g_ef_item[FAKE_EF_MUSIC]->action = g_ef_music_item->action;
 		g_ef_item[FAKE_EF_MUSIC]->unk = g_ef_music_item->unk;
-		// g_ef_item[FAKE_EF_MUSIC]->context = g_ef_music_item->context;
+		g_ef_item[FAKE_EF_MUSIC]->context = item->context;
 
 		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_music_item->text, topitem, g_ef_music_item->id, g_ef_music_item->action, g_ef_music_item->action_arg, g_ef_music_item->subtitle, g_ef_music_item->relocate, g_ef_music_item->unk, g_ef_music_item->memstick, g_ef_music_item->umd_icon, g_ef_music_item->context->text);
 		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_MUSIC]->text, topitem, g_ef_item[FAKE_EF_MUSIC]->id, g_ef_item[FAKE_EF_MUSIC]->action, g_ef_item[FAKE_EF_MUSIC]->action_arg, g_ef_item[FAKE_EF_MUSIC]->subtitle, g_ef_item[FAKE_EF_MUSIC]->relocate, g_ef_item[FAKE_EF_MUSIC]->unk, g_ef_item[FAKE_EF_MUSIC]->memstick, g_ef_item[FAKE_EF_MUSIC]->umd_icon);
@@ -308,7 +308,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		// g_ef_item[FAKE_EF_VIDEO] = addCustomVshItem(CUSTOM_ID_FAKE_EF_VIDEO, "msg_em", fake_ef0_video_action_arg, item);
 		g_ef_item[FAKE_EF_VIDEO]->action = g_ef_video_item->action;
 		g_ef_item[FAKE_EF_VIDEO]->unk = g_ef_video_item->unk;
-		// g_ef_item[FAKE_EF_VIDEO]->context = g_ef_video_item->context;
+		g_ef_item[FAKE_EF_VIDEO]->context = item->context;
 
 		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_video_item->text, topitem, g_ef_video_item->id, g_ef_video_item->action, g_ef_video_item->action_arg, g_ef_video_item->subtitle, g_ef_video_item->relocate, g_ef_video_item->unk, g_ef_video_item->memstick, g_ef_video_item->umd_icon, g_ef_video_item->context->text);
 		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_VIDEO]->text, topitem, g_ef_item[FAKE_EF_VIDEO]->id, g_ef_item[FAKE_EF_VIDEO]->action, g_ef_item[FAKE_EF_VIDEO]->action_arg, g_ef_item[FAKE_EF_VIDEO]->subtitle, g_ef_item[FAKE_EF_VIDEO]->relocate, g_ef_item[FAKE_EF_VIDEO]->unk, g_ef_item[FAKE_EF_VIDEO]->memstick, g_ef_item[FAKE_EF_VIDEO]->umd_icon);
@@ -323,7 +323,7 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		g_ef_item[FAKE_EF_GAME] = addCustomVshItem(g_ef_game_item->id, "msg_em", g_ef_game_item->action_arg, item);
 		g_ef_item[FAKE_EF_GAME]->action = g_ef_game_item->action;
 		g_ef_item[FAKE_EF_GAME]->unk = g_ef_game_item->unk;
-		g_ef_item[FAKE_EF_GAME]->context = g_ef_game_item->context;
+		g_ef_item[FAKE_EF_GAME]->context = item->context;
 
 		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_game_item->text, topitem, g_ef_game_item->id, g_ef_game_item->action, g_ef_game_item->action_arg, g_ef_game_item->subtitle, g_ef_game_item->relocate, g_ef_game_item->unk, g_ef_game_item->memstick, g_ef_game_item->umd_icon, g_ef_game_item->context->text);
 		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d\n", g_ef_item[FAKE_EF_GAME]->text, topitem, g_ef_item[FAKE_EF_GAME]->id, g_ef_item[FAKE_EF_GAME]->action, g_ef_item[FAKE_EF_GAME]->action_arg, g_ef_item[FAKE_EF_GAME]->subtitle, g_ef_item[FAKE_EF_GAME]->relocate, g_ef_item[FAKE_EF_GAME]->unk, g_ef_item[FAKE_EF_GAME]->memstick, g_ef_item[FAKE_EF_GAME]->umd_icon);

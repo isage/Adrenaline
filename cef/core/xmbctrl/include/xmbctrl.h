@@ -124,26 +124,41 @@ enum CustomId {
 };
 
 typedef struct {
+	/** The name of the context. */
 	char text[48];
+	/** Marks if the context play sound on enter. */
 	int play_sound;
+	/** Action value */
 	int action;
+	/** Action argument value */
 	int action_arg;
 } SceContextItem;
 
 typedef struct {
+	/** A identification number for the item */
 	int id;
+	/** Depending on the value of this, a item can be reallocated later (often used for itens that can stop existing like MS items)
+	 *
+	 * It also seem to be used to differentiate to get the free space on ms0 e ef0 drive.
+	*/
 	int relocate;
+	/** The action type */
 	int action;
+	/** The action argument. Often similar itens will have  */
 	int action_arg;
+	/** A list of contexts in the context menu */
 	SceContextItem *context;
+	/** Subtitle information (?) */
 	char *subtitle;
 	int unk;
+	/** Mark that it play sound on item confirmation */
 	char play_sound;
 	char memstick;
 	char umd_icon;
 	char image[4];
 	char image_shadow[4];
 	char image_glow[4];
+	/** The name of the item. Seems to also be used to identify certain itens */
 	char text[0x25];
 } SceVshItem;
 
