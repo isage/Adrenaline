@@ -414,7 +414,7 @@ int AdrenalineCompat(SceSize args, void *argp) {
 
 					if (image) {
 						vita2d_texture_set_alloc_memblock_type(SCE_KERNEL_MEMBLOCK_TYPE_USER_RW);
-						vita2d_texture* tex = vita2d_create_empty_texture_format(w,h, SCE_GXM_TEXTURE_FORMAT_U8U8U8U8_RGBA);
+						vita2d_texture* tex = vita2d_create_empty_texture(w,h);
 
 						if (tex) {
 							void* tex_data = vita2d_texture_get_datap(tex);
