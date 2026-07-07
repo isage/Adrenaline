@@ -1,6 +1,17 @@
 # Changelog
 ---
 
+## Unreleased (Nightly)
+
+### Adrenaline
+- Fix the PS1 overlay image not processing correctly
+
+### Epinephrine CFW
+- Fix `Saved Data Utility` not opening with `System Storage` set to disabled.
+- Fix XMB Memory Stick item showing zero free space after accessing `Saved Data Utility`
+- Fix plugins failing to load on POPS (PS1 titles)
+- Refactor: Don't try to load userlevel plugins on extra RAM
+
 ## v8.0.1
 
 ### Epinephrine CFW

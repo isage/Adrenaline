@@ -1,9 +1,11 @@
 # Adrenaline Project
 ---
 
-Adrenaline is two software projects in one: **Adrenaline Application** (1) and **Epinephrine CFW** (2).
+The Adrenaline Project turns the PS Vita's PSP emulator into a highly-featured virtual PSP running a Custom 6.61 PSP Firmware, with extra Vita-side integrations.
 
-1. **Adrenaline** is a software that modifies the official PSP Emulator (PSPemu/ePSP) using [taiHEN CFW framework](https://github.com/yifanlu/taiHEN) to make it possible to run a PSP 6.61 Custom Firmware (CFW).
+The Adrenaline Peoject is two software projects in one: **Adrenaline Application** (1) and **Epinephrine CFW** (2).
+
+1. **Adrenaline** is a software that modifies the official PSP Emulator (PSPemu/ePSP) using [taiHEN CFW framework](https://github.com/yifanlu/taiHEN) to make it possible to run a Custom PSP 6.61 Firmware (CFW). It is also the software that handles the Vita-side integrations with the PSP firmware and hardware.
 2. **Epinephrine** is a Custom Firmware for the Vita's PSPemu derived from TN-V CFW that, besides usual PSP CFW features, it helps to get access to PSP XMB and most of the PSP native environment in the PSPemu.
 
 > [!INFO]

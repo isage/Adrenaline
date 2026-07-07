@@ -27,7 +27,7 @@ This feature is more often used to speed-up repetitive gameplay, or skip slow se
 
 With Adrenaline, you can include an extra overlay filter based on an image that can be used to decorate the empty space on the sides of the game or custom scanline textures.
 
-One image overlay per PS1 game can be set. The image should be `960x544` pixels to work properly. And the image must be stored as `???0:/pspemu/overlays/⟨TITLE_ID⟩.png`.
+One image overlay per PS1 game can be set. The image should be `960x544` pixels and be in the RGBA color format to work properly. And the image must be stored as `???0:/pspemu/overlays/⟨TITLE_ID⟩.png`.
 
 > [!WARNING]
 > This only take effect with [Graphics Filtering](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering) option different than `Original`.
