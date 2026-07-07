@@ -256,10 +256,11 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		g_ef_drv_arg[FAKE_EF_SAVEDATA] = g_ef_savedata_item->action_arg;
 
 		// g_ef_item[FAKE_EF_SAVEDATA] = addCustomVshItem(CUSTOM_ID_FAKE_EF_SAVEDATA, "msgtop_game_savedata", fake_ef0_savedata_action_arg, item);
-		g_ef_item[FAKE_EF_SAVEDATA] = addCustomVshItem(g_ef_savedata_item->id, "msgtop_game_savedata", g_ef_savedata_item->action_arg, item);
+		g_ef_item[FAKE_EF_SAVEDATA] = addCustomVshItem(g_ef_savedata_item->id, "msgtop_game_savedata", fake_ef0_savedata_action_arg, item);
 		g_ef_item[FAKE_EF_SAVEDATA]->action = g_ef_savedata_item->action;
 		g_ef_item[FAKE_EF_SAVEDATA]->unk = g_ef_savedata_item->unk;
 		g_ef_item[FAKE_EF_SAVEDATA]->memstick = g_ef_savedata_item->memstick;
+		g_ef_item[FAKE_EF_SAVEDATA]->relocate = item->relocate;
 		// g_ef_item[FAKE_EF_SAVEDATA]->context = g_ef_savedata_item->context;
 
 		logmsg4("[INFO]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", g_ef_savedata_item->text, topitem, g_ef_savedata_item->id, g_ef_savedata_item->action, g_ef_savedata_item->action_arg, g_ef_savedata_item->subtitle, g_ef_savedata_item->relocate, g_ef_savedata_item->unk, g_ef_savedata_item->memstick, g_ef_savedata_item->umd_icon, g_ef_savedata_item->context->text);
@@ -351,6 +352,7 @@ int OnXmbContextMenuPatched(void *arg0, void *arg1) {
 }
 
 int ExecuteActionPatched(int action, int action_arg) {
+	logmsg4("[DEBUG]: %s: got action=%d action_arg=%d\n", __func__, action, action_arg);
 	int old_is_cfw_config = g_is_cfw_config;
 
 	if (g_game_plugin || g_savedata_plugin) {
@@ -360,6 +362,8 @@ int ExecuteActionPatched(int action, int action_arg) {
 	}
 
 	g_last_action_arg = action_arg;
+	g_is_ef_drive = 0;
+
 
 	if (action == sysconf_console_action) {
 		if (action_arg == sysconf_cfwconfig_action_arg) {
@@ -379,8 +383,6 @@ int ExecuteActionPatched(int action, int action_arg) {
 		if (action_arg == fake_ef0_savedata_action_arg) {
 			g_is_ef_drive = 1;
 			action_arg = g_ef_drv_arg[FAKE_EF_SAVEDATA];
-		} else if (action_arg == g_ef_drv_arg[FAKE_EF_SAVEDATA]) {
-			g_is_ef_drive = 1;
 		} else {
 			g_last_action_arg = action_arg;
 			g_is_ef_drive = 0;
@@ -442,6 +444,7 @@ int ExecuteActionPatched(int action, int action_arg) {
 		g_unload = 1;
 	}
 
+	logmsg4("[DEBUG]: %s: executed action=%d action_arg=%d\n", __func__, action, action_arg);
 	return ExecuteAction(action, action_arg);
 }
 

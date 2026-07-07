@@ -158,7 +158,6 @@ int OnModuleStart(SceModule *mod) {
 
 	if (paf_strcmp(modname, "vsh_module") == 0) {
 		PatchVshMain(text_addr, text_size);
-		PatchIo(mod);
 
 	} else if (paf_strcmp(modname, "sceVshAuthPlugin_Module") == 0) {
 		PatchAuthPlugin(text_addr, text_size);
