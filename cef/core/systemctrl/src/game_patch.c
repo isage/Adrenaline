@@ -234,11 +234,15 @@ int sceWlanGetSwitchStatePatched() {
 }
 
 SceSize (* _sceKernelTotalFreeMemSize)(void) = NULL;
+SceSize (* _sceKernelTotalMemSize)(void) = NULL;
 SceSize sceKernelTotalFreeMemSizePatched(void) {
 	SceSize res = _sceKernelTotalFreeMemSize();
 
-	if (g_fake_total_free_mem != FAKE_MAX_FREE_DISABLED && res > g_fake_total_free_mem) {
-		res = g_fake_total_free_mem;
+	if (g_fake_total_free_mem != FAKE_MAX_FREE_DISABLED) {
+		SceSize total = _sceKernelTotalMemSize();
+		SceSize used = total - res;
+		SceSize fake_free = (g_fake_total_free_mem < used) ? 0 : (g_fake_total_free_mem - used);
+		res = fake_free;
 	}
 
 	logmsg3("[DEBUG]: %s: () -> %d\n", __func__, res);

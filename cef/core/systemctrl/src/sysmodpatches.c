@@ -532,9 +532,11 @@ void PatchSysmem() {
 
 	extern SceSize (* _sceKernelMaxFreeMemSize)(void);
 	extern SceSize (* _sceKernelTotalFreeMemSize)(void);
+	extern SceSize (* _sceKernelTotalMemSize)(void);
 
 	_sceKernelMaxFreeMemSize = (void*)sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", 0xA291F107);
 	_sceKernelTotalFreeMemSize = (void*)sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", 0xF919F628);
+	_sceKernelTotalMemSize = (void*)sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", 0xACBD88CA);
 }
 
 void PatchPluginModule(SceModule *mod) {
