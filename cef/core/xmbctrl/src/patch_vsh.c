@@ -203,12 +203,14 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", item->text, topitem, item->id, item->action, item->action_arg, item->subtitle, item->relocate, item->unk, item->memstick, item->umd_icon, item->context->text);
 	}
 
-	if (g_cfw_config.no_xmb_cfw_items == 0 && paf_strcmp(item->text, "msgtop_sysconf_console") == 0) {
+	if (paf_strcmp(item->text, "msgtop_sysconf_console") == 0) {
 		g_sysconf_action = item->action;
 
 		// Plugin Manager is added before the `msgtop_sysconf_console`
 		// So apply re-patch the action for it
-		g_plugin_mgr_item->action = g_sysconf_action;
+		if (g_plugin_mgr_item != NULL) {
+			g_plugin_mgr_item->action = g_sysconf_action;
+		}
 	}
 
 	// prevent adding more than once
@@ -341,8 +343,12 @@ int OnXmbPushPatched(void *arg0, void *arg1) {
 }
 
 int OnXmbContextMenuPatched(void *arg0, void *arg1) {
-	g_plugin_mgr_item->context = NULL;
-	g_cfw_conf_item->context = NULL;
+	if (g_plugin_mgr_item != NULL) {
+		g_plugin_mgr_item->context = NULL;
+	}
+	if (g_cfw_conf_item != NULL) {
+		g_cfw_conf_item->context = NULL;
+	}
 	// g_ef_item[FAKE_EF_PHOTO]->context = NULL;
 	// g_ef_item[FAKE_EF_MUSIC]->context = NULL;
 	// g_ef_item[FAKE_EF_VIDEO]->context = NULL;
