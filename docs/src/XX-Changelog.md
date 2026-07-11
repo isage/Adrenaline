@@ -10,7 +10,15 @@
 - Fix `Saved Data Utility` not opening with `System Storage` set to disabled.
 - Fix XMB Memory Stick item showing zero free space after accessing `Saved Data Utility`
 - Fix plugins failing to load on POPS (PS1 titles)
+- Fix crash in opening context menu when `XMB CFW Settings` is disabled
+- Fix Uncategorized category on Categories Lite showing corrupt icons
 - Refactor: Don't try to load userlevel plugins on extra RAM
+- Refactor: Make fake `TotalFreeMem` more precise
+- **DEV:** Fix `guglue` library not exported with weak reference support
+
+
+### Updater
+- Feature: Upgrade the design of the updater
 
 ## v8.0.1
 
