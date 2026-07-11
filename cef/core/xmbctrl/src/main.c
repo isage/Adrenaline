@@ -151,10 +151,20 @@ int OnModuleStart(SceModule *mod) {
 	u32 text_addr = mod->text_addr;
 	u32 text_size = mod->text_size;
 
+
+	if (paf_strcmp(modname, "sceVshSDPlugin_Module") == 0 && sctrlIsEfEnable()) {
+		PatchIo(mod);
+	}
+
+	for (int i = 0; i < NELEMS(g_modules); i++) {
+		if (paf_strcmp(modname, g_modules[i]) == 0) {
+			PatchIo(mod);
+		}
+	}
+
 	if (previous) {
 		previous(mod);
 	}
-
 
 	if (paf_strcmp(modname, "vsh_module") == 0) {
 		PatchVshMain(text_addr, text_size);
@@ -170,14 +180,7 @@ int OnModuleStart(SceModule *mod) {
 
 	} else if (paf_strcmp(modname, "sceVshSDPlugin_Module") == 0 && sctrlIsEfEnable()) {
 		PatchSavedataPlugin(mod);
-		PatchIo(mod);
 
-	}
-
-	for (int i = 0; i < NELEMS(g_modules); i++) {
-		if (paf_strcmp(modname, g_modules[i]) == 0) {
-			PatchIo(mod);
-		}
 	}
 
 	return 0;
