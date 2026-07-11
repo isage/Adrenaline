@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-509df70e.js";
+            window.path_to_searchindex_js = "searchindex-8306d78f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -415,9 +415,10 @@
 </style>
 <h1 id="adrenaline-project"><a class="header" href="#adrenaline-project">Adrenaline Project</a></h1>
 <hr>
-<p>Adrenaline is two software projects in one: <strong>Adrenaline Application</strong> (1) and <strong>Epinephrine CFW</strong> (2).</p>
+<p>The Adrenaline Project turns the PS Vita’s PSP emulator into a highly-featured virtual PSP running a Custom 6.61 PSP Firmware, with extra Vita-side integrations.</p>
+<p>The Adrenaline Peoject is two software projects in one: <strong>Adrenaline Application</strong> (1) and <strong>Epinephrine CFW</strong> (2).</p>
 <ol>
-<li><strong>Adrenaline</strong> is a software that modifies the official PSP Emulator (PSPemu/ePSP) using <a href="https://github.com/yifanlu/taiHEN">taiHEN CFW framework</a> to make it possible to run a PSP 6.61 Custom Firmware (CFW).</li>
+<li><strong>Adrenaline</strong> is a software that modifies the official PSP Emulator (PSPemu/ePSP) using <a href="https://github.com/yifanlu/taiHEN">taiHEN CFW framework</a> to make it possible to run a Custom PSP 6.61 Firmware (CFW). It is also the software that handles the Vita-side integrations with the PSP firmware and hardware.</li>
 <li><strong>Epinephrine</strong> is a Custom Firmware for the Vita’s PSPemu derived from TN-V CFW that, besides usual PSP CFW features, it helps to get access to PSP XMB and most of the PSP native environment in the PSPemu.</li>
 </ol>
 <div class="mdbook-callouts mdbook-callouts-info">
@@ -5128,7 +5129,7 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <h2 id="overlay-image"><a class="header" href="#overlay-image">Overlay Image</a></h2>
 <hr>
 <p>With Adrenaline, you can include an extra overlay filter based on an image that can be used to decorate the empty space on the sides of the game or custom scanline textures.</p>
-<p>One image overlay per PS1 game can be set. The image should be <code>960x544</code> pixels to work properly. And the image must be stored as <code>???0:/pspemu/overlays/⟨TITLE_ID⟩.png</code>.</p>
+<p>One image overlay per PS1 game can be set. The image should be <code>960x544</code> pixels and be in the RGBA color format to work properly. And the image must be stored as <code>???0:/pspemu/overlays/⟨TITLE_ID⟩.png</code>.</p>
 <div class="mdbook-callouts mdbook-callouts-warning">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -8382,14 +8383,34 @@ ur0:tai/my_awesome_plugins.suprx
 </style>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <hr>
-<h2 id="v801"><a class="header" href="#v801">v8.0.1</a></h2>
+<h2 id="v802"><a class="header" href="#v802">v8.0.2</a></h2>
+<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<ul>
+<li>Fix the PS1 overlay image not processing correctly</li>
+</ul>
 <h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
+<ul>
+<li>Fix <code>Saved Data Utility</code> not opening with <code>System Storage</code> set to disabled.</li>
+<li>Fix XMB Memory Stick item showing zero free space after accessing <code>Saved Data Utility</code></li>
+<li>Fix plugins failing to load on POPS (PS1 titles)</li>
+<li>Fix crash in opening context menu when <code>XMB CFW Settings</code> is disabled</li>
+<li>Fix Uncategorized category on Categories Lite showing corrupt icons</li>
+<li>Refactor: Don’t try to load userlevel plugins on extra RAM</li>
+<li>Refactor: Make fake <code>TotalFreeMem</code> more precise</li>
+<li><strong>DEV:</strong> Fix <code>guglue</code> library not exported with weak reference support</li>
+</ul>
+<h3 id="updater"><a class="header" href="#updater">Updater</a></h3>
+<ul>
+<li>Feature: Upgrade the design of the updater</li>
+</ul>
+<h2 id="v801"><a class="header" href="#v801">v8.0.1</a></h2>
+<h3 id="epinephrine-cfw-1-1"><a class="header" href="#epinephrine-cfw-1-1">Epinephrine CFW</a></h3>
 <ul>
 <li>Fixed <code>Categories Lite</code> not able to find the categorized ISO files</li>
 </ul>
 <h2 id="v800"><a class="header" href="#v800">v8.0.0</a></h2>
 <hr>
-<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<h3 id="adrenaline-1"><a class="header" href="#adrenaline-1">Adrenaline</a></h3>
 <ul>
 <li>Add option to select the vPSP Custom Firmware to use <strong>[<a href="#vpsp-custom-firmware">docs</a>]</strong></li>
 <li>Add <code>Scale2x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
@@ -8408,7 +8429,7 @@ ur0:tai/my_awesome_plugins.suprx
 <li>Pauses PSP game when Adrenaline Menu is opened</li>
 <li>Implement the ability to hide the Adrenaline Menu to better look at the screen for differences</li>
 </ul>
-<h3 id="epinephrine-cfw-1-1"><a class="header" href="#epinephrine-cfw-1-1">Epinephrine CFW</a></h3>
+<h3 id="epinephrine-cfw-2"><a class="header" href="#epinephrine-cfw-2">Epinephrine CFW</a></h3>
 <ul>
 <li>
 <p><strong>Breaking change:</strong> New plugin configuration format <strong>[<a href="#plugin-configuration-format">docs</a>]</strong></p>
@@ -9080,6 +9101,7 @@ select ‘Original’ screen mode in Adrenaline settings. On a PS TV this will f
 <li>Every other giant shoulder we are standing on.</li>
 <li><code>n̶u̶l̸l̵</code> for relentlessly testing many different configurations to improve the performance of the patches for <code>Megpoid the Music#</code> and being a great tester in general.</li>
 <li><code>Sotico</code> for doing a bunch of tests to help to fix game instabilities with high memory layout. Also for finding and reporting bugs.</li>
+<li><code>Blue</code>  for creating the updater assets.</li>
 </ul>
 
                     </main>

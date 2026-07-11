@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-509df70e.js";
+            window.path_to_searchindex_js = "searchindex-8306d78f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-cc1a0f18.js"></script>
@@ -414,14 +414,34 @@
 </style>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <hr>
-<h2 id="v801"><a class="header" href="#v801">v8.0.1</a></h2>
+<h2 id="v802"><a class="header" href="#v802">v8.0.2</a></h2>
+<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<ul>
+<li>Fix the PS1 overlay image not processing correctly</li>
+</ul>
 <h3 id="epinephrine-cfw"><a class="header" href="#epinephrine-cfw">Epinephrine CFW</a></h3>
+<ul>
+<li>Fix <code>Saved Data Utility</code> not opening with <code>System Storage</code> set to disabled.</li>
+<li>Fix XMB Memory Stick item showing zero free space after accessing <code>Saved Data Utility</code></li>
+<li>Fix plugins failing to load on POPS (PS1 titles)</li>
+<li>Fix crash in opening context menu when <code>XMB CFW Settings</code> is disabled</li>
+<li>Fix Uncategorized category on Categories Lite showing corrupt icons</li>
+<li>Refactor: Don’t try to load userlevel plugins on extra RAM</li>
+<li>Refactor: Make fake <code>TotalFreeMem</code> more precise</li>
+<li><strong>DEV:</strong> Fix <code>guglue</code> library not exported with weak reference support</li>
+</ul>
+<h3 id="updater"><a class="header" href="#updater">Updater</a></h3>
+<ul>
+<li>Feature: Upgrade the design of the updater</li>
+</ul>
+<h2 id="v801"><a class="header" href="#v801">v8.0.1</a></h2>
+<h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
 <ul>
 <li>Fixed <code>Categories Lite</code> not able to find the categorized ISO files</li>
 </ul>
 <h2 id="v800"><a class="header" href="#v800">v8.0.0</a></h2>
 <hr>
-<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<h3 id="adrenaline-1"><a class="header" href="#adrenaline-1">Adrenaline</a></h3>
 <ul>
 <li>Add option to select the vPSP Custom Firmware to use <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#vpsp-custom-firmware">docs</a>]</strong></li>
 <li>Add <code>Scale2x</code> graphical filter options <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">docs</a>]</strong></li>
@@ -440,7 +460,7 @@
 <li>Pauses PSP game when Adrenaline Menu is opened</li>
 <li>Implement the ability to hide the Adrenaline Menu to better look at the screen for differences</li>
 </ul>
-<h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
+<h3 id="epinephrine-cfw-2"><a class="header" href="#epinephrine-cfw-2">Epinephrine CFW</a></h3>
 <ul>
 <li>
 <p><strong>Breaking change:</strong> New plugin configuration format <strong>[<a href="./04-HomebrewSupport/02-PluginConfigFormat.html">docs</a>]</strong></p>
