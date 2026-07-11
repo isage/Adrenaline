@@ -80,7 +80,8 @@ static int CorruptIconPatch(char *name) {
 		SceIoStat stat;
 		memset(&stat, 0, sizeof(stat));
 		if (sceIoGetstat(path, &stat) >= 0) {
-			strcpy(name, "__SCE"); // hide icon
+			// Hide icon
+			strcpy(name, "__SCE");
 			return 1;
 		}
 	}

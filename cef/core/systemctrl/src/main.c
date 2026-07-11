@@ -173,6 +173,24 @@ static void OnSystemStatusIdle() {
 
 }
 
+static void register_resident_libs(SceModule * mod) {
+	// // Invalid Arguments
+	// if(mod == NULL) {
+	// 	return;
+	// }
+
+	// int i = 0;
+	// while (i < mod->ent_size) {
+	// 	SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
+
+	// 	if (entry->libname) {
+	// 		logmsg3("\t- `%s`: 0x%04X ver:(0x%02X, 0x%02X) FUNC:%d VAR:%d\n", entry->libname, entry->attribute, entry->version[0], entry->version[1], entry->stubcount, entry->vstubcount);
+	// 	}
+
+	// 	i += (entry->len * 4);
+	// }
+}
+
 static int OnModuleStart(SceModule *mod) {
 	static u8 ready_gamepatch_mod = 0;
 	static u8 load_file_config = 0;
@@ -337,6 +355,7 @@ static int OnModuleStart(SceModule *mod) {
 	}
 
 	logmsg3("[DEBUG]: %s: mod_name=%s — text_addr=0x%08lX\n", __func__, modname, text_addr);
+	register_resident_libs(mod);
 
 	return 0;
 }

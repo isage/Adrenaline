@@ -75,6 +75,7 @@ static void *ResolveMissingNIDs(const char *libname, u32 nid) {
 		}
 	}
 
+	// logmsg("[ERROR]: %s: Failed to find missing NID: %s - 0x%08X\n", __func__, libname, nid);
 	return NULL;
 }
 
@@ -89,6 +90,8 @@ static u32 ResolveOldNIDs(const char *libname, u32 nid) {
 		}
 	}
 
+
+	// logmsg("[ERROR]: %s: Failed to resolve old NID: %s - 0x%08X\n", __func__, libname, nid);
 	return 0;
 }
 
@@ -177,18 +180,22 @@ int aLinkLibEntriesPatched(SceStubLibrary *lib) {
 	int res = aLinkLibEntries(lib);
 
 	if (res < 0) {
-		logmsg4("[ERROR]: %s: libname=%s -> 0x%08X\n", __func__, lib->lib_name, res);
+		logmsg4("[ERROR]: %s: libname=%s attr=0x%04X is_user_lib=%d -> 0x%08X\n", __func__, lib->lib_name, lib->attribute, lib->is_user_lib, res);
+	} else {
+		logmsg4("[INFO]: %s: libname=%s attr=0x%04X is_user_lib=%d -> 0x%08X\n", __func__, lib->lib_name, lib->attribute, lib->is_user_lib, res);
+
 	}
 
 	return res;
 }
 
-int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) {
-	char *libname = (char *)((u32 *)lib)[0x44/4];
+int search_nid_in_entrytable_patched(SceResidentLibrary *lib, u32 nid, void *stub, int count) {
+	char *libname = lib->lib_name;
 	u32 stubtable = ((u32 *)stub)[0x18/4];
 	u32 original_stub = ((u32 *)stub)[0x24/4];
 	int is_user_mode = ((u32 *)stub)[0x34/4];
 	u32 stub_addr = stubtable + (count * 8);
+
 
 	u32 module_sdk_version = sctrlHENFindFunction((char *)original_stub, NULL, 0x11B97506);
 	if (module_sdk_version && (FIRMWARE_TO_FW(*(u32 *)module_sdk_version) == 0x660 || FIRMWARE_TO_FW(*(u32 *)module_sdk_version) == 0x661)) {
@@ -212,6 +219,7 @@ int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count) 
 
 	int res = search_nid_in_entrytable(lib, nid, -1, 0);
 
+	logmsg4("[DEBUG]: %s: name=%s attr=0%04X\n", __func__, lib->lib_name, lib->attribute);
 	// Not linked yet
 	if (res < 0) {
 		VWRITE32(stub_addr, 0x0000054C);

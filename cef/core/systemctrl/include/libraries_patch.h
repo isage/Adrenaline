@@ -201,6 +201,86 @@ typedef struct SceStubLibrary {
   u32 is_lib_name_in_heap; // 52
 } SceStubLibrary;
 
+/**
+ * This structure represents a resident library control block. This control block is used to manage
+ * a resident library entry table registered to the system.
+ */
+typedef struct SceResidentLibrary {
+    /** Pointer to the next resident library with the same hash value. */
+    struct SceResidentLibrary *next; //0
+    /** Pointer to the corresponding entry table used to register this library. */
+    SceResidentLibraryEntryTable *lib_entry_table; //4
+    /**
+     * The version of the library. This member is set by the corresponding resident library entry
+     * table.
+     */
+    u8 version[2]; //8
+    /**
+     * The library's attributes. This member is set by the corresponding resident library entry table.
+     */
+    u16  attribute; //10
+    /**
+     * The number of exported functions by the resident library. This member is set by the
+     * corresponding resident library entry table.
+     */
+    u16 stub_count; //12
+    /**
+     * The number of exported variables by the resident library. This member is set by the
+     * corresponding resident library entry table.
+     */
+    u16 var_stub_count; //14
+    /**
+     * The number of total exports by the resident library (the sum of stubCount
+     * and vStubCount).
+     */
+    u32 num_exports; //16
+    /** Unknown. */
+    u8 unk20; //20
+    /** Unknown. */
+    u8 unk21; //21
+    /** Unknown. */
+    u8 unk22; //22
+    /** Unknown. */
+    s32 unk24; //24
+    /** Unknown. */
+    u32 unk28; //28
+    /**
+     * Pointer to the resident library's array of NIDs, exported subroutine/variable entries.
+     * Every subroutine/variable entry has a corresponding NID used to identify it. The NID array
+     * comes first, followed by pointers to the exported functions and variables.
+     */
+    u32 *entry_table; //32
+    /** A pointer to the first export entry (either a subroutine or variable). */
+    u32 *exports_base_addr; //36
+    /** The number of exported functions and variables + the number of NIDs used for them. */
+    u32 exports_size; //40
+    /** The index into the middle of the exported functions/variables array. */
+    u32 mid_func_index; //44
+    /** Unknown. */
+    u32 unk48; //48
+    /** Pointer to a linked list of corresponding loaded stub libraries. */
+    SceStubLibrary *stub_libs; //52
+    /** The address of the system call table block belonging to the resident library. */
+    u32 sys_table_entry; //56
+    /** Indicates whether the resident library lives in User land or Kernel land. */
+    u32 is_user_lib; //60
+    /** Unknown. */
+    u32 unk64; //64
+    /** The name of the library. */
+    char *lib_name; //68
+    /** Indicates whether the library's name is located in the heap or not. */
+    u32 lib_name_in_heap; //72
+    /**
+     * The entry index into Loadcore's system call table for an exported function of the resident
+     * library.
+     */
+    u16 sys_table_entry_start_index; //76
+    /**
+     * Extra export entries in the system call table entry belonging to the resident library.
+     */
+    u16 extra_export_entries; //78
+} SceResidentLibrary;
+
 typedef struct {
 	u32 nid;
 	void *function;
@@ -221,6 +301,6 @@ extern int (* aLinkLibEntries)(void *lib);
 extern int (* search_nid_in_entrytable)(void *lib, u32 nid, int unk, int nidSearchOption);
 
 int aLinkLibEntriesPatched(SceStubLibrary *lib);
-int search_nid_in_entrytable_patched(void *lib, u32 nid, void *stub, int count);
+int search_nid_in_entrytable_patched(SceResidentLibrary *lib, u32 nid, void *stub, int count);
 
 #endif
