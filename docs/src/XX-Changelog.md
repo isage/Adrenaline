@@ -1,7 +1,7 @@
 # Changelog
 ---
 
-## Unreleased (Nightly)
+## v8.0.2
 
 ### Adrenaline
 - Fix the PS1 overlay image not processing correctly
@@ -16,9 +16,9 @@
 - Refactor: Make fake `TotalFreeMem` more precise
 - **DEV:** Fix `guglue` library not exported with weak reference support
 
-
 ### Updater
 - Feature: Upgrade the design of the updater
+
 
 ## v8.0.1
 
