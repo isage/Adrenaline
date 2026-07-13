@@ -11,7 +11,7 @@ inject custom code into the IPL which allows unsigned code to run at boottime.
 
 How to update
 -------------
-If you have already been using Adrenaline, simply open Adrenaline.vpk as zip file and copy all modules from sce_module to `ux0:app/PSPEMUCFW/sce_module`.
+If you have already been using Adrenaline, simply open Adrenaline.vpk as zip file and copy all modules from sce_module to `ux0:app/PSPEMUCFW/sce_module`. **reboot afterwards**
 
 Alternatively, you can download [this file](http://adrenaline.sarcasticat.com/EBOOT.PBP) and use [VitaShell](https://github.com/RealYoti/VitaShell/releases) to copy it to the `ux0:/pspemu/PSP/GAME/UPDATE/` directory. Afterwards, launch Adrenaline and run the update application.
 
