@@ -63,7 +63,7 @@ jobs:
           wget -q https://github.com/pspdev/pspdev/releases/download/latest/pspdev-ubuntu-latest-x86_64.tar.gz
           sudo tar -xzf pspdev-ubuntu-latest-x86_64.tar.gz -C /usr/local/
           sudo chmod -R 755 /usr/local/pspdev
-          psp-pacman -S ya2d --noconfirm
+          psp-pacman -Syu ya2d --noconfirm
 
       - name: Setup psp-packer
         run: |
