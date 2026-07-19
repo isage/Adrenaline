@@ -3,235 +3,315 @@
 #include <string.h>
 #include <stdarg.h>
 
-static int itostr(char *buf, int in_data, int base, int upper, int sign) {
-	int res, len, i;
-	unsigned int data;
-	char *str;
+#define is_digit(c) (c >= '0' && c <= '9')
 
-	if (base==10 && sign && in_data<0) {
-		data = -in_data;
-	} else {
-		data = in_data;
+static int get_atoi(const char **str) {
+    int n;
+    for (n = 0; is_digit(**str); (*str)++) {
+        n = n * 10 + **str - '0';
 	}
-
-	str = buf;
-	do {
-		res = data%base;
-		data = data/base;
-		if (res<10) {
-			res += '0';
-		} else {
-			if (upper) {
-				res += 'A'-10;
-			} else {
-				res += 'a'-10;
-			}
-		}
-		*str++ = res;
-	}while(data);
-	len = str-buf;
-
-	/* reverse digital order */
-	for (i=0; i<len/2; i++) {
-		res = buf[i];
-		buf[i] = buf[len-1-i];
-		buf[len-1-i] = res;
-	}
-
-	return len;
+    return n;
 }
 
-/*
- * vsnprintf - Format a string and place it in a buffer
- * @buf: The buffer to place the result into
- * @size: The size of the buffer
- * @fmt: The format string to use
- * @args: Arguments for the format string
+static void bputc(char *buf, size_t *pos, size_t max, char c) {
+    if (*pos < max) {
+        buf[(*pos)] = c;
+	}
+    (*pos)++;
+}
+
+#define F_ALTERNATE 0001    // put 0x infront 16, 0 on octals, b on binary
+#define F_ZEROPAD   0002    // value should be zero padded
+#define F_LEFT      0004    // left justified if set, otherwise right justified
+#define F_SPACE     0010    // place a space before positive number
+#define F_PLUS      0020    // show +/- on signed numbers, default only for -
+#define F_SIGNED    0040    // is an unsigned number?
+#define F_SMALL     0100    // use lowercase for hex?
+
+/**
+ * Formats an integer number
+ *  buf - buffer to print into
+ *  len - current position in buffer
+ *  maxlen - last valid position in buf
+ *  num - number to print
+ *  base - it's base
+ *  width - how many spaces this should have; padding
+ *  flags - above F flags
  */
-#define OUT_C(c) \
-	if (str<end) { \
-		*str++ = (c); \
-	} else { \
-		goto exit; \
+static void fmt_int(char *buf, size_t *len, size_t maxlen, long long num, int base, int width, int flags) {
+    char nbuf[64], sign = 0;
+    char altb[8]; // small buf for sign and #
+    unsigned long n = num;
+    int npad;           // number of pads
+    char pchar = ' ';   // padding character
+    char *digits = "0123456789ABCDEF";
+    char *ldigits = "0123456789abcdef";
+    int i, j;
+
+    if (base < 2 || base > 16) {
+        return;
+	}
+    if (flags & F_SMALL) digits = ldigits;
+    if (flags & F_LEFT) flags &= ~F_ZEROPAD;
+
+    if ((flags & F_SIGNED) && num < 0) {
+        n = -num;
+        sign = '-';
+    } else if (flags & F_PLUS) {
+        sign = '+';
+    } else if (flags & F_SPACE) {
+        sign = ' ';
 	}
 
-static char digital_buf[32];
-int vsnprintf(char *buf, int size, char *fmt, va_list args) {
-	char ch, *s, *str, *end, *sstr;
-	int zero_pad, left_adj, add_sign, field_width, sign;
-	int i, base, upper, len;
+    i = 0;
+    do {
+        nbuf[i++] = digits[n % base];
+        n = n / base;
+    } while (n > 0);
 
+    j = 0;
+    if (sign) altb[j++] = sign;
+    if (flags & F_ALTERNATE) {
+        if (base == 8 || base == 16) {
+            altb[j++] = '0';
+            if (base == 16) {
+                altb[j++] = (flags & F_SMALL) ? 'x' : 'X';
+			}
+        }
+    }
+    altb[j] = 0;
 
-	if (buf == NULL || fmt == NULL || size == 0) {
-		return 0;
+    npad = width > i + j ? width - i - j : 0;
+
+    if (width > i + j) {
+        npad = width - i - j;
 	}
 
-	str = buf;
-	end = buf+size;
-
-	while (*fmt) {
-		if (*fmt!='%') {
-			OUT_C(*fmt++);
-			continue;
-		}
-
-		/* skip '%' */
-		sstr = fmt;
-		fmt++;
-
-		/* %% */
-		if (*fmt=='%') {
-			OUT_C(*fmt++);
-			continue;
-		}
-
-		/* get flag */
-		zero_pad = ' ';
-		left_adj = 0;
-		add_sign = 0;
-		while ((ch=*fmt)) {
-
-			if (*fmt=='0') {
-				zero_pad = '0';
-			} else if (*fmt=='-') {
-				left_adj = 1;
-			} else if (*fmt=='#') {
-			} else if (*fmt==' ') {
-				if (add_sign!='+')
-					add_sign = ' ';
-			} else if (*fmt=='+') {
-				add_sign = '+';
-			} else {
-				break;
+    if (npad > 0 && ((flags & F_LEFT) == 0)) {
+        if (flags & F_ZEROPAD) {
+            for (j = 0; altb[j]; j++) {
+                bputc(buf, len, maxlen, altb[j]);
 			}
-			fmt++;
+            altb[0] = 0;
+        }
+        while (npad-- > 0) {
+            bputc(buf, len, maxlen, (flags & F_ZEROPAD) ? '0' : ' ');
 		}
+    }
+    for (j = 0; altb[j]; j++) {
+        bputc(buf, len, maxlen, altb[j]);
+	}
 
-		/* get field width: m.n */
-		field_width = 0;
-		/* get m */
-		while (*fmt && *fmt>'0' && *fmt<='9') {
-			field_width = field_width*10+(*fmt-'0');
-			fmt++;
+    while (i-- > 0) {
+        bputc(buf, len, maxlen, nbuf[i]);
+	}
+
+    if (npad > 0 && (flags & F_LEFT)) {
+
+		while(npad-- > 0) {
+			bputc(buf, len, maxlen, pchar);
 		}
-		if (*fmt && *fmt=='.') {
-			fmt++;
-			/* skip n */
-			while(*fmt && *fmt>'0' && *fmt<='9') {
-				fmt++;
-			}
+	}
+}
+
+static void fmt_chr(char *buf, size_t *pos, size_t max, char c, int width, int flags) {
+    int npad = 0;
+    if (width > 0) {
+		npad = width - 1;
+	}
+    if (npad < 0) {
+		npad = 0;
+	}
+
+    if (npad && ((flags & F_LEFT) == 0)) {
+		while (npad-- > 0) {
+			bputc(buf, pos, max, ' ');
 		}
+	}
 
-		/* get format char */
-		upper = 0;
-		base = 0;
-		sign = 0;
-		len = 0;
-		s = digital_buf;
-		while ((ch=*fmt)) {
-			fmt++;
-			switch(ch) {
-			/* hexadecimal */
-			case 'p':
-			case 'X':
-				upper = 1;
-			case 'x':
-				base = 16;
-				break;
+    bputc(buf, pos, max, c);
 
-			/* decimal */
-			case 'd':
-			case 'i':
-				sign = 1;
-			case 'u':
-				base = 10;
-				break;
-
-			/* octal */
-			case 'o':
-				base = 8;
-				break;
-
-			/* character */
-			case 'c':
-				digital_buf[0] = (unsigned char) va_arg(args, int);
-				len = 1;
-				break;
-
-			/* string */
-			case 's':
-				s = va_arg(args, char *);
-				if (!s) s = "<NUL>";
-				len = strlen(s);
-				break;
-
-			/* float format, skip it */
-			case 'e': case 'E': case 'f': case 'F': case 'g': case 'G': case 'a': case 'A':
-				va_arg(args, double);
-				s = NULL;
-				break;
-
-			/* length modifier */
-			case 'l': case 'L': case 'h': case 'j': case 'z': case 't':
-				/* skip it */
-				continue;
-
-			/* bad format */
-			default:
-				s = sstr;
-				len = fmt-sstr;
-				break;
-			}
-			break;
+    if (npad && (flags & F_LEFT)) {
+		while (npad-- > 0) {
+			bputc(buf, pos, max, ' ');
 		}
+	}
+}
 
-		if (base) {
-			i = va_arg(args, int);
-			if (base==10 && sign) {
-				if (i<0) {
-					add_sign = '-';
+static void fmt_str(char *buf, size_t *pos, size_t max, char *s, int width, int flags) {
+    int npad = 0;
+    if (width > 0) {
+		npad = width - strlen(s);
+	}
+    if (npad < 0) {
+		npad = 0;
+	}
+
+    if (npad && ((flags & F_LEFT) == 0)) {
+		while (npad-- > 0) {
+			bputc(buf, pos, max, ' ');
+		}
+	}
+
+    while (*s) {
+        bputc(buf, pos, max, *s++);
+	}
+
+    if (npad && (flags & F_LEFT)) {
+		while (npad-- > 0) {
+			bputc(buf, pos, max, ' ');
+		}
+	}
+}
+
+/* Format states */
+#define S_DEFAULT   0
+#define S_FLAGS     1
+#define S_WIDTH     2
+#define S_PRECIS    3
+#define S_LENGTH    4
+#define S_CONV      5
+
+/* Lenght flags */
+#define L_CHAR      1
+#define L_SHORT     2
+#define L_LONG      3
+#define L_LLONG     4
+#define L_DOUBLE    5
+
+/**
+ * Shrinked down, vsnprintf implementation.
+ *  This will not handle floating numbers (yet).
+ */
+int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap) {
+    size_t n = 0;
+    char c, *s;
+    char state = 0;
+    long long num;
+    int base;
+    int flags, width, precision, lflags;
+
+    if (!buf) {
+		size = 0;
+	}
+
+    for (;;) {
+        c = *fmt++;
+        if (state == S_DEFAULT) {
+            if (c == '%') {
+                state = S_FLAGS;
+                flags = 0;
+            } else {
+                bputc(buf, &n, size, c);
+            }
+        } else if (state == S_FLAGS) {
+            switch (c) {
+                case '#': flags |= F_ALTERNATE; break;
+                case '0': flags |= F_ZEROPAD; break;
+                case '-': flags |= F_LEFT; break;
+                case ' ': flags |= F_SPACE; break;
+                case '+': flags |= F_PLUS; break;
+                case '\'':
+                case 'I' : break; // not yet used
+                default: fmt--; width = 0; state = S_WIDTH;
+            }
+        } else if (state == S_WIDTH) {
+            if (c == '*') {
+                width = va_arg(ap, int);
+                if (width < 0) {
+                    width = -width;
+                    flags |= F_LEFT;
+                }
+            } else if (is_digit(c) && c > '0') {
+                fmt--;
+                width = get_atoi(&fmt);
+            } else {
+                fmt--;
+                precision = -1;
+                state = S_PRECIS;
+            }
+        } else if (state == S_PRECIS) {
+            // Ignored for now, but skip it
+            if (c == '.') {
+                if (is_digit(*fmt)) {
+                    precision = get_atoi(&fmt);
+
+				} else if (*fmt == '*') {
+                    precision = va_arg(ap, int);
 				}
-			} else {
-				add_sign = 0;
+                precision = precision < 0 ? 0 : precision;
+            } else {
+                fmt--;
 			}
+            lflags = 0;
+            state = S_LENGTH;
+        } else if (state == S_LENGTH) {
+            switch(c) {
+                case 'h': lflags = lflags == L_CHAR ? L_SHORT : L_CHAR; break;
+                case 'l': lflags = lflags == L_LONG ? L_LLONG : L_LONG; break;
+                case 'L': lflags = L_DOUBLE; break;
+                default: fmt--; state = S_CONV;
+            }
+        } else if (state == S_CONV) {
+            if (c == 'd' || c == 'i' || c == 'o' || c == 'b' || c == 'u'
+                    || c == 'x' || c == 'X') {
+                if (lflags == L_LONG) {
+                    num = va_arg(ap, long);
 
-			len = itostr(digital_buf, i, base, upper, sign);
-		} else {
-			zero_pad = ' ';
-			add_sign = 0;
-		}
+				} else if (lflags & (L_LLONG | L_DOUBLE)) {
+                    num = va_arg(ap, long long);
 
-		if (s) {
-			if (len>=field_width) {
-				field_width = len;
-				if (add_sign)
-					field_width++;
-			}
-			for (i=0; i<field_width; i++) {
-				if (left_adj) {
-					if (i<len) {
-						OUT_C(*s++);
-					} else {
-						OUT_C(' ');
-					}
+				} else if (c == 'd' || c == 'i') {
+                    num = va_arg(ap, int);
+
 				} else {
-					if (add_sign && (zero_pad=='0' || i==(field_width-len-1))) {
-						OUT_C(add_sign);
-						add_sign = 0;
-						continue;
-					}
-					if (i<(field_width-len)) {
-						OUT_C(zero_pad);
-					} else {
-						OUT_C(*s++);
-					}
+                    num = (unsigned int) va_arg(ap, int);
 				}
-			}
+
+                base = 10;
+                if (c == 'd' || c == 'i') {
+                    flags |= F_SIGNED;
+                } else if (c == 'x' || c == 'X') {
+                    flags |= c == 'x' ? F_SMALL : 0;
+                    base = 16;
+                } else if (c == 'o') {
+                    base = 8;
+                } else if (c == 'b') {
+                    base = 2;
+                }
+                fmt_int(buf, &n, size, num, base, width, flags);
+            } else if (c == 'p') {
+                num = (long) va_arg(ap, void *);
+                base = 16;
+                flags |= F_SMALL | F_ALTERNATE;
+                fmt_int(buf, &n, size, num, base, width, flags);
+            } else if (c == 's') {
+                s = va_arg(ap, char *);
+                if (!s)
+                    s = "<NULL>";
+                fmt_str(buf, &n, size, s, width, flags);
+            } else if (c == 'c') {
+                c = va_arg(ap, int);
+                fmt_chr(buf, &n, size, c, width, flags);
+            } else if (c == '%') {
+                bputc(buf, &n, size, c);
+            } else {
+                bputc(buf, &n, size, '%');
+                bputc(buf, &n, size, c);
+            }
+            state = S_DEFAULT;
+        }
+        if (c == 0) {
+            break;
 		}
+    }
+    n--;
+    if (n < size) {
+        buf[n] = 0;
+	}
+    else if (size > 0) {
+        buf[size - 1] = 0;
 	}
 
-	OUT_C(0);
-
-exit:
-	return str-buf-1;
+    return n;
 }
