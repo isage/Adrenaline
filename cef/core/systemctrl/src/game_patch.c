@@ -136,6 +136,10 @@ static void SetFakeMaxFreeMemory(u32 fake_max, u32 fake_total) {
 			g_fake_max_free_mem = 60 * MB;
 			g_fake_total_free_mem = 60 * MB;
 			break;
+		case FAKE_MAX_FREE_MEM_64MB:
+			g_fake_max_free_mem = 64 * MB;
+			g_fake_total_free_mem = 64 * MB;
+			break;
 
 		case FAKE_MAX_FREE_MEM_AUTO:
 			if (fake_max != 0) {

@@ -32,6 +32,7 @@
 #include <bootloadex.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
+#include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
 
@@ -546,7 +547,12 @@ void PatchPluginModule(SceModule *mod) {
 	sctrlHookImportByNID(mod, sysmemlib, 0x3FC9AE6A, &sctrlHENFakeDevkitVersion);
 
 	// If p11 is too small and module is a user module, patch function to use p2 instead of p11
-	if (((mod->mod_state & SCE_MODULE_USER_MODULE) && (g_rebootex_config.ram11 * 1024 * 1024) <= g_plugins_loaded_mem) || g_rebootex_config.ram11 <= 2) {
+
+	if ((mod->mod_state & SCE_MODULE_USER_MODULE)
+		&& g_cfw_config.force_high_memory == HIGHMEM_OPT_OFF
+		&& ((g_rebootex_config.ram11 * 1024 * 1024) <= g_plugins_loaded_mem
+			||  g_rebootex_config.ram11 <= 2))
+	{
 		sctrlHookImportByNID(mod, "ThreadManForUser", 0x446D8DE6, sceKernelCreateThreadPluginPatched);
 		sctrlHookImportByNID(mod, "SysMemUserForUser", 0x237DBD4F, sceKernelAllocPartitionMemoryPluginPatched);
 	}

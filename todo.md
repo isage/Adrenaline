@@ -8,4 +8,4 @@
 - Find a way to complete POPS title boot from `ef0:`
 - Add a working `ef0:` savedata item on XMB
 - Context menu not showing for `ef0:` items
-- Rework on TotalFreeMemSize
+- Hide ISO/VIDEOS
