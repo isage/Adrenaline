@@ -245,13 +245,14 @@ __attribute__((noinline)) static int BuildMsPathForEf(PspIoDrvFileArg *arg, cons
 	return fs_num;
 }
 
+static char ms_path[256];
 static int _efIoOpen(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	char *file = (char *)args[1];
 	int flags = args[2];
 	SceMode mode = (SceMode)args[3];
 
-	char ms_path[128];
+	memset(ms_path, 0, 256);
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = msIoOpen(arg, ms_path, flags, mode);
 	// int res = g_ms_funcs.IoOpen(arg, ms_path, flags, mode);
@@ -264,9 +265,9 @@ static int _efIoRename(u32 *args) {
 	const char *oldname = (const char *)args[1];
 	const char *newname = (const char *)args[2];
 
-	char oldpath[128];
+	char oldpath[256];
 	BuildMsPathForEf(arg, oldname, oldpath);
-	char newpath[128];
+	char newpath[256];
 	BuildMsPathForEf(arg, newname, newpath);
 
 	int res = g_ms_funcs.IoRename(arg, oldpath, newpath);
@@ -277,9 +278,9 @@ static int _efIoRemove(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *file = (const char *)args[1];
 
-	char ms_file[128];
-	BuildMsPathForEf(arg, file, ms_file);
-	int res = g_ms_funcs.IoRemove(arg, ms_file);
+	memset(ms_path, 0, 256);
+	BuildMsPathForEf(arg, file, ms_path);
+	int res = g_ms_funcs.IoRemove(arg, ms_path);
 
 	return res;
 }
@@ -289,9 +290,9 @@ static int _efIoMkdir(u32 *args) {
 	const char *file = (const char *)args[1];
 	SceMode mode = (SceMode)args[2];
 
-	char ms_file[128];
-	BuildMsPathForEf(arg, file, ms_file);
-	int res = g_ms_funcs.IoMkdir(arg, ms_file, mode);
+	memset(ms_path, 0, 256);
+	BuildMsPathForEf(arg, file, ms_path);
+	int res = g_ms_funcs.IoMkdir(arg, ms_path, mode);
 
 	return res;
 }
@@ -300,9 +301,9 @@ static int _efIoRmDir(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *file = (const char *)args[1];
 
-	char ms_file[128];
-	BuildMsPathForEf(arg, file, ms_file);
-	int res = g_ms_funcs.IoRmdir(arg, ms_file);
+	memset(ms_path, 0, 256);
+	BuildMsPathForEf(arg, file, ms_path);
+	int res = g_ms_funcs.IoRmdir(arg, ms_path);
 
 	return res;
 }
@@ -311,9 +312,9 @@ static int _efIoDopen(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *file = (const char *)args[1];
 
-	char ms_file[128];
-	BuildMsPathForEf(arg, file, ms_file);
-	int res = g_ms_funcs.IoDopen(arg, ms_file);
+	memset(ms_path, 0, 256);
+	BuildMsPathForEf(arg, file, ms_path);
+	int res = g_ms_funcs.IoDopen(arg, ms_path);
 
 	return res;
 }
@@ -323,9 +324,9 @@ static int _efIoGetstat(u32 *args) {
 	const char *file = (const char *)args[1];
 	SceIoStat *stat = (SceIoStat *)args[2];
 
-	char ms_file[128];
-	BuildMsPathForEf(arg, file, ms_file);
-	int res = g_ms_funcs.IoGetstat(arg, ms_file, stat);
+	memset(ms_path, 0, 256);
+	BuildMsPathForEf(arg, file, ms_path);
+	int res = g_ms_funcs.IoGetstat(arg, ms_path, stat);
 
 	return res;
 }
@@ -336,9 +337,9 @@ static int _efIoChstat(u32 *args) {
 	SceIoStat *stat = (SceIoStat *)args[2];
 	int bits = (int)args[3];
 
-	char ms_file[128];
-	BuildMsPathForEf(arg, file, ms_file);
-	int res = g_ms_funcs.IoChstat(arg, ms_file, stat, bits);
+	memset(ms_path, 0, 256);
+	BuildMsPathForEf(arg, file, ms_path);
+	int res = g_ms_funcs.IoChstat(arg, ms_path, stat, bits);
 
 	return res;
 }
@@ -347,9 +348,9 @@ static int _efIoChdir(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *dir = (const char *)args[1];
 
-	char ms_dir[128];
-	BuildMsPathForEf(arg, dir, ms_dir);
-	int res = g_ms_funcs.IoChdir(arg, ms_dir);
+	memset(ms_path, 0, 256);
+	BuildMsPathForEf(arg, dir, ms_path);
+	int res = g_ms_funcs.IoChdir(arg, ms_path);
 
 	return res;
 }
@@ -892,16 +893,6 @@ int sceIoAddDrvPatched(PspIoDrv *drv) {
 		g_fatef_drv.name2 = "FATEF";
 		g_fatef_drv.funcs = &g_ef_funcs;
 
-		// Redirect `ms0:` to `ef0:`
-		// int apitype = g_adrenaline->fake_api_type;
-		// if (apitype == PSP_INIT_APITYPE_EF2
-		// 	|| apitype == PSP_INIT_APITYPE_UMD_EMU_EF1
-		// 	|| apitype == PSP_INIT_APITYPE_UMD_EMU_EF2
-		// 	|| apitype == PSP_INIT_APITYPE_EF5)
-		// {
-		// 	memcpy(g_ms_drv->funcs, &g_ef_funcs, sizeof(PspIoDrvFuncs));
-		// }
-
 		_sceIoAddDrv(g_ms_drv);
 		_sceIoAddDrv(&g_ef_drv);
 		_sceIoAddDrv(&g_fatef_drv);
@@ -977,3 +968,15 @@ void PatchIoFileMgr() {
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoUnassign), sceIoUnassignPatched, _sceIoUnassign);
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoAssign), sceIoAssignPatched, _sceIoAssign);
 }
+
+// void PatchRedirectMsToEf() {
+// 	// Redirect `ms0:` to `ef0:`
+// 	int apitype = g_adrenaline->fake_api_type;
+// 	if (apitype == PSP_INIT_APITYPE_EF2
+// 		|| apitype == PSP_INIT_APITYPE_UMD_EMU_EF1
+// 		|| apitype == PSP_INIT_APITYPE_UMD_EMU_EF2
+// 		|| apitype == PSP_INIT_APITYPE_EF5)
+// 	{
+// 		memcpy(g_ms_drv->funcs, &g_ef_funcs, sizeof(PspIoDrvFuncs));
+// 	}
+// }

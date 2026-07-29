@@ -1,6 +1,11 @@
 # Changelog
 ---
 
+## Unreleased
+
+- Fix branch logic for plugins patch
+- Fix formatting issues on recovery
+
 ## v8.0.2
 
 ### Adrenaline
@@ -12,7 +17,7 @@
 - Fix plugins failing to load on POPS (PS1 titles)
 - Fix crash in opening context menu when `XMB CFW Settings` is disabled
 - Fix Uncategorized category on Categories Lite showing corrupt icons
-- Refactor: Don't try to load userlevel plugins on extra RAM
+- Refactor: Don't try to load userlevel plugins on extra RAM on POPS
 - Refactor: Make fake `TotalFreeMem` more precise
 - **DEV:** Fix `guglue` library not exported with weak reference support
 

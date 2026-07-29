@@ -281,6 +281,7 @@ static int OnModuleStart(SceModule *mod) {
 		logmsg3("[INFO]: Boot From: 0x%X\n", sceKernelBootFrom());
 		logmsg3("[INFO]: App Type: 0x%X\n", sceKernelApplicationType());
 		logmsg3("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
+		logmsg3("[INFO]: Fake Apitype: 0x%X\n", g_adrenaline->fake_api_type);
 		logmsg3("[INFO]: Filename: %s\n", sceKernelInitFileName());
 
 		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) {

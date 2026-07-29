@@ -143,7 +143,6 @@ exit:
 int sceIoGetstatHidePatched(const char *path, SceIoStat *stat) {
 	int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	logmsg("[INFO]: %s: path=%s\n", __func__, path);
 	if (is_in_blacklist(path)) {
 		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
 		goto exit;
@@ -152,6 +151,7 @@ int sceIoGetstatHidePatched(const char *path, SceIoStat *stat) {
 	res = sceIoGetstat(path, stat);
 
 exit:
+	logmsg4("[INFO]: %s: path=%s -> 0x%08X\n", __func__, path, res);
 	return res;
 }
 
