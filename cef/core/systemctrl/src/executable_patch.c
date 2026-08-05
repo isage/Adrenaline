@@ -60,7 +60,8 @@ static void AdjustExecInfo(void *buf, SceLoadCoreExecFileInfo *execInfo) {
 	execInfo->is_kernel_mod = (execInfo->mod_info_attribute & 0x1000) ? 1 : 0;
 }
 
-__attribute__((noinline)) void AdjustExecInfoProbe(void *buf, SceLoadCoreExecFileInfo *execInfo) {
+__attribute__((noinline))
+static void AdjustExecInfoProbe(void *buf, SceLoadCoreExecFileInfo *execInfo) {
 	SceModuleInfo *modInfo = (SceModuleInfo *)((u32)buf + execInfo->module_info_offset);
 
 	if ((u32)modInfo >= 0x88400000 && (u32)modInfo <= 0x88800000) {
@@ -69,6 +70,20 @@ __attribute__((noinline)) void AdjustExecInfoProbe(void *buf, SceLoadCoreExecFil
 
 	execInfo->mod_info_attribute = modInfo->modattribute;
 	execInfo->is_kernel_mod = (execInfo->mod_info_attribute & 0x1000) ? 1 : 0;
+}
+
+static void HandleOnSystemBooted(void) {
+	static int g_idle = 0;
+
+	if (!g_idle) {
+		if (sctrlHENIsSystemBooted()) {
+			if (g_on_system_booted_handler != NULL) {
+				g_on_system_booted_handler();
+			}
+
+			g_idle = 1;
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -221,8 +236,12 @@ int PrologueModulePatched(SceModuleMgrParam *mod_param, SceModule *mod) {
 		g_last_plugin_mem_size = 0;
 	}
 
-	if (res >= 0 && g_module_handler) {
-		g_module_handler(mod);
+	if (res >= 0) {
+		if (g_module_handler != NULL) {
+			g_module_handler(mod);
+		}
+
+		HandleOnSystemBooted();
 	}
 
 	return res;

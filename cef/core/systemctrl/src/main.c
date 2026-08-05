@@ -50,7 +50,6 @@ RebootexConfigEPI g_rebootex_config;
 SEConfigEPI g_cfw_config;
 SceAdrenaline *g_adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
-static int g_idle = 0;
 static int g_is_tty_redir_init = 0;
 
 static int g_cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
@@ -348,17 +347,6 @@ static int OnModuleStart(SceModule *mod) {
 
 	}
 
-	if (!g_idle) {
-		if (sctrlHENIsSystemBooted()) {
-			g_idle = 1;
-			OnSystemStatusIdle();
-
-			if (g_on_system_booted_handler != NULL) {
-				g_on_system_booted_handler();
-			}
-		}
-	}
-
 	logmsg3("[DEBUG]: %s: mod_name=%s — text_addr=0x%08lX\n", __func__, modname, text_addr);
 	register_resident_libs(mod);
 
@@ -380,7 +368,8 @@ int module_start(SceSize args, void *argp) {
 		memcpy(&g_cfw_config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigEPI));
 	}
 
-	sctrlHENSetStartModuleHandler((STMOD_HANDLER)OnModuleStart);
+	sctrlHENSetStartModuleHandler(OnModuleStart);
+	sctrlHENSetSystemBootedHandler(OnSystemStatusIdle);
 
 	UnprotectExtraMemory();
 
