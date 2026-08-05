@@ -38,9 +38,10 @@ PSP_MODULE_INFO("Pentazemin", 0x1007, 1, 0);
 
 // Previous Module Start Handler
 static STMOD_HANDLER previous = NULL;
+static SYSBOOT_HANDLER sysboot_previous = NULL;
 
 
-void OnSystemStatusIdle() {
+void PentazeminOnSystemBooted() {
 	initAdrenalineInfo();
 	PatchVolatileMemBug();
 
@@ -52,14 +53,15 @@ void OnSystemStatusIdle() {
 		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 	}
 	sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED, 0);
+
+	if (sysboot_previous != NULL) {
+		sysboot_previous();
+	}
 }
 
 
 int PentazeminOnModuleStart(SceModule * mod) {
 	char *modname = mod->modname;
-
-	// System fully booted Status
-	static int booted = 0;
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {
 		// Protect pops memory
@@ -119,18 +121,6 @@ int PentazeminOnModuleStart(SceModule * mod) {
 		PatchVlfLib(mod);
 	}
 
-	// Boot Complete Action not done yet
-	if(booted == 0) {
-		// Boot is complete
-		if(sctrlHENIsSystemBooted()) {
-			// Adrenaline patches
-			OnSystemStatusIdle();
-
-			// Boot Complete Action done
-			booted = 1;
-		}
-	}
-
 	// Forward to previous Handler
 	if(previous) {
 		return previous(mod);
@@ -156,6 +146,7 @@ int module_start(SceSize args, void * argp) {
 
 	// Register Module Start Handler
 	previous = sctrlHENSetStartModuleHandler(PentazeminOnModuleStart);
+	sysboot_previous = sctrlHENSetSystemBootedHandler(PentazeminOnSystemBooted);
 
 	if (g_config.patch_stdio) {
 		tty_init();
