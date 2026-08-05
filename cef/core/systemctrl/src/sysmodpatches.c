@@ -48,6 +48,7 @@
 #define EXTRA_RAM_SETTABLE (0)
 
 STMOD_HANDLER g_module_handler = NULL;
+SYSBOOT_HANDLER g_on_system_booted_handler = NULL;
 
 
 static int (* RunReboot)(u32 *params) = NULL;

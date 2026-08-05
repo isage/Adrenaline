@@ -352,6 +352,10 @@ static int OnModuleStart(SceModule *mod) {
 		if (sctrlHENIsSystemBooted()) {
 			g_idle = 1;
 			OnSystemStatusIdle();
+
+			if (g_on_system_booted_handler != NULL) {
+				g_on_system_booted_handler();
+			}
 		}
 	}
 

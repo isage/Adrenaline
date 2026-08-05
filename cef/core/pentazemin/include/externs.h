@@ -5,7 +5,6 @@
 #include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
 
-extern STMOD_HANDLER g_module_handler;
 extern SceAdrenaline *g_adrenaline;
 
 extern PentazeminConfig g_config;

@@ -206,7 +206,13 @@ PspIoDrv *sctrlHENFindDriver(const char *drvname) {
 
 STMOD_HANDLER sctrlHENSetStartModuleHandler(STMOD_HANDLER handler) {
 	STMOD_HANDLER prev = g_module_handler;
-	g_module_handler = (STMOD_HANDLER)((u32)handler | 0x80000000);
+	g_module_handler = (STMOD_HANDLER)KERNELIFY(handler);
+	return prev;
+}
+
+SYSBOOT_HANDLER sctrlHENSetSystemBootedHandler(SYSBOOT_HANDLER new_handler) {
+	SYSBOOT_HANDLER prev = g_on_system_booted_handler;
+	g_on_system_booted_handler = (SYSBOOT_HANDLER)(KERNELIFY(new_handler));
 	return prev;
 }
 
@@ -300,29 +306,29 @@ int sctrlKernelLoadExecVSHWithApitype(int apitype, const char *file, SceKernelLo
 		}
 
 		// Empty UMD drive (makes sceUmdCheckMedium return false)
-        sctrlSESetUmdFile("");
-    }
+		sctrlSESetUmdFile("");
+	}
 
 	// obtain game id
-    u32 gameid_size = sizeof(g_rebootex_config.title_id);
-    memset(g_rebootex_config.title_id, 0, gameid_size);
-    if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2){
-        readTitleIdFromDisc();
-    } else {
-        sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, g_rebootex_config.title_id);
-    }
+	u32 gameid_size = sizeof(g_rebootex_config.title_id);
+	memset(g_rebootex_config.title_id, 0, gameid_size);
+	if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2){
+		readTitleIdFromDisc();
+	} else {
+		sctrlGetSfoPARAM(file, "DISC_ID", NULL, &gameid_size, g_rebootex_config.title_id);
+	}
 
 	PatchGameByTitleIdOnLoadExec();
 
 	// Handle ef-aware homebrew
-    if (apitype == PSP_INIT_APITYPE_EF2){
-        u32 psize = sizeof(int);
-        int efaware = 0;
-        if (sctrlGetSfoPARAM(file, "EFAWARE", NULL, &psize, &efaware)>=0 && efaware){
-            apitype = PSP_INIT_APITYPE_MS2;
-            g_adrenaline->fake_api_type = PSP_INIT_APITYPE_MS2;
-        }
-    }
+	if (apitype == PSP_INIT_APITYPE_EF2){
+		u32 psize = sizeof(int);
+		int efaware = 0;
+		if (sctrlGetSfoPARAM(file, "EFAWARE", NULL, &psize, &efaware)>=0 && efaware){
+			apitype = PSP_INIT_APITYPE_MS2;
+			g_adrenaline->fake_api_type = PSP_INIT_APITYPE_MS2;
+		}
+	}
 
 	int res = _sceLoadExecVSHWithApitype(apitype, file, param, 0x10000);
 	pspSdkSetK1(k1);
@@ -781,35 +787,35 @@ u32 sctrlHENFindFirstBEQ(u32 addr) {
 }
 
 u32 sctrlHENFindRefInGlobals(char* libname, u32 addr, u32 ptr){
-    while (strcmp(libname, (char*)addr)) {
-        addr++;
+	while (strcmp(libname, (char*)addr)) {
+		addr++;
 	}
 
-    if (addr % 4) {
+	if (addr % 4) {
 		// Align to 4 bytes
-        addr &= -0x4;
+		addr &= -0x4;
 	}
 
-    while (VREAD32(addr += 4) != ptr);
+	while (VREAD32(addr += 4) != ptr);
 
-    return addr;
+	return addr;
 }
 
 PspSysMemPartition* sctrlGetMemoryPartition(int partition) {
-    static PspSysMemPartition *(* GetPartition)(int partition) = NULL;
-    if (GetPartition == NULL){
-        for (u32 addr = SYSMEM_TEXT; ; addr+=4){
-            if (VREAD32(addr) == 0x2C85000D){
-                GetPartition = (void*)(addr-4);
-                break;
-            }
-        }
-    }
-    return GetPartition(partition);
+	static PspSysMemPartition *(* GetPartition)(int partition) = NULL;
+	if (GetPartition == NULL){
+		for (u32 addr = SYSMEM_TEXT; ; addr+=4){
+			if (VREAD32(addr) == 0x2C85000D){
+				GetPartition = (void*)(addr-4);
+				break;
+			}
+		}
+	}
+	return GetPartition(partition);
 }
 
 int sctrlKernelMsIsEf() {
-    int apitype = g_adrenaline->fake_api_type;
-    int res = (apitype == PSP_INIT_APITYPE_EF5 || apitype == PSP_INIT_APITYPE_UMD_EMU_EF1 || apitype == PSP_INIT_APITYPE_EF2 || apitype ==  PSP_INIT_APITYPE_VSH2);
-    return res;
+	int apitype = g_adrenaline->fake_api_type;
+	int res = (apitype == PSP_INIT_APITYPE_EF5 || apitype == PSP_INIT_APITYPE_UMD_EMU_EF1 || apitype == PSP_INIT_APITYPE_EF2 || apitype ==  PSP_INIT_APITYPE_VSH2);
+	return res;
 }
