@@ -48,4 +48,6 @@ static char *g_fake_free_mem[] = {"Auto", "16MB", "24MB", "32MB", "40MB", "48MB"
 
 static char *g_vsh_menu_opt[] = { "Modern", "Classic" };
 
+static char *g_psp_game_plugin_opt[] = { "Try Extra RAM", "Game RAM" };
+
 #endif

@@ -240,9 +240,9 @@ static int Cache(VirtualPbp *pbp) {
 static int AddIsoDirent(char *path, SceUID fd, SceIoDirent *dir, int readcategories) {
 	int res;
 
-	logmsg3("[DEBUG]: %s: path=%s, dir.d_name=%s, readcategories=%d\n", __func__, path, dir->d_name, readcategories);
 
 NEXT:
+	logmsg3("[DEBUG]: %s: path=%s, dir.d_name=%s, readcategories=%d\n", __func__, path, dir->d_name, readcategories);
 	if ((res = sceIoDread(fd, dir)) > 0) {
 		static VirtualPbp vpbp;
 		static char fullpath[256];

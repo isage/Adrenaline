@@ -311,6 +311,7 @@ static Entry g_general_entries[] = {
 static Entry g_advanced_entries[] = {
 	{ "Force high memory layout", NULL, g_highmem, sizeof(g_highmem), &g_cfw_config.force_high_memory },
 	{ "Fake max free memory", NULL, g_fake_free_mem, sizeof(g_fake_free_mem), &g_cfw_config.fake_max_free_mem },
+	{ "PSP game/app plugin RAM Partition", NULL, g_psp_game_plugin_opt, sizeof(g_psp_game_plugin_opt), &g_cfw_config.psp_game_plugin_ram },
 	{ "Use Graphic Engine 2", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_ge2 },
 	{ "Use Media Engine 2", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.use_me2 },
 	{ "Execute BOOT.BIN in UMDemu ISO", NULL, g_disenabled, sizeof(g_disenabled), &g_cfw_config.execute_boot_bin },

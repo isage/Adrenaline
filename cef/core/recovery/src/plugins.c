@@ -24,6 +24,7 @@
 
 #include <systemctrl_se.h>
 #include <adrenaline_log.h>
+#include <cfwmacros.h>
 
 #include "main.h"
 #include "menu.h"
