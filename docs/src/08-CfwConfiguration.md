@@ -222,6 +222,25 @@ Any option other than `Auto` will always use that value, regardless of existent 
 > [!CAUTION]
 > Some games may require more specific values to make then stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the [project issue tracer](https://github.com/isage/Adrenaline/issues) (but also check first to avoid opening duplicated issue tracker).
 
+### PSP game/app plugin RAM Partition
+
+Controls in what RAM partition userland plugins are loaded in PSP game/apps.
+
+#### Options:
+
+- `Try Extra RAM`: Attempts to load the userland plugin on the extra RAM partition, if that fails, attempts to load the plugin on the game RAM partition.
+	- It makes plugins not use the game memory, avoiding game crashes with out-of-memory exception when loading too many userland plugins or plugins too greedy with memory.
+	- If [Force high memory layout](#force-high-memory-layout) is enabled, this options will effectively work like `Game RAM` option.
+- `Game RAM`: Always attempts to load the userland plugin on the game RAM partition. This is the classical behavior.
+
+> [!TIP]
+> If a plugin is not loading with the `Try Extra RAM` **and** you already checked plugin configuration file, you can try to change this option to `Game RAM` and test it out.
+
+> [!WARNING]
+> The `Try Extra RAM` options allows to the system to load way more userland plugins than the classical way, because the extra RAM partition is not used by anything in the system (unless with `Force high memory layout`, that integrates the extra RAM to game/user RAM partition) and doesn't get in the way of the memory used by games/apps.
+>
+> For that reason, if you need to change to the `Game RAM` option, it is recommended to disable unnecessary PSP game plugins.
+
 ### Use Graphic Engine 2
 
 Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads `ge_2.prx` instead of `ge.prx`.
