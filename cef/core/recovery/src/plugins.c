@@ -241,15 +241,15 @@ static void processPlugin(char* runlevel, char* path, char* enabled) {
 	char *p = strrchr(path, '/');
 
 	if (p != NULL) {
-		snprintf(g_plugins[idx].name, 138, "%s [%s]", p+1, runlevel);
+		snprintf(g_plugins[idx].name, 137, "%s [%s]", p+1, runlevel);
 	} else {
-		snprintf(g_plugins[idx].name, 138, "%s [%s]", path, runlevel);
+		snprintf(g_plugins[idx].name, 137, "%s [%s]", path, runlevel);
 	}
 
-	snprintf(g_plugins[idx].path, path_len, "%s", path);
+	snprintf(g_plugins[idx].path, MIN(128, path_len), "%s", path);
 
 	int run_level_len = strlen(runlevel) + 10;
-	snprintf(g_plugins[idx].runlevel, run_level_len, "%s", runlevel);
+	snprintf(g_plugins[idx].runlevel, MIN(64, run_level_len) , "%s", runlevel);
 
 	g_plugins[idx].active = isRunlevelEnabled(enabled);
 
