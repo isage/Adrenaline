@@ -3,8 +3,15 @@
 
 ## Unreleased
 
+### Epinephrine CFW
+
+- Add option to select PSP game plugin loading behavior **\[[docs](./08-CfwConfiguration.md#psp-gameapp-plugin-ram-partition)\]**
 - Fix branch logic for plugins patch
 - Fix formatting issues on recovery
+- Refactor SystemControl and Pentazemin modules to use `sctrlHENSetSystemBootedHandler`
+
+- **DEV:** Introduce `sctrlHENSetSystemBootedHandler`
+	- It allows to se a handler that is called only once when the system just finished the boot sequence.
 
 ## v8.0.2
 
