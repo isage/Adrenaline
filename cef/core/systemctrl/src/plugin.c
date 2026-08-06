@@ -184,6 +184,8 @@ static void startPlugins() {
 				g_last_plugin_mem_size = 0;
 				continue;
 			} else {
+				g_plugins_loaded_mem += g_last_plugin_mem_size;
+				g_last_plugin_mem_size = 0;
 				logmsg3("[INFO]: Loaded plugin: %s\n", path);
 			}
 		} else {

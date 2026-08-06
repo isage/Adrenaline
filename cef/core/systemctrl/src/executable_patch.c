@@ -207,7 +207,8 @@ int PartitionCheckPatched(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo 
 	// VSH doesn't like we doing this
 	int app_type = sceKernelApplicationType();
 	int not_vsh_pops = app_type != PSP_INIT_KEYCONFIG_VSH && app_type != PSP_INIT_KEYCONFIG_POPS;
-	if (!execInfo->is_kernel_mod && sctrlIsLoadingPlugins() && g_is_plugin_loading && not_vsh_pops) {
+	int load_in_extra = g_cfw_config.psp_game_plugin_ram == PLUGIN_RAM_TRY_EXTRA;
+	if (!execInfo->is_kernel_mod && load_in_extra && sctrlIsLoadingPlugins() && g_is_plugin_loading && not_vsh_pops) {
 		// Use p2 is ram2 size `> 24` (normal user mem) and ram11 `< 4` (arbitrary), or force high mem turned on
 
 		if (mod_param->mpid_data == PSP_MEMORY_PARTITION_UNKNOWN) {
@@ -231,8 +232,11 @@ int PrologueModulePatched(SceModuleMgrParam *mod_param, SceModule *mod) {
 	if (res >= 0 && (mod->mod_state & SCE_MODULE_USER_MODULE) && mod_param->mpid_text == 11 && mod_param->mpid_data == 11 && sctrlIsLoadingPlugins() && not_vsh_pops) {
 		SceSize stack_size = (mod_param->stack_size == 0) ? DEFAULT_USER_STACK_SIZE_BYTES : mod_param->stack_size;
 		g_last_plugin_mem_size = mod->text_size + mod->data_size + stack_size;
-		g_plugins_loaded_mem += g_last_plugin_mem_size;
 	} else {
+		g_last_plugin_mem_size = 0;
+	}
+
+	if (g_cfw_config.psp_game_plugin_ram == PLUGIN_RAM_ALWAYS_GAME) {
 		g_last_plugin_mem_size = 0;
 	}
 

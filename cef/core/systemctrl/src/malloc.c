@@ -51,10 +51,15 @@ void *oe_malloc(SceSize size) {
 }
 
 void* user_malloc(SceSize size) {
-	u32 k1 = pspSdkSetK1(0);
-	SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
-	pspSdkSetK1(k1);
-	int pid = ((size+sizeof(SceUID)) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
+	int pid = PSP_MEMORY_PARTITION_USER;
+
+	if (g_cfw_config.psp_game_plugin_ram == PLUGIN_RAM_TRY_EXTRA) {
+		u32 k1 = pspSdkSetK1(0);
+		SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
+		pspSdkSetK1(k1);
+		int pid = ((size+sizeof(SceUID)) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
+	}
+
 	logmsg4("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
 	return malloc_impl(pid, size);
 }
@@ -71,10 +76,15 @@ static void* generic_memalign(int pid, SceSize align, SceSize size) {
 }
 
 void* user_memalign(SceSize align, SceSize size) {
-	u32 k1 = pspSdkSetK1(0);
-	SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
-	pspSdkSetK1(k1);
-	int pid = ((size+sizeof(SceUID)+align) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
+	int pid = PSP_MEMORY_PARTITION_USER;
+
+	if (g_cfw_config.psp_game_plugin_ram == PLUGIN_RAM_TRY_EXTRA) {
+		u32 k1 = pspSdkSetK1(0);
+		SceSize p11_free = sceKernelPartitionMaxFreeMemSize(11);
+		pspSdkSetK1(k1);
+		int pid = ((size+sizeof(SceUID)+align) > p11_free) ? PSP_MEMORY_PARTITION_USER : 11;
+	}
+
 	logmsg4("[INFO]: %s: Allocated using Partition #%d\n", __func__, pid);
 	return generic_memalign(pid, align, size);
 }
