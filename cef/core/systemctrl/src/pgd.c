@@ -48,7 +48,7 @@ int kirk7(u8 *buf, int size, int type) {
 	return 0;
 }
 
-int bbmac_getkey(SceMacKey *mkey, u8 *bbmac, u8 *vkey) {
+int nodrmBBMacGetKey(SceMacKey *mkey, u8 *bbmac, u8 *vkey) {
 	int i, retv, type, code;
 	u8 *kbuf, tmp[16], tmp1[16];
 
@@ -82,7 +82,7 @@ int bbmac_getkey(SceMacKey *mkey, u8 *bbmac, u8 *vkey) {
 	return 0;
 }
 
-int get_version_key(u8 *version_key, char *path) {
+int nodrmGetVersionKey(u8 *version_key, char *path) {
 	SceMacKey mkey;
 	u8 header[256];
 	u32 psar;
@@ -96,7 +96,7 @@ int get_version_key(u8 *version_key, char *path) {
 
 	sceDrmBBMacInit(&mkey, MAC_KEY_TYPE_FIXED);
 	sceDrmBBMacUpdate(&mkey, header, 0xC0);
-	bbmac_getkey(&mkey, header + 0xC0, version_key);
+	nodrmBBMacGetKey(&mkey, header + 0xC0, version_key);
 
 	sceDrmBBMacInit(&mkey, MAC_KEY_TYPE_FIXED);
 	sceDrmBBMacUpdate(&mkey, header, 0xC0);
@@ -105,7 +105,7 @@ int get_version_key(u8 *version_key, char *path) {
 	return ret;
 }
 
-int get_edat_key(u8 *vkey, u8 *pgd_buf) {
+int nodrmGetEdatKey(u8 *vkey, u8 *pgd_buf) {
 	int pgd_flag = 2;
 	PGD_DESC *pgd = &g_pgd;
 	SceMacKey mkey;
@@ -153,7 +153,7 @@ int get_edat_key(u8 *vkey, u8 *pgd_buf) {
 	sceDrmBBMacInit(&mkey, pgd->mac_type);
 	sceDrmBBMacUpdate(&mkey, pgd_buf, 0x70);
 
-	if (bbmac_getkey(&mkey, pgd_buf + 0x70, vkey)) {
+	if (nodrmBBMacGetKey(&mkey, pgd_buf + 0x70, vkey)) {
 		return -3;
 	}
 
@@ -188,7 +188,7 @@ int dumpPS1key(const char *path, u8 *buf) {
 
 	sceDrmBBMacInit(&mkey, PGD.mac_type);
 	sceDrmBBMacUpdate(&mkey, buf, 0x70);
-	bbmac_getkey(&mkey, buf + 0x70, PGD.vkey);
+	nodrmBBMacGetKey(&mkey, buf + 0x70, PGD.vkey);
 
 	char Path[256];
 	strcpy(Path, path);

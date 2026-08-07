@@ -202,7 +202,7 @@ int setupEdatVersionKeyPatched(u8 *vkey, u8 *edat, int size) {
 		sceIoRead(ret, g_pgdbuf, 0x90);
 		sceIoClose(ret);
 
-		ret = get_edat_key(vkey, g_pgdbuf);
+		ret = nodrmGetEdatKey(vkey, g_pgdbuf);
 	}
 
 	return ret;
@@ -221,7 +221,7 @@ int setupEbootVersionKeyPatched(u8 *vkey, u8 *cid, u32 type, u8 *act) {
 
 	// Generate key from mac if official method fails.
 	if (ret < 0) {
-		ret = get_version_key(vkey, g_ebootpath);
+		ret = nodrmGetVersionKey(vkey, g_ebootpath);
 	}
 
 	if (ret >= 0) {
@@ -252,7 +252,7 @@ void patch_drm() {
 	SceModule *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
 
 	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
-		if (_lw(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
+		if (VREAD32(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
 			HIJACK_FUNCTION(addr - 8, setupEdatVersionKeyPatched, _setupEdatVersionKey);
 			break;
 		}
