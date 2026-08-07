@@ -3,6 +3,8 @@
 #ifndef __XMBCTRL_OPTIONS_H__
 #define __XMBCTRL_OPTIONS_H__
 
+#define ITEM_OPT(i) { NELEMS(i), i }
+
 static char *g_plugins_options[] = {"Off", "On", "Remove"};
 
 static char *g_cpuspeeds_options[] = {
