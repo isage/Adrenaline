@@ -29,21 +29,31 @@
 #include "externs.h"
 #include "pgd.h"
 
-static int (* do_open)(char *file, int flags, SceMode mode, int async, int retAddr, int oldK1);
-static int (* do_ioctl)(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen, int async);
+static int (* do_open)(char *file, int flags, SceMode mode, int async, int retAddr, int oldK1) = NULL;
+static int (* do_ioctl)(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen, int async) = NULL;
 
-static SceUID (* _sceKernelLoadModuleNpDrm)(const char *path, int flags, SceKernelLMOption *option);
+static SceUID (* _sceKernelLoadModuleNpDrm)(const char *path, int flags, SceKernelLMOption *option) = NULL;
 
-static int (* _sceNpDrmRenameCheck)(const char *file_name);
-static int (* _sceNpDrmEdataSetupKey)(SceUID fd);
-static int (* _sceNpDrmEdataGetDataSize)(SceUID fd);
+static int (* _sceNpDrmRenameCheck)(const char *file_name) = NULL;
+static int (* _sceNpDrmEdataSetupKey)(SceUID fd) = NULL;
+static int (* _sceNpDrmEdataGetDataSize)(SceUID fd) = NULL;
 
 static char g_ebootpath[256];
 static char g_pgd_path[256];
 static u8 g_pgdbuf[0x90];
 static u8 g_eboot_key[16];
 static int g_is_key = 0;
+static SceModule* g_np9660_mod = NULL;
 int g_licensed_eboot = 0;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////
+
+static u32 tou32(u8 *buf) {
+	return (u32)(buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24));
+}
 
 static int IsPlainDrmFd(SceUID fd) {
 	int k1 = pspSdkSetK1(0);
@@ -88,6 +98,48 @@ static int IsPlainDrmPath(const char *path) {
 	pspSdkSetK1(k1);
 	return 0;
 }
+
+static int is_licensed_eboot(const char *path) {
+	int ret = 0;
+	u8 buf[0x28];
+	SceUID fd = sceIoOpen(path, PSP_O_RDONLY, 0);
+	sceIoRead(fd, buf, sizeof(buf));
+
+	if (!memcmp(buf, "\x00PBP", 4)) {
+		sceIoLseek(fd, tou32(buf + 0x24), 0);
+		sceIoRead(fd, buf, 0xC);
+
+		if (!memcmp(buf, "NPUMDIMG", 8)) {
+			ret = memcmp(buf + 8, "\x03\x00\x00\x01", 4); //disable patch if fixed key version is detected.
+		}
+	}
+
+	sceIoClose(fd);
+
+	return ret;
+}
+
+static void patch_drm() {
+	u32 addr, data;
+
+	for (addr = g_np9660_mod->text_addr; addr < (g_np9660_mod->text_addr + g_np9660_mod->text_size); addr += 4) {
+		data = VREAD32(addr);
+
+		if (data == 0x3C118021) { //lui        $s1, 0x8021
+			// Patch memcmp, ensures the kernel continues to decrypt the eboot.
+			MAKE_INSTRUCTION(addr - 4, 0x1021);
+		} else if (data == 0x3C098055) { //lui        $t1, 0x8055
+			HIJACK_FUNCTION(addr - 4, setupEbootVersionKeyPatched, _setupEbootVersionKey);
+			break;
+		}
+	}
+
+	sctrlFlushCache();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// PATCHED IMPLEMENTATIONS
+////////////////////////////////////////////////////////////////////////////////
 
 static int do_open_patched(char *file, int flags, SceMode mode, int async, int retAddr, int oldK1) {
 	if (flags & 0x40000000) {
@@ -165,30 +217,6 @@ int sceNpDrmEdataGetDataSizePatched(SceUID fd) {
 	return res;
 }
 
-static u32 tou32(u8 *buf) {
-	return (u32)(buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24));
-}
-
-static int is_licensed_eboot(const char *path) {
-	int ret = 0;
-	u8 buf[0x28];
-	SceUID fd = sceIoOpen(path, PSP_O_RDONLY, 0);
-	sceIoRead(fd, buf, sizeof(buf));
-
-	if (!memcmp(buf, "\x00PBP", 4)) {
-		sceIoLseek(fd, tou32(buf + 0x24), 0);
-		sceIoRead(fd, buf, 0xC);
-
-		if (!memcmp(buf, "NPUMDIMG", 8)) {
-			ret = memcmp(buf + 8, "\x03\x00\x00\x01", 4); //disable patch if fixed key version is detected.
-		}
-	}
-
-	sceIoClose(fd);
-
-	return ret;
-}
-
 //patches sceNpDrmEdataSetupKey and sceNpDrmGetModuleKey
 int (* _setupEdatVersionKey)(u8 *vkey, u8 *edat, int size);
 // variable EDAT/SPRX vkey per game, do not backup vkey.
@@ -233,34 +261,6 @@ int setupEbootVersionKeyPatched(u8 *vkey, u8 *cid, u32 type, u8 *act) {
 	return ret;
 }
 
-SceModule* g_np9660_mod = NULL;
-void patch_drm() {
-	u32 addr, data;
-
-	for (addr = g_np9660_mod->text_addr; addr < (g_np9660_mod->text_addr + g_np9660_mod->text_size); addr += 4) {
-		data = VREAD32(addr);
-
-		if (data == 0x3C118021) { //lui        $s1, 0x8021
-			// Patch memcmp, ensures the kernel continues to decrypt the eboot.
-			MAKE_INSTRUCTION(addr - 4, 0x1021);
-		} else if (data == 0x3C098055) { //lui        $t1, 0x8055
-			HIJACK_FUNCTION(addr - 4, setupEbootVersionKeyPatched, _setupEbootVersionKey);
-			break;
-		}
-	}
-
-	SceModule *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
-
-	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
-		if (VREAD32(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
-			HIJACK_FUNCTION(addr - 8, setupEdatVersionKeyPatched, _setupEdatVersionKey);
-			break;
-		}
-	}
-
-	sctrlFlushCache();
-}
-
 int (* _initEboot)(const char *eboot, u32 a1) = NULL;
 int initEbootPatched(const char *eboot, u32 a1) {
 	if ((g_licensed_eboot = is_licensed_eboot(eboot))) {
@@ -270,6 +270,10 @@ int initEbootPatched(const char *eboot, u32 a1) {
 
 	return _initEboot(eboot, a1);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// MODULE PATCHERS
+////////////////////////////////////////////////////////////////////////////////
 
 void PatchNp9660Driver(SceModule* mod) {
 	// Do not patch if configured to not patch it
@@ -314,6 +318,14 @@ void PatchNpDrmDriver(SceModule* mod) {
 	}
 
 	u32 text_addr = mod->text_addr;
+
+	for (u32 addr = text_addr; addr < (text_addr + mod->text_size); addr += 4) {
+		if (VREAD32(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
+			HIJACK_FUNCTION(addr - 8, setupEdatVersionKeyPatched, _setupEdatVersionKey);
+			break;
+		}
+	}
+
 	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 		SceModule *mod = sceKernelFindModuleByName("sceIOFileManager");
 
@@ -337,9 +349,9 @@ void PatchNpDrmDriver(SceModule* mod) {
 		HIJACK_FUNCTION(text_addr + 0x1514, sceNpDrmEdataGetDataSizePatched, _sceNpDrmEdataGetDataSize);
 
 		HIJACK_FUNCTION(sctrlHENFindFunction("sceModuleManager", "ModuleMgrForUser", 0xF2D8D1B4), sceKernelLoadModuleNpDrmPatched, _sceKernelLoadModuleNpDrm);
-
-		sctrlFlushCache();
 	}
+
+	sctrlFlushCache();
 }
 
 void *vshCheckBootable(void *dst, const void *src, int size) {
@@ -387,17 +399,7 @@ void PatchDrmOnVsh() {
 		return;
 	}
 
-	u32 addr;
-	SceModule *mod = sceKernelFindModuleByName("scePspNpDrm_Driver");
-
-	for (addr = mod->text_addr; addr < (mod->text_addr + mod->text_size); addr += 4) {
-		if (VREAD32(addr) == 0x2CC60080) { //sltiu      $a2, $a2, 128
-			HIJACK_FUNCTION(addr - 8, setupEdatVersionKeyPatched, _setupEdatVersionKey);
-			break;
-		}
-	}
-
-	addr = K_EXTRACT_IMPORT(sceIoOpen) + 4;
+	u32 addr = K_EXTRACT_IMPORT(sceIoOpen) + 4;
 
 	while (1) {
 		if ((VREAD32(addr) & 0xFC000000) == 0x0C000000) {
