@@ -38,6 +38,8 @@ static int (* _sceNpDrmRenameCheck)(const char *file_name) = NULL;
 static int (* _sceNpDrmEdataSetupKey)(SceUID fd) = NULL;
 static int (* _sceNpDrmEdataGetDataSize)(SceUID fd) = NULL;
 
+int (* _setupEbootVersionKey)(u8 *vkey, u8 *cid, u32 type, u8 *act) = NULL;
+
 static char g_ebootpath[256];
 static char g_pgd_path[256];
 static u8 g_pgdbuf[0x90];
@@ -46,6 +48,7 @@ static int g_is_key = 0;
 static SceModule* g_np9660_mod = NULL;
 int g_licensed_eboot = 0;
 
+int setupEbootVersionKeyPatched(u8 *vkey, u8 *cid, u32 type, u8 *act);
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
@@ -236,7 +239,6 @@ int setupEdatVersionKeyPatched(u8 *vkey, u8 *edat, int size) {
 	return ret;
 }
 
-int (* _setupEbootVersionKey)(u8 *vkey, u8 *cid, u32 type, u8 *act);
 int setupEbootVersionKeyPatched(u8 *vkey, u8 *cid, u32 type, u8 *act) {
 	// Prevent SceNpUmdMount thread from crashing during suspend/resume process if rif/act.dat fails.
 	if (g_is_key) {
