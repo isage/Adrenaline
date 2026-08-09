@@ -12,6 +12,8 @@
 
 - **DEV:** Introduce `sctrlHENSetSystemBootedHandler`
 	- It allows to se a handler that is called only once when the system just finished the boot sequence.
+- **DEV:** Introduce `NoDrmHelper` CFW library
+    - Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.
 
 ## v8.0.2
 
