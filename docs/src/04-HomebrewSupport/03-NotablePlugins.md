@@ -69,7 +69,7 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 > [!IMPORTANT]
 > This plugins must be installed in the `???0:/pspemu/CXMB/cxmb.prx` path or else it will refuse to work.
 
-[Download CXMB Here](https://wololo.net/talk/download/file.php?id=3995&sid=e959a08b2f9096913455fac40e7ef84c)
+[Download CXMB Here](https://www.mediafire.com/file/vg69yg77aly6h66/Adrenaline_eCFW_PluginsPack_wmxp.rar)
 
 > [!EXAMPLE]
 > On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
@@ -180,7 +180,7 @@ A cheat device compatible with every game. Requires an updated cheat database to
 
 It can be enabled on every game, but should be disabled for GTA games where their specific cheatdevice is preferred.
 
-[Download CWCheat Here](https://drive.google.com/open?id=1-PF-CmVGVvW5i-IXFxan4HLXZP8bUrm1)
+[Download CWCheat Here](https://www.mediafire.com/file/vg69yg77aly6h66/Adrenaline_eCFW_PluginsPack_wmxp.rar)
 
 [Download latest cheat database Here](https://github.com/Saramagrean/CWCheat-Database-Plus-)
 
