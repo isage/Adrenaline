@@ -67,7 +67,7 @@ With this plugin you can install custom XMB themes made by the community.
 This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 
 > [!IMPORTANT]
-> This plugins must be installed in the `/seplugins/cxmb/cxmb.prx` path or else it will refuse to work.
+> This plugins must be installed in the `???0:/pspemu/CXMB/cxmb.prx` path or else it will refuse to work.
 
 [Download CXMB Here](https://wololo.net/talk/download/file.php?id=3995&sid=e959a08b2f9096913455fac40e7ef84c)
 
@@ -75,7 +75,7 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 > On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >
 > ```
-> xmb, ms0:/seplugins/cxmb/cxmb.prx, on
+> xmb, ms0:/CXMB/cxmb.prx, on
 > ```
 
 ## PRO Online
