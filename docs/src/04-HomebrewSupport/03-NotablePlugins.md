@@ -1,25 +1,6 @@
 # Notable Plugins
 ---
 
-## CXMB
----
-
-One of the most important plugins for customization. With this plugin you can install custom XMB themes made by the community.
-
-This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
-
-> [!IMPORTANT]
-> This plugins must be installed in the `/seplugins/cxmb/cxmb.prx` path or else it will refuse to work.
-
-[Download CXMB Here](https://wololo.net/talk/download/file.php?id=3995&sid=e959a08b2f9096913455fac40e7ef84c)
-
-> [!EXAMPLE]
-> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
->
-> ```
-> xmb, ms0:/seplugins/cxmb/cxmb.prx, on
-> ```
-
 ## Game Categories Lite
 ---
 
@@ -34,7 +15,15 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 > vsh, ms0:/seplugins/category_lite.prx, on
 > ```
 
+> [!IMPORTANT]
+> This plugin must be the first `vsh` context plugin listed.
+
+[Download Game Categories Lite by wad11656](https://github.com/wad11656/game-categories-lite/releases/latest): This one has support for Epinephrine System Storage support.
+
+[Download Game Categories Lite by ticky](https://github.com/ticky/game-categories-lite/releases/latest)
+
 ## Vshbgm
+---
 
 This plugin allows to execute a user-provided mp3 as a background music on the VSH (XMB).
 
@@ -54,6 +43,39 @@ This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
 >
 > ```
 > vsh, ms0:/seplugins/vshbgm.prx, on
+> ```
+
+## XMB Item Hider
+---
+
+A plugin to hide XMB menu items. It has support to work together with Game Categories Lite.
+
+[Download XMB Item Hider Here](https://github.com/wad11656/XMB-Item-Hider-PSP/releases/latest)
+
+> [!EXAMPLE]
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
+>
+> ```
+> vsh, ms0:/seplugins/xmbih.prx, on
+> ```
+
+## CXMB
+---
+
+With this plugin you can install custom XMB themes made by the community.
+
+This plugin should be enabled for `VSH` (also known as `XMB`) mode only.
+
+> [!IMPORTANT]
+> This plugins must be installed in the `/seplugins/cxmb/cxmb.prx` path or else it will refuse to work.
+
+[Download CXMB Here](https://wololo.net/talk/download/file.php?id=3995&sid=e959a08b2f9096913455fac40e7ef84c)
+
+> [!EXAMPLE]
+> On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
+>
+> ```
+> xmb, ms0:/seplugins/cxmb/cxmb.prx, on
 > ```
 
 ## PRO Online
@@ -136,7 +158,7 @@ It includes plugins for:
 
 TempAR is a complete rewrite of the popular PSP cheat device NitePR/MKULTRA, with additional features and improvements created by raing3.
 
-[Download TempAR PSP Here](https://github.com/raing3/tempar/releases/latest)
+[Download TempAR PSP Here](https://psp.brewology.com/downloads/download.php?id=13092&mcid=1)
 
 > [!EXAMPLE]
 > On `???0:/pspemu/seplugins/plugins.txt`, add the following lines:
