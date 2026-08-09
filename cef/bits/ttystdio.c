@@ -5,7 +5,7 @@
 #include <pspdebug.h>
 #include <pspkernel.h>
 
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 extern SceAdrenaline *g_adrenaline;
 

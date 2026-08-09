@@ -26,12 +26,12 @@
 
 #include <cfwmacros.h>
 #include <systemctrl_se.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 #include <adrenaline_log.h>
 
 #include "externs.h"
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 typedef struct LbaParams {
 	int unknown1; // 0

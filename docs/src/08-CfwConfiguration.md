@@ -177,24 +177,29 @@ Incorrect configuration may lead to unexpected issues, so proceed with caution a
 > [!TIP]
 > On the XMB CFW menu, advanced settings are marked with the `▲` symbol.
 
-### Force high memory layout
+### High memory layout
 
 Controls whether to force the unlock extra RAM space for the user-space RAM partition, that can be used by games and apps.
 
 #### Options:
 
-- `Disabled`: With this option, no specific memory layout is forced.
+- `Default`: With this option, no specific memory layout is forced.
 	- By default, user RAM partition gets the standard 24MB.
 	- Homebrew games/apps can request other layout by using the `MEMSIZE` in their `SFO` information or by using the CFW API.
 	- Plugin author can use the CFW API to request changing the layout.
-- `Stable`: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
+- `Force Stable`: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
 	- When this options is set, it truly forces it, any requests to modify it will result in it being "ignored" (the CFW API returns an error informing that is not possible to modify the memory layout).
-- `Max`: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
+- `Force Max`: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
 	- When this options is set, it truly forces it, any requests to modify it will result in it being "ignored" (the CFW API returns an error informing that is not possible to modify the memory layout).
-
+- `Force Disabled`: This option forces the the system to always have the same memory layout as the unmodified PSP firmware.
+    - This means the `MEMSIZE` option in homebrew `SFO` will be ignored
+	- CFW API to request changes to memory layout will always fail.
 
 > [!WARNING] Max Option Warning
 > Some important stuff for the VITA's PSPemu are put in this region of memory. Although Epinephrine protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.
+
+> [!TIP]
+> Homebrew developers can use the `Force Disabled` to test with more certainty if the homebrew will work on PSP 1000 models when testing on real 1000 model is not possible.
 
 ### Fake max free memory
 

@@ -32,12 +32,12 @@
 #include <bootloadex.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 #include <adrenaline_log.h>
 
 #include "externs.h"
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 #include "rebootex.h"
 #include "plugin.h"
@@ -294,7 +294,10 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 			}
 		}
 
-		if (largememory == 1) {
+		if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_OFF) {
+			sctrlHENSetMemory(24, 16);
+			ApplyMemory();
+		} if (largememory == 1) {
 			sctrlHENSetMemory(52, 0);
 			ApplyMemory();
 		} else if (largememory == 2) {
@@ -550,7 +553,7 @@ void PatchPluginModule(SceModule *mod) {
 	// If p11 is too small and module is a user module, patch function to use p2 instead of p11
 
 	if ((mod->mod_state & SCE_MODULE_USER_MODULE)
-		&& g_cfw_config.force_high_memory == HIGHMEM_OPT_OFF
+		&& g_cfw_config.high_memory == HIGHMEM_OPT_DEFAULT
 		&& ((g_rebootex_config.ram11 * 1024 * 1024) <= g_plugins_loaded_mem
 			||  g_rebootex_config.ram11 <= 2))
 	{

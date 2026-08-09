@@ -32,7 +32,7 @@ static char *g_region_options[] = {
 	"Russia",         "China",         "Debug I",   "Debug II"
 };
 
-static char *g_highmem_options[] = {"Disabled", "Stable", "Max"};
+static char *g_highmem_options[] = {"Default", "Force Stable", "Force Max", "Force Disabled"};
 
 static char *g_use_extended_color_option[] = {"Disabled", "02g", "03g"};
 

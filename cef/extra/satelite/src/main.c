@@ -91,7 +91,7 @@ static Entry g_adv_quick_game_entries_p1[] = {
 	{ "USE SONY PSP OSK", NULL, g_disenabled, NELEMS(g_disenabled), &g_cfw_config.use_sony_psposk, 0 },
 	{ "MS CACHE", NULL, g_endisabled, NELEMS(g_endisabled), &g_cfw_config.no_ms_cache, 0 },
 	{ "", NULL, NULL, 0, NULL, 0 },
-	{ "FORCE HIGH MEM", NULL, g_highmem, NELEMS(g_highmem), &g_cfw_config.force_high_memory, 0 },
+	{ "HIGH MEMORY", NULL, g_highmem, NELEMS(g_highmem), &g_cfw_config.high_memory, 0 },
 	{ "FAKE MAX FREE RAM", NULL, g_fake_free_mem, NELEMS(g_fake_free_mem), &g_cfw_config.fake_max_free_mem, 0 },
 	{ "", NULL, NULL, 0, NULL, 0 },
 	{ "PART 2", switchAdvGameMenuP2, NULL, 0, NULL, 0 },

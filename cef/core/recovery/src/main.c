@@ -23,7 +23,7 @@
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>

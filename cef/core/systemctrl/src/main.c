@@ -28,7 +28,7 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <infernoctrl.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
@@ -133,7 +133,7 @@ static void OnSystemStatusIdle() {
 
 		// Handle Inferno Iso cache
 		if (g_rebootex_config.bootfileindex == MODE_INFERNO && g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
-			if (g_rebootex_config.ram2 > 24 || g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) {
+			if (g_rebootex_config.ram2 > 24 || g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT || g_cfw_config.high_memory != HIGHMEM_OPT_FORCE_OFF) {
 				g_cfw_config.iso_cache_partition = 2;
 			} else {
 				g_cfw_config.iso_cache_partition = 11;
@@ -283,13 +283,19 @@ static int OnModuleStart(SceModule *mod) {
 		logmsg3("[INFO]: Fake Apitype: 0x%X\n", g_adrenaline->fake_api_type);
 		logmsg3("[INFO]: Filename: %s\n", sceKernelInitFileName());
 
-		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) {
-			if (g_cfw_config.force_high_memory == HIGHMEM_OPT_STABLE) {
+		if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_OFF) {
+			// Set to normal and not allow to change it.
+			sctrlHENSetMemory(24, 16);
+			ApplyMemory();
+
+		} else if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT) {
+			if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_STABLE) {
 				sctrlHENSetMemory(40, 0);
-			} else if (g_cfw_config.force_high_memory == HIGHMEM_OPT_MAX) {
+			} else if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_MAX) {
 				sctrlHENSetMemory(52, 0);
 			}
 			ApplyMemory();
+
 		} else {
 			// If not force-high-memory. Make sure to make p11 as big as
 			// possible (stable), but in a state that if a game request

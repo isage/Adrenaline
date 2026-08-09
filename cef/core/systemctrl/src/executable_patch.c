@@ -25,7 +25,7 @@
 #include <pspelf.h>
 #include <cfwmacros.h>
 #include <pspextratypes.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 #include <adrenaline_log.h>
 
 #include "externs.h"
@@ -212,11 +212,11 @@ int PartitionCheckPatched(SceModuleMgrParam *mod_param, SceLoadCoreExecFileInfo 
 		// Use p2 is ram2 size `> 24` (normal user mem) and ram11 `< 4` (arbitrary), or force high mem turned on
 
 		if (mod_param->mpid_data == PSP_MEMORY_PARTITION_UNKNOWN) {
-			mod_param->mpid_data = ((g_rebootex_config.ram2 > 24 && g_rebootex_config.ram11 < 4) || g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) ? 2 : 11;
+			mod_param->mpid_data = ((g_rebootex_config.ram2 > 24 && g_rebootex_config.ram11 < 4) || g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT) ? 2 : 11;
 		}
 
 		if (mod_param->mpid_text == PSP_MEMORY_PARTITION_UNKNOWN) {
-			mod_param->mpid_text = ((g_rebootex_config.ram2 > 24 && g_rebootex_config.ram11 < 4) || g_cfw_config.force_high_memory != HIGHMEM_OPT_OFF) ? 2 : 11;
+			mod_param->mpid_text = ((g_rebootex_config.ram2 > 24 && g_rebootex_config.ram11 < 4) || g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT) ? 2 : 11;
 		}
 	}
 

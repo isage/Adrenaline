@@ -22,7 +22,7 @@
 #include <pspiofilemgr.h>
 
 #include <systemctrl_se.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 #include <adrenaline_log.h>
 
@@ -87,7 +87,7 @@ static void migrate_config717(SEConfigEPI717* old, SEConfigEPI* new){
 	new->no_xmb_plugins = old->no_xmb_plugins;
 	new->no_game_plugins = old->no_game_plugins;
 	new->no_pops_plugins = old->no_pops_plugins;
-	new->force_high_memory = old->force_high_memory;
+	new->high_memory = old->force_high_memory;
 	new->execute_boot_bin = old->execute_boot_bin;
 	new->recovery_color = old->recovery_color;
 }

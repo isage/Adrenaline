@@ -25,7 +25,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 #include <rebootexconfig.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 
 #include "libc.h"
 

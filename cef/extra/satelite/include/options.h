@@ -7,7 +7,7 @@ static char *g_endisabled[] = { "Enabled", "Disabled" };
 static char *g_cpuspeeds[] = { "Default", "20/10", "75/37", "100/50", "133/66", "222/111", "266/133", "300/150", "333/166" };
 static char *g_umdmodes[] = { "Inferno", "M33 Driver", "ME Driver", "Sony NP9660" };
 
-static char *g_highmem[] = { "Default", "Stable", "Max" };
+static char *g_highmem[] = {"Default", "Force Stable", "Force Max", "Force Disabled"};;
 static char *g_iso_cache[] = {"LRU", "RR", "Off"};
 static char *g_iso_cache_num[] = {"Auto", "1", "2", "4", "8", "16", "32", "64", "128"};
 static char *g_iso_cache_size[] = {"Auto", "1KB", "2KB", "4KB", "8KB", "16KB", "32KB", "64KB"};

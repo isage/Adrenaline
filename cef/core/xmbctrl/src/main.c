@@ -25,7 +25,7 @@
 
 #include <vshctrl.h>
 #include <systemctrl.h>
-#include <systemctrl_adrenaline.h>
+#include <systemctrl_epi.h>
 #include <cfwmacros.h>
 
 #define _ADRENALINE_LOG_IMPL_
@@ -63,7 +63,7 @@ GetItem g_menu_items[] = {
 	{17, 1, "NoDRM engine", 1, 0, &g_cfw_config.no_nodrm_engine},
 	{18, 1, "XMB CFW Settings", 1, 0, &g_cfw_config.no_xmb_cfw_items},
 	{19, 0, "VSH Menu", 1, 0, &g_cfw_config.vsh_menu},
-	{20, 0, "Force high memory layout", 0, 1, &g_cfw_config.force_high_memory},
+	{20, 0, "High memory layout", 0, 1, &g_cfw_config.high_memory},
 	{21, 0, "Fake max free memory", 0, 1, &g_cfw_config.fake_max_free_mem},
 	{22, 0, "PSP game/app plugin RAM Partition", 0, 1, &g_cfw_config.psp_game_plugin_ram},
 	{23, 0, "Use Graphic Engine 2", 0, 1, &g_cfw_config.use_ge2},

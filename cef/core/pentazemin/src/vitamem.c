@@ -48,7 +48,7 @@ int memoryHandlerVita(u32 p2){
 	// the first 16MB are stable and good enough for most use cases
 	// but homebrew that require extra ram will be allowed to use (some of) the upper 16MB
 	if (p2 > 52){
-		p2 = 52; //(se_config->force_high_memory == 2)? 52 : 40;
+		p2 = 52; //(se_config->high_memory == 2)? 52 : 40;
 	}
 
 	// call orig function to determine if can unlock
