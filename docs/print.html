@@ -37,10 +37,10 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-8306d78f.js";
+            window.path_to_searchindex_js = "searchindex-97acf81c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-cc1a0f18.js"></script>
+        <script src="toc-1af7a252.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -2993,31 +2993,6 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </style>
 <h1 id="notable-plugins"><a class="header" href="#notable-plugins">Notable Plugins</a></h1>
 <hr>
-<h2 id="cxmb"><a class="header" href="#cxmb">CXMB</a></h2>
-<hr>
-<p>One of the most important plugins for customization. With this plugin you can install custom XMB themes made by the community.</p>
-<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
-<div class="mdbook-callouts mdbook-callouts-important">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  important
-</p>
-
-<p>This plugins must be installed in the <code>/seplugins/cxmb/cxmb.prx</code> path or else it will refuse to work.</p>
-</div>
-
-<p><a href="https://wololo.net/talk/download/file.php?id=3995&amp;sid=e959a08b2f9096913455fac40e7ef84c">Download CXMB Here</a></p>
-<div class="mdbook-callouts mdbook-callouts-example">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  example
-</p>
-
-<p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
-<pre><code>xmb, ms0:/seplugins/cxmb/cxmb.prx, on
-</code></pre>
-</div>
-
 <h2 id="game-categories-lite"><a class="header" href="#game-categories-lite">Game Categories Lite</a></h2>
 <hr>
 <p>This plugin lets you organize your games in subfolders where you can more easily find them and have the XMB load them faster. An important plugin these days of high capacity memory sticks that fit hundreds of games, way more than the PSP was supposed to handle with its limited memory.</p>
@@ -3033,7 +3008,19 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 </code></pre>
 </div>
 
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+
+<p>This plugin must be the first <code>vsh</code> context plugin listed.</p>
+</div>
+
+<p><a href="https://github.com/wad11656/game-categories-lite/releases/latest">Download Game Categories Lite by wad11656</a>: This one has support for Epinephrine System Storage support.</p>
+<p><a href="https://github.com/ticky/game-categories-lite/releases/latest">Download Game Categories Lite by ticky</a></p>
 <h2 id="vshbgm"><a class="header" href="#vshbgm">Vshbgm</a></h2>
+<hr>
 <p>This plugin allows to execute a user-provided mp3 as a background music on the VSH (XMB).</p>
 <p>Music automatically stops for media playback, UMD games, or other sounds. Giving you a smooth audio experience while navigating your XMB menus.</p>
 <p>The plugin expects the mp3 file to be in a very specific format. But no worries, as the site provides a way to convert it in the site, not only that, you can provide more than one mp3 source, it also merge the files in a single mp3 file, giving a experience similar to having a mini playlist as background music.</p>
@@ -3049,6 +3036,46 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 
 <p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
 <pre><code>vsh, ms0:/seplugins/vshbgm.prx, on
+</code></pre>
+</div>
+
+<h2 id="xmb-item-hider"><a class="header" href="#xmb-item-hider">XMB Item Hider</a></h2>
+<hr>
+<p>A plugin to hide XMB menu items. It has support to work together with Game Categories Lite.</p>
+<p><a href="https://github.com/wad11656/XMB-Item-Hider-PSP/releases/latest">Download XMB Item Hider Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+
+<p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
+<pre><code>vsh, ms0:/seplugins/xmbih.prx, on
+</code></pre>
+</div>
+
+<h2 id="cxmb"><a class="header" href="#cxmb">CXMB</a></h2>
+<hr>
+<p>With this plugin you can install custom XMB themes made by the community.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+
+<p>This plugins must be installed in the <code>???0:/pspemu/CXMB/cxmb.prx</code> path or else it will refuse to work.</p>
+</div>
+
+<p><a href="https://www.mediafire.com/file/vg69yg77aly6h66/Adrenaline_eCFW_PluginsPack_wmxp.rar">Download CXMB Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+
+<p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
+<pre><code>xmb, ms0:/CXMB/cxmb.prx, on
 </code></pre>
 </div>
 
@@ -3145,7 +3172,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <h2 id="tempar-psp"><a class="header" href="#tempar-psp">TempAR PSP</a></h2>
 <hr>
 <p>TempAR is a complete rewrite of the popular PSP cheat device NitePR/MKULTRA, with additional features and improvements created by raing3.</p>
-<p><a href="https://github.com/raing3/tempar/releases/latest">Download TempAR PSP Here</a></p>
+<p><a href="https://psp.brewology.com/downloads/download.php?id=13092&amp;mcid=1">Download TempAR PSP Here</a></p>
 <div class="mdbook-callouts mdbook-callouts-example">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -3165,7 +3192,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <hr>
 <p>A cheat device compatible with every game. Requires an updated cheat database to recognize most games.</p>
 <p>It can be enabled on every game, but should be disabled for GTA games where their specific cheatdevice is preferred.</p>
-<p><a href="https://drive.google.com/open?id=1-PF-CmVGVvW5i-IXFxan4HLXZP8bUrm1">Download CWCheat Here</a></p>
+<p><a href="https://www.mediafire.com/file/vg69yg77aly6h66/Adrenaline_eCFW_PluginsPack_wmxp.rar">Download CWCheat Here</a></p>
 <p><a href="https://github.com/Saramagrean/CWCheat-Database-Plus-">Download latest cheat database Here</a></p>
 <div class="mdbook-callouts mdbook-callouts-example">
 <p class="mdbook-callouts-title">
@@ -5906,6 +5933,37 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Some games may require more specific values to make then stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the <a href="https://github.com/isage/Adrenaline/issues">project issue tracer</a> (but also check first to avoid opening duplicated issue tracker).</p>
 </div>
 
+<h3 id="psp-gameapp-plugin-ram-partition"><a class="header" href="#psp-gameapp-plugin-ram-partition">PSP game/app plugin RAM Partition</a></h3>
+<p>Controls in what RAM partition userland plugins are loaded in PSP game/apps.</p>
+<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
+<ul>
+<li><code>Try Extra RAM</code>: Attempts to load the userland plugin on the extra RAM partition, if that fails, attempts to load the plugin on the game RAM partition.
+<ul>
+<li>It makes plugins not use the game memory, avoiding game crashes with out-of-memory exception when loading too many userland plugins or plugins too greedy with memory.</li>
+<li>If <a href="#force-high-memory-layout">Force high memory layout</a> is enabled, this options will effectively work like <code>Game RAM</code> option.</li>
+</ul>
+</li>
+<li><code>Game RAM</code>: Always attempts to load the userland plugin on the game RAM partition. This is the classical behavior.</li>
+</ul>
+<div class="mdbook-callouts mdbook-callouts-tip">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  tip
+</p>
+
+<p>If a plugin is not loading with the <code>Try Extra RAM</code> <strong>and</strong> you already checked plugin configuration file, you can try to change this option to <code>Game RAM</code> and test it out.</p>
+</div>
+
+<div class="mdbook-callouts mdbook-callouts-warning">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  warning
+</p>
+
+<p>The <code>Try Extra RAM</code> options allows to the system to load way more userland plugins than the classical way, because the extra RAM partition is not used by anything in the system (unless with <code>Force high memory layout</code>, that integrates the extra RAM to game/user RAM partition) and doesn’t get in the way of the memory used by games/apps.</p>
+<p>For that reason, if you need to change to the <code>Game RAM</code> option, it is recommended to disable unnecessary PSP game plugins.</p>
+</div>
+
 <h3 id="use-graphic-engine-2"><a class="header" href="#use-graphic-engine-2">Use Graphic Engine 2</a></h3>
 <p>Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
@@ -5965,7 +6023,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h3 id="inferno-iso-cache-policy"><a class="header" href="#inferno-iso-cache-policy">Inferno ISO cache policy</a></h3>
 <p>Configures what cache policy the <code>Inferno</code> UMDemu driver will use for its overall cache (also known as <code>Inferno Cache</code>).</p>
-<h4 id="options-9"><a class="header" href="#options-9">Options:</a></h4>
+<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
 <ul>
 <li><code>LRU</code>: Least Recently Used policy. Uses less cpu cycles because it will discards the cache slot from the queue that have not been used in a timeframe when new cache item needs to be added.</li>
 <li><code>RR</code>: Random Replacement policy. Uses slightly less memory as it doesn’t need to keep track of data related to cache slots usage. It can be beneficial for uniform or streaming reading patterns.</li>
@@ -5983,7 +6041,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Configures how many caches the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-10"><a class="header" href="#options-10">Options:</a></h4>
+<h4 id="options-11"><a class="header" href="#options-11">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1</code></li>
@@ -5999,7 +6057,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Configures the size of cache the <code>Inferno</code> UMDemu driver will use for <code>Inferno Cache</code>.</p>
 <p>This also could improve the execution of a game/app at the cost of using more memory.</p>
 <p>Any option other than <code>Auto</code> will always use that value for all ISO games and apps launched with the <code>Inferno</code> driver.</p>
-<h4 id="options-11"><a class="header" href="#options-11">Options:</a></h4>
+<h4 id="options-12"><a class="header" href="#options-12">Options:</a></h4>
 <ul>
 <li><code>Auto</code>: Uses the default value <code>32KB</code>, but also can change based on automatic game patches and fixes, including totally disabling Inferno Cache.</li>
 <li><code>1KB</code></li>
@@ -6367,7 +6425,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h3 id="button-assign"><a class="header" href="#button-assign">Button assign</a></h3>
 <p>Configures what button is used for confirmation/enter system-wide.</p>
-<h4 id="options-12"><a class="header" href="#options-12">Options:</a></h4>
+<h4 id="options-13"><a class="header" href="#options-13">Options:</a></h4>
 <ul>
 <li><code>⭕️ is enter</code></li>
 <li><code>❌ is enter</code></li>
@@ -8383,19 +8441,47 @@ ur0:tai/my_awesome_plugins.suprx
 </style>
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <hr>
+<h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
+<h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
+<ul>
+<li>
+<p>Add option to select PSP game plugin loading behavior <strong>[<a href="#psp-gameapp-plugin-ram-partition">docs</a>]</strong></p>
+</li>
+<li>
+<p>Fix branch logic for plugins patch</p>
+</li>
+<li>
+<p>Fix formatting issues on recovery</p>
+</li>
+<li>
+<p>Refactor SystemControl and Pentazemin modules to use <code>sctrlHENSetSystemBootedHandler</code></p>
+</li>
+<li>
+<p><strong>DEV:</strong> Introduce <code>sctrlHENSetSystemBootedHandler</code></p>
+<ul>
+<li>It allows to se a handler that is called only once when the system just finished the boot sequence.</li>
+</ul>
+</li>
+<li>
+<p><strong>DEV:</strong> Introduce <code>NoDrmHelper</code> CFW library</p>
+<ul>
+<li>Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.</li>
+</ul>
+</li>
+</ul>
 <h2 id="v802"><a class="header" href="#v802">v8.0.2</a></h2>
 <h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
 <ul>
 <li>Fix the PS1 overlay image not processing correctly</li>
 </ul>
-<h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
+<h3 id="epinephrine-cfw-1-1"><a class="header" href="#epinephrine-cfw-1-1">Epinephrine CFW</a></h3>
 <ul>
 <li>Fix <code>Saved Data Utility</code> not opening with <code>System Storage</code> set to disabled.</li>
 <li>Fix XMB Memory Stick item showing zero free space after accessing <code>Saved Data Utility</code></li>
 <li>Fix plugins failing to load on POPS (PS1 titles)</li>
 <li>Fix crash in opening context menu when <code>XMB CFW Settings</code> is disabled</li>
 <li>Fix Uncategorized category on Categories Lite showing corrupt icons</li>
-<li>Refactor: Don’t try to load userlevel plugins on extra RAM</li>
+<li>Refactor: Don’t try to load userlevel plugins on extra RAM on POPS</li>
 <li>Refactor: Make fake <code>TotalFreeMem</code> more precise</li>
 <li><strong>DEV:</strong> Fix <code>guglue</code> library not exported with weak reference support</li>
 </ul>
@@ -8404,7 +8490,7 @@ ur0:tai/my_awesome_plugins.suprx
 <li>Feature: Upgrade the design of the updater</li>
 </ul>
 <h2 id="v801"><a class="header" href="#v801">v8.0.1</a></h2>
-<h3 id="epinephrine-cfw-1-1"><a class="header" href="#epinephrine-cfw-1-1">Epinephrine CFW</a></h3>
+<h3 id="epinephrine-cfw-2"><a class="header" href="#epinephrine-cfw-2">Epinephrine CFW</a></h3>
 <ul>
 <li>Fixed <code>Categories Lite</code> not able to find the categorized ISO files</li>
 </ul>
@@ -8429,7 +8515,7 @@ ur0:tai/my_awesome_plugins.suprx
 <li>Pauses PSP game when Adrenaline Menu is opened</li>
 <li>Implement the ability to hide the Adrenaline Menu to better look at the screen for differences</li>
 </ul>
-<h3 id="epinephrine-cfw-2"><a class="header" href="#epinephrine-cfw-2">Epinephrine CFW</a></h3>
+<h3 id="epinephrine-cfw-3"><a class="header" href="#epinephrine-cfw-3">Epinephrine CFW</a></h3>
 <ul>
 <li>
 <p><strong>Breaking change:</strong> New plugin configuration format <strong>[<a href="#plugin-configuration-format">docs</a>]</strong></p>

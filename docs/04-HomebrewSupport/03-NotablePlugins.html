@@ -36,10 +36,10 @@
             const path_to_root = "../";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "../searchindex-8306d78f.js";
+            window.path_to_searchindex_js = "../searchindex-97acf81c.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-cc1a0f18.js"></script>
+        <script src="../toc-1af7a252.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -414,31 +414,6 @@
 </style>
 <h1 id="notable-plugins"><a class="header" href="#notable-plugins">Notable Plugins</a></h1>
 <hr>
-<h2 id="cxmb"><a class="header" href="#cxmb">CXMB</a></h2>
-<hr>
-<p>One of the most important plugins for customization. With this plugin you can install custom XMB themes made by the community.</p>
-<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
-<div class="mdbook-callouts mdbook-callouts-important">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  important
-</p>
-
-<p>This plugins must be installed in the <code>/seplugins/cxmb/cxmb.prx</code> path or else it will refuse to work.</p>
-</div>
-
-<p><a href="https://wololo.net/talk/download/file.php?id=3995&amp;sid=e959a08b2f9096913455fac40e7ef84c">Download CXMB Here</a></p>
-<div class="mdbook-callouts mdbook-callouts-example">
-<p class="mdbook-callouts-title">
-  <span class="mdbook-callouts-icon"></span>
-  example
-</p>
-
-<p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
-<pre><code>xmb, ms0:/seplugins/cxmb/cxmb.prx, on
-</code></pre>
-</div>
-
 <h2 id="game-categories-lite"><a class="header" href="#game-categories-lite">Game Categories Lite</a></h2>
 <hr>
 <p>This plugin lets you organize your games in subfolders where you can more easily find them and have the XMB load them faster. An important plugin these days of high capacity memory sticks that fit hundreds of games, way more than the PSP was supposed to handle with its limited memory.</p>
@@ -454,7 +429,19 @@
 </code></pre>
 </div>
 
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+
+<p>This plugin must be the first <code>vsh</code> context plugin listed.</p>
+</div>
+
+<p><a href="https://github.com/wad11656/game-categories-lite/releases/latest">Download Game Categories Lite by wad11656</a>: This one has support for Epinephrine System Storage support.</p>
+<p><a href="https://github.com/ticky/game-categories-lite/releases/latest">Download Game Categories Lite by ticky</a></p>
 <h2 id="vshbgm"><a class="header" href="#vshbgm">Vshbgm</a></h2>
+<hr>
 <p>This plugin allows to execute a user-provided mp3 as a background music on the VSH (XMB).</p>
 <p>Music automatically stops for media playback, UMD games, or other sounds. Giving you a smooth audio experience while navigating your XMB menus.</p>
 <p>The plugin expects the mp3 file to be in a very specific format. But no worries, as the site provides a way to convert it in the site, not only that, you can provide more than one mp3 source, it also merge the files in a single mp3 file, giving a experience similar to having a mini playlist as background music.</p>
@@ -470,6 +457,46 @@
 
 <p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
 <pre><code>vsh, ms0:/seplugins/vshbgm.prx, on
+</code></pre>
+</div>
+
+<h2 id="xmb-item-hider"><a class="header" href="#xmb-item-hider">XMB Item Hider</a></h2>
+<hr>
+<p>A plugin to hide XMB menu items. It has support to work together with Game Categories Lite.</p>
+<p><a href="https://github.com/wad11656/XMB-Item-Hider-PSP/releases/latest">Download XMB Item Hider Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+
+<p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
+<pre><code>vsh, ms0:/seplugins/xmbih.prx, on
+</code></pre>
+</div>
+
+<h2 id="cxmb"><a class="header" href="#cxmb">CXMB</a></h2>
+<hr>
+<p>With this plugin you can install custom XMB themes made by the community.</p>
+<p>This plugin should be enabled for <code>VSH</code> (also known as <code>XMB</code>) mode only.</p>
+<div class="mdbook-callouts mdbook-callouts-important">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  important
+</p>
+
+<p>This plugins must be installed in the <code>???0:/pspemu/CXMB/cxmb.prx</code> path or else it will refuse to work.</p>
+</div>
+
+<p><a href="https://www.mediafire.com/file/vg69yg77aly6h66/Adrenaline_eCFW_PluginsPack_wmxp.rar">Download CXMB Here</a></p>
+<div class="mdbook-callouts mdbook-callouts-example">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  example
+</p>
+
+<p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
+<pre><code>xmb, ms0:/CXMB/cxmb.prx, on
 </code></pre>
 </div>
 
@@ -566,7 +593,7 @@
 <h2 id="tempar-psp"><a class="header" href="#tempar-psp">TempAR PSP</a></h2>
 <hr>
 <p>TempAR is a complete rewrite of the popular PSP cheat device NitePR/MKULTRA, with additional features and improvements created by raing3.</p>
-<p><a href="https://github.com/raing3/tempar/releases/latest">Download TempAR PSP Here</a></p>
+<p><a href="https://psp.brewology.com/downloads/download.php?id=13092&amp;mcid=1">Download TempAR PSP Here</a></p>
 <div class="mdbook-callouts mdbook-callouts-example">
 <p class="mdbook-callouts-title">
   <span class="mdbook-callouts-icon"></span>
@@ -586,7 +613,7 @@
 <hr>
 <p>A cheat device compatible with every game. Requires an updated cheat database to recognize most games.</p>
 <p>It can be enabled on every game, but should be disabled for GTA games where their specific cheatdevice is preferred.</p>
-<p><a href="https://drive.google.com/open?id=1-PF-CmVGVvW5i-IXFxan4HLXZP8bUrm1">Download CWCheat Here</a></p>
+<p><a href="https://www.mediafire.com/file/vg69yg77aly6h66/Adrenaline_eCFW_PluginsPack_wmxp.rar">Download CWCheat Here</a></p>
 <p><a href="https://github.com/Saramagrean/CWCheat-Database-Plus-">Download latest cheat database Here</a></p>
 <div class="mdbook-callouts mdbook-callouts-example">
 <p class="mdbook-callouts-title">
