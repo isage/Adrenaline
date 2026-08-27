@@ -3,9 +3,14 @@
 
 ## Unreleased
 
+### Adrenaline
+- Fix savestate thumbnail on some graphical filters showing as one color plain image
+- Fix UTF-8 rendering on Adrenaline Menu
+
 ### Epinephrine CFW
 
 - Add option to select PSP game plugin loading behavior **\[[docs](./08-CfwConfiguration.md#psp-gameapp-plugin-ram-partition)\]**
+- Add option to forcibly disable high memory layout **\[[docs](./08-CfwConfiguration.md#high-memory-layout)\]**
 - Fix branch logic for plugins patch
 - Fix formatting issues on recovery
 - Refactor SystemControl and Pentazemin modules to use `sctrlHENSetSystemBootedHandler`
@@ -51,8 +56,6 @@
 - Add `Scale3x` graphical filter options **\[[docs](./03-AdrenalineMenu/02-AdrenalineSettings.md#graphics-filtering)\]**
 - Add image overlay filter for PS1 game/apps **\[[docs](./06-PS1Playback.md#overlay-image)\]**
 - Add an option to select a System Storage location to expose `ef0:` to the chosen CFW.
-- Implement a GPU-rendered VSH Menu
-  - The classical version is still available through configuration
 - "Fix" manual double launch on first install
 - Improve frame pacing on Original graphics filtering
 - Implement hold `Square` to hide Adrenaline Menu on graphics-related settings
@@ -72,6 +75,8 @@
 - Introduce an improved implementation of the GalaxyController **\[[docs](./05-PSPPlayback/05-Galaxy.md)\]**
 - Add support for launching `JSO`, `ZSO`, `CSOv2`, and `DAX` compressed ISO formats using any ISO driver. **\[[docs](./05-PSPPlayback.md#umdemu-iso-drivers)\]**
 - Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.
+- Implement a GPU-rendered VSH Menu
+  - The classical version is still available through configuration
 - Add CFW file hider in games.
 - Introduce CFW Settings on the XMB **\[[docs](./10-XmbCfwMenus.md#-adrenaline-cfw-settings)\]**
 - Introduce Plugin Manager on the XMB **\[[docs](./10-XmbCfwMenus.md#-plugins-manager)\]**

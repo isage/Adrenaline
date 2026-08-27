@@ -77,7 +77,7 @@ cmake --build cef/build
 Then, you have to build the VITA-side part:
 
 ```sh
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
