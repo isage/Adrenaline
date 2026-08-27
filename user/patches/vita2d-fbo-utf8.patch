@@ -1,0 +1,13 @@
+diff --git a/libvita2d/source/utils.c b/libvita2d/source/utils.c
+index 86825e3..87fdff2 100644
+--- a/libvita2d/source/utils.c
++++ b/libvita2d/source/utils.c
+@@ -270,7 +270,7 @@ void matrix_init_perspective(float *m, float fov, float aspect, float near, floa
+ 
+ uint32_t utf8_character(const char** unicode)
+ {
+-	char byte = **unicode;
++	unsigned char byte = **unicode;
+ 	++*unicode;
+ 	if (!(byte & 0x80)) {
+ 		return byte;

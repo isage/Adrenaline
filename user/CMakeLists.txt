@@ -12,6 +12,7 @@ project(adrenaline_user)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 include(ExternalProject)
+find_package(Git REQUIRED)
 
 if(DEFINED NIGHTLY AND NIGHTLY EQUAL 1)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostartfiles -fno-lto -nostdlib -fno-builtin -DNIGHTLY=1")
@@ -25,6 +26,9 @@ ExternalProject_Add(libvita2dfbo
     GIT_REPOSITORY https://github.com/frangarcj/vita2dlib.git
     GIT_TAG        fbo
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/libvita2dfbo
+    UPDATE_DISCONNECTED TRUE
+    PATCH_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>
+      ${GIT_EXECUTABLE} apply ${CMAKE_CURRENT_SOURCE_DIR}/patches/vita2d-fbo-utf8.patch
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND make -C libvita2d
@@ -165,4 +169,3 @@ add_custom_target(user_all
   ALL
   DEPENDS adrenaline_user.suprx-self
 )
-
