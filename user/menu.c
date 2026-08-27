@@ -730,6 +730,11 @@ int AdrenalineDraw(SceSize args, void *argp) {
 
 		// Draw Menu
 		if (menu_open && !g_hide_menu) {
+			vita2d_texture_set_program(overlay_shader->vertexProgram, overlay_shader->fragmentProgram);
+			vita2d_texture_set_wvp(overlay_shader->wvpParam);
+			vita2d_texture_set_vertexInput(&overlay_shader->vertexInput);
+			vita2d_texture_set_fragmentInput(&overlay_shader->fragmentInput);
+
 			drawMenu();
 		}
 
