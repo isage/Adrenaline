@@ -712,6 +712,11 @@ int module_start(SceSize args, void *argp) {
 
 	mspace_init();
 
+	SceIoStat stat;
+	if (sceIoGetstat("ux0:data/" ADRENALINE_TITLEID, &stat) == SCE_ENOENT) {
+		sceIoMkdir("ux0:data/" ADRENALINE_TITLEID, 0777);
+	}
+
 	// Read config
 	memset(&config, 0, sizeof(AdrenalineConfig));
 	res = ReadFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
