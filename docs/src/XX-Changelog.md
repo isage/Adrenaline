@@ -4,6 +4,7 @@
 ## Unreleased
 
 ### Adrenaline
+- Add support to use files on `ux0:data/PSPEMUCFW/` instead of `ux0:app/PSPEMUCFW/`
 - Fix savestate thumbnail on some graphical filters showing as one color plain image
 - Fix UTF-8 rendering on Adrenaline Menu
 
