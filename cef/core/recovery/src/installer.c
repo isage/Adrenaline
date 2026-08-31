@@ -201,7 +201,7 @@ void Installer() {
 		VGraphGoto(2, 24);
 		// TODO:show error dialog
 		VGraphSetTextColor(0x4, 0x0);
-		VGraphPrintf("Cannot find ux0:app/" ADRENALINE_TITLEID "/661.PBP.");
+		VGraphPrintf("Cannot find ux0:data/" ADRENALINE_TITLEID "/661.PBP or ux0:app/" ADRENALINE_TITLEID "/661.PBP.");
 		goto EXIT;
 	}
 
