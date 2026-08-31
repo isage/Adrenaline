@@ -158,6 +158,29 @@ static void initNet() {
 	sceHttpInit(40 * 1024);
 }
 
+static int check_firmware_install() {
+	SceIoStat stat;
+	memset(&stat, 0, sizeof(SceIoStat));
+
+	if (sceIoGetstat("ux0:data/" ADRENALINE_TITLEID, &stat) < 0) {
+		sceIoMkdir("ux0:data/" ADRENALINE_TITLEID, 0777);
+	}
+
+	if (sceIoGetstat("ux0:data/" ADRENALINE_TITLEID "/flash0", &stat) < 0
+		&& sceIoGetstat("ux0:data/" ADRENALINE_TITLEID "/661.PBP", &stat) < 0)
+	{
+		if (sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/flash0", &stat) < 0
+			&& sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/661.PBP", &stat) < 0)
+		{
+			return 1;
+		}
+	}
+
+
+
+	return 0;
+}
+
 int main() {
 	int res;
 
@@ -172,13 +195,10 @@ int main() {
 	// Enable write access
 	sceAppMgrUmount("app0:");
 
-	SceIoStat stat;
-	memset(&stat, 0, sizeof(SceIoStat));
-	if (sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/flash0", &stat) < 0 &&
-		sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/661.PBP", &stat) < 0) {
+	if (check_firmware_install()) {
 		printf("The 6.61 firmware has not been installed yet and 661.PBP does not\nexist.\n");
 		printf("Press X to download the PSP 6.61 firmware.\n");
-		printf("Press any other button to ignore it (but you need to manually\nput 661.PBP to ux0:app/" ADRENALINE_TITLEID "/661.PBP" ").\n\n");
+		printf("Press any other button to ignore it (but you need to manually\nput 661.PBP to ux0:data/" ADRENALINE_TITLEID "/661.PBP or ux0:app/" ADRENALINE_TITLEID "/661.PBP" ").\n\n");
 
 		while (1) {
 			SceCtrlData pad;
@@ -187,7 +207,7 @@ int main() {
 			if (pad.buttons & SCE_CTRL_CROSS) {
 				initNet();
 
-				res = downloadFile(EBOOT_URL, "ux0:app/" ADRENALINE_TITLEID "/661.PBP");
+				res = downloadFile(EBOOT_URL, "ux0:data/" ADRENALINE_TITLEID "/661.PBP");
 				if (res < 0) {
 					printf("Error 0x%08X downloading file.\n", res);
 					while (1);
