@@ -714,7 +714,7 @@ int module_start(SceSize args, void *argp) {
 
 	// Read config
 	memset(&config, 0, sizeof(AdrenalineConfig));
-	int res = ReadFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	res = ReadFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
 	if (res < 0) {
 		ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
 	}
