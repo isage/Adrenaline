@@ -559,7 +559,9 @@ static int sceCompatWaitSpecialRequestPatched(int mode) {
 		((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
 	}
 
-	if (sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/flash0", &stat) < 0) {
+	if (sceIoGetstat("ux0:data/" ADRENALINE_TITLEID "/flash0", &stat) < 0
+		&& sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/flash0", &stat) < 0)
+	{
 		((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
 		allow_ark = 0;
 	}
@@ -651,8 +653,12 @@ static void migrate_config() {
 		case ADRENALINE717_CFG_MAGIC_2:
 			sceClibPrintf("Adrenaline: [INFO]: Found 7.1.7 configuration\n");
 			AdrenalineConfig717 config_compat = {0};
-			ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config_compat, sizeof(AdrenalineConfig717));
+			int res = ReadFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config_compat, sizeof(AdrenalineConfig717));
+			if (res < 0) {
+				ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config_compat, sizeof(AdrenalineConfig717));
+			}
 			migrate_config_717(&config_compat, &config);
+			WriteFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
 			WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
 			sceClibPrintf("Adrenaline: [INFO]: Migrated 7.1.7 configuration\n");
 			break;
@@ -708,7 +714,11 @@ int module_start(SceSize args, void *argp) {
 
 	// Read config
 	memset(&config, 0, sizeof(AdrenalineConfig));
-	ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	int res = ReadFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	if (res < 0) {
+		ReadFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	}
+
 	migrate_config();
 	if ((uint32_t)config.psp_screen_scale_x == 0) {
 		config.psp_screen_scale_x = 2.0f;

@@ -175,7 +175,12 @@ static int EnterStandbyMode() {
 static int SaveAdrSetting() {
 	config.magic[0] = ADRENALINE_CFG_MAGIC_1;
 	config.magic[1] = ADRENALINE_CFG_MAGIC_2;
-	WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	WriteFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+
+	SceIoStat stat;
+	if (sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &stat) >= 0) {
+		WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	}
 }
 
 static int OpenOfficialSettings() {
@@ -263,7 +268,12 @@ int ResetAdrenalineSettings() {
 	config.psp_screen_scale_y = 2.0f;
 	config.ps1_screen_scale_x = 1.0f;
 	config.ps1_screen_scale_y = 1.0f;
-	WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	WriteFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+
+	SceIoStat stat;
+	if (sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &stat) >= 0) {
+		WriteFile("ux0:app/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
+	}
 
 	return 0;
 }
