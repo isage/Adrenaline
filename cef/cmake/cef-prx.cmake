@@ -21,12 +21,13 @@ function(add_cef_prx NAME)
 
   string(TOUPPER ${NAME} NAME_UPPER)
   set(DEBUG_VAR "${NAME_UPPER}_DEBUG")
-  if(DEBUG)
-    message(STATUS "Enabling debug build for ${NAME}.prx")
-    target_compile_definitions(${NAME} PRIVATE -DDEBUG=${DEBUG})
-  elseif(DEFINED ${DEBUG_VAR})
-    message(STATUS "Enabling debug build for ${NAME}.prx")
+
+  if(DEFINED ${DEBUG_VAR})
+    message(STATUS "Enabling debug build for ${NAME}.prx: Level ${${DEBUG_VAR}}")
     target_compile_definitions(${NAME} PRIVATE DEBUG=${${DEBUG_VAR}})
+  elseif(DEBUG)
+    message(STATUS "Enabling debug build for ${NAME}.prx: Level ${DEBUG}")
+    target_compile_definitions(${NAME} PRIVATE -DDEBUG=${DEBUG})
   endif()
 endfunction()
 
