@@ -180,9 +180,9 @@ int aLinkLibEntriesPatched(SceStubLibrary *lib) {
 	int res = aLinkLibEntries(lib);
 
 	if (res < 0) {
-		logmsg4("[ERROR]: %s: libname=%s attr=0x%04X is_user_lib=%d -> 0x%08X\n", __func__, lib->lib_name, lib->attribute, lib->is_user_lib, res);
+		logmsg("[ERROR]: %s: libname=%s attr=0x%04X is_user_lib=%ld -> 0x%08X\n", __func__, lib->lib_name, lib->attribute, lib->is_user_lib, res);
 	} else {
-		logmsg4("[INFO]: %s: libname=%s attr=0x%04X is_user_lib=%d -> 0x%08X\n", __func__, lib->lib_name, lib->attribute, lib->is_user_lib, res);
+		logmsg4("[INFO]: %s: libname=%s attr=0x%04X is_user_lib=%ld -> 0x%08X\n", __func__, lib->lib_name, lib->attribute, lib->is_user_lib, res);
 
 	}
 
@@ -466,19 +466,19 @@ u32 sctrlHENMakeSyscallStub(void *function) {
 }
 
 u32 sctrlHENFindFunctionOnSystem(const char *libname, u32 nid, int user_mods_only) {
-	SceUID mod_list[128] = {0};
+	SceUID mod_list[256] = {0};
 	u32 mod_count = 0;
-	int res = sceKernelGetModuleIdListForKernel(mod_list, 128, &mod_count, user_mods_only);
+	int res = sceKernelGetModuleIdListForKernel(mod_list, 256, &mod_count, user_mods_only);
 
 	if (res != 0) {
 		return 0;
 	}
 
-	if (mod_count > 128) {
-		logmsg("[WARN]: %s: System has more than 128 modules, result will be incomplete\n", __func__);
+	if (mod_count > 256) {
+		logmsg("[WARN]: %s: System has more than 256 modules, result will be incomplete\n", __func__);
 	}
 
-	for (int i = 0; i < MIN(mod_count, 128); i++) {
+	for (int i = 0; i < MIN(mod_count, 256); i++) {
 		SceUID mod_id = mod_list[i];
 		SceModule* mod = sceKernelFindModuleByUID(mod_id);
 		u32 fn = sctrlHENFindFunctionInMod(mod, libname, nid);

@@ -83,7 +83,7 @@ SceUID sceIoDopenHidePatched(const char *dirname) {
 	SceUID res = SCE_KERR_ILLEGAL_ACCESS;
 
 	if (is_in_blacklist(dirname)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, dirname);
+		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, dirname);
 		goto exit;
 	}
 
@@ -102,7 +102,7 @@ int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
 		if (res == 0) {
 			res = SCE_KERR_ILLEGAL_ACCESS;
 		} else {
-			logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, dir->d_name);
+			logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, dir->d_name);
 			res = sceIoDreadHidePatched(fd, dir);
 		}
     }
@@ -115,7 +115,7 @@ SceUID sceIoOpenHidePatched(const char *path, int flags, SceMode mode) {
 	SceUID res = SCE_KERR_ILLEGAL_ACCESS;
 
 	if (is_in_blacklist(path)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
+		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
 		goto exit;
 	}
 
@@ -130,7 +130,7 @@ int sceIoRemoveHidePatched(const char *path) {
 	int res = SCE_KERR_ILLEGAL_ACCESS;
 
 	if (is_in_blacklist(path)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
+		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
 		goto exit;
 	}
 
@@ -144,7 +144,7 @@ int sceIoGetstatHidePatched(const char *path, SceIoStat *stat) {
 	int res = SCE_KERR_ILLEGAL_ACCESS;
 
 	if (is_in_blacklist(path)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
+		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
 		goto exit;
 	}
 
@@ -159,7 +159,7 @@ int sceIoChstatHidePatched(const char *path, SceIoStat *stat, int bits) {
 	int res = SCE_KERR_ILLEGAL_ACCESS;
 
 	if (is_in_blacklist(path)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
+		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
 		goto exit;
 	}
 
@@ -173,7 +173,7 @@ int sceIoRmdirHidePatched(const char *path) {
 	int res = SCE_KERR_ILLEGAL_ACCESS;
 
 	if (is_in_blacklist(path)) {
-		logmsg2("[INFO]: %s: Game tried to access CFW files: %s\n", __func__, path);
+		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
 		goto exit;
 	}
 

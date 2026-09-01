@@ -180,7 +180,7 @@ void CheckControllerInput() {
 	_sceCtrlPeekBufferPositive(&pad_data, 1);
 	if ((pad_data.Buttons & PSP_CTRL_LTRIGGER) == PSP_CTRL_LTRIGGER) {
 		g_disable_plugins = 1;
-		logmsg2("[INFO]: Plugins disabled by holding `L` at the application start\n");
+		logmsg("[INFO]: Plugins disabled by holding `L` at the application start\n");
 	}
 }
 

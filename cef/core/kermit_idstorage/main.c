@@ -74,28 +74,33 @@ int sceKermitPeripheral_driver_C6F8B4E1(short key,int offset,void *buf,int len);
 int sceWlanDevGetMacAddr(void* buf);
 
 int sceIdStorageLookup(short key,int offset,void *buf,int len) {
-	logmsg("sceIdStorageLookup(0x%04X, %d, buf, %d)\n", key, offset, len);
-
+	int res = 0;
 	// Vita side doesn't handle keys < 0x100 and > 0x13F
 	if (key == 0x44) {
 		if (offset == 0) {
 			sceWlanDevGetMacAddr(buf);
-			return 0;
+			res = 0;
+			goto exit;
 		}
-	}
-	else if (key == 0x51) {
+
+	} else if (key == 0x51) {
 		if (offset == 0) {
 			strcpy(buf,"6.61");
-			return 0;
+			res = 0;
+			goto exit;
 		}
-	}
-	else if ((key == 0x100) && (offset == 0)) {
+
+	} else if ((key == 0x100) && (offset == 0)) {
 		buf = (void *)((int)buf + 0x38);
 		offset = 0x38;
 		len = 0xb8;
 	}
 
-	return sceKermitPeripheral_driver_C6F8B4E1(key,offset,buf,len);
+	res = sceKermitPeripheral_driver_C6F8B4E1(key,offset,buf,len);
+
+exit:
+	logmsg4("[INFO]: %s: key=0x%04X, offset=%d, buf=%p, len=%d -> 0x%08X\n", __func__, key, offset, buf, len, res);
+	return res;
 }
 
 int sceIdStorageReadLeaf(short key,void *buf) {

@@ -186,7 +186,7 @@ static void startPlugins() {
 			} else {
 				g_plugins_loaded_mem += g_last_plugin_mem_size;
 				g_last_plugin_mem_size = 0;
-				logmsg3("[INFO]: Loaded plugin: %s\n", path);
+				logmsg("[INFO]: Loaded plugin: %s\n", path);
 			}
 		} else {
 			logmsg("[ERROR]: %s: Failed to load %s -> 0x%08X\n", __func__, path, uid);

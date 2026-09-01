@@ -91,7 +91,7 @@ int module_start(SceSize args, void* argp) {
 		return ret;
 	}
 
-	logmsg3("[INFO]: UMD File: %s\n", g_iso_fn);
+	logmsg("[INFO]: Start UMDemu File: %s\n", g_iso_fn);
 
 	ret = init_inferno();
 

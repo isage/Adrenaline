@@ -189,7 +189,10 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap) {
     char state = 0;
     long long num;
     int base;
-    int flags, width, precision, lflags;
+    int flags = 0;
+	int width = 0;
+	int precision = 0;
+	int lflags = 0;
 
     if (!buf) {
 		size = 0;

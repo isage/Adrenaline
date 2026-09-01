@@ -418,7 +418,7 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 			if (g_config_size > 0) {
 				// It is located at 0x420 after PSISOIMG, thus 0x20 after given buffer
 				memcpy(data+0x20, g_custom_config, g_config_size);
-				logmsg2("[INFO]: %s: Custom config was set.\n", __func__);
+				logmsg("[INFO]: %s: Custom config was set.\n", __func__);
 			}
 
 			// anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG, 0xEB0 after given buffer
@@ -430,7 +430,7 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 				// It needs to be xored with this constant
 				libcrypt_magic ^= LIBCRYPT_XOR_MAGIC;
 				memcpy(data+0xeb0, &libcrypt_magic, sizeof(libcrypt_magic));
-				logmsg2("[INFO]: %s: Anti-libcrypt patch was applied.\n", __func__);
+				logmsg("[INFO]: %s: Anti-libcrypt patch was applied.\n", __func__);
 			}
 		}
 	}

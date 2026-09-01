@@ -75,7 +75,7 @@ static void CheckControllerInput() {
 	sceCtrlPeekBufferPositive(&pad_data, 1);
 	if ((pad_data.Buttons & PSP_CTRL_RTRIGGER) == PSP_CTRL_RTRIGGER) {
 		g_exec_boot_bin = 1;
-		logmsg2("[INFO]: Set to exec BOOT.BIN (if exist) by holding `R` at the ISO application start\n");
+		logmsg("[INFO]: Set to exec BOOT.BIN (if exist) by holding `R` at the ISO application start\n");
 	}
 }
 

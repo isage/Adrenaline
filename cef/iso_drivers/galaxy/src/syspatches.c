@@ -170,7 +170,7 @@ int isoSwapUmdFile(const char *new_file_path, char *previous, int previous_size)
 
 		return res;
 	}
-	logmsg2("[INFO]: %s: UMD file swapped from `%s` to `%s`\n", __func__, old_path, new_file_path);
+	logmsg("[INFO]: %s: UMD file swapped from `%s` to `%s`\n", __func__, old_path, new_file_path);
 
 	sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
 	sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_CHANGED);

@@ -202,7 +202,7 @@ static int OnModuleStart(SceModule *mod) {
 	// Load SE config from file
 	if (load_file_config) {
 		int res = sctrlSEGetConfig((SEConfig*)&g_cfw_config);
-		logmsg("[DEBUG]: sctrlSEGetConfig -> 0x%08X\n", res);
+		logmsg("[DEBUG]: %s: sctrlSEGetConfig -> 0x%08X\n", __func__, res);
 		if (res == 0) {
 			load_file_config = 0;
 			// configure Pentazemin
@@ -276,12 +276,12 @@ static int OnModuleStart(SceModule *mod) {
 		HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
 
 	} else if (strcmp(modname, "scePower_Service") == 0) {
-		logmsg3("[INFO]: Built: %s %s\n", __DATE__, __TIME__);
-		logmsg3("[INFO]: Boot From: 0x%X\n", sceKernelBootFrom());
-		logmsg3("[INFO]: App Type: 0x%X\n", sceKernelApplicationType());
-		logmsg3("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
-		logmsg3("[INFO]: Fake Apitype: 0x%X\n", g_adrenaline->fake_api_type);
-		logmsg3("[INFO]: Filename: %s\n", sceKernelInitFileName());
+		logmsg("[INFO]: Built: %s %s\n", __DATE__, __TIME__);
+		logmsg("[INFO]: Boot From: 0x%X\n", sceKernelBootFrom());
+		logmsg("[INFO]: App Type: 0x%X\n", sceKernelApplicationType());
+		logmsg("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
+		logmsg("[INFO]: Fake Apitype: 0x%X\n", g_adrenaline->fake_api_type);
+		logmsg("[INFO]: Filename: %s\n", sceKernelInitFileName());
 
 		if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_OFF) {
 			// Set to normal and not allow to change it.
@@ -315,7 +315,7 @@ static int OnModuleStart(SceModule *mod) {
 
 	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
 		findAndSetTitleId();
-		logmsg3("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
+		logmsg("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
 		CheckControllerInput();
 
 	} else if (strcmp(modname, "sceMediaSync") == 0) {

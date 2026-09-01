@@ -321,7 +321,7 @@ int InitMediaMan() {
 		return g_mediaman_sema;
 	}
 
-	logmsg4("[INFO]: Media man inited.\n");
+	logmsg4("[INFO]: MediaMan initialized.\n");
 
 	return 0;
 }

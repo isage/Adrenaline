@@ -336,10 +336,10 @@ void vshmenu_draw(void* frame){
         char text[128] = { 0 };
         strcpy(text, g_current_menu[i].name);
 
-		logmsg("[DEBUG]: %s: drawing %s\n", __func__, g_current_menu[i].name);
+		logmsg3("[DEBUG]: %s: drawing %s\n", __func__, g_current_menu[i].name);
 
         if (g_current_menu[i].options && g_current_menu[i].size_options > *(g_current_menu[i].value)) {
-			logmsg("[DEBUG]: %s: current %s option is %s\n", __func__, g_current_menu[i].name, g_current_menu[i].options[*g_current_menu[i].value]);
+			logmsg3("[DEBUG]: %s: current %s option is %s\n", __func__, g_current_menu[i].name, g_current_menu[i].options[*g_current_menu[i].value]);
             char* opt_txt = g_current_menu[i].options[*g_current_menu[i].value];
 
             int padding = 3 + ((w - 36)/8) - strlen(text) - strlen(opt_txt);
@@ -405,7 +405,6 @@ int VshMenu_Thread(SceSize _args, void *_argp) {
 
 	g_vshmenu.is_registered = 1;
 	while (!g_vshmenu.stop_flag) {
-		logmsg4("[INFO]: %s: Got in the loop\n", __func__);
 		if (sceDisplayWaitVblankStart() < 0) {
 			logmsg("[ERROR]: %s: Error on `sceDisplayWaitVblankStart`\n", __func__);
 			// end of VSH ?
@@ -415,8 +414,6 @@ int VshMenu_Thread(SceSize _args, void *_argp) {
 		button_func();
 	}
 	g_vshmenu.is_registered = 0;
-
-	logmsg("[INFO]: %s: GOT HERE\n", __func__);
 
 	sctrlSESetConfig((SEConfig*)&g_cfw_config);
 	vctrlVSHExitVSHMenu((SEConfig*)&g_cfw_config, NULL, 0);
