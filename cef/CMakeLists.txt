@@ -30,7 +30,6 @@ if(NIGHTLY)
 endif()
 if(DEBUG)
   message(STATUS "Enabling DEBUG ${DEBUG} build")
-  add_compile_definitions(-DDEBUG=${DEBUG})
 endif()
 
 add_subdirectory(core/binary)

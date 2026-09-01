@@ -172,7 +172,7 @@ static int EnterStandbyMode() {
 	return 0;
 }
 
-static int SaveAdrSetting() {
+static void SaveAdrSetting() {
 	config.magic[0] = ADRENALINE_CFG_MAGIC_1;
 	config.magic[1] = ADRENALINE_CFG_MAGIC_2;
 	WriteFile("ux0:data/" ADRENALINE_TITLEID "/adrenaline.bin", &config, sizeof(AdrenalineConfig));
