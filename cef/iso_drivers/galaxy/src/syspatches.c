@@ -19,6 +19,7 @@
 */
 #include <string.h>
 
+#include <pspumd.h>
 #include <pspiofilemgr.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
@@ -26,8 +27,12 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 
+#include <adrenaline_log.h>
+
 #include "galaxy.h"
 #include "../bits/iso_common.h"
+
+void sceUmdSetDriveStatus(int status);
 
 // SceNpUmdMount Thread ID
 static SceUID g_SceNpUmdMount_thid = -1;
@@ -135,6 +140,50 @@ int isoReadUmdFile(u32 sector, void *buffer, u32 size) {
 	readSectorFlushNP9660();
 
 	return res;
+}
+
+int isoReopenUmdFile(void) {
+	int res = open_iso();
+	sceKernelDelayThread(20000);
+	return res;
+}
+
+int isoSwapUmdFile(const char *new_file_path, char *previous, int previous_size) {
+	char old_path[MAX_ISO_PATH_SIZE] = {0};
+	memcpy(old_path, g_iso_fn, MAX_ISO_PATH_SIZE);
+	sceUmdSetDriveStatus(PSP_UMD_NOT_PRESENT | PSP_UMD_CHANGED);
+	sceKernelDelayThread(100000);
+
+	isoSetUmdFile(new_file_path);
+
+	int res = open_iso();
+	sceKernelDelayThread(20000);
+
+	if (res < 0) {
+		// reset and reopen previous filepath
+		isoSetUmdFile(old_path);
+		open_iso();
+		sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
+		sceKernelDelayThread(20000);
+		sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY);
+		logmsg("[ERROR]: %s: Failed to swap UMD file: %s: 0x%08X\n", __func__, new_file_path, res);
+
+		return res;
+	}
+	logmsg2("[INFO]: %s: UMD file swapped from `%s` to `%s`\n", __func__, old_path, new_file_path);
+
+	sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
+	sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_CHANGED);
+
+	sceKernelDelayThread(20000);
+    sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY | PSP_UMD_CHANGED);
+
+	// Copy if possible
+	if (previous != NULL && previous_size >= MAX_ISO_PATH_SIZE) {
+		memcpy(previous, old_path, MAX_ISO_PATH_SIZE);
+	}
+
+	return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@
 #include <ciso.h>
 
 #define MAX_FILES_NR 8
+#define MAX_ISO_PATH_SIZE 256
 
 typedef struct IoReadArg {
 	u32 offset; // 0
@@ -32,7 +33,7 @@ typedef struct IoReadArg {
 	u32 size; // 8
 } IoReadArg;
 
-extern char g_iso_fn[256];
+extern char g_iso_fn[MAX_ISO_PATH_SIZE];
 extern SceUID g_iso_fd;
 extern int g_iso_opened;
 extern int g_total_sectors;
@@ -44,7 +45,7 @@ int iso_open(void);
 void iso_close(void);
 
 int isoGetTitleId(char title_id[10]);
-void isoSetUmdFile(const char* path);
+int isoSetUmdFile(const char* path);
 
 #ifdef __ISO_EXTRA__
 int iso_type_check(SceUID fd);

@@ -150,6 +150,12 @@ PSP_EXPORT_FUNC_NID(isoSetUmdDelay, 0xFAEC97D6)
 PSP_EXPORT_FUNC(isoReadUmdFile)
 # isoCtrl_driver_2830271E
 PSP_EXPORT_FUNC(isoSetUmdFile)
+# isoCtrl_driver_CA44FFAD
+PSP_EXPORT_FUNC(isoGetUmdFile)
+# isoCtrl_driver_B0B73A40
+PSP_EXPORT_FUNC(isoReopenUmdFile)
+# isoCtrl_driver_BBF7527A
+PSP_EXPORT_FUNC(isoSwapUmdFile)
 PSP_EXPORT_END
 
 PSP_END_EXPORTS

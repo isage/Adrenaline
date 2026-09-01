@@ -149,7 +149,7 @@ static int read_raw_data(void* arg, u8* addr, u32 size, u32 offset) {
 			i = 0;
 			break;
 		} else {
-			logmsg("%s: %s(%d) lseek retry %d error 0x%08X\n", __func__, g_iso_fn, g_iso_fd, i, (int)ofs);
+			logmsg("[ERROR]: %s: %s(%d) lseek retry %d error 0x%08X\n", __func__, g_iso_fn, g_iso_fd, i, (int)ofs);
 			iso_open();
 		}
 
@@ -171,7 +171,7 @@ static int read_raw_data(void* arg, u8* addr, u32 size, u32 offset) {
 			i = 0;
 			break;
 		} else {
-			logmsg("%s: %s read retry %d error 0x%08X\n", __func__, g_iso_fn, i, ret);
+			logmsg("[ERROR] %s: %s read retry %d error 0x%08X\n", __func__, g_iso_fn, i, ret);
 			iso_open();
 			sceIoLseek(g_iso_fd, offset, PSP_SEEK_SET);
 		}
@@ -269,12 +269,14 @@ int iso_open(void) {
 
     g_is_compressed = ciso_open(&g_ciso_file);
 
-	if (g_is_compressed < 0) return g_is_compressed;
+	if (g_is_compressed < 0) {
+		return g_is_compressed;
+	}
     // total number of DVD sectors (2K) in the original ISO.
     else if (g_is_compressed > 0){
         g_total_sectors = g_ciso_file.uncompressed_size / ISO_SECTOR_SIZE;
-    }
-    else {
+
+	} else {
         SceOff off = sceIoLseek(g_iso_fd, 0, PSP_SEEK_CUR);
         SceOff total = sceIoLseek(g_iso_fd, 0, PSP_SEEK_END);
         sceIoLseek(g_iso_fd, off, PSP_SEEK_SET);
@@ -359,10 +361,29 @@ int isoGetTitleId(char title_id[10]) {
 	return 1;
 }
 
-void isoSetUmdFile(const char* path) {
+int isoSetUmdFile(const char* path) {
 	if (path != NULL && path[0] != 0) {
 		memset(g_iso_fn, 0, sizeof(g_iso_fn));
 		strncpy(g_iso_fn, path, sizeof(g_iso_fn)-1);
 		logmsg("[INFO]: %s: ISO file set to %s\n", __func__, g_iso_fn);
+		return 0;
 	}
+
+	return SCE_EINVAL;
+}
+
+int isoGetUmdFile(char *path_buf, size_t path_size) {
+	if (path_buf == NULL) {
+		logmsg("[ERROR]: %s: `path_buf` is null\n", __func__);
+		return SCE_EINVAL;
+	}
+
+	int len = strnlen(g_iso_fn, MAX_ISO_PATH_SIZE);
+	if (path_size < len) {
+		logmsg("[ERROR]: %s: `path_size` is too small to receive the current filename: `%d < %d`\n", __func__, path_size, len);
+		return SCE_EINVAL;
+	}
+
+	strncpy(path_buf, g_iso_fn, path_size);
+	return 0;
 }
