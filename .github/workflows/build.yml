@@ -181,13 +181,13 @@ jobs:
 
       - name: Build eCFW
         run: |
-            psp-cmake -S cef -B cef/build -DNIGHTLY=1 -DSYSTEMCTRL_DEBUG=3 -DPENTAZEMIN_DEBUG=3
+            psp-cmake -S cef -B cef/build -DNIGHTLY=1 -DDEBUG=2 -DSYSTEMCTRL_DEBUG=3 -DPENTAZEMIN_DEBUG=3
             cmake --build cef/build -j
 
       - name: Build VPK
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1 -DNIGHTLY=1
-          cmake --build build
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DNIGHTLY=1
+          cmake --build build -j
           mv build/bubble/Adrenaline.vpk build/bubble/Adrenaline-nightly-DEBUG.vpk
 
       - name: Upload VPK
