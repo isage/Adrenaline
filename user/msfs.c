@@ -512,7 +512,7 @@ try_again:
 		goto try_again;
 	}
 
-	return ;
+	return res;
 }
 
 static SceUID ScePspemuMsfsDopen(const char *dirname) {
