@@ -16,8 +16,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-0392ca55.css">
-        <link rel="stylesheet" href="css/chrome-fc474251.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-97acf81c.js";
+            window.path_to_searchindex_js = "searchindex-9b5fbdb4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-1af7a252.js"></script>
@@ -5868,25 +5868,31 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>On the XMB CFW menu, advanced settings are marked with the <code>▲</code> symbol.</p>
 </div>
 
-<h3 id="force-high-memory-layout"><a class="header" href="#force-high-memory-layout">Force high memory layout</a></h3>
+<h3 id="high-memory-layout"><a class="header" href="#high-memory-layout">High memory layout</a></h3>
 <p>Controls whether to force the unlock extra RAM space for the user-space RAM partition, that can be used by games and apps.</p>
 <h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
 <ul>
-<li><code>Disabled</code>: With this option, no specific memory layout is forced.
+<li><code>Default</code>: With this option, no specific memory layout is forced.
 <ul>
 <li>By default, user RAM partition gets the standard 24MB.</li>
 <li>Homebrew games/apps can request other layout by using the <code>MEMSIZE</code> in their <code>SFO</code> information or by using the CFW API.</li>
 <li>Plugin author can use the CFW API to request changing the layout.</li>
 </ul>
 </li>
-<li><code>Stable</code>: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
+<li><code>Force Stable</code>: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
 <ul>
 <li>When this options is set, it truly forces it, any requests to modify it will result in it being “ignored” (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
 </ul>
 </li>
-<li><code>Max</code>: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
+<li><code>Force Max</code>: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
 <ul>
 <li>When this options is set, it truly forces it, any requests to modify it will result in it being “ignored” (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
+</ul>
+</li>
+<li><code>Force Disabled</code>: This option forces the the system to always have the same memory layout as the unmodified PSP firmware.
+<ul>
+<li>This means the <code>MEMSIZE</code> option in homebrew <code>SFO</code> will be ignored</li>
+<li>CFW API to request changes to memory layout will always fail.</li>
 </ul>
 </li>
 </ul>
@@ -5897,6 +5903,15 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 </p>
 
 <p>Some important stuff for the VITA’s PSPemu are put in this region of memory. Although Epinephrine protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.</p>
+</div>
+
+<div class="mdbook-callouts mdbook-callouts-tip">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  tip
+</p>
+
+<p>Homebrew developers can use the <code>Force Disabled</code> to test with more certainty if the homebrew will work on PSP 1000 models when testing on real 1000 model is not possible.</p>
 </div>
 
 <h3 id="fake-max-free-memory"><a class="header" href="#fake-max-free-memory">Fake max free memory</a></h3>
@@ -7010,7 +7025,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 cmake --build cef/build
 </code></pre>
 <p>Then, you have to build the VITA-side part:</p>
-<pre><code class="language-sh">cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCEF_CMAKE=1
+<pre><code class="language-sh">cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 </code></pre>
 <p>For every change, you must recompile the project for the changes to take effect. This may be obvious for many programmers, but absolute novice in compiled languages may not understand this right away.</p>
@@ -8442,10 +8457,19 @@ ur0:tai/my_awesome_plugins.suprx
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <hr>
 <h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
+<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<ul>
+<li>Add support to use files on <code>ux0:data/PSPEMUCFW/</code> instead of <code>ux0:app/PSPEMUCFW/</code></li>
+<li>Fix savestate thumbnail on some graphical filters showing as one color plain image</li>
+<li>Fix UTF-8 rendering on Adrenaline Menu</li>
+</ul>
 <h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
 <ul>
 <li>
 <p>Add option to select PSP game plugin loading behavior <strong>[<a href="#psp-gameapp-plugin-ram-partition">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add option to forcibly disable high memory layout <strong>[<a href="#high-memory-layout">docs</a>]</strong></p>
 </li>
 <li>
 <p>Fix branch logic for plugins patch</p>
@@ -8463,6 +8487,9 @@ ur0:tai/my_awesome_plugins.suprx
 </ul>
 </li>
 <li>
+<p><strong>DEV:</strong> Expand <code>isoCtrl_driver</code> API with <code>isoGetUmdFile</code>, <code>isoReopenUmdFile</code>, <code>isoSwapUmdFile</code>.</p>
+</li>
+<li>
 <p><strong>DEV:</strong> Introduce <code>NoDrmHelper</code> CFW library</p>
 <ul>
 <li>Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.</li>
@@ -8470,7 +8497,7 @@ ur0:tai/my_awesome_plugins.suprx
 </li>
 </ul>
 <h2 id="v802"><a class="header" href="#v802">v8.0.2</a></h2>
-<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<h3 id="adrenaline-1"><a class="header" href="#adrenaline-1">Adrenaline</a></h3>
 <ul>
 <li>Fix the PS1 overlay image not processing correctly</li>
 </ul>
@@ -8496,7 +8523,7 @@ ur0:tai/my_awesome_plugins.suprx
 </ul>
 <h2 id="v800"><a class="header" href="#v800">v8.0.0</a></h2>
 <hr>
-<h3 id="adrenaline-1"><a class="header" href="#adrenaline-1">Adrenaline</a></h3>
+<h3 id="adrenaline-2"><a class="header" href="#adrenaline-2">Adrenaline</a></h3>
 <ul>
 <li>Add option to select the vPSP Custom Firmware to use <strong>[<a href="#vpsp-custom-firmware">docs</a>]</strong></li>
 <li>Add <code>Scale2x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
@@ -8504,11 +8531,6 @@ ur0:tai/my_awesome_plugins.suprx
 <li>Add <code>Scale3x</code> graphical filter options <strong>[<a href="#graphics-filtering">docs</a>]</strong></li>
 <li>Add image overlay filter for PS1 game/apps <strong>[<a href="#overlay-image">docs</a>]</strong></li>
 <li>Add an option to select a System Storage location to expose <code>ef0:</code> to the chosen CFW.</li>
-<li>Implement a GPU-rendered VSH Menu
-<ul>
-<li>The classical version is still available through configuration</li>
-</ul>
-</li>
 <li>“Fix” manual double launch on first install</li>
 <li>Improve frame pacing on Original graphics filtering</li>
 <li>Implement hold <code>Square</code> to hide Adrenaline Menu on graphics-related settings</li>
@@ -8544,6 +8566,12 @@ ur0:tai/my_awesome_plugins.suprx
 </li>
 <li>
 <p>Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.</p>
+</li>
+<li>
+<p>Implement a GPU-rendered VSH Menu</p>
+<ul>
+<li>The classical version is still available through configuration</li>
+</ul>
 </li>
 <li>
 <p>Add CFW file hider in games.</p>
@@ -9226,7 +9254,7 @@ select ‘Original’ screen mode in Adrenaline settings. On a PS TV this will f
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-c22b7243.js"></script>
+        <script src="book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 

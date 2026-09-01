@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-0392ca55.css">
-        <link rel="stylesheet" href="css/chrome-fc474251.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-97acf81c.js";
+            window.path_to_searchindex_js = "searchindex-9b5fbdb4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-1af7a252.js"></script>
@@ -558,25 +558,31 @@
 <p>On the XMB CFW menu, advanced settings are marked with the <code>▲</code> symbol.</p>
 </div>
 
-<h3 id="force-high-memory-layout"><a class="header" href="#force-high-memory-layout">Force high memory layout</a></h3>
+<h3 id="high-memory-layout"><a class="header" href="#high-memory-layout">High memory layout</a></h3>
 <p>Controls whether to force the unlock extra RAM space for the user-space RAM partition, that can be used by games and apps.</p>
 <h4 id="options-7"><a class="header" href="#options-7">Options:</a></h4>
 <ul>
-<li><code>Disabled</code>: With this option, no specific memory layout is forced.
+<li><code>Default</code>: With this option, no specific memory layout is forced.
 <ul>
 <li>By default, user RAM partition gets the standard 24MB.</li>
 <li>Homebrew games/apps can request other layout by using the <code>MEMSIZE</code> in their <code>SFO</code> information or by using the CFW API.</li>
 <li>Plugin author can use the CFW API to request changing the layout.</li>
 </ul>
 </li>
-<li><code>Stable</code>: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
+<li><code>Force Stable</code>: The stable amount of extra RAM is made available to the user RAM partition, a total of 40MB.
 <ul>
 <li>When this options is set, it truly forces it, any requests to modify it will result in it being “ignored” (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
 </ul>
 </li>
-<li><code>Max</code>: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
+<li><code>Force Max</code>: Makes the maximum possible of RAM available to the user RAM partition, a total of 52MB, at the cost of potential instabilities.
 <ul>
 <li>When this options is set, it truly forces it, any requests to modify it will result in it being “ignored” (the CFW API returns an error informing that is not possible to modify the memory layout).</li>
+</ul>
+</li>
+<li><code>Force Disabled</code>: This option forces the the system to always have the same memory layout as the unmodified PSP firmware.
+<ul>
+<li>This means the <code>MEMSIZE</code> option in homebrew <code>SFO</code> will be ignored</li>
+<li>CFW API to request changes to memory layout will always fail.</li>
 </ul>
 </li>
 </ul>
@@ -587,6 +593,15 @@
 </p>
 
 <p>Some important stuff for the VITA’s PSPemu are put in this region of memory. Although Epinephrine protects the sub-region that was already identified, those last 16MB region usage was not yet completely investigated and reversed. That means that some system instabilities may occur once things start to be allocated on this region.</p>
+</div>
+
+<div class="mdbook-callouts mdbook-callouts-tip">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  tip
+</p>
+
+<p>Homebrew developers can use the <code>Force Disabled</code> to test with more certainty if the homebrew will work on PSP 1000 models when testing on real 1000 model is not possible.</p>
 </div>
 
 <h3 id="fake-max-free-memory"><a class="header" href="#fake-max-free-memory">Fake max free memory</a></h3>
@@ -896,7 +911,7 @@
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-c22b7243.js"></script>
+        <script src="book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 

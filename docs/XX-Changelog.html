@@ -15,8 +15,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-0392ca55.css">
-        <link rel="stylesheet" href="css/chrome-fc474251.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-97acf81c.js";
+            window.path_to_searchindex_js = "searchindex-9b5fbdb4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-1af7a252.js"></script>
@@ -415,10 +415,19 @@
 <h1 id="changelog"><a class="header" href="#changelog">Changelog</a></h1>
 <hr>
 <h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
+<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<ul>
+<li>Add support to use files on <code>ux0:data/PSPEMUCFW/</code> instead of <code>ux0:app/PSPEMUCFW/</code></li>
+<li>Fix savestate thumbnail on some graphical filters showing as one color plain image</li>
+<li>Fix UTF-8 rendering on Adrenaline Menu</li>
+</ul>
 <h3 id="epinephrine-cfw"><a class="header" href="#epinephrine-cfw">Epinephrine CFW</a></h3>
 <ul>
 <li>
 <p>Add option to select PSP game plugin loading behavior <strong>[<a href="./08-CfwConfiguration.html#psp-gameapp-plugin-ram-partition">docs</a>]</strong></p>
+</li>
+<li>
+<p>Add option to forcibly disable high memory layout <strong>[<a href="./08-CfwConfiguration.html#high-memory-layout">docs</a>]</strong></p>
 </li>
 <li>
 <p>Fix branch logic for plugins patch</p>
@@ -436,6 +445,9 @@
 </ul>
 </li>
 <li>
+<p><strong>DEV:</strong> Expand <code>isoCtrl_driver</code> API with <code>isoGetUmdFile</code>, <code>isoReopenUmdFile</code>, <code>isoSwapUmdFile</code>.</p>
+</li>
+<li>
 <p><strong>DEV:</strong> Introduce <code>NoDrmHelper</code> CFW library</p>
 <ul>
 <li>Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.</li>
@@ -443,7 +455,7 @@
 </li>
 </ul>
 <h2 id="v802"><a class="header" href="#v802">v8.0.2</a></h2>
-<h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
+<h3 id="adrenaline-1"><a class="header" href="#adrenaline-1">Adrenaline</a></h3>
 <ul>
 <li>Fix the PS1 overlay image not processing correctly</li>
 </ul>
@@ -469,7 +481,7 @@
 </ul>
 <h2 id="v800"><a class="header" href="#v800">v8.0.0</a></h2>
 <hr>
-<h3 id="adrenaline-1"><a class="header" href="#adrenaline-1">Adrenaline</a></h3>
+<h3 id="adrenaline-2"><a class="header" href="#adrenaline-2">Adrenaline</a></h3>
 <ul>
 <li>Add option to select the vPSP Custom Firmware to use <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#vpsp-custom-firmware">docs</a>]</strong></li>
 <li>Add <code>Scale2x</code> graphical filter options <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">docs</a>]</strong></li>
@@ -477,11 +489,6 @@
 <li>Add <code>Scale3x</code> graphical filter options <strong>[<a href="./03-AdrenalineMenu/02-AdrenalineSettings.html#graphics-filtering">docs</a>]</strong></li>
 <li>Add image overlay filter for PS1 game/apps <strong>[<a href="./06-PS1Playback.html#overlay-image">docs</a>]</strong></li>
 <li>Add an option to select a System Storage location to expose <code>ef0:</code> to the chosen CFW.</li>
-<li>Implement a GPU-rendered VSH Menu
-<ul>
-<li>The classical version is still available through configuration</li>
-</ul>
-</li>
 <li>“Fix” manual double launch on first install</li>
 <li>Improve frame pacing on Original graphics filtering</li>
 <li>Implement hold <code>Square</code> to hide Adrenaline Menu on graphics-related settings</li>
@@ -517,6 +524,12 @@
 </li>
 <li>
 <p>Add support for per-file descriptor UMD seek/read speed emulation to ISO drivers.</p>
+</li>
+<li>
+<p>Implement a GPU-rendered VSH Menu</p>
+<ul>
+<li>The classical version is still available through configuration</li>
+</ul>
 </li>
 <li>
 <p>Add CFW file hider in games.</p>
@@ -948,7 +961,7 @@ select ‘Original’ screen mode in Adrenaline settings. On a PS TV this will f
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-c22b7243.js"></script>
+        <script src="book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 
