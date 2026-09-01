@@ -56,6 +56,7 @@ add_dependencies(${PROJECT_NAME} "user_all")
 add_dependencies(${PROJECT_NAME} "vsh_all")
 add_dependencies(${PROJECT_NAME} "usbdevice_all")
 add_dependencies(adrenaline_user "kernel_all" ${CEF_DEP})
+add_dependencies(adrenaline_vsh "kernel_all")
 
 add_custom_target(updater
   COMMAND bin2c ${CMAKE_CURRENT_BINARY_DIR}/user/adrenaline_user.suprx ${CMAKE_SOURCE_DIR}/cef/extra/updater/adrenaline_user.h adrenaline_user
