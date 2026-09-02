@@ -25,7 +25,6 @@ add_cef_prx(systemctrl
     -Wno-builtin-declaration-mismatch
   LINK_STATICS
     pspsdk
-	pspmodinfo
     microlz
   LINK_STUBS
     adrenalinectrl

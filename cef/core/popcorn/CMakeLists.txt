@@ -5,7 +5,6 @@ add_cef_prx(popcorn
     src/libcrypt.c
   LINK_STATICS
     pspsdk
-	pspmodinfo
   LINK_STUBS
     pspsemaphore
     pspinit_kernel

@@ -3,7 +3,6 @@ add_cef_prx(kermit_idstorage
     main.c
   LINK_STATICS
     pspsdk
-	pspmodinfo
   LINK_STUBS
     pspkernel
     pspwlandrv_driver

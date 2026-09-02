@@ -16,7 +16,6 @@ add_cef_prx(xmbctrl USER
     -std=c99
   LINK_STATICS
     pspsdk
-	pspmodinfo
 	pspgum
     pspgu
   LINK_STUBS

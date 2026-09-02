@@ -12,7 +12,6 @@ add_cef_prx(vshctrl
     ../../bits/iso_common.c
   LINK_STATICS
     pspsdk
-	pspmodinfo
     cisoread
   LINK_STUBS
     pspsystemctrl_kernel

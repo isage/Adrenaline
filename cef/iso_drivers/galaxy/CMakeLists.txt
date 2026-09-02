@@ -5,7 +5,6 @@ add_cef_prx(galaxy
     ../../bits/iso_common.c
   LINK_STATICS
     pspsdk
-	pspmodinfo
     cisoread
   LINK_STUBS
     pspinit_kernel

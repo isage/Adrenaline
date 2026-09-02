@@ -16,7 +16,6 @@ add_cef_prx(pentazemin
     binary.h
   LINK_STATICS
     pspsdk
-	pspmodinfo
   LINK_STUBS
     pspusb_driver
     pspinit_kernel

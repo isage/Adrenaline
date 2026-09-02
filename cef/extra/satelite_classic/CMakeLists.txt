@@ -5,7 +5,6 @@ add_cef_prx(satelite_classic USER
     src/blit.c
   LINK_STATICS
     pspsdk
-	pspmodinfo
   LINK_STUBS
     pspdebug
     psppower

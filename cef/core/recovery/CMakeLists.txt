@@ -14,7 +14,6 @@ add_cef_prx(recovery USER
     gcc
     z
 	pspsdk
-	pspmodinfo
   LINK_STUBS
     pspge
     pspreg

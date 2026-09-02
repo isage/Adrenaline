@@ -12,10 +12,10 @@ function(add_cef_prx NAME)
   target_include_directories(${NAME} PRIVATE include)
 
   if(ARG_USER)
-    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_STATICS} ${ARG_LINK_STUBS} )
+    target_link_libraries(${NAME} PRIVATE pspmodinfo ${ARG_LINK_STATICS} ${ARG_LINK_STUBS} )
   else()
     target_compile_definitions(${NAME} PRIVATE __KERNEL__)
-    target_link_libraries(${NAME} PRIVATE ${ARG_LINK_STATICS} ${ARG_LINK_STUBS} )
+    target_link_libraries(${NAME} PRIVATE pspmodinfo ${ARG_LINK_STATICS} ${ARG_LINK_STUBS} )
     target_link_options(${NAME} PRIVATE -nostdlib)
   endif()
 

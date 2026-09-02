@@ -7,7 +7,6 @@ add_cef_prx(minimal_edition
     ../../bits/iso_common.c
   LINK_STATICS
     pspsdk
-	pspmodinfo
     cisoread
   LINK_STUBS
     pspsemaphore

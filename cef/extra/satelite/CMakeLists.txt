@@ -3,7 +3,6 @@ add_cef_prx(satelite USER
     src/main.c
   LINK_STATICS
     pspsdk
-	pspmodinfo
 	ya2d
 	tinyfont
 	pspmath
