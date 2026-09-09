@@ -82,8 +82,6 @@ static ScePspemuFlash0Package custom_package[] = {
 	FLASH0_FILE("/vsh/module/satelite_classic.prx", vsh_module_satelite_classic_prx),
 };
 
-#define SCE_PSPEMU_TEMP_SIZE 1 * 1024 * 1024
-
 static void addFile(char *name, void *buffer, int size, void *data, uint32_t *pkg_ptr, uint32_t *name_ptr, uint32_t *buffer_ptr) {
 	// Buffer
 	*buffer_ptr = ALIGN(*buffer_ptr, 0x40);
@@ -105,7 +103,7 @@ static void addFile(char *name, void *buffer, int size, void *data, uint32_t *pk
 }
 
 int ScePspemuBuildFlash0() {
-	void *flash0_data = NULL, *temp_data = NULL;
+	void *flash0_data = NULL;
 
 	// Allocate flash0 memory
 	SceUID flash0_blockid = sceKernelAllocMemBlock("ScePspemuFlash0", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW_UNCACHE, SCE_PSPEMU_FLASH0_PACKAGE_SIZE, NULL);
@@ -113,15 +111,8 @@ int ScePspemuBuildFlash0() {
 		return flash0_blockid;
 	}
 
-	// Allocate temp memory
-	SceUID temp_blockid = sceKernelAllocMemBlock("ScePspemuTemp", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW_UNCACHE, SCE_PSPEMU_TEMP_SIZE, NULL);
-	if (temp_blockid < 0) {
-		return temp_blockid;
-	}
-
 	// Get base address
 	sceKernelGetMemBlockBase(flash0_blockid, (void **)&flash0_data);
-	sceKernelGetMemBlockBase(temp_blockid, (void **)&temp_data);
 
 	// Clear flash0 data
 	memset(flash0_data, 0, SCE_PSPEMU_FLASH0_PACKAGE_SIZE);
@@ -160,8 +151,7 @@ int ScePspemuBuildFlash0() {
 	memcpy(flash0_package_psp, flash0_data, SCE_PSPEMU_FLASH0_PACKAGE_SIZE);
 	ScePspemuWritebackCache(flash0_package_psp, SCE_PSPEMU_FLASH0_PACKAGE_SIZE);
 
-	// Free blocks
-	sceKernelFreeMemBlock(temp_blockid);
+	// Free block
 	sceKernelFreeMemBlock(flash0_blockid);
 
 	// Make flash0 list
@@ -196,22 +186,9 @@ int ScePspemuBuildFlash0() {
 }
 
 int ScePspemuLoadFlash0Ark() {
-	void *flash0_data = NULL;
-
-	// Allocate flash0 memory
-	SceUID flash0_blockid = sceKernelAllocMemBlock("ScePspemuFlash0", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW_UNCACHE, FLASH0_ARK_SIZE, NULL);
-	if (flash0_blockid < 0) {
-		return flash0_blockid;
-	}
-
-	// Get base address
-	sceKernelGetMemBlockBase(flash0_blockid, (void **)&flash0_data);
-
-	memset(flash0_data, 0, FLASH0_ARK_SIZE);
-
 	// read flash0 ark package
-	char ark_path[47];
-	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
+	char ark_path[64];
+	snprintf(ark_path, sizeof(ark_path), "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
 	SceUID fd = sceIoOpen(ark_path, SCE_O_RDONLY, 0777);
 
 	if (fd < 0) {
@@ -222,6 +199,20 @@ int ScePspemuLoadFlash0Ark() {
 			return fd;
 		}
 	}
+
+	void *flash0_data = NULL;
+
+	// Allocate flash0 memory
+	SceUID flash0_blockid = sceKernelAllocMemBlock("ScePspemuFlash0", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW_UNCACHE, FLASH0_ARK_SIZE, NULL);
+	if (flash0_blockid < 0) {
+		sceIoClose(fd);
+		return flash0_blockid;
+	}
+
+	// Get base address
+	sceKernelGetMemBlockBase(flash0_blockid, (void **)&flash0_data);
+
+	memset(flash0_data, 0, FLASH0_ARK_SIZE);
 
 	sceIoRead(fd, flash0_data, FLASH0_ARK_SIZE);
 	sceIoClose(fd);
