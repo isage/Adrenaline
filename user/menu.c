@@ -101,14 +101,15 @@ static char *cfwtype_options[] = { "EPI", "ARK" };
 static char *ef_location_options[] = { "Disabled", "uma0:pspemu", "xmc0:pspemu", "ux0:pspemu", "uma0:" };
 
 static MenuEntry main_entries[] = {
-	{ "Enter Standby Mode",        MENU_ENTRY_TYPE_CALLBACK, 0, EnterStandbyMode, NULL, NULL, 0 },
-	{ "Open Official Settings",    MENU_ENTRY_TYPE_CALLBACK, 0, OpenOfficialSettings, NULL, NULL, 0 },
-	{ "Exit PspEmu Application",   MENU_ENTRY_TYPE_CALLBACK, 0, ExitPspEmuApplication, NULL, NULL, 0 },
-	{ "Exit Adrenaline Menu",      MENU_ENTRY_TYPE_CALLBACK, 0, ExitAdrenalineMenu, NULL, NULL, 0 },
+	{ "Enter Standby Mode",        MENU_ENTRY_TYPE_CALLBACK, WHITE, EnterStandbyMode, NULL, NULL, 0 },
+	{ "Open Official Settings",    MENU_ENTRY_TYPE_CALLBACK, WHITE, OpenOfficialSettings, NULL, NULL, 0 },
+	{ "Exit PspEmu Application",   MENU_ENTRY_TYPE_CALLBACK, WHITE, ExitPspEmuApplication, NULL, NULL, 0 },
+	{ "Exit Adrenaline Menu",      MENU_ENTRY_TYPE_CALLBACK, WHITE, ExitAdrenalineMenu, NULL, NULL, 0 },
 };
 
 static MenuEntry settings_entries[] = {
 	{ "vPSP Custom Firmware",      MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.cfw_type, cfwtype_options, sizeof(cfwtype_options)/sizeof(char*) },
+	{ "", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 	{ "Graphics Filtering",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.graphics_filtering, graphics_options, sizeof(graphics_options) / sizeof(char **) },
 	{ "Smooth Graphics",           MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.no_smooth_graphics, yes_no_options, sizeof(yes_no_options) / sizeof(char **) },
 	{ "f.lux Filter Color",        MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.flux_mode, flux_mode_options, sizeof(flux_mode_options) / sizeof(char **) },
@@ -116,11 +117,12 @@ static MenuEntry settings_entries[] = {
 	{ "Screen Scale Y (PSP)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (uint8_t *)&config.psp_screen_scale_y, NULL, 0 },
 	{ "Screen Scale X (PS1)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (uint8_t *)&config.ps1_screen_scale_x, NULL, 0 },
 	{ "Screen Scale Y (PS1)",      MENU_ENTRY_TYPE_SCALE,  0, NULL, (uint8_t *)&config.ps1_screen_scale_y, NULL, 0 },
+	{ "", MENU_ENTRY_TYPE_TEXT, WHITE, NULL, NULL, NULL, 0 },
 	{ "Memory Stick Location",     MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.ms_location, ms_location_options, sizeof(ms_location_options) / sizeof(char **) },
 	{ "System Storage Location",   MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.ef_location, ef_location_options, sizeof(ef_location_options) / sizeof(char **) },
 	{ "USB device",                MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.usbdevice, usbdevice_options, sizeof(usbdevice_options) / sizeof(char **) },
 	{ "Skip Adrenaline Boot Logo", MENU_ENTRY_TYPE_OPTION, 0, NULL, &config.skip_logo, no_yes_options, sizeof(no_yes_options) / sizeof(char **) },
-	{ "Reset Adrenaline Settings", MENU_ENTRY_TYPE_CALLBACK, 0, ResetAdrenalineSettings, NULL, NULL, 0 },
+	{ "Reset Adrenaline Settings", MENU_ENTRY_TYPE_CALLBACK, YELLOW, ResetAdrenalineSettings, NULL, NULL, 0 },
 };
 
 static MenuEntry about_entries[] = {
@@ -330,7 +332,7 @@ void drawMenu() {
 			float y = (tab_sel == 0) ? FONT_Y_LINE(3 + i) : FONT_Y_LINE(2 + i);
 
 			uint32_t color = WHITE;
-			if (menu_entries[i].type == MENU_ENTRY_TYPE_TEXT) {
+			if (menu_entries[i].type == MENU_ENTRY_TYPE_TEXT || menu_entries[i].type == MENU_ENTRY_TYPE_CALLBACK) {
 				color = menu_entries[i].color;
 			}
 
@@ -362,12 +364,12 @@ void drawMenu() {
 		// Info about PSP CFW change
 		if (tab_sel == 2 && menu_sel == 0) {
 			char *title = "Changing Custom Firmware requires to close and reopen Adrenaline to take effect.";
-			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17), WHITE, FONT_SIZE, title);
+			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17)+10, ORANGE, FONT_SIZE, title);
 		}
 		// Info about Original filter
-		if (tab_sel == 2 && menu_sel == 1 && config.graphics_filtering == 0) {
+		if (tab_sel == 2 && menu_sel == 2 && config.graphics_filtering == 0) {
 			char *title = "All graphics related options are not taking effect with the Original rendering mode.";
-			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17), WHITE, FONT_SIZE, title);
+			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17)+10, ORANGE, FONT_SIZE, title);
 		}
 	} else {
 		drawStates();
@@ -471,14 +473,20 @@ void ctrlMenu() {
 			}
 
 			if ((hold_pad[PAD_UP] || hold_pad[PAD_LEFT_ANALOG_UP]) && !g_hide_menu) {
-				if (menu_sel > 0) {
-					menu_sel--;
+				menu_sel = (tab_entries[tab_sel].n_entries + menu_sel - 1) % tab_entries[tab_sel].n_entries;
+
+				// Skip empty lines
+				if (strcmp(tab_entries[tab_sel].entries[menu_sel].name, "") == 0) {
+					menu_sel = (tab_entries[tab_sel].n_entries + menu_sel - 1) % tab_entries[tab_sel].n_entries;
 				}
 			}
 
 			if ((hold_pad[PAD_DOWN] || hold_pad[PAD_LEFT_ANALOG_DOWN]) && !g_hide_menu) {
-				if (menu_sel < tab_entries[tab_sel].n_entries-1) {
-					menu_sel++;
+				menu_sel = (tab_entries[tab_sel].n_entries + menu_sel + 1) % tab_entries[tab_sel].n_entries;
+
+				// Skip empty lines
+				if (strcmp(tab_entries[tab_sel].entries[menu_sel].name, "") == 0) {
+					menu_sel = (tab_entries[tab_sel].n_entries + menu_sel + 1) % tab_entries[tab_sel].n_entries;
 				}
 			}
 		}

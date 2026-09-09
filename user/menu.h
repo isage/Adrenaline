@@ -29,7 +29,7 @@ enum Colors {
 	// Secondary colors
 	CYAN            = 0xFFFFFF00,
 	MAGENTA         = 0xFFFF00FF,
-	YELLOW          = 0xFF00FFFF,
+	YELLOW          = 0xFF44EEFF,
 	// Tertiary colors
 	AZURE           = 0xFFFF7F00,
 	VIOLET          = 0xFFFF007F,
