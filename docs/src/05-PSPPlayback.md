@@ -85,3 +85,14 @@ Epinephrine also supports manuals for ISO games. For it to work, the `.DAT` file
 Epinephrine supports launching ISO games/apps executing the `BOOT.BIN` inside the ISO instead of the `EBOOT.BIN` by holding `R` while launching the game/app.
 
 This feature can be used in the few games that requires usage of the `BOOT.BIN` to work properly, as it is the case for ISO of demos, prototypes, decrypted and modded games.
+
+### Janus ISO Switcher
+
+Epinephrine has a native ISO switcher, it allows to switch the ISO driver file in a way that simulates a physical UMD disc switch. This allows Epinephrine to support multi-disc PSP games as well games that have integration with other titles from the same franchise.
+
+To bring the menu up, you can use the `L+R+UP+START`, after that, you just need to select the ISO file you want to switch.
+
+
+<p align="center">
+<img src="./assets/05-janus-0.png" width="49%" /> <img src="./assets/05-janus-1.png" width="49%" />
+</p>

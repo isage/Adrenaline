@@ -48,6 +48,7 @@ INCLUDE_EXTERN_RESOURCE(kd_systemctrl_prx);
 INCLUDE_EXTERN_RESOURCE(kd_pentazemin_prx);
 INCLUDE_EXTERN_RESOURCE(kd_popcorn_prx);
 INCLUDE_EXTERN_RESOURCE(kd_vshctrl_prx);
+INCLUDE_EXTERN_RESOURCE(kd_janus_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_xmbctrl_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_recovery_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_satelite_prx);
@@ -76,6 +77,7 @@ static ScePspemuFlash0Package custom_package[] = {
 	FLASH0_FILE("/kd/pentazemin.prx",       kd_pentazemin_prx),
 	FLASH0_FILE("/kd/popcorn.prx",          kd_popcorn_prx),
 	FLASH0_FILE("/kd/vshctrl.prx",          kd_vshctrl_prx),
+	FLASH0_FILE("/kd/janus.prx",            kd_janus_prx),
 	FLASH0_FILE("/vsh/module/xmbctrl.prx",  vsh_module_xmbctrl_prx),
 	FLASH0_FILE("/vsh/module/recovery.prx", vsh_module_recovery_prx),
 	FLASH0_FILE("/vsh/module/satelite.prx", vsh_module_satelite_prx),

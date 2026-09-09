@@ -68,6 +68,7 @@ The Adrenaline Peoject is two software projects in one: **Adrenaline Application
 | L+R+Down+Start    | Fast exit to XMB/VSH                  | Anytime on XMB or PSP title                                 |
 | L2+R2+Down+Select | Fast exit to XMB/VSH                  | Anytime on PS1 title on Vita                                |
 | L2+R2+Down+Start  | Fast exit to XMB/VSH                  | Anytime on PS1 title on Vita                                |
+| L+R+Up+Start      | Open Janus ISO Switcher Menu          | During PSP ISO title and games                              |
 | Select            | Open VSH Menu                         | XMB/VSH                                                     |
 | Hold L            | Plugins disabled                      | On PSP/PS1 title Reset/Power-on/launch                      |
 | Hold R            | Execute BOOT.BIN in UMDemu ISO        | On PSP ISO title and games launch                           |
