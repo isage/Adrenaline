@@ -48,16 +48,21 @@ static void UmdNormalizeName(char *filename) {
 
 static int GetPathAndName(char *fullpath, char *path, char *filename) {
 	static char fullpath2[256];
-	strcpy(fullpath2, fullpath);
+	strncpy(fullpath2, fullpath, 256);
 
-	if (fullpath2[strlen(fullpath2)-1] == '/') {
-		fullpath2[strlen(fullpath2)-1] = 0;
+	SceSize fullpath2_len = strnlen(fullpath2, 256);
+	if (fullpath2_len == 0) {
+		return SCE_EINVAL;
+	}
+
+	if (fullpath2[fullpath2_len-1] == '/') {
+		fullpath2[fullpath2_len-1] = 0;
 	}
 
 	char *p = strrchr(fullpath2, '/');
 
 	if (!p) {
-		if (strlen(fullpath2)+1 > 32) {
+		if (fullpath2_len+1 > 32) {
 			// filename too big for ISO9660
 			return SCE_ENAMETOOLONG;
 		}
@@ -110,8 +115,15 @@ static int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660D
 
 	u8 *p = g_sectors;
 	Iso9660DirectoryRecord *record = (Iso9660DirectoryRecord *)p;
-
+	SceSize fi_offset = sizeof(Iso9660DirectoryRecord) - 1;
 	while (1) {
+		size_t offset = (size_t)(p - g_sectors);
+		size_t buffer_end = SECTOR_SIZE * 8;
+
+		if (offset >= buffer_end) {
+			return SCE_EINVAL;
+		}
+
 		if (record->len_dr == 0) {
 			if (SECTOR_SIZE - (pos % SECTOR_SIZE) <= oldDirLen) {
 				p += (SECTOR_SIZE - (pos % SECTOR_SIZE));
@@ -121,13 +133,21 @@ static int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660D
 				if (record->len_dr == 0) {
 					return SCE_ENOENT;
 				}
-			} else
-			{
+			} else {
 				return SCE_ENOENT;
+			}
+
+			offset = (size_t)(p - g_sectors);
+			if (offset > buffer_end - fi_offset) {
+				return SCE_EINVAL;
 			}
 		}
 
-		if (record->len_fi > 32) {
+		if (record->len_dr < sizeof(Iso9660DirectoryRecord) || record->len_dr > buffer_end - offset) {
+			return SCE_EINVAL;
+		}
+
+		if (record->len_fi > 32 || record->len_fi > record->len_dr - fi_offset) {
 			return SCE_EINVAL;
 		}
 
@@ -141,8 +161,7 @@ static int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660D
 				memcpy(retRecord, record, sizeof(Iso9660DirectoryRecord));
 				return record->lsbStart;
 			}
-		} else
-		{
+		} else {
 			memset(name, 0, 32);
 			memcpy(name, &record->fi, record->len_fi);
 			UmdNormalizeName(name);
@@ -301,7 +320,9 @@ int isofs_open(char *file, int flags, SceMode mode) {
 	int res, lba, i;
 	int notallowedflags = PSP_O_WRONLY | PSP_O_APPEND | PSP_O_CREAT | PSP_O_TRUNC | PSP_O_EXCL;
 
-	if (!file) return SCE_EINVAL;
+	if (!file) {
+		return SCE_EINVAL;
+	}
 
 	if (strcmp(file, "/") == 0) {
 		i = GetFreeHandle();
@@ -316,18 +337,26 @@ int isofs_open(char *file, int flags, SceMode mode) {
 	}
 
 	memset(fullpath, 0, 256);
-	strncpy(fullpath, file, 256);
+	strncpy(fullpath, file, 255);
 
-	if (fullpath[strlen(fullpath)-1] == '/') {
-		fullpath[strlen(fullpath)-1] = 0;
+	int fullpath_len = strnlen(fullpath, 256);
+
+	if (fullpath_len == 0) {
+		return SCE_EINVAL;
 	}
 
-	if (strlen(fullpath)+1 > 256) {
+	if (fullpath[fullpath_len-1] == '/') {
+		fullpath[fullpath_len-1] = 0;
+	}
+
+	if (fullpath_len+1 > 256) {
 		// path too big for ISO9660
 		return SCE_ENAMETOOLONG;
 	}
 
-	if (flags & notallowedflags) return SCE_EFLAG;
+	if (flags & notallowedflags) {
+		return SCE_EFLAG;
+	}
 
 	if (strncmp(fullpath, "/sce_lbn", 8) != 0) {
 		if ((res = GetPathAndName(fullpath, path, filename)) < 0) {
@@ -336,31 +365,38 @@ int isofs_open(char *file, int flags, SceMode mode) {
 
 		if (path[0]) {
 			lba = FindPathLBA(path, &record);
-		} else
-		{
+		} else {
 			memcpy(&record, &g_main_record, sizeof(Iso9660DirectoryRecord));
 			lba = record.lsbStart;
 		}
 
-		if (lba < 0) return lba;
+		if (lba < 0) {
+			return lba;
+		}
 
 		lba = FindFileLBA(filename, lba, record.lsbDataLength, 0, &record);
-		if (lba < 0) return lba;
+		if (lba < 0) {
+			return lba;
+		}
 
 		i = GetFreeHandle();
-		if (i < 0) return i;
+		if (i < 0) {
+			return i;
+		}
 
 		g_handlers[i].opened = 1;
 		g_handlers[i].lba = lba;
 		g_handlers[i].filesize = record.lsbDataLength;
 		g_handlers[i].filepointer = 0;
-	} else
-	{
+
+	} else {
 		// lba  access
 		char str[11];
 
 		char *p = strstr(fullpath, "_size");
-		if (!p) return SCE_EINVAL;
+		if (!p) {
+			return SCE_EINVAL;
+		}
 
 		if ((p-(fullpath+8)) > 10) {
 			return SCE_ENAMETOOLONG;
@@ -370,7 +406,9 @@ int isofs_open(char *file, int flags, SceMode mode) {
 		strncpy(str, fullpath+8, p-(fullpath+8));
 
 		lba = strtol(str, NULL, 0);
-		if (lba < 0) return SCE_EINVAL;
+		if (lba < 0) {
+			return SCE_EINVAL;
+		}
 
 		if ((p+strlen(p)-(p+5)) > 10) {
 			return SCE_ENAMETOOLONG;
@@ -380,10 +418,14 @@ int isofs_open(char *file, int flags, SceMode mode) {
 		strncpy(str, p+5, p+strlen(p)-(p+5));
 
 		int size = strtol(str, NULL, 0);
-		if (size < 0) return SCE_EINVAL;
+		if (size < 0) {
+			return SCE_EINVAL;
+		}
 
 		i = GetFreeHandle();
-		if (i < 0) return i;
+		if (i < 0) {
+			return i;
+		}
 
 		g_handlers[i].opened = 1;
 		g_handlers[i].lba = lba;
