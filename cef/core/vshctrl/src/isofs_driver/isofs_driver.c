@@ -539,7 +539,7 @@ SceOff isofs_lseek(SceUID fd, SceOff ofs, int whence) {
 	} else if (whence == PSP_SEEK_CUR) {
 		g_handlers[fd].filepointer += (int)ofs;
 	} else if (whence == PSP_SEEK_END) {
-		g_handlers[fd].filepointer = g_handlers[fd].filesize - (int)ofs;
+		g_handlers[fd].filepointer = g_handlers[fd].filesize + (int)ofs;
 	} else
 	{
 		return SCE_EINVAL;
