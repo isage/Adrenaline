@@ -132,7 +132,7 @@ static void update_cache_info(void) {
 	}
 }
 
-static ISOCache *get_retirng_cache(void) {
+static ISOCache *get_retiring_cache(void) {
 	int retiring = 0;
 
 	// invalid cache first
@@ -150,7 +150,12 @@ static ISOCache *get_retirng_cache(void) {
 			}
 		}
 	} else if (cache_policy == INFERNO_CACHE_RR) {
-		retiring = sctrlKernelRand() % g_caches_num;
+		if (g_caches_num == 0) {
+			logmsg("[ERROR]: %s: `g_caches_num` is zero\n", __func__);
+			return NULL;
+		} else {
+			retiring = sctrlKernelRand() % g_caches_num;
+		}
 	}
 
 exit:
@@ -158,6 +163,10 @@ exit:
 }
 
 static void disable_cache(ISOCache *cache) {
+	if (cache == NULL) {
+		return;
+	}
+
 	cache->pos = (u32)-1;
 	cache->age = -1;
 	cache->bufsize = 0;
@@ -166,7 +175,7 @@ static void disable_cache(ISOCache *cache) {
 static void reorder_iso_cache(int idx) {
 	ISOCache tmp;
 
-	if (idx < 0 && idx >= g_caches_num) {
+	if (idx < 0 || idx >= g_caches_num) {
 		logmsg("[ERROR]: %s: wrong idx\n", __func__);
 		return;
 	}
@@ -216,7 +225,7 @@ static int add_cache(IoReadArg *arg) {
 			cur = last_cache->pos + last_cache->bufsize;
 		}
 
-		cache = get_retirng_cache();
+		cache = get_retiring_cache();
 		disable_cache(cache);
 		cache_arg.offset = cur & (~(64-1));
 		cache_arg.address = (u8*)cache->buf;
