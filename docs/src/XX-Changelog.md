@@ -5,8 +5,10 @@
 
 ### Adrenaline
 - Add support to use files on `ux0:data/PSPEMUCFW/` instead of `ux0:app/PSPEMUCFW/`
+- Reduce memory usage
 - Fix savestate thumbnail on some graphical filters showing as one color plain image
 - Fix UTF-8 rendering on Adrenaline Menu
+- Fix a memory leak on error code path
 
 ### Epinephrine CFW
 
@@ -17,10 +19,14 @@
 - Add option to forcibly disable high memory layout **\[[docs](./08-CfwConfiguration.md#high-memory-layout)\]**
 - Fix branch logic for plugins patch
 - Fix formatting issues on recovery
+- Fix wrong logic on VSH isofs driver
+- Fix UB on virtualPBP initialization
+- Fix overflow on custom POPS `CONFIG.BIN` injection
 - Refactor SystemControl and Pentazemin modules to use `sctrlHENSetSystemBootedHandler`
+- Improve overall stability and performance
 
 - **DEV:** Introduce `sctrlHENSetSystemBootedHandler`
-	- It allows to se a handler that is called only once when the system just finished the boot sequence.
+	- It allows to set a handler that is called only once when the system just finished the boot sequence.
 - **DEV:** Expand `isoCtrl_driver` API with `isoGetUmdFile`, `isoReopenUmdFile`, `isoSwapUmdFile`.
 - **DEV:** Introduce `NoDrmHelper` CFW library
     - Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.
