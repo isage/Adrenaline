@@ -74,7 +74,7 @@ static int CorruptIconPatch(char *name) {
 
 	for (int i = 0; i < NELEMS(g_game_dir_list); i++) {
 		char path[256];
-		sprintf(path, "%s/%s%%/EBOOT.PBP", g_game_dir_list[i], name);
+		snprintf(path, 256, "%s/%s%%/EBOOT.PBP", g_game_dir_list[i], name);
 		logmsg4("[DEBUG]: %s: path=%s\n", __func__, path);
 
 		SceIoStat stat;

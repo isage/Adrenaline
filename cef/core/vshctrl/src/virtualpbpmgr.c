@@ -77,14 +77,12 @@ void GetSFOInfo(char *title, int n, char *discid, int m, char *system_version , 
 
 int virtualpbp_init() {
 	g_vpbps = (VirtualPbp *)oe_malloc(MAX_FILES*sizeof(VirtualPbp));
-	memset(g_vpbps, 0, MAX_FILES*sizeof(VirtualPbp));
 
 	if (!g_vpbps) {
 		return -1;
 	}
 
 	g_states = (InternalState *)oe_malloc(MAX_FILES*sizeof(InternalState));
-	memset(g_states, 0, MAX_FILES*sizeof(InternalState));
 	if (!g_states) {
 		return -1;
 	}
@@ -95,6 +93,7 @@ int virtualpbp_init() {
 	}
 
 	memset(g_vpbps, 0, MAX_FILES*sizeof(VirtualPbp));
+	memset(g_states, 0, MAX_FILES*sizeof(InternalState));
 	g_index = 0;
 	virtual_sfo_init();
 	return 0;
@@ -155,6 +154,11 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 	SceUID fd = isofs_open("/PSP_GAME/PARAM.SFO", PSP_O_RDONLY, 0);
 	if (fd >= 0) {
 		char *buf = (char *)oe_malloc(1024);
+
+		if (buf == NULL) {
+			logmsg("[ERROR]: %s: Failed to allocate buffer for SFO\n", __func__);
+			return -1;
+		}
 
 		isofs_read(fd, buf, 1024);
 		isofs_close(fd);
