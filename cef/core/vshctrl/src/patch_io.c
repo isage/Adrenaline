@@ -123,7 +123,7 @@ static int HideDlc(char *name) {
 
 static void ApplyIsoNamePatch(SceIoDirent *dir) {
 	if (dir->d_name[0] != '.') {
-		memset(dir->d_name, 0, 256);
+		memset(dir->d_name, 0, sizeof(dir->d_name));
 		sprintf(dir->d_name, ISO_FOLDER_PREFIX"%d", g_isoindex++);
 	}
 }
@@ -309,7 +309,7 @@ int GetIsoIndex(const char *file) {
 	}
 
 	char number[5];
-	memset(number, 0, 5);
+	memset(number, 0, sizeof(number));
 	strncpy(number, p + 9, q - (p + 9));
 
 	return strtol(number, NULL, 10);
@@ -318,7 +318,7 @@ int GetIsoIndex(const char *file) {
 char *GetPathDrive(const char *path) {
 	static char buf[10] = {0};
 
-	memset(buf, 0, 10);
+	memset(buf, 0, sizeof(buf));
 	for (int i = 0; i < 10; i++) {
 		if (path[i] == '.' || path[i] == '\0') {
 			break;

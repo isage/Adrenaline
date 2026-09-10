@@ -224,8 +224,8 @@ static char* fix_path_on_ef(char *file) {
 		static char fixed[256] = {0};
 
 		// When the system reboots to launch the game, `ef0:` is not yet available, so we use the ms0 magic path to ef0 driver
-		memset(fixed, 0, 256);
-		snprintf(fixed, 255, "ms0:/__ef0__%s", file+4);
+		memset(fixed, 0, sizeof(fixed));
+		snprintf(fixed, sizeof(fixed)-1, "ms0:/__ef0__%s", file+4);
 		return fixed;
 	} else {
 		return file;
@@ -237,8 +237,8 @@ static char* force_path_on_ef(const char *file) {
 		static char fixed[256] = {0};
 
 		// When the system reboots to launch the game, `ef0:` is not yet available, so we use the ms0 magic path to ef0 driver
-		memset(fixed, 0, 256);
-		snprintf(fixed, 255, "ms0:/__ef0__%s", file+4);
+		memset(fixed, 0, sizeof(fixed));
+		snprintf(fixed, sizeof(fixed)-1, "ms0:/__ef0__%s", file+4);
 		return fixed;
 	} else {
 		return file;

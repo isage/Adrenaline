@@ -252,7 +252,7 @@ static int _efIoOpen(u32 *args) {
 	int flags = args[2];
 	SceMode mode = (SceMode)args[3];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = msIoOpen(arg, ms_path, flags, mode);
 	// int res = g_ms_funcs.IoOpen(arg, ms_path, flags, mode);
@@ -278,7 +278,7 @@ static int _efIoRemove(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *file = (const char *)args[1];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = g_ms_funcs.IoRemove(arg, ms_path);
 
@@ -290,7 +290,7 @@ static int _efIoMkdir(u32 *args) {
 	const char *file = (const char *)args[1];
 	SceMode mode = (SceMode)args[2];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = g_ms_funcs.IoMkdir(arg, ms_path, mode);
 
@@ -301,7 +301,7 @@ static int _efIoRmDir(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *file = (const char *)args[1];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = g_ms_funcs.IoRmdir(arg, ms_path);
 
@@ -312,7 +312,7 @@ static int _efIoDopen(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *file = (const char *)args[1];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = g_ms_funcs.IoDopen(arg, ms_path);
 
@@ -324,7 +324,7 @@ static int _efIoGetstat(u32 *args) {
 	const char *file = (const char *)args[1];
 	SceIoStat *stat = (SceIoStat *)args[2];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = g_ms_funcs.IoGetstat(arg, ms_path, stat);
 
@@ -337,7 +337,7 @@ static int _efIoChstat(u32 *args) {
 	SceIoStat *stat = (SceIoStat *)args[2];
 	int bits = (int)args[3];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, file, ms_path);
 	int res = g_ms_funcs.IoChstat(arg, ms_path, stat, bits);
 
@@ -348,7 +348,7 @@ static int _efIoChdir(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *dir = (const char *)args[1];
 
-	memset(ms_path, 0, 256);
+	memset(ms_path, 0, sizeof(ms_path));
 	BuildMsPathForEf(arg, dir, ms_path);
 	int res = g_ms_funcs.IoChdir(arg, ms_path);
 

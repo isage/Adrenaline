@@ -165,7 +165,7 @@ static int calcWindowHeight(){
 }
 
 static void switchMainMenu() {
-	memset(g_current_header_text, 0, 128);
+	memset(g_current_header_text, 0, sizeof(g_current_header_text));
 	strcpy(g_current_header_text, MAIN_HEADER);
 	g_current_menu = g_main_menu_entries;
 	g_current_menu_size = NELEMS(g_main_menu_entries);
@@ -177,7 +177,7 @@ static void switchMainMenu() {
 }
 
 static void switchAdvGameMenuP1() {
-	memset(g_current_header_text, 0, 128);
+	memset(g_current_header_text, 0, sizeof(g_current_header_text));
 	strcpy(g_current_header_text, GAME_OPT_HEADER);
 	g_current_menu = g_adv_quick_game_entries_p1;
 	g_current_menu_size = NELEMS(g_adv_quick_game_entries_p1);

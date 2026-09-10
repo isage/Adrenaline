@@ -321,7 +321,7 @@ int RunRebootPatched(u32 *params) {
 		if (g_rebootex_config.bootfileindex != MODE_RECOVERY) {
 			g_rebootex_config.bootfileindex = MODE_UMD;
 		}
-		memset(g_rebootex_config.umdfilename, 0, 256);
+		memset(g_rebootex_config.umdfilename, 0, sizeof(g_rebootex_config.umdfilename));
 	}
 
 	return RunReboot(params);

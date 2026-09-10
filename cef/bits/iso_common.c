@@ -309,7 +309,7 @@ void iso_close() {
 
 	g_total_sectors = 0;
 	g_is_compressed = 0;
-	memset(g_iso_fn, 0, 255);
+	memset(g_iso_fn, 0, sizeof(g_iso_fn));
 }
 
 #ifdef __ISO_EXTRA__

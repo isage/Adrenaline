@@ -221,7 +221,7 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
 	int k1 = pspSdkSetK1(0);
 
 	// Reset rebootex stuff that is per title basis before exiting an app.
-	memset(g_rebootex_config.title_id, 0, 10);
+	memset(g_rebootex_config.title_id, 0, sizeof(g_rebootex_config.title_id));
 
 	// Set boot mode to normal on not recovery
 	if (g_rebootex_config.bootfileindex != MODE_RECOVERY) {

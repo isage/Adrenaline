@@ -72,7 +72,7 @@ int module_start(SceSize args, void *argp) {
 
   // Remove image path limitation
   char zero[0x6E];
-  memset(zero, 0, 0x6E);
+  memset(zero, 0, sizeof(zero));
   hooks[0] = taiInjectDataForKernel(KERNEL_PID, info.modid, 0, 0x1738, zero, 0x6E);
 
   // Add patches to support exFAT

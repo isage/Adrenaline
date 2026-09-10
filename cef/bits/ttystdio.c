@@ -44,7 +44,7 @@ static int io_write(PspIoDrvFileArg *arg, const char *data, int len) {
 	(void) sceKernelWaitSema(g_out_sema, 1, 0);
 	if ((arg->fs_num == STDOUT_FILENO) || (arg->fs_num == STDERR_FILENO)) {
 		if (len < 1023) {
-			memset(g_adrenaline->printbuf, 0, 1024);
+			memset(g_adrenaline->printbuf, 0, sizeof(g_adrenaline->printbuf));
 			strncpy(g_adrenaline->printbuf, data, len);
 			ret = sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_PRINT, 0);
 		}

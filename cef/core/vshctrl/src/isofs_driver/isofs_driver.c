@@ -167,7 +167,7 @@ static int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660D
 				return record->lsbStart;
 			}
 		} else {
-			memset(name, 0, 32);
+			memset(name, 0, sizeof(name));
 			memcpy(name, &record->fi, record->len_fi);
 			UmdNormalizeName(name);
 
@@ -341,10 +341,10 @@ int isofs_open(char *file, int flags, SceMode mode) {
 		return i;
 	}
 
-	memset(fullpath, 0, 256);
-	strncpy(fullpath, file, 255);
+	memset(fullpath, 0, sizeof(fullpath));
+	strncpy(fullpath, file, sizeof(fullpath));
 
-	int fullpath_len = strnlen(fullpath, 256);
+	int fullpath_len = strnlen(fullpath, sizeof(fullpath));
 
 	if (fullpath_len == 0) {
 		return SCE_EINVAL;

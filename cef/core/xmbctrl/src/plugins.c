@@ -335,8 +335,8 @@ void savePlugins() {
 		if (plugin->name != NULL && plugin->runlevel != NULL) {
 			static char buf[256] = {0};
 			char *enabled = (plugin->active) ? "on" : "off";
-			paf_memset(buf, 0, 256);
-			paf_snprintf(buf, 255, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
+			paf_memset(buf, 0, sizeof(buf));
+			paf_snprintf(buf, sizeof(buf)-1, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
 			sceIoWrite(fd, buf, paf_strlen(buf));
 
 		  // Custom line

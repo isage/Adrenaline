@@ -695,10 +695,10 @@ int module_start(SceSize args, void *argp) {
 		);
 		res = sceLiveAreaUpdateFrameSync("01.00", frameXmlStr, strlen(frameXmlStr), "app0:/", 0);
 
-		memset(frameXmlStr, 0, 512);
+		memset(frameXmlStr, 0, sizeof(frameXmlStr));
 		snprintf(
 			frameXmlStr,
-			512,
+			sizeof(frameXmlStr),
 			"<frame id=\"frame3\">"
 				"<liveitem>"
 					"<text valign=\"top\" align=\"left\" text-align=\"left\" text-valign=\"top\" line-space=\"2\" ellipsis=\"on\">"
