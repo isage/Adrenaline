@@ -161,6 +161,7 @@ int initGlobals() {
 	char* slash = strrchr(config_filename, '/');
 	if (!slash) {
 		logmsg(" [ERROR]: %s: Ignoring custom config: Invalid filename to find custom config: %s\n", __func__, filename);
+		return 0;
 	}
 	strcpy(slash+1, "CONFIG.BIN");
 
