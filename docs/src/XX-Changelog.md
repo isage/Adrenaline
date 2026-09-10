@@ -6,6 +6,7 @@
 ### Adrenaline
 - Add support to use files on `ux0:data/PSPEMUCFW/` instead of `ux0:app/PSPEMUCFW/`
 - Reduce memory usage
+- Use IFTU based Sharp Bilinear without Scanlines when conditions are right
 - Fix savestate thumbnail on some graphical filters showing as one color plain image
 - Fix UTF-8 rendering on Adrenaline Menu
 - Fix a memory leak on error code path

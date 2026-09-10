@@ -79,6 +79,8 @@ vita2d_texture* overlay_texture = NULL;
 
 int language = 0, enter_button = 0, date_format = 0, time_format = 0;
 
+int g_direct_sharp_scale_active = 0;
+
 static int EnterStandbyMode();
 static int OpenOfficialSettings();
 static int ExitPspEmuApplication();
@@ -97,7 +99,7 @@ static char *no_yes_options[] = { "No", "Yes" };
 static char *yes_no_options[] = { "Yes", "No" };
 static char *ms_location_options[] = { "ux0:pspemu", "ur0:pspemu", "imc0:pspemu", "xmc0:pspemu", "uma0:pspemu", "uma0:" };
 static char *usbdevice_options[] = { "Memory Card", "Internal Storage", "sd2vita", "psvsd" };
-static char *cfwtype_options[] = { "EPI", "ARK" };
+static char *cfwtype_options[] = { "Epinephrine (EPI)", "ARK" };
 static char *ef_location_options[] = { "Disabled", "uma0:pspemu", "xmc0:pspemu", "ux0:pspemu", "uma0:" };
 
 static MenuEntry main_entries[] = {
@@ -364,12 +366,16 @@ void drawMenu() {
 		// Info about PSP CFW change
 		if (tab_sel == 2 && menu_sel == 0) {
 			char *title = "Changing Custom Firmware requires to close and reopen Adrenaline to take effect.";
-			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17)+10, ORANGE, FONT_SIZE, title);
+			pgf_draw_text(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17)+10, ORANGE, FONT_SIZE, title);
 		}
 		// Info about Original filter
 		if (tab_sel == 2 && menu_sel == 2 && config.graphics_filtering == 0) {
 			char *title = "All graphics related options are not taking effect with the Original rendering mode.";
-			pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17)+10, ORANGE, FONT_SIZE, title);
+			pgf_draw_text(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17)+10, ORANGE, FONT_SIZE, title);
+		}
+		if (tab_sel == 2 && menu_sel == 2 && config.graphics_filtering == 5) {
+			char *title = (g_direct_sharp_scale_active) ? "Using IFTU Sharp Bilinear" : "Using vita2d Sharp Bilinear";
+			pgf_draw_text(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, title)), FONT_Y_LINE(17)+10, ORANGE, FONT_SIZE, title);
 		}
 	} else {
 		drawStates();
@@ -598,9 +604,25 @@ int AdrenalineDraw(SceSize args, void *argp) {
 	// keep track of entering pops mode
 	int lastPops = 0;
 
+	int direct_sharp_scale_requested = -1;
+	int is_vita_tv = sceKernelIsPSVitaTV();
+
 	while (1) {
 		int draw_native = *(uint32_t *)CONVERT_ADDRESS(DRAW_NATIVE);
 		SceAdrenaline *adrenaline = (SceAdrenaline *)CONVERT_ADDRESS(ADRENALINE_ADDRESS);
+
+		int request_direct_sharp_scale =
+			!is_vita_tv && !adrenaline->pops_mode && !draw_native
+			&& config.graphics_filtering == 5 && config.no_smooth_graphics != 0
+			&& config.flux_mode == FLUX_MODE_OFF
+			&& config.psp_screen_scale_x == 2.0f
+			&& config.psp_screen_scale_y == 2.0f;
+
+		if (request_direct_sharp_scale != direct_sharp_scale_requested) {
+			int res = adrSetPspemuDirectSharpScale(request_direct_sharp_scale);
+			direct_sharp_scale_requested = request_direct_sharp_scale;
+			g_direct_sharp_scale_active = request_direct_sharp_scale && res >= 0;
+		}
 
 		// pause/unpause pops once after switching from psp to pops mode
 		// this pause/unpause fixes slowdown in PS1 games that used to require manually entering/exiting menu
@@ -672,10 +694,15 @@ int AdrenalineDraw(SceSize args, void *argp) {
 		}
 
 		// Do not draw if dialog is running
-		if (sceCommonDialogIsRunning() || (config.graphics_filtering == 0 && menu_open == 0 && draw_native == 0)) {
+		if (sceCommonDialogIsRunning() || ((config.graphics_filtering == FILTER_ORIGINAL || g_direct_sharp_scale_active) &&
+			menu_open == 0 && draw_native == 0)) {
 			sceDisplayWaitVblankStart();
 
 			continue;
+		}
+
+		if (request_direct_sharp_scale && !g_direct_sharp_scale_active) {
+			sceGxmDisplayQueueFinish();
 		}
 
 		// Draw display
@@ -692,7 +719,11 @@ int AdrenalineDraw(SceSize args, void *argp) {
 		} else if (config.graphics_filtering == 4) {
 			shader = lcd3x_shader;
 		} else if (config.graphics_filtering == 5) {
-			shader = sharp_simple_shader;
+			if (g_direct_sharp_scale_active) {
+				shader = opaque_shader;
+			} else {
+				shader = sharp_simple_shader;
+			}
 		} else if (config.graphics_filtering == 6) {
 			shader = scale2x_shader;
 		} else if (config.graphics_filtering == 7) {

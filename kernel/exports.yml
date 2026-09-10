@@ -13,3 +13,4 @@ AdrenalineKernel:
         - kuCtrlPeekBufferPositive
         - adrStartBlanking
         - adrStopBlanking
+        - adrSetPspemuDirectSharpScale

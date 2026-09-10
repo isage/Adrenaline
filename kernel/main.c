@@ -24,6 +24,7 @@
 #include <psp2kern/kernel/sysroot.h>
 #include <psp2kern/kernel/cpu.h>
 #include <psp2kern/kernel/debug.h>
+#include <psp2kern/lowio/iftu.h>
 #include <psp2common/display.h>
 
 #include <stdio.h>
@@ -46,6 +47,10 @@ static tai_hook_ref_t sceCompatSecSetSSRAMAclRef;
 static tai_hook_ref_t ksceSblAimgrIsDEXRef;
 static tai_hook_ref_t ksceKernelStartPreloadedModulesRef;
 static tai_hook_ref_t ksceDisplaySetFrameBufInternalRef;
+static tai_hook_ref_t ksceIftuSetInputFrameBufferRef;
+
+static SceUID g_ksceIftuSetInputFrameBufferHook = -1;
+static volatile int g_pspemu_direct_sharp_scale = 0;
 
 static int hooks[9];
 static int n_hooks = 0;
@@ -166,6 +171,16 @@ DISPLAY_HOOK_RET:
 	return TAI_CONTINUE(int, ksceDisplaySetFrameBufInternalRef, head, index, pParam, sync);
 }
 
+static int ksceIftuSetInputFrameBufferPatched(int plane, SceIftuPlaneState *state, int bilinear, int sync_mode) {
+	if (g_pspemu_direct_sharp_scale && bilinear == 1 && state &&
+		state->fb.width == PSP_SCREEN_WIDTH && state->fb.height == PSP_SCREEN_HEIGHT)
+	{
+		bilinear = 0;
+	}
+
+	return TAI_CONTINUE(int, ksceIftuSetInputFrameBufferRef, plane, state, bilinear, sync_mode);
+}
+
 int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count) {
 	uint32_t state;
 	ENTER_SYSCALL(state);
@@ -202,6 +217,17 @@ int adrStartBlanking(int vol) {
 	return 0;
 }
 
+int adrSetPspemuDirectSharpScale(int enabled) {
+	if (g_ksceIftuSetInputFrameBufferHook < 0) {
+		g_pspemu_direct_sharp_scale = 0;
+		return g_ksceIftuSetInputFrameBufferHook;
+	}
+
+	g_pspemu_direct_sharp_scale = enabled != 0;
+	__sync_synchronize();
+	return 0;
+}
+
 uint32_t adrStopBlanking() {
 	uint32_t state;
 	ENTER_SYSCALL(state);
@@ -222,6 +248,10 @@ uint32_t adrStopBlanking() {
 void _start() __attribute__ ((weak, alias("module_start")));
 int module_start(SceSize args, void *argp) {
 	int res;
+
+	g_ksceIftuSetInputFrameBufferHook = taiHookFunctionImportForKernel(KERNEL_PID,
+		&ksceIftuSetInputFrameBufferRef, "SceDisplay", 0xCAFCFE50, 0x7CE0C4DA,
+		ksceIftuSetInputFrameBufferPatched);
 
 	// Tai module info
 	tai_module_info_t info;
