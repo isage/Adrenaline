@@ -170,28 +170,36 @@ int initGlobals() {
 	fd = sceIoOpen(config_filename, PSP_O_RDONLY, 0777);
 	if (fd < 0) {
 		logmsg("[ERROR]: %s: sceIoOpen %s -> 0x%08X\n", __func__, config_filename, fd);
+		return 0;
 	}
 
 	// 3. Read it if it exists
-	if (fd > 0) {
-		g_config_size = sceIoLseek(fd, 0, PSP_SEEK_END);
-		if (g_config_size <= 0) {
+	if (fd >= 0) {
+		g_config_size = 0;
+
+		int config_size = sceIoLseek32(fd, 0, PSP_SEEK_END);
+		if (config_size <= 0 || config_size > sizeof(g_custom_config)) {
 			logmsg("[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__);
 			sceIoClose(fd);
 			return 0;
 		}
 
-		sceIoLseek(fd, 0, PSP_SEEK_SET);
-		io_ret = sceIoRead(fd, g_custom_config, g_config_size);
-
-		if (io_ret < 0) {
-			logmsg("[ERROR]: %s: Ignoring custom config: Fail to read custom config size\n", __func__);
+		if (sceIoLseek(fd, 0, PSP_SEEK_SET) < 0) {
+			logmsg("[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__);
 			sceIoClose(fd);
 			return 0;
 		}
 
-		logmsg3("[INFO]: %s: `g_custom_config` set: 0x%08X bytes\n", __func__, g_config_size);
+		io_ret = sceIoRead(fd, g_custom_config, config_size);
 		sceIoClose(fd);
+
+		if (io_ret != config_size) {
+			logmsg("[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__);
+			return 0;
+		}
+
+		g_config_size = config_size;
+		logmsg3("[INFO]: %s: `g_custom_config` set: 0x%08X bytes\n", __func__, g_config_size);
 	}
 
 	return 0;
@@ -414,24 +422,26 @@ int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 		sceIoLseek(fd, pos+size, PSP_SEEK_SET);
 
 		// Magic is correct
-		if (memcmp(magic, "PSISOIMG0000", 12) == 0) {
+		if (memcmp(magic, "PSISOIMG0000", 12) == 0 && res == size) {
 			// Copy custom config if it exists
-			if (g_config_size > 0) {
+			if (g_config_size > 0 && size >= 0x20 + (SceSize)g_config_size) {
 				// It is located at 0x420 after PSISOIMG, thus 0x20 after given buffer
 				memcpy(data+0x20, g_custom_config, g_config_size);
 				logmsg("[INFO]: %s: Custom config was set.\n", __func__);
 			}
 
 			// anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG, 0xEB0 after given buffer
-			// buf points to PSISOIMG+0x0400, which conviniently starts with the disc_id
-			u32 libcrypt_magic = searchLibCryptMagicWord(data);
+			// buf points to PSISOIMG+0x0400, which conveniently starts with the disc_id
+			if (size >= 0xeb4) {
+				u32 libcrypt_magic = searchLibCryptMagicWord(data);
 
-			// A magic word for this title was found
-			if (libcrypt_magic != 0) {
-				// It needs to be xored with this constant
-				libcrypt_magic ^= LIBCRYPT_XOR_MAGIC;
-				memcpy(data+0xeb0, &libcrypt_magic, sizeof(libcrypt_magic));
-				logmsg("[INFO]: %s: Anti-libcrypt patch was applied.\n", __func__);
+				// A magic word for this title was found
+				if (libcrypt_magic != 0) {
+					// It needs to be xored with this constant
+					libcrypt_magic ^= LIBCRYPT_XOR_MAGIC;
+					memcpy(data+0xeb0, &libcrypt_magic, sizeof(libcrypt_magic));
+					logmsg("[INFO]: %s: Anti-libcrypt patch was applied.\n", __func__);
+				}
 			}
 		}
 	}
