@@ -157,6 +157,9 @@ int virtualpbp_add(char *isofile, ScePspDateTime *mtime, VirtualPbp *res) {
 
 		if (buf == NULL) {
 			logmsg("[ERROR]: %s: Failed to allocate buffer for SFO\n", __func__);
+			isofs_close(fd);
+			isofs_exit();
+			sceKernelSignalSema(g_vpsema, 1);
 			return -1;
 		}
 

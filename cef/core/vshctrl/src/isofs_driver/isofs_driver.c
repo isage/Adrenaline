@@ -48,9 +48,10 @@ static void UmdNormalizeName(char *filename) {
 
 static int GetPathAndName(char *fullpath, char *path, char *filename) {
 	static char fullpath2[256];
-	strncpy(fullpath2, fullpath, 256);
+	memset(fullpath2, 0 , sizeof(fullpath2));
+	strncpy(fullpath2, fullpath, sizeof(fullpath2)-1);
 
-	SceSize fullpath2_len = strnlen(fullpath2, 256);
+	SceSize fullpath2_len = strnlen(fullpath2, sizeof(fullpath2));
 	if (fullpath2_len == 0) {
 		return SCE_EINVAL;
 	}
@@ -121,6 +122,10 @@ static int FindFileLBA(char *filename, int lba, int dirSize, int isDir, Iso9660D
 		size_t buffer_end = SECTOR_SIZE * 8;
 
 		if (offset >= buffer_end) {
+			return SCE_EINVAL;
+		}
+
+		if (offset > buffer_end - fi_offset) {
 			return SCE_EINVAL;
 		}
 
@@ -534,18 +539,23 @@ SceOff isofs_lseek(SceUID fd, SceOff ofs, int whence) {
 		return SCE_EBADF;
 	}
 
+	SceOff position = 0;
 	if (whence == PSP_SEEK_SET) {
-		g_handlers[fd].filepointer = (int)ofs;
+		position = (int)ofs;
 	} else if (whence == PSP_SEEK_CUR) {
-		g_handlers[fd].filepointer += (int)ofs;
+		position += (int)ofs;
 	} else if (whence == PSP_SEEK_END) {
-		g_handlers[fd].filepointer = g_handlers[fd].filesize + (int)ofs;
-	} else
-	{
+		position = g_handlers[fd].filesize + (int)ofs;
+	} else {
 		return SCE_EINVAL;
 	}
 
-	return g_handlers[fd].filepointer;
+	if (position < 0 || position > g_handlers[fd].filesize) {
+		return SCE_EINVAL;
+	}
+
+	g_handlers[fd].filepointer = (int)position;
+	return position;
 }
 
 int isofs_getstat(const char *file, SceIoStat *stat) {
@@ -560,11 +570,21 @@ int isofs_getstat(const char *file, SceIoStat *stat) {
 		return SCE_ENAMETOOLONG;
 	}
 
-	memset(fullpath, 0, 256);
-	strncpy(fullpath, file, 256);
+	memset(fullpath, 0, sizeof(fullpath));
+	strncpy(fullpath, file, sizeof(fullpath)-1);
 
-	if (fullpath[strlen(fullpath)-1] == '/') {
-		fullpath[strlen(fullpath)-1] = 0;
+	SceSize fullpath_len = strnlen(file, sizeof(fullpath));
+
+	if (fullpath_len == 0) {
+		return SCE_EINVAL;
+	}
+
+	if (fullpath_len >= sizeof(fullpath)) {
+		return SCE_ENAMETOOLONG;
+	}
+
+	if (fullpath[fullpath_len-1] == '/') {
+		fullpath[fullpath_len-1] = 0;
 	}
 
 	if (strncmp(fullpath, "/sce_lbn", 8) != 0) {
@@ -574,16 +594,19 @@ int isofs_getstat(const char *file, SceIoStat *stat) {
 
 		if (path[0]) {
 			lba = FindPathLBA(path, &record);
-		} else
-		{
+		} else {
 			memcpy(&record, &g_main_record, sizeof(Iso9660DirectoryRecord));
 			lba = record.lsbStart;
 		}
 
-		if (lba < 0) return lba;
+		if (lba < 0) {
+			return lba;
+		}
 
 		lba = FindFileLBA(filename, lba, record.lsbDataLength, 0, &record);
-		if (lba < 0) return lba;
+		if (lba < 0) {
+			return lba;
+		}
 
 		memset(stat, 0, sizeof(SceIoStat));
 		stat->st_size = record.lsbDataLength;
