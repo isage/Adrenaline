@@ -231,14 +231,20 @@ static int FindPathLBA(char *path, Iso9660DirectoryRecord *retRecord) {
 
 int isofs_init() {
 	g_sectors = oe_malloc(SIZE_OF_SECTORS);
-	if (!g_sectors) return -1;
+	if (!g_sectors) {
+		return -1;
+	}
 
 	memset(g_sectors, 0, SIZE_OF_SECTORS);
 
 	int res = IsofsReadSectors(0x10, 1, g_sectors);
-	if (res < 0) return res;
+	if (res < 0) {
+		isofs_exit();
+		return res;
+	}
 
 	if (memcmp(g_sectors + 1, "CD001", 5) != 0) {
+		isofs_exit();
 		return SCE_EINVAL;
 	}
 
