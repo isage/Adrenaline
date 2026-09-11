@@ -50,7 +50,6 @@
 #include "includes/texture_v.h"
 #include "includes/texture_f.h"
 #include "includes/opaque_v.h"
-#include "includes/bicubic_f.h"
 #include "includes/sharp_bilinear_f.h"
 #include "includes/sharp_bilinear_v.h"
 #include "includes/sharp_bilinear_simple_f.h"
@@ -65,8 +64,6 @@
 #include "includes/scale3x_f.h"
 #include "includes/vflux_f.h"
 #include "includes/vflux_v.h"
-#include "includes/texture_v.h"
-#include "includes/texture_f.h"
 
 static const SceGxmProgram *const gxm_program_vflux_v = (SceGxmProgram*)&vflux_v;
 static const SceGxmProgram *const gxm_program_vflux_f = (SceGxmProgram*)&vflux_f;
@@ -219,8 +216,8 @@ static int EnterAdrenalineMenu() {
 
 	// Check if ARK is installed
 	SceIoStat stat;
-	char ark_path[47];
-	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
+	char ark_path[64];
+	snprintf(ark_path, sizeof(ark_path), "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
 	if (sceIoGetstat(ark_path, &stat) < 0 && sceIoGetstat("ux0:pspemu" FLASH0_ARK_PATH, &stat) < 0){
 		settings_entries[0].n_options = 1;
 		config.cfw_type = 0;
@@ -311,7 +308,7 @@ void drawMenu() {
 		}
 
 		vita2d_draw_rectangle(WINDOW_X, FONT_Y_LINE(1) + 9.0f, WINDOW_WIDTH, 28.0f, COLOR_ALPHA(0xFFFF1F7F, 0x7F));
-		pgf_draw_textf(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, info)), FONT_Y_LINE(1) + 10.0f, WHITE, FONT_SIZE, info);
+		pgf_draw_text(WINDOW_X + ALIGN_CENTER(WINDOW_WIDTH, vita2d_pgf_text_width(font, FONT_SIZE, info)), FONT_Y_LINE(1) + 10.0f, WHITE, FONT_SIZE, info);
 	}
 
 	// Draw tabs
@@ -497,16 +494,6 @@ void ctrlMenu() {
 			}
 		}
 	}
-}
-
-void getPspScreenScale(float *scale_x, float *scale_y) {
-	*scale_x = config.psp_screen_scale_x;
-	*scale_y = config.psp_screen_scale_y;
-}
-
-void getPopsScreenScale(float *scale_x, float *scale_y) {
-	*scale_x = config.ps1_screen_scale_x;
-	*scale_y = config.ps1_screen_scale_y;
 }
 
 void *pops_data = NULL;
@@ -753,18 +740,12 @@ int AdrenalineDraw(SceSize args, void *argp) {
 			sceDmacMemcpy(psp_data, (void *)SCE_PSPEMU_FRAMEBUFFER, SCE_PSPEMU_FRAMEBUFFER_SIZE);
 
 			// Draw psp screen
-			float scale_x = 2.00f;
-			float scale_y = 2.00f;
-			getPspScreenScale(&scale_x, &scale_y);
-			vita2d_draw_texture_scale_rotate_hotspot(psp_tex, 480.0f, 272.0f, scale_x, scale_y, 0.0, 240.0, 136.0);
+			vita2d_draw_texture_scale_rotate_hotspot(psp_tex, 480.0f, 272.0f, config.psp_screen_scale_x, config.psp_screen_scale_y, 0.0, 240.0, 136.0);
 		} else if (draw_native) {
 			vita2d_draw_texture_scale_rotate_hotspot(native_tex, 480.0f, 272.0f, 1.0f, 1.0f, 0.0, 480.0, 272.0);
 		} else {
 			// Draw pops screen
-			float scale_x = 1.0f;
-			float scale_y = 1.0f;
-			getPopsScreenScale(&scale_x, &scale_y);
-			vita2d_draw_texture_scale_rotate_hotspot(pops_tex, 480.0f, 272.0f, scale_x, scale_y, 0.0, 480.0, 272.0);
+			vita2d_draw_texture_scale_rotate_hotspot(pops_tex, 480.0f, 272.0f, config.ps1_screen_scale_x, config.ps1_screen_scale_y, 0.0, 480.0, 272.0);
 			if (overlay_texture) {
 				vita2d_texture_set_program(overlay_shader->vertexProgram, overlay_shader->fragmentProgram);
 				vita2d_texture_set_wvp(overlay_shader->wvpParam);
@@ -772,7 +753,7 @@ int AdrenalineDraw(SceSize args, void *argp) {
 				vita2d_texture_set_fragmentInput(&overlay_shader->fragmentInput);
 
 				vita2d_texture_set_filters(overlay_texture, SCE_GXM_TEXTURE_FILTER_LINEAR, SCE_GXM_TEXTURE_FILTER_LINEAR);
-				vita2d_draw_texture_scale_rotate_hotspot(overlay_texture, 480.0f, 272.0f, scale_x, scale_y, 0.0, 480.0, 272.0);
+				vita2d_draw_texture_scale_rotate_hotspot(overlay_texture, 480.0f, 272.0f, config.ps1_screen_scale_x, config.ps1_screen_scale_y, 0.0, 480.0, 272.0);
 			}
 		}
 
