@@ -20,10 +20,7 @@
 #include <psp2/display.h>
 #include <psp2/rtc.h>
 #include <psp2/system_param.h>
-#include <psp2/io/dirent.h>
 #include <psp2/io/fcntl.h>
-#include <psp2/io/stat.h>
-#include <psp2/kernel/modulemgr.h>
 #include <psp2/kernel/sysmem.h>
 #include <psp2/kernel/processmgr.h>
 
@@ -36,16 +33,14 @@
 #include "utils.h"
 
 Pad old_pad, current_pad, pressed_pad, released_pad, hold_pad, hold2_pad;
-Pad hold_count, hold2_count;
-
-int SCE_CTRL_ENTER = SCE_CTRL_CROSS, SCE_CTRL_CANCEL = SCE_CTRL_CIRCLE;
+static Pad hold_count, hold2_count;
 
 int debugPrintf(char *text, ...) {
 	va_list list;
 	char string[512];
 
 	va_start(list, text);
-	vsprintf(string, text, list);
+	vsnprintf(string, sizeof(string), text, list);
 	va_end(list);
 
 	SceUID fd = sceIoOpen("ux0:data/adrenaline_user_log.txt", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
@@ -246,7 +241,7 @@ void getSizeString(char string[16], uint64_t size) {
 	snprintf(string, 16, "%.*lld %s", (i == 0) ? 0 : 2, size, units[i]);
 }
 
-void convertUtcToLocalTime(SceDateTime *time_local, SceDateTime *time_utc) {
+static void convertUtcToLocalTime(SceDateTime *time_local, SceDateTime *time_utc) {
 	SceRtcTick tick;
 	sceRtcGetTick(time_utc, &tick);
 	sceRtcConvertUtcToLocalTime(&tick, &tick);

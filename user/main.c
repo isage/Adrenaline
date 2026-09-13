@@ -42,6 +42,7 @@
 #include <string.h>
 
 #include "lodepng/lodepng.h"
+#include "lz4/lz4.h"
 
 #include "main.h"
 #include "pops.h"
@@ -52,13 +53,9 @@
 #include "states.h"
 #include "usb.h"
 #include "utils.h"
-#include "msfs.h"
+#include "startdat.h"
 #include "../adrenaline_vita.h"
 #include "../adrenaline_version.h"
-
-#include "lz4/lz4.h"
-
-#include "startdat.h"
 
 
 INCLUDE_EXTERN_RESOURCE(payloadex_bin);
@@ -118,7 +115,7 @@ extern SceInt32 sceLiveAreaUpdateFrameSync(const char *formatVer,const char *fra
 
 int __errno;
 
-void GetFunctions() {
+static void GetFunctions() {
 	ScePspemuDivide                     = (void *)(text_addr + 0x39F0 + 0x1);
 	ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
 	ScePspemuConvertAddress             = (void *)(text_addr + 0x6364 + 0x1);
@@ -162,7 +159,7 @@ void SendAdrenalineRequest(int cmd) {
 #define LZ4_ACCELERATION 8
 #define SAVESTATE_TEMP_SIZE (32 * 1024 * 1024)
 
-int SaveState(SceAdrenaline *adrenaline, void *savestate_data) {
+static int SaveState(SceAdrenaline *adrenaline, void *savestate_data) {
 	void *ram = (void *)ScePspemuConvertAddress(0x88000000, KERMIT_INPUT_MODE, PSP_RAM_SIZE);
 
 	char path[128];
@@ -213,7 +210,7 @@ int SaveState(SceAdrenaline *adrenaline, void *savestate_data) {
 	return 0;
 }
 
-int LoadState(SceAdrenaline *adrenaline, void *savestate_data) {
+static int LoadState(SceAdrenaline *adrenaline, void *savestate_data) {
 	void *ram = (void *)ScePspemuConvertAddress(0x88000000, KERMIT_OUTPUT_MODE, PSP_RAM_SIZE);
 
 	char path[128];
@@ -261,7 +258,7 @@ int LoadState(SceAdrenaline *adrenaline, void *savestate_data) {
 
 extern vita2d_texture* overlay_texture;
 
-int AdrenalineCompat(SceSize args, void *argp) {
+static int AdrenalineCompat(SceSize args, void *argp) {
 	void *savestate_data = NULL;
 
 	// Allocate savestate temp memory
@@ -369,7 +366,7 @@ int AdrenalineCompat(SceSize args, void *argp) {
 
 			if ( res == 0 ) {
 				char frameXmlStr[512] = {0};
-				res = ReadFile("ux0:app/" ADRENALINE_TITLEID "/frame.xml", frameXmlStr, 512);
+				res = ReadFile("ux0:app/" ADRENALINE_TITLEID "/frame.xml", frameXmlStr, sizeof(frameXmlStr));
 				if (res > 0) {
 					res = sceLiveAreaUpdateFrameSync("01.00", frameXmlStr, strlen(frameXmlStr), "app0:/", 0);
 				}
@@ -502,7 +499,7 @@ static int InitAdrenaline() {
 	return 0;
 }
 
-int sceCompatSuspendResumePatched(int unk) {
+static int sceCompatSuspendResumePatched(int unk) {
 	// Lock USB connection and PS button
 	sceShellUtilLock(SCE_SHELL_UTIL_LOCK_TYPE_USB_CONNECTION | SCE_SHELL_UTIL_LOCK_TYPE_PS_BTN_2);
 
@@ -551,8 +548,8 @@ static int sceCompatWaitSpecialRequestPatched(int mode) {
 	kuCtrlPeekBufferPositive(0, &pad, 1);
 
 	SceIoStat stat;
-	char ark_path[47];
-	snprintf(ark_path, 47, "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
+	char ark_path[64];
+	snprintf(ark_path, sizeof(ark_path), "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
 	allow_ark = sceIoGetstat(ark_path, &stat) >= 0 || sceIoGetstat("ux0:pspemu" FLASH0_ARK_PATH, &stat) >= 0;
 
 	if (pad.buttons & SCE_CTRL_RTRIGGER) {
@@ -681,7 +678,7 @@ int module_start(SceSize args, void *argp) {
 		char frameXmlStr[512];
 		snprintf(
 			frameXmlStr,
-			512,
+			sizeof(frameXmlStr),
 			"<frame id=\"frame2\">"
 					"<liveitem>"
 							"<text valign=\"bottom\" align=\"left\" text-align=\"left\" text-valign=\"bottom\" line-space=\"3\" ellipsis=\"on\">"
