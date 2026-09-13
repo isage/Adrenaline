@@ -56,7 +56,6 @@ enum PadButtons {
 typedef uint8_t Pad[PAD_N_BUTTONS];
 
 extern Pad old_pad, current_pad, pressed_pad, released_pad, hold_pad, hold2_pad;
-extern Pad hold_count, hold2_count;
 
 int debugPrintf(char *text, ...);
 int ReadFile(char *file, void *buf, int size);
