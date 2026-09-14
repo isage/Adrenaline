@@ -23,12 +23,13 @@
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
 #include <psp2/kernel/sysmem.h>
-#include <vita2d.h>
 
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <vita2d.h>
 
 #include "main.h"
 #include "menu.h"
