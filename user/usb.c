@@ -18,7 +18,6 @@
 
 #include <psp2/appmgr.h>
 #include <psp2/mtpif.h>
-#include <psp2/udcd.h>
 #include <psp2/usbstorvstor.h>
 #include <psp2/io/dirent.h>
 
@@ -33,7 +32,7 @@
 int _vshIoMount(int id, const char *path, int permission, void *buf);
 int vshIoUmount(int id, int a2, int a3, int a4);
 
-int vshIoMount(int id, const char *path, int permission, int a4, int a5, int a6) {
+static int vshIoMount(int id, const char *path, int permission, int a4, int a5, int a6) {
 	uint32_t buf[3];
 
 	buf[0] = a4;
@@ -43,13 +42,13 @@ int vshIoMount(int id, const char *path, int permission, int a4, int a5, int a6)
 	return _vshIoMount(id, path, permission, buf);
 }
 
-void remount(int id) {
+static void remount(int id) {
 	vshIoUmount(id, 0, 0, 0);
 	vshIoUmount(id, 1, 0, 0);
 	vshIoMount(id, NULL, 0, 0, 0, 0);
 }
 
-int checkFolderExist(const char *folder) {
+static int checkFolderExist(const char *folder) {
 	SceUID dfd = sceIoDopen(folder);
 	if (dfd < 0) {
 		return 0;
