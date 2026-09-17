@@ -127,10 +127,10 @@ extern int (* ScePspemuKermitSendResponse)(int mode, SceKermitRequest *request, 
 extern int (* ScePspemuConvertStatTimeToUtc)(SceIoStat *stat);
 extern int (* ScePspemuConvertStatTimeToLocaltime)(SceIoStat *stat);
 extern int (* ScePspemuSettingsHandler)(int a1, int a2, int a3, int a4);
-extern int (* ScePspemuSetDisplayConfig)();
+extern int (* ScePspemuSetDisplayConfig)(void);
 extern int (* ScePspemuPausePops)(int pause);
-extern int (* ScePspemuInitPops)();
-extern int (* ScePspemuInitPocs)();
+extern int (* ScePspemuInitPops)(void);
+extern int (* ScePspemuInitPocs)(void);
 
 extern tai_hook_ref_t sceCompatSuspendResumeRef;
 extern tai_hook_ref_t sceCompatWriteSharedCtrlRef;
@@ -154,7 +154,7 @@ extern tai_hook_ref_t ScePspemuGetParamRef;
 extern uint32_t module_nid;
 extern uint32_t text_addr, text_size, data_addr, data_size;
 
-int sceKernelIsPSVitaTV();
+int sceKernelIsPSVitaTV(void);
 int kuCtrlPeekBufferPositive(int port, SceCtrlData *pad_data, int count);
 uint32_t adrStopBlanking(void);
 int adrSetPspemuDirectSharpScale(int enabled);
