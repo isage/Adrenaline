@@ -23,11 +23,13 @@
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
 
-int ScePspemuInitAudioOutPatched();
+extern void *pops_data;
+
+int ScePspemuInitAudioOutPatched(void);
 int sceAudioOutOpenPortPatched(int type, int len, int freq, int mode);
 int sceAudioOutOutputPatched(int port, const void *buf);
 int ScePspemuDecodePopsAudioPatched(int a1, int a2, int a3, int a4);
-char *ScePspemuGetTitleidPatched();
+char *ScePspemuGetTitleidPatched(void);
 int ScePspemuConvertAddressPatched(uint32_t addr, int mode, uint32_t cache_size);
 SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode);
 int sceIoGetstatPatched(const char *file, SceIoStat *stat);

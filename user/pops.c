@@ -17,25 +17,20 @@
 */
 
 #include <psp2/audioout.h>
-#include <psp2/ctrl.h>
 #include <psp2/display.h>
-#include <psp2/io/dirent.h>
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
-#include <psp2/kernel/dmac.h>
 #include <psp2/kernel/sysmem.h>
-#include <psp2/kernel/processmgr.h>
 
 #include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "main.h"
 #include "menu.h"
+#include "pops.h"
 #include "utils.h"
 
-int ScePspemuInitAudioOutPatched() {
+int ScePspemuInitAudioOutPatched(void) {
 	int res = TAI_CONTINUE(int, ScePspemuInitAudioOutRef);
 
 	res = ScePspemuInitPops();
@@ -48,7 +43,7 @@ int ScePspemuInitAudioOutPatched() {
 		return blockid;
 	}
 
-	int (* init_sth)() = NULL;
+	int (* init_sth)(uint32_t, int) = NULL;
 	int base_offset = 0x10100;
 
 	if (module_nid == 0x2714F07D) { // 3.60 retail
@@ -80,7 +75,7 @@ int sceAudioOutOpenPortPatched(int type, int len, int freq, int mode) {
 	int res = TAI_CONTINUE(int, sceAudioOutOpenPortRef, type, len, freq, mode);
 
 	// Use voice port
-	if (res == SCE_AUDIO_OUT_ERROR_PORT_FULL && type == SCE_AUDIO_OUT_PORT_TYPE_BGM) {
+	if (res == (int)SCE_AUDIO_OUT_ERROR_PORT_FULL && type == SCE_AUDIO_OUT_PORT_TYPE_BGM) {
 		pops_audio_port = TAI_CONTINUE(int, sceAudioOutOpenPortRef, SCE_AUDIO_OUT_PORT_TYPE_VOICE, len, freq, mode);
 		return pops_audio_port;
 	}
@@ -109,7 +104,7 @@ int ScePspemuDecodePopsAudioPatched(int a1, int a2, int a3, int a4) {
 	return TAI_CONTINUE(int, ScePspemuDecodePopsAudioRef, a1, a2, a3, a4);
 }
 
-char *ScePspemuGetTitleidPatched() {
+char *ScePspemuGetTitleidPatched(void) {
 	SceAdrenaline *adrenaline = (SceAdrenaline *)ScePspemuConvertAddress(ADRENALINE_ADDRESS, KERMIT_INPUT_MODE, ADRENALINE_SIZE);
 	return adrenaline->titleid;
 }
@@ -166,8 +161,6 @@ int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 
 	return TAI_CONTINUE(int, sceIoGetstatRef, file, stat);
 }
-
-extern void *pops_data;
 
 int sceDisplaySetFrameBufForCompatPatched(int a1, int a2, int a3, int a4, int a5, SceDisplayFrameBuf *pParam) {
 	if (config.graphics_filtering != 0) {

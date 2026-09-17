@@ -23,11 +23,8 @@
 
 #include <taihen.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "main.h"
+#include "usb.h"
 
 int _vshIoMount(int id, const char *path, int permission, void *buf);
 int vshIoUmount(int id, int a2, int a3, int a4);
@@ -75,7 +72,7 @@ SceUID startUsb(const char *usbDevicePath, const char *imgFilePath, int type) {
 
 	// Stop MTP driver
 	res = sceMtpIfStopDriver(1);
-	if (res < 0 && res != 0x8054360C) {
+	if (res < 0 && res != (int)0x8054360C) {
 		goto ERROR_STOP_DRIVER;
 	}
 
