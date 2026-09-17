@@ -16,9 +16,12 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define N_FILES (sizeof(files) / sizeof(char **))
+#ifndef FILES_H
+#define FILES_H
 
-char *files[] = {
+#define N_FILES (sizeof(files) / sizeof(files[0]))
+
+static const char * const files[] = {
 	// "/codepage/cptbl.dat",
 	// "/data/cert/CA_LIST.cer",
 	// "/font/gb3s1518.bwfon",
@@ -207,3 +210,5 @@ char *files[] = {
 	// "/vsh/resource/system_plugin.rco",
 	// "/vsh/resource/system_plugin_fg.rco",
 };
+
+#endif

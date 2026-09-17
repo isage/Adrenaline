@@ -16,21 +16,13 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <psp2/io/dirent.h>
-#include <psp2/io/fcntl.h>
-#include <psp2/io/stat.h>
-#include <psp2/kernel/dmac.h>
-#include <psp2/kernel/sysmem.h>
-#include <psp2/kernel/processmgr.h>
-
 #include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "main.h"
+#include "titleinfo.h"
 
 int ScePspemuInitTitleSpecificInfoPatched(const char *titleid, SceUID uid) {
+	(void)uid;
 	int res = 0;
 	uint32_t *info = NULL;
 	uint32_t *unk = NULL;
