@@ -91,7 +91,7 @@ On Epinephrine this plugin is compatible with the "Inferno Cache" settings.
 [Download PRO Online Here](https://github.com/Kethen/aemu/releases)
 
 > [!EXAMPLE]
-> Note that this example if for **Motorstorm Artic Edge** US version, change or add `TITLE ID`s according to the games you want that it enabled.
+> Note that this example is for **Motorstorm Arctic Edge** US version, change or add `TITLE ID`s according to the games you want that it enabled.
 >
 > On `???0:/pspemu/seplugins/plugins.txt`, add the following line:
 >

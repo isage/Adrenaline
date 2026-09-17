@@ -7,7 +7,7 @@ To access this menu, click the `Select` button while on XMB/VSH.
 
 Epinephrine comes with two flavours of the VSH Menu: `Modern` and `Classic`.
 
-The `Modern` is a re-implementation from scratch that uses GU on VSH, a recently developed way to GPU render graphics while on XMB/VSH. Yes, that means this implementation is GPU rendered. It also contais some quality-of-life improvements, like following the defined button to function as enter/back. Besides that, this new implementation also extends the functionality to provide a quick access to advanced game options; this were made to make testing configuration on game titles not working faster.
+The `Modern` is a re-implementation from scratch that uses GU on VSH, a recently developed way to GPU render graphics while on XMB/VSH. Yes, that means this implementation is GPU rendered. It also contains some quality-of-life improvements, like following the defined button to function as enter/back. Besides that, this new implementation also extends the functionality to provide a quick access to advanced game options; this was made to make testing configuration on game titles not working faster.
 
 Initially this implementation was developed to demonstrate the usage of the VSH-GU.
 

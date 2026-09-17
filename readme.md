@@ -28,7 +28,7 @@ Please only do this approach for a fresh installation, otherwise please refer to
 
 Getting rid of double launch bug
 --------------------------------
-Adrenaline has been redesigned in `6.61 Adrenaline-6`, so you'd need to launch Adrenaline twice everytime you reboot your device. To get rid of that, simply write this line to `*KERNEL`
+Adrenaline has been redesigned in `6.61 Adrenaline-6`, so you'd need to launch Adrenaline twice every time you reboot your device. To get rid of that, simply write this line to `*KERNEL`
 
 ```text
 *KERNEL
@@ -38,7 +38,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 Manuals for ISO games
 ---------------------
 Adrenaline now supports displaying manuals for ISO-format games:
-1. Obtain/create DOCUMENT.DAT for you game.
+1. Obtain/create DOCUMENT.DAT for your game.
 2. Rename it to <your_iso_name>.DAT and place next to it.
 E.g.: if you have `ux0:/pspemu/ISO/MYGAME.iso` name your manual `ux0:/pspemu/ISO/MYGAME.DAT`
 

@@ -9,10 +9,10 @@ The Epinephrine `Minimal Edition 2` driver is an evolution of the Minimal Editio
 
 ## Evolution of the driver
 
-The ME driver was originally developed by neur0n for their custom firmware (L)ME CFW. It started as a reverse engineer of the `March33 Driver` when it was closed-source, but then it started to evolve as the ME CFW was being developed. Back then, the ME CFW also called this driver as "March33 Drive" for it's history of the March33 driver reversed engineered. The following version is a ludic version number; we will consider all reported changes as the last release of the same base OFW version.
+The ME driver was originally developed by neur0n for their custom firmware (L)ME CFW. It started as a reverse engineer of the `March33 Driver` when it was closed-source, but then it started to evolve as the ME CFW was being developed. Back then, the ME CFW also called this driver as "March33 Drive" for its history of the March33 driver reverse engineered. The following version is a ludic version number; we will consider all reported changes as the last release of the same base OFW version.
 
 - **`ME Driver 1.0`**: A reverse-engineered version of the `March33` driver made available in the ME CFW.
-- **`ME Driver 1.5`**: An natural evolution fo the `MinimalEdition` driver by the latest release of the ME CFW.
+- **`ME Driver 1.5`**: A natural evolution of the `MinimalEdition` driver by the latest release of the ME CFW.
 
 Now that we've covered the history and evolution of the `MinimalEdition` Driver over the years, we can focus on the changes made to it in EPI that justify it being called `MinimalEdition Driver 2`.
 
