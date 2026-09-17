@@ -1,6 +1,6 @@
 - Provide source for psp-packer
 - UMD Video
-- ADHOC shenenigans
+- ADHOC shenanigans
 - Fix pspemu resampler on vita side (drop mic patches)
 - Apply custom color on initial setup
 

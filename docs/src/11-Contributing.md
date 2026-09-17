@@ -126,7 +126,7 @@ It is recommended to use the specific ones. Another recommendation is to avoid u
 > psp-cmake -S cef -B cef/build -DSYSTEMCTRL_DEBUG=2 -DPENTAZEMIN_DEBUG=1
 > ```
 
-On the **VITA-side**, we don't have something super well stablished, you can use `sceClibPrintf` function, and the messages will show up in the `tty`, that you can access through log homebrews (we recommend [catlog](https://github.com/isage/catlog)).
+On the **VITA-side**, we don't have something super well established, you can use `sceClibPrintf` function, and the messages will show up in the `tty`, that you can access through log homebrews (we recommend [catlog](https://github.com/isage/catlog)).
 
 ### Accessing the logs
 

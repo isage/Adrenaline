@@ -33,7 +33,7 @@ Configures the CPU/BUS clock speed on when the system is running a PSP game, PSP
 
 #### Options:
 
-- `Default`: Game/app dependant
+- `Default`: Game/app dependent
 - `20/10`
 - `75/37`
 - `100/50`
@@ -203,7 +203,7 @@ Controls whether to force the unlock extra RAM space for the user-space RAM part
 
 ### Fake max free memory
 
-Controls wether to limit the reported maximum free memory and how much to limit from `sceKernelMaxFreeMemSize` on a title.
+Controls whether to limit the reported maximum free memory and how much to limit from `sceKernelMaxFreeMemSize` on a title.
 
 Any option other than `Auto` will always use that value, regardless of existent game patches and fixes.
 
@@ -225,7 +225,7 @@ Any option other than `Auto` will always use that value, regardless of existent 
 > This options is made available to facilitate exploratory tests with games that breaks with high memory layout or similar issues.
 
 > [!CAUTION]
-> Some games may require more specific values to make then stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the [project issue tracer](https://github.com/isage/Adrenaline/issues) (but also check first to avoid opening duplicated issue tracker).
+> Some games may require more specific values to make them stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the [project issue tracker](https://github.com/isage/Adrenaline/issues) (but also check first to avoid opening duplicated issue tracker).
 
 ### PSP game/app plugin RAM Partition
 
@@ -248,12 +248,12 @@ Controls in what RAM partition userland plugins are loaded in PSP game/apps.
 
 ### Use Graphic Engine 2
 
-Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads `ge_2.prx` instead of `ge.prx`.
+Controls whether to load an alternative implementation of the Graphic Engine module, i.e. loads `ge_2.prx` instead of `ge.prx`.
 
 This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.
 
 > [!NOTE]
-> The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.
+> The modules being called "2" doesn't mean it is an improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.
 >
 > So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.
 
@@ -262,12 +262,12 @@ This is a CFW option made available to tinkerers to explore possible improvement
 
 ### Use Media Engine 2
 
-Controls wether to load an alternative implementation of the Media Engine module, i.e. loads `kermit_me_wrapper_2.prx` instead of `kermit_me_wrapper.prx`.
+Controls whether to load an alternative implementation of the Media Engine module, i.e. loads `kermit_me_wrapper_2.prx` instead of `kermit_me_wrapper.prx`.
 
 This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.
 
 > [!NOTE]
-> The modules being called "2" doesn't mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.
+> The modules being called "2" doesn't mean it is an improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.
 >
 > So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users... Been there, done that LOL.
 
@@ -366,7 +366,7 @@ Epinephrine's UMDemu drivers have the ability to simulate the **slower** read sp
 
 This setting allows to control a factor of how much **slower** is that read speed simulation.
 
-This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desyc issues when both [seek](./08-CfwConfiguration.md#umdemu-iso-seek-time-delay-factor) and read time are set to `Auto`.
+This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desync issues when both [seek](./08-CfwConfiguration.md#umdemu-iso-seek-time-delay-factor) and read time are set to `Auto`.
 
 #### Option:
 

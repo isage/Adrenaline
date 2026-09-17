@@ -102,7 +102,7 @@ The `uma0:` option can be used to facilitate PS3<->PSVITA data share (e.g. saved
 
 ## System Storage Location
 
-Chooses the drive Adrenaline App shows up fot the chosen CFW as the System Storage drive (`ef0:`).
+Chooses the drive Adrenaline App shows up for the chosen CFW as the System Storage drive (`ef0:`).
 
 The options are:
 
