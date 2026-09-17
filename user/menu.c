@@ -521,6 +521,9 @@ int AdrenalineDraw(SceSize args, void *argp) {
 	}
 
 	pops_data = vita2d_texture_get_datap(pops_tex);
+	if (pops_data) {
+		memset(pops_data, 0, SCREEN_LINE * SCREEN_HEIGHT * sizeof(uint32_t));
+	}
 
 	vita2d_shader *opaque_shader = vita2d_create_shader((SceGxmProgram *)opaque_v, (SceGxmProgram *)texture_f);
 	vita2d_shader *sharp_shader = vita2d_create_shader((SceGxmProgram *)sharp_bilinear_v, (SceGxmProgram *)sharp_bilinear_f);
@@ -614,6 +617,9 @@ int AdrenalineDraw(SceSize args, void *argp) {
 		}
 
 		if (adrenaline->pops_mode && lastPops == 0) {
+			if (pops_data) {
+				memset(pops_data, 0, SCREEN_LINE * SCREEN_HEIGHT * sizeof(uint32_t));
+			}
 			ScePspemuPausePops(1);
 			sceDisplayWaitVblankStart();
 			ScePspemuPausePops(0);
