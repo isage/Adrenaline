@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 #include "main.h"
 #include "utils.h"
@@ -165,7 +165,7 @@ try_again:
 	return descriptor->fd;
 }
 
-ScePspemuMsfsDescriptor *ScePspemuMsfsGetFileDescriptors() {
+ScePspemuMsfsDescriptor *ScePspemuMsfsGetFileDescriptors(void) {
 	return descriptor_list;
 }
 
@@ -361,7 +361,7 @@ static int ScePspemuMsfsRead(SceUID fd, void *data, SceSize size) {
 
 		seek += res;
 		descriptor->offset += res;
-	} while (seek < size);
+	} while ((SceSize)seek < size);
 
 	return seek;
 }
@@ -402,7 +402,7 @@ static int ScePspemuMsfsWrite(SceUID fd, const void *data, SceSize size) {
 
 		seek += res;
 		descriptor->offset += res;
-	} while (seek < size);
+	} while ((SceSize)seek < size);
 
 	return seek;
 }
@@ -737,7 +737,7 @@ try_again:
 		}
 
 		*p = '\0';
-		snprintf(new_path, MAX_PATH_LENGTH, "%s/%s", old_path, newname);
+		snprintf(new_path, sizeof(new_path), "%s/%s", old_path, newname);
 		*p = '/';
 	}
 

@@ -108,14 +108,11 @@ SceUID usbdevice_modid = -1;
 
 AdrenalineConfig config;
 
-extern int menu_open;
-extern int g_devctl_use_ef;
-
 extern SceInt32 sceLiveAreaUpdateFrameSync(const char *formatVer,const char *frameXmlStr,SceInt32 frameXmlLen,const char *dirpathTop,SceUInt32 flag);
 
 int __errno;
 
-static void GetFunctions() {
+static void GetFunctions(void) {
 	ScePspemuDivide                     = (void *)(text_addr + 0x39F0 + 0x1);
 	ScePspemuErrorExit                  = (void *)(text_addr + 0x4104 + 0x1);
 	ScePspemuConvertAddress             = (void *)(text_addr + 0x6364 + 0x1);

@@ -21,17 +21,13 @@
 #include <psp2/ctrl.h>
 #include <psp2/display.h>
 #include <psp2/system_param.h>
-#include <psp2/sysmodule.h>
 #include <psp2/power.h>
-#include <psp2/io/dirent.h>
-#include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
 #include <psp2/kernel/dmac.h>
 #include <psp2/kernel/sysmem.h>
 #include <psp2/kernel/processmgr.h>
 
 #include <stdio.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -228,7 +224,7 @@ static int EnterAdrenalineMenu() {
 	return 0;
 }
 
-int ExitAdrenalineMenu() {
+int ExitAdrenalineMenu(void) {
 	if (changed) {
 		SaveAdrSetting();
 	}
@@ -261,7 +257,7 @@ int ExitAdrenalineMenu() {
 	return 0;
 }
 
-int ResetAdrenalineSettings() {
+static int ResetAdrenalineSettings(void) {
 	memset(&config, 0, sizeof(AdrenalineConfig));
 	config.magic[0] = ADRENALINE_CFG_MAGIC_1;
 	config.magic[1] = ADRENALINE_CFG_MAGIC_2;
@@ -279,7 +275,7 @@ int ResetAdrenalineSettings() {
 	return 0;
 }
 
-void drawMenu() {
+static void drawMenu(void) {
 	// Draw window
 	vita2d_draw_rectangle(WINDOW_X, WINDOW_Y, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_COLOR);
 
@@ -294,16 +290,16 @@ void drawMenu() {
 
 		char info[143] = {0};
 		if (strcmp(adrenaline->title, "XMB\xE2\x84\xA2") == 0) {
-			snprintf(info, 128, "XMB");
+			snprintf(info, sizeof(info), "XMB");
 		} else {
 			int res = 0;
 
 			if (adrenaline->title[0] != 0) {
-				res = snprintf(info, 128, "%s - ", adrenaline->title);
+				res = snprintf(info, sizeof(info), "%s - ", adrenaline->title);
 			}
 
-			if (adrenaline->titleid[0] != 0) {
-				snprintf(info+res, 13, "%s", adrenaline->titleid);
+			if (adrenaline->titleid[0] != 0 && res < (int)sizeof(info)) {
+				snprintf(info+res, sizeof(info) - res, "%s", adrenaline->titleid);
 			}
 		}
 
@@ -379,7 +375,7 @@ void drawMenu() {
 	}
 }
 
-void ctrlMenu() {
+static void ctrlMenu(void) {
 	if (released_pad[PAD_PSBUTTON]) {
 		ExitAdrenalineMenu();
 	}

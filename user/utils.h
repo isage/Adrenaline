@@ -57,23 +57,23 @@ typedef uint8_t Pad[PAD_N_BUTTONS];
 
 extern Pad old_pad, current_pad, pressed_pad, released_pad, hold_pad, hold2_pad;
 
-int debugPrintf(char *text, ...);
-int ReadFile(char *file, void *buf, int size);
-int WriteFile(char *file, void *buf, int size);
+int debugPrintf(const char *text, ...);
+int ReadFile(const char *file, void *buf, int size);
+int WriteFile(const char *file, const void *buf, int size);
 
-void readPad();
+void readPad(void);
 int doubleClick(uint32_t buttons, uint64_t max_time);
 
 void getSizeString(char string[16], uint64_t size);
-void getTimeString(char string[16], int time_format, SceDateTime *time);
-void getDateString(char string[24], int date_format, SceDateTime *time);
+void getTimeString(char string[16], int time_format, const SceDateTime *time);
+void getDateString(char string[24], int date_format, const SceDateTime *time);
 
 void SetPspemuFrameBuffer(void *base);
 
-char *getPspemuMemoryStickLocation();
-char *getPspemuMemoryStickDevice();
-char *getPspemuEfLocation();
-char *getPspemuEfDevice();
+char *getPspemuMemoryStickLocation(void);
+char *getPspemuMemoryStickDevice(void);
+char *getPspemuEfLocation(void);
+char *getPspemuEfDevice(void);
 
 uint32_t encode_movw(uint8_t rd, uint16_t imm16);
 uint32_t encode_movt(uint8_t rd, uint16_t imm16);

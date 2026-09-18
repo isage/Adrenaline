@@ -19,11 +19,11 @@
 #ifndef __MSFS_H__
 #define __MSFS_H__
 
-#define SCE_ENOENT      0x80010002
-#define SCE_ERROR_ERRNO_EEXIST      0x80010011
-#define SCE_ENODEV      0x80010013
-#define SCE_ENOTDIR     0x80010014
-#define SCE_EINVAL      0x80010016
+#define SCE_ENOENT                  ((int)0x80010002)
+#define SCE_ERROR_ERRNO_EEXIST      ((int)0x80010011)
+#define SCE_ENODEV                  ((int)0x80010013)
+#define SCE_ENOTDIR                 ((int)0x80010014)
+#define SCE_EINVAL                  ((int)0x80010016)
 
 #define PSP_SECTOR_SIZE 512
 
@@ -74,7 +74,9 @@ typedef struct {
 
 #define MAX_DESCRIPTORS 32
 
-ScePspemuMsfsDescriptor *ScePspemuMsfsGetFileDescriptors();
+extern int g_devctl_use_ef;
+
+ScePspemuMsfsDescriptor *ScePspemuMsfsGetFileDescriptors(void);
 void ScePspemuMsfsSetFileDescriptors(ScePspemuMsfsDescriptor *descriptors);
 
 int ScePspemuMsfsGetstat(const char *file, SceIoStat *stat);

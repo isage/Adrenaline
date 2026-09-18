@@ -19,7 +19,7 @@
 #ifndef __FLASHFS_H__
 #define __FLASHFS_H__
 
-int ScePspemuBuildFlash0();
-int ScePspemuLoadFlash0Ark();
+int ScePspemuBuildFlash0(void);
+int ScePspemuLoadFlash0Ark(void);
 
 #endif

@@ -65,9 +65,9 @@ extern int open_options;
 
 void makeSaveStatePath(char *path, int num);
 
-int initStates();
-void finishStates();
-void drawStates();
-void ctrlStates();
+int initStates(void);
+void finishStates(void);
+void drawStates(void);
+void ctrlStates(void);
 
 #endif

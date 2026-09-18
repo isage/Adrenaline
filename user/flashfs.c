@@ -16,10 +16,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <psp2/ctrl.h>
-#include <psp2/io/dirent.h>
 #include <psp2/io/fcntl.h>
-#include <psp2/io/stat.h>
 #include <psp2/kernel/sysmem.h>
 
 #include <stdio.h>
@@ -27,6 +24,7 @@
 
 #include "main.h"
 #include "utils.h"
+#include "flashfs.h"
 
 #include "files.h"
 
@@ -55,12 +53,12 @@ INCLUDE_EXTERN_RESOURCE(vsh_module_satelite_prx);
 INCLUDE_EXTERN_RESOURCE(vsh_module_satelite_classic_prx);
 
 typedef struct {
-	char *name;
-	void *buffer;
+	const char *name;
+	const void *buffer;
 	uint32_t size;
 } ScePspemuFlash0Package;
 
-static ScePspemuFlash0Package custom_package[] = {
+static const ScePspemuFlash0Package custom_package[] = {
 	FLASH0_FILE("/kd/galaxy.prx",           kd_galaxy_prx),
 	FLASH0_FILE("/kd/inferno.prx",          kd_inferno_prx),
 	FLASH0_FILE("/kd/kermit_idstorage.prx", kd_kermit_idstorage_prx),
@@ -84,18 +82,18 @@ static ScePspemuFlash0Package custom_package[] = {
 	FLASH0_FILE("/vsh/module/satelite_classic.prx", vsh_module_satelite_classic_prx),
 };
 
-static void addFile(char *name, void *buffer, int size, void *data, uint32_t *pkg_ptr, uint32_t *name_ptr, uint32_t *buffer_ptr) {
+static void addFile(const char *name, const void *buffer, uint32_t size, void *data, uint32_t *pkg_ptr, uint32_t *name_ptr, uint32_t *buffer_ptr) {
 	// Buffer
 	*buffer_ptr = ALIGN(*buffer_ptr, 0x40);
-	memcpy(data + *buffer_ptr, buffer, size);
+	memcpy((uint8_t *)data + *buffer_ptr, buffer, size);
 
 	// Name
-	strcpy(data + *name_ptr, name);
+	strcpy((char *)data + *name_ptr, name);
 
 	// Header
-	ScePspemuFlash0Package *header = (ScePspemuFlash0Package *)(data + *pkg_ptr);
-	header->name = (char *)(SCE_PSPEMU_EXTRA_MEMORY + *name_ptr);
-	header->buffer = (void *)(SCE_PSPEMU_EXTRA_MEMORY + *buffer_ptr);
+	ScePspemuFlash0Package *header = (ScePspemuFlash0Package *)((uint8_t *)data + *pkg_ptr);
+	header->name = (const char *)(SCE_PSPEMU_EXTRA_MEMORY + *name_ptr);
+	header->buffer = (const void *)(SCE_PSPEMU_EXTRA_MEMORY + *buffer_ptr);
 	header->size = size;
 
 	// Increase
@@ -104,7 +102,7 @@ static void addFile(char *name, void *buffer, int size, void *data, uint32_t *pk
 	(*buffer_ptr) += size;
 }
 
-int ScePspemuBuildFlash0() {
+int ScePspemuBuildFlash0(void) {
 	void *flash0_data = NULL;
 
 	// Allocate flash0 memory
@@ -122,19 +120,19 @@ int ScePspemuBuildFlash0() {
 	ScePspemuFlash0Package *flash0_package = (ScePspemuFlash0Package *)(data_addr + 0xB9080);
 
 	uint32_t pkg_ptr = 0, name_ptr = 0x1000, buffer_ptr = 0x2000;
-	int i = 0, j = 0;
+	uint32_t i = 0, j = 0;
 
 	// Add custom package
-	for (i = 0; i < (sizeof(custom_package) / sizeof(ScePspemuFlash0Package)); i++) {
+	for (i = 0; i < (sizeof(custom_package) / sizeof(custom_package[0])); i++) {
 		addFile(custom_package[i].name, custom_package[i].buffer, custom_package[i].size, flash0_data, &pkg_ptr, &name_ptr, &buffer_ptr);
 	}
 
 	// Add package
 	for (i = 0; i < N_FILES; i++) {
 		while (flash0_package[j].buffer != NULL) {
-			char *name = (char *)((uint32_t)flash0_package[j].name - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
-			void *buffer = (void *)((uint32_t)flash0_package[j].buffer - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
-			int size = flash0_package[j].size;
+			const char *name = (const char *)((uint32_t)flash0_package[j].name - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
+			const void *buffer = (const void *)((uint32_t)flash0_package[j].buffer - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
+			uint32_t size = flash0_package[j].size;
 
 			if (strcmp(files[i], name) == 0) {
 				addFile(name, buffer, size, flash0_data, &pkg_ptr, &name_ptr, &buffer_ptr);
@@ -162,9 +160,9 @@ int ScePspemuBuildFlash0() {
 
 	i = 0;
 	while (flash0_package[i].buffer != NULL) {
-		char *name = (char *)((uint32_t)flash0_package[i].name - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
-		void *buffer = (void *)((uint32_t)flash0_package[i].buffer - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
-		int size = flash0_package[i].size;
+		const char *name = (const char *)((uint32_t)flash0_package[i].name - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
+		const void *buffer = (const void *)((uint32_t)flash0_package[i].buffer - SCE_PSPEMU_EXTRA_MEMORY + (uint32_t)flash0_package);
+		uint32_t size = flash0_package[i].size;
 
 		flash0_list[i].name = name;
 		flash0_list[i].buffer = buffer;
@@ -174,20 +172,16 @@ int ScePspemuBuildFlash0() {
 	}
 
 	// Fix this weird thing
-	int n_files = i;
+	uint32_t n_files = i;
 
 	for (i = 0; i < 141; i++) {
-		if (i < n_files) {
-			*(uint8_t *)(data_addr + 0x40D4 + i) = i;
-		} else {
-			*(uint8_t *)(data_addr + 0x40D4 + i) = 0;
-		}
+		*(uint8_t *)(data_addr + 0x40D4 + i) = (i < n_files) ? (uint8_t)i : 0;
 	}
 
 	return 0;
 }
 
-int ScePspemuLoadFlash0Ark() {
+int ScePspemuLoadFlash0Ark(void) {
 	// read flash0 ark package
 	char ark_path[64];
 	snprintf(ark_path, sizeof(ark_path), "%s" FLASH0_ARK_PATH, getPspemuMemoryStickLocation());
@@ -216,8 +210,13 @@ int ScePspemuLoadFlash0Ark() {
 
 	memset(flash0_data, 0, FLASH0_ARK_SIZE);
 
-	sceIoRead(fd, flash0_data, FLASH0_ARK_SIZE);
+	int read_bytes = sceIoRead(fd, flash0_data, FLASH0_ARK_SIZE);
 	sceIoClose(fd);
+
+	if (read_bytes < 0) {
+		sceKernelFreeMemBlock(flash0_blockid);
+		return read_bytes;
+	}
 
 	uint32_t *m = (uint32_t *)ScePspemuConvertAddress(FLASH0_ARK_ADDR, KERMIT_OUTPUT_MODE, FLASH0_ARK_SIZE);
 	memcpy(m, flash0_data, FLASH0_ARK_SIZE);
