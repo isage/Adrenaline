@@ -97,7 +97,7 @@ Changelog
 
 ### Changelog v6.6
 - Fixed bug from previous update that caused black screen in other DJ max games.
-- Inferno driver was not included correcty, now it is.
+- Inferno driver was not included correctly, now it is.
 - Tekken 6 can now be played with any CPU speed.
 
 ### Changelog v6.5
@@ -154,7 +154,7 @@ Changelog
 
 ### Changelog v4.2
 - Added support for ISO sorting using 'Game Categories Lite' plugin.
-- Fixed compatiblity with 'Kingdom Hearts: Birth by Sleep' english patch.
+- Fixed compatibility with 'Kingdom Hearts: Birth by Sleep' english patch.
 
 ### Changelog v4.1
 - Fixed bug where holding R trigger while launching Adrenaline didn't open the recovery menu.
@@ -195,7 +195,7 @@ official settings, then apply the custom screen mode. On the other hand, if you 
 - Fixed bug that was introduced in v2 which caused some games to crashed at PMF sequences.
 - Fixed NoDrm engine bug where fan translated games couldn't load PGD decrypted files.
 - Fixed msfs directory filter bug that caused some games not to recognize savedatas.
-- Fixed compatiblity of base games, any game should now be able to use Adrenaline to the fullest.
+- Fixed compatibility of base games, any game should now be able to use Adrenaline to the fullest.
 
 ### Changelog v2
 - Added 64MB RAM support for homebrews.
@@ -222,7 +222,7 @@ official settings, then apply the custom screen mode. On the other hand, if you 
 - grab VKP from `build/bubble/`
 
 ## Building updater
-- Build adrenaline (sse above)
+- Build adrenaline (see above)
 - (optionally) modify `cef/updater/psp-updatelist.template`
 - `cmake --build build --target updater`
 - resulting files are `EBOOT.PBP` and `psp-updatelist.txt` at `build/updater`
