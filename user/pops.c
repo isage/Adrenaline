@@ -38,10 +38,6 @@ int ScePspemuInitAudioOutPatched(void) {
 		return res;
 	}
 
-	if (pops_data) {
-		memset(pops_data, 0, SCREEN_LINE * SCREEN_HEIGHT * sizeof(uint32_t));
-	}
-
 	SceUID blockid = sceKernelAllocMemBlock("ScePspemuMcWork", SCE_KERNEL_MEMBLOCK_TYPE_USER_RW, 0x40000, NULL);
 	if (blockid < 0) {
 		return blockid;
@@ -177,10 +173,6 @@ int sceDisplaySetFrameBufForCompatPatched(int a1, int a2, int a3, int a4, int a5
 			param.width = SCREEN_WIDTH;
 			param.height = SCREEN_HEIGHT;
 			pParam = &param;
-
-			if (pops_data) {
-				memset(pops_data, 0, SCREEN_LINE * SCREEN_HEIGHT * sizeof(uint32_t));
-			}
 		}
 	}
 
