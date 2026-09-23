@@ -10,6 +10,7 @@
 - Fix savestate thumbnail on some graphical filters showing as one color plain image
 - Fix UTF-8 rendering on Adrenaline Menu
 - Fix a memory leak on error code path
+- Fix ghost frame on PS1 titles when Graphical Filters enabled
 
 ### Epinephrine CFW
 
