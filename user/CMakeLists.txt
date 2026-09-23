@@ -29,6 +29,8 @@ ExternalProject_Add(libvita2dfbo
     UPDATE_DISCONNECTED TRUE
     PATCH_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>
       ${GIT_EXECUTABLE} apply ${CMAKE_CURRENT_SOURCE_DIR}/patches/vita2d-fbo-utf8.patch && true
+	UPDATE_COMMAND ${CMAKE_COMMAND} -E chdir <SOURCE_DIR>
+      ${GIT_EXECUTABLE} reset --hard
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ""
     BUILD_COMMAND make -C libvita2d
