@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "../../../../adrenaline_version.h"
 
 int main() {

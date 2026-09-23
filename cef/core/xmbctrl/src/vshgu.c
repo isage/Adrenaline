@@ -37,8 +37,6 @@ static int (*prevDisplaySetFrameBuf)(void*, int, int, int) = NULL;
 
 static void* g_list = NULL;
 
-static void gu_sync();
-
 static int vshDisplaySetFrameBuf(void *frameBuf, int bufferwidth, int pixelformat, int sync) {
 	void* frame = (void*)(0x1fffffff & (u32)frameBuf);
 

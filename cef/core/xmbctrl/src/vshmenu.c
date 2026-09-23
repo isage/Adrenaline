@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <string.h>
 #include <pspkernel.h>
 #include <psputility.h>
 #include <pspdisplay.h>
@@ -10,7 +8,6 @@
 #include <cfwmacros.h>
 #include <vshctrl.h>
 #include <kubridge.h>
-#include <systemctrl.h>
 
 #include "xmbctrl.h"
 #include "utils.h"

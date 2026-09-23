@@ -345,15 +345,6 @@ int iso_cache_read(IoReadArg *arg) {
 	int ret = get_hit_caches(pos, len, data, &last_cache);
 
 	if (ret < 0) {
-#if 0
-		{
-			char buf[256];
-
-			sprintf(buf, "%s: 0x%08X <%d>\n", __func__, (uint)arg->offset, (int)arg->size);
-			sceIoWrite(2, buf, strlen(buf));
-		}
-#endif
-
 		// abandon the caching, because the bufsize is too small
 		// if we cache it then random access performance will be hurt
 		if (arg->size < MIN(CACHE_MINIMUM_THRESHOLD, (u32)g_caches_cap)) {
@@ -466,15 +457,6 @@ int infernoCacheAdd(u32 pos, int len) {
 		g_cache_request[g_cache_request_idx].pos = pos;
 		g_cache_request[g_cache_request_idx].len = len;
 		g_cache_request_idx++;
-
-#if 0
-		{
-			char buf[256];
-
-			sprintf(buf, "%s: 0x%08X <%d> added\n", __func__, pos, len);
-			sceIoWrite(2, buf, strlen(buf));
-		}
-#endif
 
 		return 0;
 	}

@@ -50,8 +50,6 @@ SceUID g_umd_cbid = 0;
 SceUID g_drive_status_evf = -1;
 int g_disc_type = PSP_UMD_TYPE_GAME;
 
-extern int sceKernelCancelSema(SceUID semaid, int newcount, int *num_wait_threads);
-
 static int check_memory(const void *addr, int size) {
 	u32 k1 = pspSdkGetK1();
 	const void *end_addr = addr + size - 1;
