@@ -13,7 +13,6 @@
 
 #include "adrenaline.h"
 #include "externs.h"
-#include <systemctrl_adrenaline.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // PATCHED IMPLEMENTATIONS
@@ -36,8 +35,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		if (strcmp(filename, "/kd/ge.prx") == 0) {
 			filename = "/kd/ge_2.prx";
 
-			char* path = "flash0:/kd/ge_2.prx";
-			SceUID mod = sceKernelLoadModule(path, 0, NULL);
+			SceUID mod = sceKernelLoadModule("flash0:/kd/ge_2.prx", 0, NULL);
 			if (mod >= 0) {
 				return mod;
 			}
@@ -48,8 +46,7 @@ SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *
 		if (strcmp(filename, "/kd/kermit_me_wrapper.prx") == 0) {
 			filename = "/kd/kermit_me_wrapper_2.prx";
 
-			char* path = "flash0:/kd/kermit_me_wrapper_2.prx";
-			SceUID mod = sceKernelLoadModule(path, 0, NULL);
+			SceUID mod = sceKernelLoadModule("flash0:/kd/kermit_me_wrapper_2.prx", 0, NULL);
 			if (mod >= 0) {
 				return mod;
 			}

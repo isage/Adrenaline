@@ -28,27 +28,6 @@
 #include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
 
-
-typedef struct {
-	int pll;
-	int mode;
-} SceDdrPllMode;
-
-// static SceDdrPllMode g_pll_modes[] = {
-// 	{ 19,   8 },
-// 	{ 37,   0 },
-// 	{ 74,   9 },
-// 	{ 95,  10 },
-// 	{ 111, 11 },
-// 	{ 133, 12 },
-// 	{ 148,  1 },
-// 	{ 166, 13 },
-// 	{ 190,  2 },
-// 	{ 222,  3 },
-// 	{ 266,  4 },
-// 	{ 333,  5 },
-// };
-
 int scePowerRequestColdResetPatched(int a0) {
 	sctrlSESetBootConfFileIndex(MODE_UMD);
 

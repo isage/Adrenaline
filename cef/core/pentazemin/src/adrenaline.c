@@ -34,8 +34,6 @@
 
 #include "binary.h"
 
-#include <systemctrl_adrenaline.h>
-
 typedef struct {
 	void *sasCore;
 	int grainSamples;
@@ -114,9 +112,9 @@ void initAdrenalineInfo() {
 
 #define MAX_THREADS 32
 #define USER_THREAD (0x80000000)
-SceUID g_threads[MAX_THREADS] = {-1};
-int g_thread_count = 0;
-int g_suspended_count = 0;
+static SceUID g_threads[MAX_THREADS] = {-1};
+static int g_thread_count = 0;
+static int g_suspended_count = 0;
 
 static int pauseWorld() {
 	int res = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, g_threads, MAX_THREADS, &g_thread_count);
