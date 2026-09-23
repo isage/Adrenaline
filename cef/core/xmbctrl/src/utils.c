@@ -28,9 +28,6 @@
 #define MASKBYTE 0x80
 #define MASK2BYTES 0xC0
 #define MASK3BYTES 0xE0
-#define MASK4BYTES 0xF0
-#define MASK5BYTES 0xF8
-#define MASK6BYTES 0xFC
 
 int utf8_to_unicode(wchar_t *dest, char *src) {
 	int i, x;

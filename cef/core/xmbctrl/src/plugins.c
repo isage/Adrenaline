@@ -1,11 +1,5 @@
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
-#include <stdio.h>
-#include <stdarg.h>
-
-#include <systemctrl.h>
-#include <systemctrl_se.h>
-
 #include <adrenaline_log.h>
 
 #include "list.h"
@@ -16,7 +10,6 @@ List g_plugins;
 
 static char* sample_plugin_path = "ms0:/SEPLUGINS/example.prx";
 static int g_cur_place = 0;
-
 
 static int isRunlevelEnabled(char* line) {
 	return (paf_strncasecmp(line, "on", 2) == 0 || paf_strncasecmp(line, "1", 1) == 0 || paf_strncasecmp(line, "enabled", 7) == 0 || paf_strncasecmp(line, "true", 4) == 0);

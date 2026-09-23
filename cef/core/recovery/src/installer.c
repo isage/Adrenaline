@@ -26,15 +26,12 @@
 
 #include <pspextratypes.h>
 #include <systemctrl.h>
-#include <systemctrl_se.h>
 #include <libpsardumper.h>
 #include <pspdecrypt.h>
 
 #include "main.h"
-#include "menu.h"
 #include "utils.h"
 #include "files.h"
-#include <systemctrl_epi.h>
 
 #define BIG_BUFFER_SIZE 8 * 1024 * 1024
 #define SMALL_BUFFER_SIZE 2 * 1024 * 1024
@@ -63,7 +60,7 @@ static char *g_flash1_dirs[] = {
 	"ms0:/__ADRENALINE__/flash1/vsh/theme",
 };
 
-static int FindTablePath(char *table, int table_size, char *number, char *szOut) {
+static int FindTablePath(const char *table, int table_size, const char *number, char *szOut) {
 	int i, j, k;
 	for (i = 0; i < table_size - 5; i++) {
 		if (strncmp(number, table+i, 5) == 0) {
@@ -103,7 +100,7 @@ static char *GetVersion(char *buf) {
 	return p + 1;
 }
 
-static int is5Dnum(char *str) {
+static int is5Dnum(const char *str) {
 	int len = strlen(str);
 	if (len != 5) {
 		return 0;
@@ -133,7 +130,6 @@ static void DrawProgress(int progress) {
 
 
 void Installer() {
-	u32 size_written = 0;
 	int res = 0;
 	int error = 0;
 	int psar_pos = 0;

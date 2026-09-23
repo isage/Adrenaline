@@ -37,8 +37,6 @@
 #include <adrenaline_log.h>
 
 #include "externs.h"
-#include <systemctrl_epi.h>
-
 #include "rebootex.h"
 #include "plugin.h"
 

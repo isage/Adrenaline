@@ -28,14 +28,10 @@ extern u32 select_color;
 extern u8 g_theme;
 extern u32 g_button_assign_value;
 
-void MainMenu();
 void ToggleUSB();
-void Configuration();
 void RunRecovery();
 void ResetSettings();
 void Advanced();
-void AdvancedConfiguration();
-void CpuSpeed();
 void SetButtonAssign(int sel);
 void SetWMA(int sel);
 void SetFlashPlayer(int sel);

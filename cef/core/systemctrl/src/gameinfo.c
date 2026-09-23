@@ -31,7 +31,6 @@
 #include <adrenaline_log.h>
 
 #include "externs.h"
-#include <systemctrl_epi.h>
 
 typedef struct LbaParams {
 	int unknown1; // 0
