@@ -16,20 +16,18 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <psp2/kernel/modulemgr.h>
-#include <psp2/kernel/sysmem.h>
 #include <psp2/io/fcntl.h>
 
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 
-int debugPrintf(char *text, ...) {
+int debugPrintf(const char *text, ...) {
 	va_list list;
 	char string[512];
 
 	va_start(list, text);
-	vsprintf(string, text, list);
+	vsnprintf(string, sizeof(string), text, list);
 	va_end(list);
 
 	SceUID fd = sceIoOpen("ux0:data/adrenaline_bubble_log.txt", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
@@ -41,7 +39,7 @@ int debugPrintf(char *text, ...) {
 	return 0;
 }
 
-int ReadFile(char *file, void *buf, int size) {
+int ReadFile(const char *file, void *buf, int size) {
 	SceUID fd = sceIoOpen(file, SCE_O_RDONLY, 0);
 	if (fd < 0)
 		return fd;
@@ -52,7 +50,7 @@ int ReadFile(char *file, void *buf, int size) {
 	return read;
 }
 
-int WriteFile(char *file, void *buf, int size) {
+int WriteFile(const char *file, const void *buf, int size) {
 	SceUID fd = sceIoOpen(file, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
 	if (fd < 0)
 		return fd;

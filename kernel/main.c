@@ -17,27 +17,20 @@
 */
 
 #include <psp2kern/ctrl.h>
-#include <psp2kern/io/fcntl.h>
 #include <psp2kern/kernel/modulemgr.h>
-#include <psp2kern/kernel/threadmgr.h>
 #include <psp2kern/kernel/sysmem.h>
 #include <psp2kern/kernel/sysroot.h>
 #include <psp2kern/kernel/cpu.h>
-#include <psp2kern/kernel/debug.h>
 #include <psp2kern/lowio/iftu.h>
 #include <psp2common/display.h>
 
-#include <stdio.h>
 #include <string.h>
 
 #include <taihen.h>
 
-#include "utils.h"
-
 #include "../adrenaline_vita.h"
 
 int ksceKernelSysrootGetShellPid();
-int module_get_export_func(SceUID pid, const char *modname, uint32_t libnid, uint32_t funcnid, uintptr_t *func);
 
 static tai_hook_ref_t ksceKernelAllocMemBlockRef;
 static tai_hook_ref_t ksceKernelFreeMemBlockRef;
@@ -153,7 +146,7 @@ static int ksceKernelStartPreloadedModulesPatched(SceUID pid) {
 	return res;
 }
 
-int ksceDisplaySetFrameBufInternalPatched(int head, int index, const SceDisplayFrameBuf *pParam, int sync) {
+static int ksceDisplaySetFrameBufInternalPatched(int head, int index, const SceDisplayFrameBuf *pParam, int sync) {
 	if (!head || !pParam) {
 		goto DISPLAY_HOOK_RET;
 	}

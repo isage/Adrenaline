@@ -20,7 +20,6 @@
 #include <psp2kern/io/fcntl.h>
 #include <psp2kern/udcd.h>
 
-#include <stdio.h>
 #include <string.h>
 
 #include <taihen.h>
@@ -71,9 +70,8 @@ int module_start(SceSize args, void *argp) {
     return SCE_KERNEL_START_SUCCESS;
 
   // Remove image path limitation
-  char zero[0x6E];
-  memset(zero, 0, sizeof(zero));
-  hooks[0] = taiInjectDataForKernel(KERNEL_PID, info.modid, 0, 0x1738, zero, 0x6E);
+  char zero[0x6E] = {0};
+  hooks[0] = taiInjectDataForKernel(KERNEL_PID, info.modid, 0, 0x1738, zero, sizeof(zero));
 
   // Add patches to support exFAT
   hooks[1] = taiHookFunctionImportForKernel(KERNEL_PID, &ksceIoOpenRef, "SceUsbstorVStorDriver",

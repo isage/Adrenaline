@@ -16,14 +16,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <psp2kern/kernel/modulemgr.h>
-#include <psp2kern/kernel/sysmem.h>
 #include <psp2kern/io/fcntl.h>
 
-#include <stdio.h>
 #include <string.h>
 
-void debug_printf(char *msg) {
+void debug_printf(const char *msg) {
 	SceUID fd = ksceIoOpen("ux0:data/adrenaline_kernel_log.txt", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
 	if (fd >= 0) {
 		ksceIoWrite(fd, msg, strlen(msg));
@@ -31,7 +28,7 @@ void debug_printf(char *msg) {
 	}
 }
 
-int ReadFile(char *file, void *buf, int size) {
+int ReadFile(const char *file, void *buf, int size) {
 	SceUID fd = ksceIoOpen(file, SCE_O_RDONLY, 0);
 	if (fd < 0) {
 		return fd;
@@ -43,7 +40,7 @@ int ReadFile(char *file, void *buf, int size) {
 	return read;
 }
 
-int WriteFile(char *file, void *buf, int size) {
+int WriteFile(const char *file, const void *buf, int size) {
 	SceUID fd = ksceIoOpen(file, SCE_O_WRONLY | SCE_O_CREAT | SCE_O_TRUNC, 0777);
 	if (fd < 0) {
 		return fd;
