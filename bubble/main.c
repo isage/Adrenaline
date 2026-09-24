@@ -21,20 +21,15 @@
 #include <psp2/sysmodule.h>
 #include <psp2/io/fcntl.h>
 #include <psp2/io/devctl.h>
-#include <psp2/io/dirent.h>
 #include <psp2/io/stat.h>
-#include <psp2/kernel/processmgr.h>
-#include <psp2/kernel/modulemgr.h>
 #include <psp2/net/http.h>
 #include <psp2/net/net.h>
 #include <psp2/net/netctl.h>
 #include <taihen.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
-#include "utils.h"
 #include "pspdebug.h"
 
 #include "../adrenaline_vita.h"

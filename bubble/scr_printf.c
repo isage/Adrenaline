@@ -12,9 +12,7 @@
  * $Id: scr_printf.c 2450 2009-01-04 23:53:02Z oopo $
  */
 #include <vitasdk.h>
-#include <stdio.h>
 #include <stdarg.h>
-#include <string.h>
 
 #include "pspdebug.h"
 
@@ -313,5 +311,6 @@ void psvDebugScreenPrintf(const char *format, ...)
 
   va_start(opt, format);
   bufsz = sceClibVsnprintf( buff, (size_t) sizeof(buff), format, opt);
+  va_end(opt);
   (void) psvDebugScreenPrintData(buff, bufsz);
 }
