@@ -19,8 +19,8 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-int debugPrintf(char *text, ...);
-int ReadFile(char *file, void *buf, int size);
-int WriteFile(char *file, void *buf, int size);
+int debugPrintf(const char *text, ...);
+int ReadFile(const char *file, void *buf, int size);
+int WriteFile(const char *file, const void *buf, int size);
 
 #endif
