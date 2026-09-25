@@ -18,16 +18,8 @@
 
 #include <psp2/appmgr.h>
 #include <psp2/avconfig.h>
-#include <psp2/io/dirent.h>
-#include <psp2/io/fcntl.h>
-#include <psp2/io/stat.h>
 #include <psp2/kernel/clib.h>
 #include <psp2/kernel/modulemgr.h>
-#include <psp2/kernel/sysmem.h>
-#include <psp2/kernel/processmgr.h>
-
-#include <stdio.h>
-#include <string.h>
 
 #include <taihen.h>
 
@@ -40,7 +32,7 @@ static tai_hook_ref_t sceSysmoduleUnloadModuleInternalWithArgRef;
 static tai_hook_ref_t scePafMiscLoadModuleRef;
 static tai_hook_ref_t sceLsdbGetTypeRef;
 
-static SceUID hooks[4];
+static SceUID hooks[4] = { -1, -1, -1, -1 };
 
 static int sceLsdbGetTypePatched(void *a1) {
 	int val = TAI_CONTINUE(int, sceLsdbGetTypeRef, a1);
@@ -81,6 +73,7 @@ static int sceSysmoduleUnloadModuleInternalWithArgPatched(SceUInt32 id, SceSize 
 	if (res >= 0 && id == 0x80000008) {
 		if (hooks[2] >= 0) {
 			taiHookRelease(hooks[2], scePafMiscLoadModuleRef);
+			hooks[2] = -1;
 		}
 	}
 
@@ -90,10 +83,10 @@ static int sceSysmoduleUnloadModuleInternalWithArgPatched(SceUInt32 id, SceSize 
 // real name is sceAppMgrLaunchApp2, but oh well...
 int sceAppMgrLaunchAppByPath4(const char* path, const char* titleid, int unk1, char* params, int unk3, void* unk4);
 
-int adrStartBlanking(uint32_t vol);
+int adrStartBlanking(int vol);
 
-int sceAppMgrGetStatusByName(char* name, SceAppMgrAppState* state);
-int sceAVConfigGetMasterVol(int* vol);
+int sceAppMgrGetStatusByName(const char *name, SceAppMgrAppState *state);
+int sceAVConfigGetMasterVol(int *vol);
 int sceAVConfigSetMasterVol(int vol);
 
 void _start() __attribute__ ((weak, alias("module_start")));
@@ -109,7 +102,7 @@ int module_start(SceSize args, void *argp) {
 
 	// check if eboot is running and blank screen/sound until restart
 	SceAppMgrAppState state;
-	sceClibMemset(&state, 0, sizeof(SceAppMgrAppState));
+	sceClibMemset(&state, 0, sizeof(state));
 
 	int vol = 0;
 
@@ -129,7 +122,7 @@ int module_start(SceSize args, void *argp) {
 	//Relaunch if we killed
 	if (ret >= 0) {
 		char params[0x400];
-		sceClibSnprintf(params, 0x400, "originalpath=ux0:app/"ADRENALINE_TITLEID"&selfpath=ux0:app/"ADRENALINE_TITLEID"/eboot.bin&discid="ADRENALINE_TITLEID"&parentallevel=0&gamedataid=&appver=00.00&bootable=&category=gd");
+		sceClibSnprintf(params, sizeof(params), "originalpath=ux0:app/"ADRENALINE_TITLEID"&selfpath=ux0:app/"ADRENALINE_TITLEID"/eboot.bin&discid="ADRENALINE_TITLEID"&parentallevel=0&gamedataid=&appver=00.00&bootable=&category=gd");
 
 		// we need to run pspemu but with adrenaline titleid
 		sceAppMgrLaunchAppByPath4("vs0:app/NPXS10028/eboot.bin", ADRENALINE_TITLEID, 0, params, 0, 0);
@@ -145,12 +138,19 @@ int module_start(SceSize args, void *argp) {
 int module_stop(SceSize args, void *argp) {
 	if (hooks[3] >= 0) {
 		taiHookRelease(hooks[3], sceLsdbGetTypeRef);
+		hooks[3] = -1;
+	}
+	if (hooks[2] >= 0) {
+		taiHookRelease(hooks[2], scePafMiscLoadModuleRef);
+		hooks[2] = -1;
 	}
 	if (hooks[1] >= 0) {
 		taiHookRelease(hooks[1], sceSysmoduleUnloadModuleInternalWithArgRef);
+		hooks[1] = -1;
 	}
 	if (hooks[0] >= 0) {
 		taiHookRelease(hooks[0], sceSysmoduleLoadModuleInternalWithArgRef);
+		hooks[0] = -1;
 	}
 
 	return SCE_KERNEL_STOP_SUCCESS;
