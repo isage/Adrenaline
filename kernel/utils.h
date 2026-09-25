@@ -26,8 +26,8 @@
 	debug_printf(msg); \
 }
 
-void debug_printf(char *msg);
-int ReadFile(char *file, void *buf, int size);
-int WriteFile(char *file, void *buf, int size);
+void debug_printf(const char *msg);
+int ReadFile(const char *file, void *buf, int size);
+int WriteFile(const char *file, const void *buf, int size);
 
 #endif
