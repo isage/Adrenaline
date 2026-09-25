@@ -29,5 +29,5 @@ vita_create_self(usbdevice.skprx usbdevice CONFIG exports.yml UNSAFE)
 
 add_custom_target(usbdevice_all
   ALL
-  DEPENDS adrenaline_kernel.skprx-self
+  DEPENDS usbdevice.skprx-self
 )
