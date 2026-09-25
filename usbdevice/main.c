@@ -20,7 +20,6 @@
 #include <psp2kern/io/fcntl.h>
 #include <psp2kern/udcd.h>
 
-#include <stdio.h>
 #include <string.h>
 
 #include <taihen.h>
@@ -28,7 +27,7 @@
 static tai_hook_ref_t ksceIoOpenRef;
 static tai_hook_ref_t ksceIoReadRef;
 
-static SceUID hooks[3];
+static SceUID hooks[3] = { -1, -1, -1 };
 
 static int first = 1;
 
@@ -37,7 +36,7 @@ static SceUID ksceIoOpenPatched(const char *file, int flags, SceMode mode) {
 
   SceUID fd = TAI_CONTINUE(SceUID, ksceIoOpenRef, file, flags, mode);
 
-  if (fd == 0x800F090D)
+  if (fd == (SceUID)0x800F090D)
     return TAI_CONTINUE(SceUID, ksceIoOpenRef, file, flags & ~SCE_O_WRONLY, mode);
 
   return fd;
@@ -46,16 +45,18 @@ static SceUID ksceIoOpenPatched(const char *file, int flags, SceMode mode) {
 static int ksceIoReadPatched(SceUID fd, void *data, SceSize size) {
   int res = TAI_CONTINUE(int, ksceIoReadRef, fd, data, size);
 
-  if (first) {
+  if (first && res >= 0x70 && data) {
     first = 0;
 
+    uint8_t *bytes = (uint8_t *)data;
+
     // Manipulate boot sector to support exFAT
-    if (memcmp(data + 0x3, "EXFAT", 5) == 0) {
+    if (memcmp(bytes + 0x3, "EXFAT", 5) == 0) {
       // Sector size
-      *(uint16_t *)(data + 0xB) = 1 << *(uint8_t *)(data + 0x6C);
+      *(uint16_t *)(bytes + 0xB) = 1 << *(uint8_t *)(bytes + 0x6C);
 
       // Volume size
-      *(uint32_t *)(data + 0x20) = *(uint32_t *)(data + 0x48);
+      *(uint32_t *)(bytes + 0x20) = *(uint32_t *)(bytes + 0x48);
     }
   }
 
@@ -71,9 +72,8 @@ int module_start(SceSize args, void *argp) {
     return SCE_KERNEL_START_SUCCESS;
 
   // Remove image path limitation
-  char zero[0x6E];
-  memset(zero, 0, sizeof(zero));
-  hooks[0] = taiInjectDataForKernel(KERNEL_PID, info.modid, 0, 0x1738, zero, 0x6E);
+  char zero[0x6E] = { 0 };
+  hooks[0] = taiInjectDataForKernel(KERNEL_PID, info.modid, 0, 0x1738, zero, sizeof(zero));
 
   // Add patches to support exFAT
   hooks[1] = taiHookFunctionImportForKernel(KERNEL_PID, &ksceIoOpenRef, "SceUsbstorVStorDriver",
@@ -87,12 +87,18 @@ int module_start(SceSize args, void *argp) {
 }
 
 int module_stop(SceSize args, void *argp) {
-  if (hooks[2] >= 0)
+  if (hooks[2] >= 0) {
     taiHookReleaseForKernel(hooks[2], ksceIoReadRef);
-  if (hooks[1] >= 0)
+    hooks[2] = -1;
+  }
+  if (hooks[1] >= 0) {
     taiHookReleaseForKernel(hooks[1], ksceIoOpenRef);
-  if (hooks[0] >= 0)
+    hooks[1] = -1;
+  }
+  if (hooks[0] >= 0) {
     taiInjectReleaseForKernel(hooks[0]);
+    hooks[0] = -1;
+  }
 
   return SCE_KERNEL_STOP_SUCCESS;
 }
