@@ -41,7 +41,7 @@ static STMOD_HANDLER previous = NULL;
 static SYSBOOT_HANDLER sysboot_previous = NULL;
 
 
-void PentazeminOnSystemBooted() {
+static void PentazeminOnSystemBooted(void) {
 	initAdrenalineInfo();
 	PatchVolatileMemBug();
 
@@ -60,7 +60,7 @@ void PentazeminOnSystemBooted() {
 }
 
 
-int PentazeminOnModuleStart(SceModule * mod) {
+static int PentazeminOnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
 
 	if (strcmp(modname, "sceLowIO_Driver") == 0) {

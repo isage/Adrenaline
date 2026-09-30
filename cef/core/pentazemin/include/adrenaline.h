@@ -27,8 +27,8 @@
 extern SceAdrenaline *g_adrenaline;
 extern PentazeminConfig g_config;
 
-void initAdrenalineInfo();
+void initAdrenalineInfo(void);
 
-int initAdrenaline();
+int initAdrenaline(void);
 
 #endif

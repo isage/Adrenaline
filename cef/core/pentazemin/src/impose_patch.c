@@ -60,7 +60,7 @@ static int CallbackThread(SceSize args, void *argp) {
 	return 0;
 }
 
-static SceUID SetupCallbacks() {
+static SceUID SetupCallbacks(void) {
 	SceUID thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
 	if (thid >= 0) {
 		sceKernelStartThread(thid, 0, 0);
@@ -72,8 +72,8 @@ static SceUID SetupCallbacks() {
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-int (* SetIdleCallback)(int flags);
-int SetIdleCallbackPatched(int flags) {
+static int (* SetIdleCallback)(int flags);
+static int SetIdleCallbackPatched(int flags) {
 	// Only allow idle callback for music player sleep-timer
 	if (flags & 8) {
 		return SetIdleCallback(flags);
@@ -82,12 +82,12 @@ int SetIdleCallbackPatched(int flags) {
 	return 0;
 }
 
-int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, SceUInt *timeout) {
+static int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, SceUInt *timeout) {
 	int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
 
-	if (*outBits & 0x1) {
+	if (outBits && (*outBits & 0x1)) {
 		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
-	} else if (*outBits & 0x2) {
+	} else if (outBits && (*outBits & 0x2)) {
 		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 	}
 

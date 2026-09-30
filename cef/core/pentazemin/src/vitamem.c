@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <string.h>
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <pspkernel.h>
@@ -12,7 +10,7 @@
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
-int unlockVitaMemory(u32 user_size_mib){
+static int unlockVitaMemory(u32 user_size_mib){
 	// Do not allow in pops and vsh
 	int apitype = sceKernelInitApitype();
 	if (apitype == PSP_INIT_APITYPE_MS5 || apitype == PSP_INIT_APITYPE_EF5 || apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
@@ -40,8 +38,8 @@ int unlockVitaMemory(u32 user_size_mib){
 	return 0;
 }
 
-int (*_sctrlHENApplyMemory)(u32) = NULL;
-int memoryHandlerVita(u32 p2){
+static int (*_sctrlHENApplyMemory)(u32) = NULL;
+static int memoryHandlerVita(u32 p2){
 	// sanity checks
 	if (p2<=24) return -1;
 
