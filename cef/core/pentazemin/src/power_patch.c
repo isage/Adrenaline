@@ -29,27 +29,7 @@
 #include <systemctrl_adrenaline.h>
 
 
-typedef struct {
-	int pll;
-	int mode;
-} SceDdrPllMode;
-
-// static SceDdrPllMode g_pll_modes[] = {
-// 	{ 19,   8 },
-// 	{ 37,   0 },
-// 	{ 74,   9 },
-// 	{ 95,  10 },
-// 	{ 111, 11 },
-// 	{ 133, 12 },
-// 	{ 148,  1 },
-// 	{ 166, 13 },
-// 	{ 190,  2 },
-// 	{ 222,  3 },
-// 	{ 266,  4 },
-// 	{ 333,  5 },
-// };
-
-int scePowerRequestColdResetPatched(int a0) {
+static int scePowerRequestColdResetPatched(int a0) {
 	sctrlSESetBootConfFileIndex(MODE_UMD);
 
 	if (a0 == 0) {
@@ -66,40 +46,19 @@ int scePowerRequestColdResetPatched(int a0) {
 	return SCE_ERR_INMODE;
 }
 
-__attribute__((noinline)) int scePowerGetBatteryLifeTimePatched() {
+static __attribute__((noinline)) int scePowerGetBatteryLifeTimePatched(void) {
 	while(*(volatile u32 *)0xBFC0017C != *(volatile u32 *)0xBFC00180);
 	short lifetime = *(volatile short *)0xBFC00184;
 	return (lifetime < 0) ? 0 : (int)lifetime;
 }
 
-int power_online() {
+static int power_online(void) {
 	return (scePowerGetBatteryLifeTimePatched() == 0) ? 1 : 0;
 }
 
-static float (* sceClkcGetCpuFrequency)();
-static float (* sceClkcGetBusFrequency)();
-/*
-333/166: 0x43A68000/0x43268000
-300/150: 0x4395E1F1/0x4315E1F1
-266/133: 0x4384F078/0x43053333
-222/111: 0x435E0000/0x42DE0000
-133/66: 0x4304F078/0x42853333
-100/50: 0x42C7D7EC/0x4247D7EC
-75/37: 0x4295B247/0x4213D5A2
-20/10: 0x419FDFF0/0x41940000
-*/
+static float (* sceClkcGetCpuFrequency)(void);
 
-/*
-333/166: 0x43A68000/0x43268000
-300/150: 0x4395E1F1/0x4315E1F1
-266/133: 0x4384F078/0x43268000
-222/111: 0x435D90C8/0x43268000
-133/66: 0x4304F078/0x43268000
-100/50: 0x42C768B4/0x42A585C3
-75/37: 0x4295E1F1/0x42A585C3
-20/10: 0x419C6633/0x43268000
-*/
-float sceClkcGetCpuFrequencyPatched() {
+static float sceClkcGetCpuFrequencyPatched(void) {
 	float res = sceClkcGetCpuFrequency();
 
 	u32 res_hex;
@@ -114,22 +73,7 @@ float sceClkcGetCpuFrequencyPatched() {
 	return res;
 }
 
-float sceClkcGetBusFrequencyPatched() {
-	float res = sceClkcGetBusFrequency();
-
-	u32 res_hex;
-	memcpy(&res_hex, &res, sizeof(u32));
-
-	// 166.5 -> 111
-	if (res_hex == 0x43268000) {
-		res_hex = 0x42DE0000;
-		memcpy(&res, &res_hex, sizeof(u32));
-	}
-
-	return res;
-}
-
-float sceSysregPllGetFrequencyPatched() {
+static float sceSysregPllGetFrequencyPatched(void) {
 	return 333.0f;
 }
 
@@ -161,24 +105,6 @@ void PatchPowerService(SceModule* mod) {
 	sceClkcGetCpuFrequency = (void *)K_EXTRACT_IMPORT(text_addr + 0x4810);
 	MAKE_JUMP(text_addr + 0x4810, sceClkcGetCpuFrequencyPatched);
 
-	// sceClkcGetBusFrequency = (void *)K_EXTRACT_IMPORT(text_addr + 0x4830);
-	// MAKE_JUMP(text_addr + 0x4830, sceClkcGetBusFrequencyPatched);
-/*
-	// Change ddr pll modes
-	// By doing this, the speed is equivalent to the psp
-	_sw(5, text_addr + 0x5488); // 19
-	_sw(5, text_addr + 0x5490); // 37
-	_sw(5, text_addr + 0x5498); // 74
-	_sw(5, text_addr + 0x54A0); // 95
-	_sw(5, text_addr + 0x54A8); // 111
-	_sw(5, text_addr + 0x54B0); // 133
-	_sw(5, text_addr + 0x54B8); // 148
-	_sw(5, text_addr + 0x54C0); // 166
-	_sw(5, text_addr + 0x54C8); // 190
-	_sw(5, text_addr + 0x54D0); // 222
-	_sw(5, text_addr + 0x54D8); // 266
-	_sw(5, text_addr + 0x54E0); // 333
-*/
 	SceModule *mod_low_io = sceKernelFindModuleByName("sceLowIO_Driver");
 
 	MAKE_CALL(mod_low_io->text_addr + 0x2B60, sceSysregPllGetFrequencyPatched);

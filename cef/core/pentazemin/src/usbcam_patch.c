@@ -6,8 +6,8 @@
 #include <cfwmacros.h>
 #include <systemctrl.h>
 
-void sceUsb_driver_ED8C8695();
-void sceUsb_driver_63E55EBE();
+void sceUsb_driver_ED8C8695(void);
+void sceUsb_driver_63E55EBE(void);
 
 static int g_mute_mic = 0;
 static void* g_mic_buf = NULL;
@@ -19,7 +19,7 @@ static int g_dummy_read_cam = 0;
 ////////////////////////////////////////////////////////////////////////////////
 
 static int (* _sceUsbCamStillInput)(u8 *buf, SceSize size);
-int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
+static int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	int k1 = pspSdkSetK1(0);
 	int ret = _sceUsbCamStillInput(buf, size);
 	sceUsb_driver_ED8C8695(); // force camera stop
@@ -29,7 +29,7 @@ int sceUsbCamStillInput_Patched(u8 *buf, SceSize size) {
 	return ret;
 }
 
-int sceUsbCamSetupStillEx_Patched(PspUsbCamSetupStillExParam *exparam) {
+static int sceUsbCamSetupStillEx_Patched(PspUsbCamSetupStillExParam *exparam) {
 	int res = 0;
 
 	int k1 = pspSdkSetK1(0);

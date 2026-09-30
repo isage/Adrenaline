@@ -34,8 +34,6 @@
 
 #include "binary.h"
 
-#include <systemctrl_adrenaline.h>
-
 typedef struct {
 	void *sasCore;
 	int grainSamples;
@@ -52,15 +50,15 @@ static SceUID adrenaline_semaid = -1;
 
 static int (* _scePowerSuspendOperation)(int a1);
 
-static int (* SetFlag1)();
-static int (* SetFlag2)();
-static int (* sceKermitSyncDisplay)();
+static int (* SetFlag1)(void);
+static int (* SetFlag2)(void);
+static int (* sceKermitSyncDisplay)(void);
 
 static int (* uiResumePoint)(u32 *data);
-static void (* VitaSync)();
+static void (* VitaSync)(void);
 
-static int (* sceSasCoreInit)();
-static int (* sceSasCoreExit)();
+static int (* sceSasCoreInit)(void);
+static int (* sceSasCoreExit)(void);
 
 static int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate);
 
@@ -85,7 +83,7 @@ static int getSfoTitle(char *title, int n) {
 	return sctrlGetInitPARAM("TITLE", NULL, (u32 *)&n, title);
 }
 
-void initAdrenalineInfo() {
+void initAdrenalineInfo(void) {
 	memset(g_adrenaline, 0, sizeof(SceAdrenaline));
 
 	int keyconfig = sceKernelApplicationType();
@@ -114,11 +112,11 @@ void initAdrenalineInfo() {
 
 #define MAX_THREADS 32
 #define USER_THREAD (0x80000000)
-SceUID g_threads[MAX_THREADS] = {-1};
-int g_thread_count = 0;
-int g_suspended_count = 0;
+static SceUID g_threads[MAX_THREADS] = {-1};
+static int g_thread_count = 0;
+static int g_suspended_count = 0;
 
-static int pauseWorld() {
+static int pauseWorld(void) {
 	int res = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, g_threads, MAX_THREADS, &g_thread_count);
 
 	if (res < 0) {
@@ -146,7 +144,7 @@ static int pauseWorld() {
 		g_threads[i] = -1;
 	}
 
-	for (int i = g_thread_count; i > 0; i--) {
+	for (int i = g_thread_count - 1; i >= 0; i--) {
 		if (g_threads[i] >= 0) {
 			res = sceKernelSuspendThread(g_threads[i]);
 
@@ -161,7 +159,7 @@ static int pauseWorld() {
 	return 0;
 }
 
-static int resumeWorld() {
+static int resumeWorld(void) {
 	if (g_suspended_count <= 0) {
 		return 0;
 	}
@@ -234,7 +232,7 @@ static int adrenaline_thread(SceSize args, void *argp) {
 	return 0;
 }
 
-int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate) {
+static int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate) {
 	g_sas_args.sasCore = sasCore;
 	g_sas_args.grainSamples = grainSamples;
 	g_sas_args.maxVoices = maxVoices;
@@ -246,7 +244,7 @@ int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outM
 	return __sceSasInit(sasCore, grainSamples, maxVoices, outMode, sampleRate);
 }
 
-void ReInitSasCore() {
+static void ReInitSasCore(void) {
 	if (__sceSasInit && g_sas_inited) {
 		sceSasCoreExit();
 		sceSasCoreInit();
@@ -254,7 +252,7 @@ void ReInitSasCore() {
 	}
 }
 
-int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
+static int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 	// Resume completed
 	if (ev_id == 0x400000) {
 		if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
@@ -262,7 +260,7 @@ int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 			ReInitSasCore();
 
 			if (g_adrenaline->pops_mode) {
-				int (* sceKermitPeripheralInitPops)() = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
+				int (* sceKermitPeripheralInitPops)(void) = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
 				if (sceKermitPeripheralInitPops) {
 					sceKermitPeripheralInitPops();
 				}
@@ -273,9 +271,9 @@ int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
 	return 0;
 }
 
-void VitaSyncPatched() {
+static void VitaSyncPatched(void) {
 	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-		void (* SaveStateBinary)() = (void *)0x00010000;
+		void (* SaveStateBinary)(void) = (void *)0x00010000;
 		memcpy((void *)SaveStateBinary, binary, size_binary);
 		sctrlFlushCache();
 
@@ -296,7 +294,7 @@ void VitaSyncPatched() {
 	VitaSync();
 }
 
-int SetFlag1Patched() {
+static int SetFlag1Patched(void) {
 	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
@@ -304,7 +302,7 @@ int SetFlag1Patched() {
 	return SetFlag1();
 }
 
-int SetFlag2Patched() {
+static int SetFlag2Patched(void) {
 	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
@@ -312,7 +310,7 @@ int SetFlag2Patched() {
 	return SetFlag2();
 }
 
-int sceKermitSyncDisplayPatched() {
+static int sceKermitSyncDisplayPatched(void) {
 	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
 		return 0;
 	}
@@ -351,7 +349,7 @@ void PatchPowerService2(SceModule* mod) {
 	sctrlFlushCache();
 }
 
-int initAdrenaline() {
+int initAdrenaline(void) {
 	// Register sysevent handler
 	static PspSysEventHandler event_handler = {
 		sizeof(PspSysEventHandler),

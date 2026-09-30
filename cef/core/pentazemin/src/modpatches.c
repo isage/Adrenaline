@@ -18,7 +18,7 @@
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
 
-static int ReadFile(char *file, void *buf, int size) {
+static int ReadFile(const char *file, void *buf, int size) {
 	SceUID fd = sceIoOpen(file, PSP_O_RDONLY, 0);
 	if (fd < 0)
 		return fd;
@@ -34,21 +34,24 @@ static int ReadFile(char *file, void *buf, int size) {
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-int sceResmgrDecryptIndexPatched(void *buf, int size, int *retSize) {
+static int sceResmgrDecryptIndexPatched(void *buf, int size, int *retSize) {
 	int k1 = pspSdkSetK1(0);
-	*retSize = ReadFile("flash0:/vsh/etc/version.txt", buf, size);
+	int read = ReadFile("flash0:/vsh/etc/version.txt", buf, size);
+	if (retSize) {
+		*retSize = read;
+	}
 	pspSdkSetK1(k1);
 	return 0;
 }
 
-int sceUmdRegisterUMDCallBackPatched(int cbid) {
+static int sceUmdRegisterUMDCallBackPatched(int cbid) {
 	int k1 = pspSdkSetK1(0);
 	int res = sceKernelNotifyCallback(cbid, PSP_UMD_NOT_PRESENT);
 	pspSdkSetK1(k1);
 	return res;
 }
 
-int sceKernelSuspendThreadPatched(SceUID thid) {
+static int sceKernelSuspendThreadPatched(SceUID thid) {
 	SceKernelThreadInfo info;
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
@@ -60,7 +63,7 @@ int sceKernelSuspendThreadPatched(SceUID thid) {
 	return sceKernelSuspendThread(thid);
 }
 
-int sceKernelResumeThreadPatched(SceUID thid) {
+static int sceKernelResumeThreadPatched(SceUID thid) {
 	SceKernelThreadInfo info;
 	info.size = sizeof(SceKernelThreadInfo);
 	if (sceKernelReferThreadStatus(thid, &info) == 0) {
@@ -72,7 +75,7 @@ int sceKernelResumeThreadPatched(SceUID thid) {
 	return sceKernelResumeThread(thid);
 }
 
-int memcmp_patched(const void *b1, const void *b2, size_t len) {
+static int memcmp_patched(const void *b1, const void *b2, size_t len) {
 	u32 tag = 0x4C9494F0;
 
 	if (memcmp(&tag, b2, len) == 0) {
@@ -85,7 +88,7 @@ int memcmp_patched(const void *b1, const void *b2, size_t len) {
 }
 
 static int (*_sceKernelPowerTick)(u32 tick_type) = NULL;
-int sceKernelPowerTickPatched(u32 tick_type) {
+static int sceKernelPowerTickPatched(u32 tick_type) {
 	if (_sceKernelPowerTick == NULL) {
 		return SCE_KERR_ILLEGAL_ADDR;
 	}
@@ -106,7 +109,7 @@ exit:
 }
 
 static int (* _sceMeAudio_driver_C300D466)(int codec, int unk, void *info) = NULL;
-int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
+static int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 	int res = _sceMeAudio_driver_C300D466(codec, unk, info);
 
 	if (res < 0 && codec == 0x1002 && unk == 2) {
@@ -117,7 +120,7 @@ int sceMeAudio_driver_C300D466_Patched(int codec, int unk, void *info) {
 }
 
 static int (* _sceKernelVolatileMemTryLock)(int unk, void **ptr, int *size) = NULL;
-int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
+static int sceKernelVolatileMemTryLockPatched(int unk, void **ptr, int *size) {
 	int res = 0;
 
 	for (int i = 0; i < 0x10; i++) {
@@ -153,7 +156,7 @@ void PatchSysmem(void) {
 	HIJACK_FUNCTION(power_tick_addr, sceKernelPowerTickPatched, _sceKernelPowerTick);
 }
 
-void PatchVolatileMemBug() {
+void PatchVolatileMemBug(void) {
 	if (sceKernelBootFrom() == PSP_BOOT_DISC) {
 		_sceKernelVolatileMemTryLock = (void *)sctrlHENFindFunction("sceSystemMemoryManager", "sceSuspendForUser", 0xA14F40B2);
 		sctrlHENPatchSyscall(_sceKernelVolatileMemTryLock, sceKernelVolatileMemTryLockPatched);
@@ -302,30 +305,6 @@ void PatchVlfLib(SceModule* mod) {
 	for (int i = 0; i < (sizeof(nids) / sizeof(u32)); i++) {
 		sctrlHookImportByNID(mod, "VlfGui", nids[i], NULL);
 	}
-
-	sctrlFlushCache();
-}
-
-void PatchGameBoot(SceModule* mod) {
-	u32 p1 = 0;
-	u32 p2 = 0;
-
-	int patches = 2;
-	for (u32 addr=mod->text_addr; addr < mod->text_addr+mod->text_size && patches; addr += 4) {
-		u32 data = VREAD32(addr);
-
-		if (data == 0x2C43000D){
-			p1 = addr-36;
-			patches--;
-
-		} else if (data == 0x27BDFF20 && VREAD32(addr-4) == 0x27BD0040){
-			p2 = addr-24;
-			patches--;
-		}
-	}
-
-	MAKE_INSTRUCTION(p2, JAL(p1));
-	MAKE_INSTRUCTION(p2 + 4, 0x24040002);
 
 	sctrlFlushCache();
 }

@@ -22,14 +22,14 @@
 #include <pspiofilemgr.h>
 
 
-int removePath(const char *path) {
+static int removePath(const char *path) {
 	SceUID dfd = sceIoDopen(path);
 	if (dfd >= 0) {
 		int res = 0;
 
 		do {
 			SceIoDirent dir;
-			memset(&dir, 0, sizeof(SceIoDirent));
+			memset(&dir, 0, sizeof(dir));
 
 			res = sceIoDread(dfd, &dir);
 			if (res > 0) {
@@ -52,7 +52,7 @@ int removePath(const char *path) {
 }
 
 int sceLflashFatfmtStartFatfmt(int argc, char *argv[]) {
-	if (argv) {
+	if (argc > 1 && argv && argv[1]) {
 		if (strncmp(argv[1], "lflash0:0,", 10) == 0) {
 			int num = argv[1][10] - '0';
 

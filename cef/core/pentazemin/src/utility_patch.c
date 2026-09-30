@@ -35,17 +35,17 @@ static int (* _kermitUtilityOskInitStart)(SceUtilityOskParams *params);
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-int sceUtilityLoadModulePatched(int id) {
+static int sceUtilityLoadModulePatched(int id) {
 	int res = _sceUtilityLoadModule(id);
 	return (id != PSP_MODULE_NP_DRM) ? res : 0;
 }
 
-int sceUtilityUnloadModulePatched(int id) {
+static int sceUtilityUnloadModulePatched(int id) {
 	int res = _sceUtilityUnloadModule(id);
 	return (id != PSP_MODULE_NP_DRM) ? res : 0;
 }
 
-int kermitUtilityOskInitStartPatched(SceUtilityOskParams *params) {
+static int kermitUtilityOskInitStartPatched(SceUtilityOskParams *params) {
 	int k1 = pspSdkSetK1(0);
 
 	if (params->data->language == PSP_UTILITY_OSK_LANGUAGE_DEFAULT) {

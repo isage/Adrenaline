@@ -55,7 +55,7 @@ static char mytolower(const char in) {
 	return in;
 }
 
-char *stristr(const char *str1, const char *str2) {
+static char *stristr(const char *str1, const char *str2) {
 	#define MAXLEN 256
 
 	static char temp1[MAXLEN+1], temp2[MAXLEN+1];
@@ -586,7 +586,7 @@ static SceOff _flashIoLseek(u32 *args) {
 	return g_flash_funcs.IoLseek(arg, ofs, whence);
 }
 
-int _flashIoRemove(u32 *args) {
+static int _flashIoRemove(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	const char *name = (const char *)args[1];
 
@@ -852,7 +852,7 @@ static int flashIoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int
 	return 0;
 }
 
-int sceIoAddDrvPatched(PspIoDrv *drv) {
+static int sceIoAddDrvPatched(PspIoDrv *drv) {
 	if (strcmp(drv->name, "ms") == 0) {
 		g_ms_drv = drv;
 		return 0;
@@ -924,7 +924,7 @@ int sceIoAddDrvPatched(PspIoDrv *drv) {
 	return _sceIoAddDrv(drv);
 }
 
-int sceIoDelDrvPatched(const char *drv_name) {
+static int sceIoDelDrvPatched(const char *drv_name) {
 	if (strcmp(drv_name, "ms") == 0 || strcmp(drv_name, "flashfat") == 0) {
 		return 0;
 	} else if (strcmp(drv_name, "fatms") == 0) {
@@ -936,7 +936,7 @@ int sceIoDelDrvPatched(const char *drv_name) {
 	return _sceIoDelDrv(drv_name);
 }
 
-int sceIoUnassignPatched(const char *dev) {
+static int sceIoUnassignPatched(const char *dev) {
 	int k1 = pspSdkSetK1(0);
 
 	if (strncmp(dev, "ms", 2) == 0 || strncmp(dev, "ef", 2) == 0 || strncmp(dev, "flash", 5) == 0) {
@@ -948,7 +948,7 @@ int sceIoUnassignPatched(const char *dev) {
 	return _sceIoUnassign(dev);
 }
 
-int sceIoAssignPatched(const char *dev1, const char *dev2, const char *dev3, int mode, void* unk1, long unk2) {
+static int sceIoAssignPatched(const char *dev1, const char *dev2, const char *dev3, int mode, void* unk1, long unk2) {
 	int k1 = pspSdkSetK1(0);
 
 	if (strncmp(dev1, "ms", 2) == 0  || strncmp(dev1, "ef", 2) == 0 || strncmp(dev1, "flash", 5) == 0) {
@@ -960,7 +960,7 @@ int sceIoAssignPatched(const char *dev1, const char *dev2, const char *dev3, int
 	return _sceIoAssign(dev1, dev2, dev3, mode, unk1, unk2);
 }
 
-void PatchIoFileMgr() {
+void PatchIoFileMgr(void) {
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoAddDrv), sceIoAddDrvPatched, _sceIoAddDrv);
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoDelDrv), sceIoDelDrvPatched, _sceIoDelDrv);
 

@@ -37,8 +37,6 @@ int AdrenalinePatchInit(int (* module_bootstart)(SceSize, void *), void *argp);
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchMemUnlock(void);
-void PatchGameBoot(SceModule* mod);
-
 void PatchVlfLib(SceModule* mod);
 void PatchCwCheatPlugin(SceModule* mod);
 

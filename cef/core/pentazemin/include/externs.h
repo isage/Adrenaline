@@ -9,7 +9,4 @@ extern SceAdrenaline *g_adrenaline;
 
 extern PentazeminConfig g_config;
 
-extern int (*_sctrlHENApplyMemory)(u32);
-int memoryHandlerVita(u32 p2);
-
 #endif
