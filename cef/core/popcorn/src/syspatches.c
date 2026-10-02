@@ -55,7 +55,7 @@ static int g_is_ef = 0;
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Init `g_is_official`, `g_psiso_offsets`, `g_pgd_buf`, `g_custom_config`, `g_config_size`
-int initGlobals() {
+int initGlobals(void) {
 	const char * filename = sceKernelInitFileName();
 
 	if (NULL == filename) {
@@ -157,13 +157,13 @@ int initGlobals() {
 	// From now on, errors should be ignored since custom config are optional.
 	// 1. Set filename
 	char config_filename[256] = {0};
-	strcpy(config_filename, filename);
-	char* slash = strrchr(config_filename, '/');
-	if (!slash) {
+	char* slash = strrchr(filename, '/');
+	if (!slash || (slash - filename + 1 + sizeof("CONFIG.BIN") > sizeof(config_filename))) {
 		logmsg(" [ERROR]: %s: Ignoring custom config: Invalid filename to find custom config: %s\n", __func__, filename);
 		return 0;
 	}
-	strcpy(slash+1, "CONFIG.BIN");
+	int dir_len = (int)(slash - filename + 1);
+	snprintf(config_filename, sizeof(config_filename), "%.*sCONFIG.BIN", dir_len, filename);
 
 	// 2. Open file
 	fd = -1;
@@ -219,26 +219,26 @@ static int kirk7(u8 *buf, int size, int type) {
 	return sceUtilsBufferCopyWithRange(buf, size + KIRK7_HEADER_SIZE, buf, size, 7);
 }
 
-static char* fix_path_on_ef(char *file) {
+static const char* fix_path_on_ef(const char *file) {
 	if (strncmp(file, "ef0:", 4) == 0) {
 		static char fixed[256] = {0};
 
 		// When the system reboots to launch the game, `ef0:` is not yet available, so we use the ms0 magic path to ef0 driver
 		memset(fixed, 0, sizeof(fixed));
-		snprintf(fixed, sizeof(fixed)-1, "ms0:/__ef0__%s", file+4);
+		snprintf(fixed, sizeof(fixed), "ms0:/__ef0__%s", file+4);
 		return fixed;
 	} else {
 		return file;
 	}
 }
 
-static char* force_path_on_ef(const char *file) {
+static const char* force_path_on_ef(const char *file) {
 	if (g_is_ef && ((strncmp(file, "ms0:", 4) == 0 && strncmp(file, "ms0:/__ef0__", 12) != 0) || strncmp(file, "ef0:", 4) == 0)) {
 		static char fixed[256] = {0};
 
 		// When the system reboots to launch the game, `ef0:` is not yet available, so we use the ms0 magic path to ef0 driver
 		memset(fixed, 0, sizeof(fixed));
-		snprintf(fixed, sizeof(fixed)-1, "ms0:/__ef0__%s", file+4);
+		snprintf(fixed, sizeof(fixed), "ms0:/__ef0__%s", file+4);
 		return fixed;
 	} else {
 		return file;
@@ -272,7 +272,7 @@ int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
 }
 
 static int (*_sceMeAudio_2AB4FE43)(void *buf, int size) = NULL;
-int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
+static int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 	if (NULL == _sceMeAudio_2AB4FE43) {
 		logmsg("[ERROR]: %s: Pointer to original function was not set\n", __func__);
 		return SCE_KERR_ILLEGAL_ADDR;
@@ -287,7 +287,7 @@ int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
 }
 
 static int (* SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id) = NULL;
-int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id) {
+static int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id) {
 	u8 dummy_version_key[VERSION_KEY_SIZE];
 	char dummy_content_id[CONTENT_ID_SIZE];
 
@@ -363,7 +363,7 @@ SceUID sceIoDopenPatched(const char *dirpath) {
 	return res;
 }
 
-int sceIoGetstatPatched(char *file, SceIoStat *stat) {
+int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
 	file = fix_path_on_ef(file);
 	int res = sceIoGetstat(file, stat);
 
@@ -372,7 +372,7 @@ int sceIoGetstatPatched(char *file, SceIoStat *stat) {
 }
 
 
-int sceIoIoctlPatched(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
+static int sceIoIoctlPatched(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
 	int ret = 0;
 
 	if (cmd == 0x04100002) { // Seek
@@ -394,7 +394,7 @@ int sceIoIoctlPatched(SceUID fd, unsigned int cmd, void *indata, int inlen, void
 	return ret;
 }
 
-int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
+static int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
 	u32 k1 = pspSdkSetK1(0);
 	u32 pos = sceIoLseek32(fd, 0, PSP_SEEK_CUR);
 	int res = sceIoRead(fd, data, size);
@@ -502,7 +502,7 @@ SceUID sceIoDopenEfPatched(const char *dirpath) {
 	return res;
 }
 
-int sceIoRemoveEfPatched(char *file) {
+int sceIoRemoveEfPatched(const char *file) {
 	int k1 = pspSdkSetK1(0);
 	file = force_path_on_ef(file);
 	int res = sceIoRemove(file);
@@ -512,7 +512,7 @@ int sceIoRemoveEfPatched(char *file) {
 	return res;
 }
 
-int sceIoGetstatEfPatched(char *file, SceIoStat *stat) {
+int sceIoGetstatEfPatched(const char *file, SceIoStat *stat) {
 	int k1 = pspSdkSetK1(0);
 	file = force_path_on_ef(file);
 	int res = sceIoGetstat(file, stat);
@@ -522,18 +522,21 @@ int sceIoGetstatEfPatched(char *file, SceIoStat *stat) {
 	return res;
 }
 
-int sceIoRenameEfPatched(char *oldname, char *newname) {
+int sceIoRenameEfPatched(const char *oldname, const char *newname) {
 	int k1 = pspSdkSetK1(0);
+	char fixed_old[256];
 	oldname = force_path_on_ef(oldname);
+	strncpy(fixed_old, oldname, sizeof(fixed_old) - 1);
+	fixed_old[sizeof(fixed_old) - 1] = '\0';
 	newname = force_path_on_ef(newname);
-	int res = sceIoRename(oldname, newname);
+	int res = sceIoRename(fixed_old, newname);
 
 	pspSdkSetK1(k1);
 	logmsg3("[DEBUG]: %s: oldname=%s newname=%s -> 0x%08X\n", __func__, oldname, newname, res);
 	return res;
 }
 
-int sceIoRmdirEfPatched(char *path) {
+int sceIoRmdirEfPatched(const char *path) {
 	int k1 = pspSdkSetK1(0);
 	path = force_path_on_ef(path);
 	int res = sceIoRmdir(path);
@@ -543,7 +546,7 @@ int sceIoRmdirEfPatched(char *path) {
 	return res;
 }
 
-int sceIoMkdirEfPatched(char *dir, SceMode mode) {
+int sceIoMkdirEfPatched(const char *dir, SceMode mode) {
 	int k1 = pspSdkSetK1(0);
 	dir = force_path_on_ef(dir);
 	int res = sceIoMkdir(dir, mode);
@@ -589,7 +592,7 @@ void PatchScePopsMgr(void) {
 
 		// Dummying amctrl decryption functions
 		MAKE_DUMMY_FUNCTION(text_addr + 0xA90, 1);
-		MAKE_NOP(text_addr + 0x53C)
+		MAKE_NOP(text_addr + 0x53C);
 
 		// Removes checks in scePopsManLoadModule that only allows loading modules below FW 3.XX
 		MAKE_NOP(text_addr + 0x10D0);

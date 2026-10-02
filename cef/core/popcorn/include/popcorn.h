@@ -31,12 +31,11 @@
 #define LIBCRYPT_XOR_MAGIC 0x72D0EE59
 
 
-u32 searchLibCryptMagicWord(u8* disc_id);
-int initGlobals();
+u32 searchLibCryptMagicWord(const void *disc_id);
+int initGlobals(void);
 
 void PatchScePopsMgr(void);
 void PatchPops(SceModule *mod);
-void PatchVshSDAuto(SceModule *mod);
 void PatchForceEf0Io(SceModule *mod);
 
 #endif // __POPCORN_H__
