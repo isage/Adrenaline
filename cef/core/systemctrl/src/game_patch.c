@@ -183,6 +183,8 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 }
 
 int moduleLoaderJackass(u32* name, int value) {
+	int k1 = pspSdkSetK1(0);
+
 	char path[256] = {0};
 	if (name != NULL && (char*)name[0] != NULL) {
 		snprintf(path, sizeof(path), "disc0:/PSP_GAME/USRDIR/%s", (char*)name[0]);
@@ -199,8 +201,10 @@ int moduleLoaderJackass(u32* name, int value) {
 	int res = sceKernelLoadModule(path, 0, &option);
 	if (res >= 0) {
 		int status;
-		res = sceKernelStartModule(res,0,0,&status,0);
+		res = sceKernelStartModule(res, 0, 0, &status, 0);
 	}
+
+	pspSdkSetK1(k1);
 	return res;
 }
 
