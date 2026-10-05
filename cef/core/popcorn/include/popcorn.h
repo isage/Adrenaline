@@ -31,7 +31,7 @@
 #define LIBCRYPT_XOR_MAGIC 0x72D0EE59
 
 
-u32 searchLibCryptMagicWord(const void *disc_id);
+u32 searchLibCryptMagicWord(const char *disc_id);
 int initGlobals(void);
 
 void PatchScePopsMgr(void);

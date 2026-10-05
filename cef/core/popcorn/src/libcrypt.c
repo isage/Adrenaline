@@ -236,18 +236,17 @@ static const LibCryptMagicTable magic_words[] = {
 	{"_SLES_32969", 59587},
 };
 
-u32 searchLibCryptMagicWord(const void *disc_id) {
+u32 searchLibCryptMagicWord(const char *disc_id) {
 	if (!disc_id) {
 		return 0;
 	}
 
-	const char *id = (const char *)disc_id;
 	int lower = 0;
 	int upper = (sizeof(magic_words)/sizeof(magic_words[0]))-1;
 
 	while (lower < upper-1) {
-		int cmp1 = strcmp(magic_words[lower].disc_id, id);
-		int cmp2 = strcmp(magic_words[upper].disc_id, id);
+		int cmp1 = strcmp(magic_words[lower].disc_id, disc_id);
+		int cmp2 = strcmp(magic_words[upper].disc_id, disc_id);
 		if (cmp1 == 0) {
 			return magic_words[lower].magic;
 		} else if (cmp2 == 0) {
@@ -255,7 +254,7 @@ u32 searchLibCryptMagicWord(const void *disc_id) {
 		}
 
 		int half = (upper - lower) / 2;
-		int cmp3 = strcmp(magic_words[lower+half].disc_id, id);
+		int cmp3 = strcmp(magic_words[lower+half].disc_id, disc_id);
 		if (cmp3 == 0) {
 			return magic_words[lower+half].magic;
 		} else if (cmp3 < 0) {

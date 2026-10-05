@@ -64,9 +64,6 @@ static int OnModuleStart(SceModule *mod) {
 }
 
 int module_start(SceSize args, void *argp) {
-	(void)args;
-	(void)argp;
-
 	logInit("ms0:/log_popcorn.txt");
 	logmsg("Popcorn started...\n");
 
