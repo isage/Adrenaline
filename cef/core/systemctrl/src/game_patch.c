@@ -18,6 +18,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
 #include <string.h>
 
 #include <psptypes.h>
@@ -181,10 +182,10 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 	return res;
 }
 
-int moduleLoaderJackass(char* name, int value) {
+int moduleLoaderJackass(u32* name, int value) {
 	char path[256] = {0};
-	if (name != NULL) {
-		strncpy(path, name, sizeof(path) - 1);
+	if (name != NULL && (char*)name[0] != NULL) {
+		snprintf(path, sizeof(path), "disc0:/PSP_GAME/USRDIR/%s", (char*)name[0]);
 	}
 
 	SceKernelLMOption option;
