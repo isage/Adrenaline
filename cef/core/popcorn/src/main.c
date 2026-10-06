@@ -29,9 +29,9 @@
 
 PSP_MODULE_INFO("EPI-PopcornManager", 0x1007, 1, 1);
 
-STMOD_HANDLER previous;
+static STMOD_HANDLER previous = NULL;
 
-int (* setCompiledSdkVersion)(u32 ver) = NULL;
+static int (* setCompiledSdkVersion)(u32 ver) = NULL;
 static void setPsxCompiledFwVersion(u32 version) {
 	if (NULL == setCompiledSdkVersion) {
 		setCompiledSdkVersion = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x358CA1BB);
@@ -40,7 +40,7 @@ static void setPsxCompiledFwVersion(u32 version) {
 	setCompiledSdkVersion(version);
 }
 
-int OnModuleStart(SceModule *mod) {
+static int OnModuleStart(SceModule *mod) {
 	static int user_mod_start = 0;
 
 	// Do not patch the game PBP itself

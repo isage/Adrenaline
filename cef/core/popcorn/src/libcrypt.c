@@ -4,11 +4,11 @@
 #include <pspkernel.h>
 
 typedef struct LibCryptMagicTable {
-	char *disc_id;
+	const char *disc_id;
 	u32 magic;
 } LibCryptMagicTable;
 
-LibCryptMagicTable magic_words[] = {
+static const LibCryptMagicTable magic_words[] = {
 	{"_SCES_00311", 34730},
 	{"_SCES_01431", 25927},
 	{"_SCES_01444", 48452},
@@ -236,7 +236,11 @@ LibCryptMagicTable magic_words[] = {
 	{"_SLES_32969", 59587},
 };
 
-u32 searchLibCryptMagicWord(char* disc_id) {
+u32 searchLibCryptMagicWord(const char *disc_id) {
+	if (!disc_id) {
+		return 0;
+	}
+
 	int lower = 0;
 	int upper = (sizeof(magic_words)/sizeof(magic_words[0]))-1;
 
