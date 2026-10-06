@@ -18,8 +18,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
 #include <string.h>
 
+#include <psptypes.h>
+#include <psploadcore.h>
 #include <pspkermit.h>
 #include <psputility.h>
 
@@ -30,6 +33,7 @@
 #include <adrenaline_log.h>
 
 #include "externs.h"
+#include "modulepatches.h"
 #include "utils.h"
 #include "storage_cache.h"
 
@@ -54,7 +58,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read, u8 strategy) {
 	if (g_cfw_config.umd_seek == 0 && g_cfw_config.umd_speed == 0) {
 
 		if (g_rebootex_config.bootfileindex != MODE_UMD) {
-			char * iso_mod_name = "INVALID";
+			const char *iso_mod_name = "INVALID";
 			switch (g_rebootex_config.bootfileindex){
 				case MODE_INFERNO:
 					iso_mod_name = "EPI-InfernoDriver";
@@ -90,7 +94,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read, u8 strategy) {
 	}
 }
 
-static void DisableInfernoCache() {
+static void DisableInfernoCache(void) {
 	int (*CacheInit)(int, int, int) = NULL;
 	if (g_rebootex_config.bootfileindex == MODE_INFERNO) {
 		CacheInit = (void*)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0x8CDE7F95);
@@ -178,8 +182,13 @@ static int utilityGetParamPatched_ULJM05221(int param, int* value) {
 	return res;
 }
 
-int moduleLoaderJackass(char* name, int value) {
+int moduleLoaderJackass(u32* name, int value) {
+	int k1 = pspSdkSetK1(0);
+
 	char path[256] = {0};
+	if (name != NULL && (char*)name[0] != NULL) {
+		snprintf(path, sizeof(path), "disc0:/PSP_GAME/USRDIR/%s", (char*)name[0]);
+	}
 
 	SceKernelLMOption option;
 	memset(&option, 0, sizeof(option));
@@ -192,8 +201,10 @@ int moduleLoaderJackass(char* name, int value) {
 	int res = sceKernelLoadModule(path, 0, &option);
 	if (res >= 0) {
 		int status;
-		res = sceKernelStartModule(res,0,0,&status,0);
+		res = sceKernelStartModule(res, 0, 0, &status, 0);
 	}
+
+	pspSdkSetK1(k1);
 	return res;
 }
 
@@ -215,7 +226,7 @@ static int wweModuleOnStart(SceModule * mod) {
 }
 
 // Reimplement the function without cache
-int sceWlanGetSwitchStatePatched() {
+int sceWlanGetSwitchStatePatched(void) {
 	int k1 = pspSdkSetK1(0);
 
 	char buf[sizeof(SceKermitRequest) + 0x40];
@@ -271,12 +282,12 @@ SceSize sceKernelMaxFreeMemSizePatched(void) {
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchGameByTitleIdOnLoadExec() {
+void PatchGameByTitleIdOnLoadExec(void) {
 	// char* title_id = g_rebootex_config.title_id;
 }
 
-void PatchGameByTitleId() {
-	char* title_id = g_rebootex_config.title_id;
+void PatchGameByTitleId(void) {
+	const char* title_id = g_rebootex_config.title_id;
 
 	// Make sure this is set before by module
 	SetFakeMaxFreeMemory(0, 0);
@@ -313,7 +324,7 @@ void PatchGameByTitleId() {
 }
 
 void PatchGamesByMod(SceModule* mod) {
-	char *modname = mod->modname;
+	const char *modname = mod->modname;
 
 	sctrlHookImportByNID(mod, "SysMemUserForUser", 0xA291F107, sceKernelMaxFreeMemSizePatched);
 	// This one is more for exploratory purposes
@@ -324,7 +335,7 @@ void PatchGamesByMod(SceModule* mod) {
 		// Stops it trying to find and maybe deleting CFW folders and their contents
 		sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, (void*)0);
 
-	} else if (strcmp(mod->modname, "ATVPRO") == 0){
+	} else if (strcmp(modname, "ATVPRO") == 0){
 		// Remove "overclock" message in `ATV PRO`
 		// scePowerSetCpuClockFrequency, scePowerGetCpuClockFrequencyInt and scePowerGetBusClockFrequencyInt respectively
 		sctrlHookImportByNID(mod, "scePower", 0x843FBF43, (void*)0);
@@ -341,7 +352,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "Jackass") == 0) {
 		// Fix infinite loading screen on `Jackass: The Game`
-		char* title_id = g_rebootex_config.title_id;
+		const char* title_id = g_rebootex_config.title_id;
 		if (strcasecmp("ULES00897", title_id) == 0) { // PAL
 			logmsg4("[DEBUG]: %s: Patching Jackass PAL\n", __func__);
 			REDIRECT_FUNCTION(mod->text_addr + 0x35A204, sctrlHENMakeSyscallStub(moduleLoaderJackass));
@@ -353,7 +364,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "projectg_psp") == 0) {
 		// Fix black screen on `Pangya Golf Fantasy`
-		char* title_id = g_rebootex_config.title_id;
+		const char* title_id = g_rebootex_config.title_id;
 		u32 addrs[4] = {0};
 		if (strcasecmp("ULUS10438", title_id) == 0) { // USA
 			addrs[0] = mod->text_addr + 0x35fd88;

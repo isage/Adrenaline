@@ -26,25 +26,25 @@
  *
  * @returns 0 on success. -1 if the function to get the partitions is not found.
 */
-int ApplyMemory();
+int ApplyMemory(void);
 /**
  * Apply the partition 2 and 11 memory configured by ::sctrlHENSetMemory and
  * resets the rebootex config so a game can request large memory.
 */
-void ApplyAndResetMemory();
-void UnprotectExtraMemory();
-void CheckControllerInput();
+void ApplyAndResetMemory(void);
+void UnprotectExtraMemory(void);
+void CheckControllerInput(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 // System Module Patchers
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchChkreg();
-void PatchSysmem();
-void PatchLoadCore();
-void PatchModuleMgr();
-void PatchIoFileMgr();
-void PatchInterruptMgr();
+void PatchChkreg(void);
+void PatchSysmem(void);
+void PatchLoadCore(void);
+void PatchModuleMgr(void);
+void PatchIoFileMgr(void);
+void PatchInterruptMgr(void);
 void PatchLoadExec(SceModule* mod);
 void PatchMediaSync(SceModule* mod);
 void PatchController(SceModule* mod);
@@ -53,8 +53,8 @@ void PatchController(SceModule* mod);
 // Other Module Patchers
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchGameByTitleId();
-void PatchGameByTitleIdOnLoadExec();
+void PatchGameByTitleId(void);
+void PatchGameByTitleIdOnLoadExec(void);
 void PatchGamesByMod(SceModule* mod);
 void PatchHideCfwFiles(SceModule* mod);
 void PatchPluginModule(SceModule *mod);
