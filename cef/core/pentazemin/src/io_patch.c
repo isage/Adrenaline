@@ -558,7 +558,12 @@ static int FontCacheInit() {
 	int partition_id = 11;
 	PspSysMemPartition *user_partition = sctrlGetMemoryPartition(PSP_MEMORY_PARTITION_USER);
 	if (user_partition && user_partition->size > (24 * 1024 * 1024)) {
-		partition_id = PSP_MEMORY_PARTITION_KERNEL;
+		if (user_partition->size <= (40 * 1024 * 1024)) {
+			partition_id = PSP_MEMORY_PARTITION_USER;
+		} else {
+			// Only default to use kernel RAM if in unstable high memory layout.
+			partition_id = PSP_MEMORY_PARTITION_KERNEL;
+		}
 	}
 
 	static const u32 counts[] = { 96, 64, 32, 16 };
