@@ -508,11 +508,11 @@ __attribute__((noinline)) static int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg
 // FLASH0 FONT READ CACHE
 ////////////////////////////////////////////////////////////////////////////////
 
-// `flash0:` files are redirected to the Memory Stick driver, so every read and
-// seek on them is a round trip to the VITA side (~0.75ms each). `sceFont` reads
-// glyphs straight from the `/font/*.pgf` files with a seek plus a few tiny
-// reads per character, so redrawing a screen of text can cost hundreds of round
-// trips (e.g. Dissidia 012 menus freezing ~280ms per cursor move).
+// `sceFont` reads glyphs straight from the `/font/*.pgf` files with a seek plus
+// a few tiny reads per character, so redrawing a screen of text costs hundreds
+// of I/O calls (e.g. Dissidia 012 menus froze ~280ms per cursor move). Each call
+// is expensive on vPSP: ~0.75ms through the Memory Stick redirection, and still
+// ~0.35ms through the in-memory flash0 image.
 //
 // Read-only font files are served from a small LRU cache of fixed-size blocks,
 // and seeks on them only move a position kept here.
@@ -523,6 +523,7 @@ __attribute__((noinline)) static int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg
 
 typedef struct {
 	PspIoDrvFileArg *arg;
+	PspIoDrvFuncs *funcs;
 	u32 size;
 	u32 pos;
 } FontCacheFile;
@@ -552,11 +553,19 @@ static int FontCacheInit() {
 		return 0;
 	}
 
+	// Keep kernel memory free for plugins: use the extra RAM partition, unless the
+	// high memory layout has given it to the user partition
+	int partition_id = 11;
+	PspSysMemPartition *user_partition = sctrlGetMemoryPartition(PSP_MEMORY_PARTITION_USER);
+	if (user_partition && user_partition->size > (24 * 1024 * 1024)) {
+		partition_id = PSP_MEMORY_PARTITION_KERNEL;
+	}
+
 	static const u32 counts[] = { 96, 64, 32, 16 };
 	for (int i = 0; i < (sizeof(counts) / sizeof(u32)); i++) {
 		u32 n = counts[i];
 		u32 size = n * FONT_CACHE_BLOCK_SIZE + n * sizeof(FontCacheBlock);
-		SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "EPI_FontCache", PSP_SMEM_High, size, NULL);
+		SceUID uid = sceKernelAllocPartitionMemory(partition_id, "EPI_FontCache", PSP_SMEM_High, size, NULL);
 		if (uid >= 0) {
 			g_font_cache_mem = (u8 *)sceKernelGetBlockHeadAddr(uid);
 			g_font_blocks = (FontCacheBlock *)(g_font_cache_mem + n * FONT_CACHE_BLOCK_SIZE);
@@ -564,7 +573,7 @@ static int FontCacheInit() {
 				g_font_blocks[j].arg = NULL;
 			}
 			g_font_cache_nblocks = n;
-			logmsg3("[INFO]: %s: %ld blocks of %d bytes\n", __func__, n, FONT_CACHE_BLOCK_SIZE);
+			logmsg3("[INFO]: %s: %ld blocks of %d bytes in partition %d\n", __func__, n, FONT_CACHE_BLOCK_SIZE, partition_id);
 			return 1;
 		}
 	}
@@ -588,7 +597,7 @@ static FontCacheFile *FontCacheFind(PspIoDrvFileArg *arg) {
 	return NULL;
 }
 
-static void FontCacheOpen(PspIoDrvFileArg *arg, const char *file, int flags) {
+static void FontCacheOpen(PspIoDrvFileArg *arg, PspIoDrvFuncs *funcs, const char *file, int flags) {
 	if ((flags & PSP_O_WRONLY) || strncmp(file, FONT_CACHE_PREFIX, sizeof(FONT_CACHE_PREFIX) - 1) != 0) {
 		return;
 	}
@@ -607,11 +616,12 @@ static void FontCacheOpen(PspIoDrvFileArg *arg, const char *file, int flags) {
 
 	if (f) {
 		arg->fs_num = 0;
-		SceOff end = g_ms_funcs.IoLseek(arg, 0, PSP_SEEK_END);
-		g_ms_funcs.IoLseek(arg, 0, PSP_SEEK_SET);
+		SceOff end = funcs->IoLseek(arg, 0, PSP_SEEK_END);
+		funcs->IoLseek(arg, 0, PSP_SEEK_SET);
 
 		if (end > 0) {
 			f->arg = arg;
+			f->funcs = funcs;
 			f->size = (u32)end;
 			f->pos = 0;
 		}
@@ -653,8 +663,8 @@ static FontCacheBlock *FontCacheGetBlock(FontCacheFile *f, u32 base, int *err) {
 	u8 *dst = g_font_cache_mem + (u32)(victim - g_font_blocks) * FONT_CACHE_BLOCK_SIZE;
 
 	f->arg->fs_num = 0;
-	g_ms_funcs.IoLseek(f->arg, base, PSP_SEEK_SET);
-	int res = g_ms_funcs.IoRead(f->arg, (char *)dst, FONT_CACHE_BLOCK_SIZE);
+	f->funcs->IoLseek(f->arg, base, PSP_SEEK_SET);
+	int res = f->funcs->IoRead(f->arg, (char *)dst, FONT_CACHE_BLOCK_SIZE);
 	if (res <= 0) {
 		victim->arg = NULL;
 		*err = res;
@@ -686,8 +696,8 @@ static int FontCacheRead(FontCacheFile *f, char *data, int len) {
 	if (want >= FONT_CACHE_BLOCK_SIZE) {
 		// Large reads gain nothing from the cache: read them directly
 		f->arg->fs_num = 0;
-		g_ms_funcs.IoLseek(f->arg, f->pos, PSP_SEEK_SET);
-		int res = g_ms_funcs.IoRead(f->arg, data, want);
+		f->funcs->IoLseek(f->arg, f->pos, PSP_SEEK_SET);
+		int res = f->funcs->IoRead(f->arg, data, want);
 		if (res > 0) {
 			done = res;
 			f->pos += res;
@@ -764,12 +774,26 @@ static int _flashIoOpen(u32 *args) {
 
 	char ms_path[128];
 	int fs_num = BuildMsPathChangeFsNum(arg, file, ms_path);
+
+	// Fonts are read with a seek plus tiny reads per glyph, and every access on a
+	// redirected file is a round trip to the VITA side. Open them from the
+	// in-memory flash0 image first, and only fall back to the redirection.
+	if (fs_num == 0 && strncmp(file, "/font/", 6) == 0) {
+		arg->fs_num = fs_num;
+		int res = g_flash_funcs.IoOpen(arg, file, flags, mode);
+		if (res >= 0) {
+			FontCacheOpen(arg, &g_flash_funcs, file, flags);
+			return res;
+		}
+		arg->fs_num = 0;
+	}
+
 	int res = g_ms_funcs.IoOpen(arg, ms_path, flags, mode);
 	if (res >= 0) {
 		((u32 *)arg)[18] = 1;
 
 		if (fs_num == 0) {
-			FontCacheOpen(arg, file, flags);
+			FontCacheOpen(arg, &g_ms_funcs, file, flags);
 		}
 	}
 
@@ -783,12 +807,12 @@ static int _flashIoOpen(u32 *args) {
 }
 
 static int _flashIoClose(PspIoDrvFileArg *arg) {
-	if (((u32 *)arg)[18]) {
-		FontCacheFile *f = FontCacheFind(arg);
-		if (f) {
-			FontCacheClose(f);
-		}
+	FontCacheFile *f = FontCacheFind(arg);
+	if (f) {
+		FontCacheClose(f);
+	}
 
+	if (((u32 *)arg)[18]) {
 		arg->fs_num = 0;
 		return g_ms_funcs.IoClose(arg);
 	}
@@ -801,12 +825,12 @@ static int _flashIoRead(u32 *args) {
 	char *data = (char *)args[1];
 	int len = args[2];
 
-	if (((u32 *)arg)[18]) {
-		FontCacheFile *f = FontCacheFind(arg);
-		if (f) {
-			return FontCacheRead(f, data, len);
-		}
+	FontCacheFile *f = FontCacheFind(arg);
+	if (f) {
+		return FontCacheRead(f, data, len);
+	}
 
+	if (((u32 *)arg)[18]) {
 		arg->fs_num = 0;
 		return g_ms_funcs.IoRead(arg, data, len);
 	}
@@ -836,12 +860,12 @@ static SceOff _flashIoLseek(u32 *args) {
 	u32 ofs = (u32)args[1];
 	int whence = args[2];
 
-	if (((u32 *)arg)[18]) {
-		FontCacheFile *f = FontCacheFind(arg);
-		if (f) {
-			return FontCacheLseek(f, (s32)ofs, whence);
-		}
+	FontCacheFile *f = FontCacheFind(arg);
+	if (f) {
+		return FontCacheLseek(f, (s32)ofs, whence);
+	}
 
+	if (((u32 *)arg)[18]) {
 		arg->fs_num = 0;
 		return g_ms_funcs.IoLseek(arg, ofs, whence);
 	}
