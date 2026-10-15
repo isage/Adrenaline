@@ -85,6 +85,12 @@ static const ScePspemuFlash0Package custom_package[] = {
 static void addFile(const char *name, const void *buffer, uint32_t size, void *data, uint32_t *pkg_ptr, uint32_t *name_ptr, uint32_t *buffer_ptr) {
 	// Buffer
 	*buffer_ptr = ALIGN(*buffer_ptr, 0x40);
+
+	// Skip files that would not fit in the package instead of overflowing it
+	if (*buffer_ptr + size > SCE_PSPEMU_FLASH0_PACKAGE_SIZE) {
+		return;
+	}
+
 	memcpy((uint8_t *)data + *buffer_ptr, buffer, size);
 
 	// Name
