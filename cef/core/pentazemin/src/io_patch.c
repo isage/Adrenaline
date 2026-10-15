@@ -778,7 +778,8 @@ static int _flashIoOpen(u32 *args) {
 	// Fonts are read with a seek plus tiny reads per glyph, and every access on a
 	// redirected file is a round trip to the VITA side. Open them from the
 	// in-memory flash0 image first, and only fall back to the redirection.
-	if (fs_num == 0 && strncmp(file, "/font/", 6) == 0) {
+	int is_font = fs_num == 0 && strncmp(file, FONT_CACHE_PREFIX, sizeof(FONT_CACHE_PREFIX) - 1) == 0;
+	if (is_font) {
 		arg->fs_num = fs_num;
 		int res = g_flash_funcs.IoOpen(arg, file, flags, mode);
 		if (res >= 0) {
@@ -792,7 +793,7 @@ static int _flashIoOpen(u32 *args) {
 	if (res >= 0) {
 		((u32 *)arg)[18] = 1;
 
-		if (fs_num == 0) {
+		if (is_font) {
 			FontCacheOpen(arg, &g_ms_funcs, file, flags);
 		}
 	}
