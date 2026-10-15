@@ -23,10 +23,12 @@
 #include <pspkernel.h>
 #include <pspinit.h>
 #include <pspthreadman_kernel.h>
+#include <pspsysmem_kernel.h>
 #include <pspiofilemgr.h>
 #include <pspiofilemgr_kernel.h>
 
 #include <cfwmacros.h>
+#include <psperror.h>
 #include <systemctrl_adrenaline.h>
 
 #include <adrenaline_log.h>
@@ -502,6 +504,248 @@ __attribute__((noinline)) static int BuildMsPathChangeFsNum(PspIoDrvFileArg *arg
 	return fs_num;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// FLASH0 FONT READ CACHE
+////////////////////////////////////////////////////////////////////////////////
+
+// `flash0:` files are redirected to the Memory Stick driver, so every read and
+// seek on them is a round trip to the VITA side (~0.75ms each). `sceFont` reads
+// glyphs straight from the `/font/*.pgf` files with a seek plus a few tiny
+// reads per character, so redrawing a screen of text can cost hundreds of round
+// trips (e.g. Dissidia 012 menus freezing ~280ms per cursor move).
+//
+// Read-only font files are served from a small LRU cache of fixed-size blocks,
+// and seeks on them only move a position kept here.
+
+#define FONT_CACHE_PREFIX "/font/"
+#define FONT_CACHE_BLOCK_SIZE (4 * 1024)
+#define FONT_CACHE_MAX_FILES 8
+
+typedef struct {
+	PspIoDrvFileArg *arg;
+	u32 size;
+	u32 pos;
+} FontCacheFile;
+
+typedef struct {
+	PspIoDrvFileArg *arg;
+	u32 base;
+	u32 len;
+	u32 stamp;
+} FontCacheBlock;
+
+static FontCacheFile g_font_files[FONT_CACHE_MAX_FILES];
+static FontCacheBlock *g_font_blocks = NULL;
+static u8 *g_font_cache_mem = NULL;
+static u32 g_font_cache_nblocks = 0;
+static u32 g_font_cache_clock = 0;
+static SceUID g_font_cache_sema = -1;
+static int g_font_cache_failed = 0;
+
+// Lazily allocated on the first font open, so nothing is reserved when no font is used
+static int FontCacheInit() {
+	if (g_font_cache_nblocks) {
+		return 1;
+	}
+
+	if (g_font_cache_failed || g_font_cache_sema < 0) {
+		return 0;
+	}
+
+	static const u32 counts[] = { 96, 64, 32, 16 };
+	for (int i = 0; i < (sizeof(counts) / sizeof(u32)); i++) {
+		u32 n = counts[i];
+		u32 size = n * FONT_CACHE_BLOCK_SIZE + n * sizeof(FontCacheBlock);
+		SceUID uid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "EPI_FontCache", PSP_SMEM_High, size, NULL);
+		if (uid >= 0) {
+			g_font_cache_mem = (u8 *)sceKernelGetBlockHeadAddr(uid);
+			g_font_blocks = (FontCacheBlock *)(g_font_cache_mem + n * FONT_CACHE_BLOCK_SIZE);
+			for (int j = 0; j < n; j++) {
+				g_font_blocks[j].arg = NULL;
+			}
+			g_font_cache_nblocks = n;
+			logmsg3("[INFO]: %s: %ld blocks of %d bytes\n", __func__, n, FONT_CACHE_BLOCK_SIZE);
+			return 1;
+		}
+	}
+
+	logmsg("[WARN]: %s: Could not allocate font cache\n", __func__);
+	g_font_cache_failed = 1;
+	return 0;
+}
+
+static FontCacheFile *FontCacheFind(PspIoDrvFileArg *arg) {
+	if (!g_font_cache_nblocks) {
+		return NULL;
+	}
+
+	for (int i = 0; i < FONT_CACHE_MAX_FILES; i++) {
+		if (g_font_files[i].arg == arg) {
+			return &g_font_files[i];
+		}
+	}
+
+	return NULL;
+}
+
+static void FontCacheOpen(PspIoDrvFileArg *arg, const char *file, int flags) {
+	if ((flags & PSP_O_WRONLY) || strncmp(file, FONT_CACHE_PREFIX, sizeof(FONT_CACHE_PREFIX) - 1) != 0) {
+		return;
+	}
+
+	sceKernelWaitSema(g_font_cache_sema, 1, NULL);
+
+	FontCacheFile *f = NULL;
+	if (FontCacheInit()) {
+		for (int i = 0; i < FONT_CACHE_MAX_FILES; i++) {
+			if (g_font_files[i].arg == NULL) {
+				f = &g_font_files[i];
+				break;
+			}
+		}
+	}
+
+	if (f) {
+		arg->fs_num = 0;
+		SceOff end = g_ms_funcs.IoLseek(arg, 0, PSP_SEEK_END);
+		g_ms_funcs.IoLseek(arg, 0, PSP_SEEK_SET);
+
+		if (end > 0) {
+			f->arg = arg;
+			f->size = (u32)end;
+			f->pos = 0;
+		}
+	}
+
+	sceKernelSignalSema(g_font_cache_sema, 1);
+}
+
+static void FontCacheClose(FontCacheFile *f) {
+	sceKernelWaitSema(g_font_cache_sema, 1, NULL);
+
+	for (int i = 0; i < g_font_cache_nblocks; i++) {
+		if (g_font_blocks[i].arg == f->arg) {
+			g_font_blocks[i].arg = NULL;
+		}
+	}
+	f->arg = NULL;
+
+	sceKernelSignalSema(g_font_cache_sema, 1);
+}
+
+// Returns the block holding `base` for the file, reading it on a miss
+static FontCacheBlock *FontCacheGetBlock(FontCacheFile *f, u32 base, int *err) {
+	FontCacheBlock *victim = NULL;
+
+	for (int i = 0; i < g_font_cache_nblocks; i++) {
+		FontCacheBlock *b = &g_font_blocks[i];
+		if (b->arg == f->arg && b->base == base) {
+			b->stamp = ++g_font_cache_clock;
+			return b;
+		}
+
+		// Prefer an empty block, otherwise the least recently used one
+		if (!victim || (victim->arg && (!b->arg || b->stamp < victim->stamp))) {
+			victim = b;
+		}
+	}
+
+	u8 *dst = g_font_cache_mem + (u32)(victim - g_font_blocks) * FONT_CACHE_BLOCK_SIZE;
+
+	f->arg->fs_num = 0;
+	g_ms_funcs.IoLseek(f->arg, base, PSP_SEEK_SET);
+	int res = g_ms_funcs.IoRead(f->arg, (char *)dst, FONT_CACHE_BLOCK_SIZE);
+	if (res <= 0) {
+		victim->arg = NULL;
+		*err = res;
+		return NULL;
+	}
+
+	victim->arg = f->arg;
+	victim->base = base;
+	victim->len = (u32)res;
+	victim->stamp = ++g_font_cache_clock;
+
+	return victim;
+}
+
+static int FontCacheRead(FontCacheFile *f, char *data, int len) {
+	if (len <= 0) {
+		return 0;
+	}
+
+	sceKernelWaitSema(g_font_cache_sema, 1, NULL);
+
+	int err = 0;
+	u32 done = 0;
+	u32 want = (f->pos < f->size) ? (f->size - f->pos) : 0;
+	if ((u32)len < want) {
+		want = (u32)len;
+	}
+
+	if (want >= FONT_CACHE_BLOCK_SIZE) {
+		// Large reads gain nothing from the cache: read them directly
+		f->arg->fs_num = 0;
+		g_ms_funcs.IoLseek(f->arg, f->pos, PSP_SEEK_SET);
+		int res = g_ms_funcs.IoRead(f->arg, data, want);
+		if (res > 0) {
+			done = res;
+			f->pos += res;
+		} else {
+			err = res;
+		}
+	} else {
+		while (done < want) {
+			u32 base = f->pos & ~(FONT_CACHE_BLOCK_SIZE - 1);
+			FontCacheBlock *b = FontCacheGetBlock(f, base, &err);
+			if (!b) {
+				break;
+			}
+
+			u32 offset = f->pos - base;
+			if (offset >= b->len) {
+				break;
+			}
+
+			u32 n = b->len - offset;
+			if (n > want - done) {
+				n = want - done;
+			}
+
+			memcpy(data + done, g_font_cache_mem + (u32)(b - g_font_blocks) * FONT_CACHE_BLOCK_SIZE + offset, n);
+			done += n;
+			f->pos += n;
+		}
+	}
+
+	sceKernelSignalSema(g_font_cache_sema, 1);
+
+	return (done == 0 && err < 0) ? err : (int)done;
+}
+
+static SceOff FontCacheLseek(FontCacheFile *f, s32 ofs, int whence) {
+	SceOff pos;
+
+	switch (whence) {
+		case PSP_SEEK_CUR:
+			pos = (SceOff)f->pos + ofs;
+			break;
+		case PSP_SEEK_END:
+			pos = (SceOff)f->size + ofs;
+			break;
+		default:
+			pos = ofs;
+			break;
+	}
+
+	if (pos < 0) {
+		return SCE_EINVAL;
+	}
+
+	f->pos = (u32)pos;
+	return pos;
+}
+
 static int _flashIoOpen(u32 *args) {
 	PspIoDrvFileArg *arg = (PspIoDrvFileArg *)args[0];
 	char *file = (char *)args[1];
@@ -523,6 +767,10 @@ static int _flashIoOpen(u32 *args) {
 	int res = g_ms_funcs.IoOpen(arg, ms_path, flags, mode);
 	if (res >= 0) {
 		((u32 *)arg)[18] = 1;
+
+		if (fs_num == 0) {
+			FontCacheOpen(arg, file, flags);
+		}
 	}
 
 	if (fs_num == 1 || res >= 0) {
@@ -536,6 +784,11 @@ static int _flashIoOpen(u32 *args) {
 
 static int _flashIoClose(PspIoDrvFileArg *arg) {
 	if (((u32 *)arg)[18]) {
+		FontCacheFile *f = FontCacheFind(arg);
+		if (f) {
+			FontCacheClose(f);
+		}
+
 		arg->fs_num = 0;
 		return g_ms_funcs.IoClose(arg);
 	}
@@ -549,6 +802,11 @@ static int _flashIoRead(u32 *args) {
 	int len = args[2];
 
 	if (((u32 *)arg)[18]) {
+		FontCacheFile *f = FontCacheFind(arg);
+		if (f) {
+			return FontCacheRead(f, data, len);
+		}
+
 		arg->fs_num = 0;
 		return g_ms_funcs.IoRead(arg, data, len);
 	}
@@ -579,6 +837,11 @@ static SceOff _flashIoLseek(u32 *args) {
 	int whence = args[2];
 
 	if (((u32 *)arg)[18]) {
+		FontCacheFile *f = FontCacheFind(arg);
+		if (f) {
+			return FontCacheLseek(f, (s32)ofs, whence);
+		}
+
 		arg->fs_num = 0;
 		return g_ms_funcs.IoLseek(arg, ofs, whence);
 	}
@@ -961,6 +1224,8 @@ static int sceIoAssignPatched(const char *dev1, const char *dev2, const char *de
 }
 
 void PatchIoFileMgr(void) {
+	g_font_cache_sema = sceKernelCreateSema("EPI_FontCacheSema", 0, 1, 1, NULL);
+
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoAddDrv), sceIoAddDrvPatched, _sceIoAddDrv);
 	HIJACK_FUNCTION(K_EXTRACT_IMPORT(&sceIoDelDrv), sceIoDelDrvPatched, _sceIoDelDrv);
 
