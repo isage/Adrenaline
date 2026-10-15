@@ -221,10 +221,10 @@ clean:
 	make -C core/vshctrl clean
 	make -C core/kermit_idstorage clean
 	make -C core/recovery clean
+	make -C core/xmbctrl clean
 	make -C iso_drivers/galaxy clean
 	make -C iso_drivers/march33 clean
 	make -C iso_drivers/inferno clean
 	make -C iso_drivers/minimal_edition clean
-	make -C extra/xmbctrl clean
 	make -C extra/satelite clean
 	rm -f pentazemin/binary.h systemctrl/rebootex.h
