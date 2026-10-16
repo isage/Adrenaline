@@ -5,12 +5,14 @@
 
 ### Adrenaline
 - Add support to use files on `ux0:data/PSPEMUCFW/` instead of `ux0:app/PSPEMUCFW/`
+- Add PSPemu font files to the ramfs flash0 image if possible
 - Reduce memory usage
 - Use IFTU based Sharp Bilinear without Scanlines when conditions are right
 - Fix savestate thumbnail on some graphical filters showing as one color plain image
 - Fix UTF-8 rendering on Adrenaline Menu
 - Fix a memory leak on error code path
 - Fix ghost frame on PS1 titles when Graphical Filters enabled
+- Fix bilinear filter not being applied when `Smooth Graphics` is off.
 
 ### Epinephrine CFW
 
@@ -24,8 +26,12 @@
 - Fix wrong logic on VSH isofs driver
 - Fix UB on virtualPBP initialization
 - Fix overflow on custom POPS `CONFIG.BIN` injection
+- Fix slowness on read/seek system fonts by caching system fonts when used
+  - Besides `Dissidia 012`, it potentially fix stuttering on other games that relies heavily on the system fonts
 - Refactor SystemControl and Pentazemin modules to use `sctrlHENSetSystemBootedHandler`
 - Improve overall stability and performance
+- **Game Compatibility:**
+  - Fix `Dissidia 012` stuttering on text-heavy menus by caching system fonts.
 
 - **DEV:** Introduce `sctrlHENSetSystemBootedHandler`
 	- It allows to set a handler that is called only once when the system just finished the boot sequence.
