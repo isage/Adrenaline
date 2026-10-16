@@ -5,7 +5,7 @@ PSPGZ = $(CFWSDK)/build-tools/gz/pspgz.py
 KHDR = $(CFWSDK)/build-tools/gz/SystemControl.hdr
 UHDR = $(CFWSDK)/build-tools/gz/UserModule.hdr
 
-all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _pentazemin _popcorn _galaxy _march33 _inferno _me _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl
+all: _payloadex _payloadex_ark _rebootex _binary _systemctrl _pentazemin _popcorn _galaxy _march33 _inferno _me _vshctrl _satelite _recovery _kermit_idstorage _btcnf _xmbctrl _janus
 
 KERNEL_STUBS = pspamctrl_driver pspwlandrv_driver pspkermitperipheral_driver psppower_driver pspreg_driver pspchkreg_driver pspusb_driver pspdisplay_driver pspusbcam_driver pspthreadman_kernel psploadcore_kernel pspmodulemgr_kernel pspkermit_driver pspinit_kernel pspsysclib_kernel psploadexec_kernel pspinterruptmanager_kernel pspsemaphore pspsysmem_kernel
 
@@ -202,6 +202,16 @@ else
 endif
 	make -C core/recovery clean
 
+_janus:
+	make -C extra/janus clean
+	make -C extra/janus -j
+ifdef USE_PSP_PACKER
+	psp-packer extra/janus/janus.prx -o ../user/flash0/vsh/module/janus.prx
+else
+	$(PY) $(PSPGZ) ../user/flash0/vsh/module/janus.prx $(UHDR) extra/janus/janus.prx Janus 0x0000
+endif
+	make -C extra/janus clean
+
 clean:
 	make -C core/btcnf/pspbtcnf_inferno clean
 	make -C core/btcnf/pspbtcnf_march33 clean
@@ -227,4 +237,5 @@ clean:
 	make -C iso_drivers/inferno clean
 	make -C iso_drivers/minimal_edition clean
 	make -C extra/satelite clean
+	make -C extra/janus clean
 	rm -f pentazemin/binary.h systemctrl/rebootex.h
