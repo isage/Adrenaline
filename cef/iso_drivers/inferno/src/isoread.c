@@ -41,18 +41,17 @@ u32 g_cur_offset = 0;
 u32 g_last_read_offset = 0;
 
 int (*iso_reader)(IoReadArg *args) = &iso_read;
-int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
-	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
-	if (ret < 0) {
-		return -1;
-	}
-
+int _isoReadUmdFileInner(u32 offset, void *ptr, u32 data_len) {
 	g_read_arg.offset = offset;
 	g_read_arg.address = ptr;
 	g_read_arg.size = data_len;
 
-	int retv = sceKernelExtendKernelStack(0x2000, (void*)iso_reader, &g_read_arg);
+	int ret =  sceKernelExtendKernelStack(
+        0x2000,
+        (void*)iso_reader,
+        &g_read_arg
+    );
 
 	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
 		// simulate seek time
@@ -71,6 +70,18 @@ int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
 		// simulate read time
 		sceKernelDelayThread(data_len * g_umd_speed);
 	}
+
+	return ret;
+}
+
+int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
+	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
+
+	if (ret < 0) {
+		return -1;
+	}
+
+	int retv = _isoReadUmdFileInner(offset, ptr, data_len);
 
 	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 

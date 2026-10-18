@@ -65,21 +65,17 @@ static const char *g_game_group3[N_GAME_GROUP3] = {
 	if (sceKernelSignalSema(g_umd_sema, 1) < 0) \
 		return -1;
 
-
-// iso_read_with_stack
-int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
-	LOCK();
-
+static int _isoReadUmdFileInner(u32 offset, void *ptr, u32 data_len) {
 	g_read_arg.offset = offset;
-	g_read_arg.address = buf;
-	g_read_arg.size = outsize;
+	g_read_arg.address = ptr;
+	g_read_arg.size = data_len;
 
-	int res = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
+	int ret =  sceKernelExtendKernelStack(0x2000, (void*)iso_read, &g_read_arg);
 
 	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
 		// simulate seek time
 		u32 diff = 0;
-		g_last_read_offset = offset+outsize;
+		g_last_read_offset = offset+data_len;
 		if (g_cur_offset > g_last_read_offset) {
 			diff = g_cur_offset - g_last_read_offset;
 		} else {
@@ -91,8 +87,17 @@ int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
 	}
 	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
 		// simulate read time
-		sceKernelDelayThread(outsize * g_umd_speed);
+		sceKernelDelayThread(data_len * g_umd_speed);
 	}
+
+	return ret;
+}
+
+// iso_read_with_stack
+int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
+	LOCK();
+
+	int res = _isoReadUmdFileInner(offset, buf, outsize);
 
 	UNLOCK();
 
@@ -311,6 +316,8 @@ static int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 		len = g_discsize - discpointer;
 	}
 
+	LOCK();
+
 	// per-fd seek delay
 	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
 		u32 read_byte_pos = discpointer * ISO_SECTOR_SIZE;
@@ -329,17 +336,18 @@ static int umd_read(PspIoDrvFileArg *arg, char *data, int len) {
 		sceKernelDelayThread(len * ISO_SECTOR_SIZE * g_umd_speed);
 	}
 
-	int res = isoReadUmdFile(discpointer*SECTOR_SIZE, data, len*SECTOR_SIZE); //***
+	int res = _isoReadUmdFileInner(discpointer*SECTOR_SIZE, data, len*SECTOR_SIZE); //***
+
 
 	if (res > 0) {
 		res = res / SECTOR_SIZE;
 
-		LOCK();
 		g_descriptors[i].discpointer += res;
 		g_head_pos = (discpointer + res) * ISO_SECTOR_SIZE;
 		g_descriptors[i].last_read_byte_pos = g_head_pos;
-		UNLOCK();
 	}
+
+	UNLOCK();
 
 	logmsg3("[DEBUG]: %s: arg=0x%p, data=%s, len=0x%08X -> 0x%08X\n", __func__, arg, data, len, res);
 	return res;
@@ -444,7 +452,7 @@ static int umd_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int i
 	return SCE_ENOSYS;
 }
 
-static int ProcessDevctlRead(void *outdata, int size, u32 *indata) {
+static int ProcessDevctlRead(PspIoDrvFileArg *arg, void *outdata, int size, u32 *indata) {
 	int datasize = indata[4]; // 0x10
 	int lba = indata[2]; // 0x08
 	int dataoffset = indata[6]; // 0x18
@@ -465,7 +473,50 @@ static int ProcessDevctlRead(void *outdata, int size, u32 *indata) {
 		offset = (lba*ISO_SECTOR_SIZE)-dataoffset+ISO_SECTOR_SIZE;
 	}
 
-	return isoReadUmdFile(offset, outdata, datasize);
+	LOCK();
+
+	int idx = arg != NULL ? (int)arg->arg : -1;
+    u32 last_read_byte_pos = g_head_pos;
+
+    if (idx >= 0 && idx < MAX_FILES_NR) {
+        last_read_byte_pos = g_descriptors[idx].last_read_byte_pos;
+    }
+
+    if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+		u32 diff;
+		if (last_read_byte_pos > offset) {
+			diff = last_read_byte_pos - offset;
+		} else {
+			diff = offset - last_read_byte_pos;
+		}
+        sceKernelDelayThread(
+            (diff * g_umd_seek) / 1024
+        );
+    }
+
+    if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+        sceKernelDelayThread(datasize * g_umd_speed);
+    }
+
+    int ret = _isoReadUmdFileInner(offset, outdata, datasize);
+
+    if (ret > 0 && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+        u32 new_position = offset + ret;
+
+        g_head_pos = new_position;
+
+        /*
+         * Do not change the descriptor's logical offset.
+         * Only update its simulated physical read position.
+         */
+        if (idx >= 0 && idx < MAX_FILES_NR) {
+            g_descriptors[idx].last_read_byte_pos = new_position;
+        }
+    }
+
+	UNLOCK();
+
+	return ret;
 }
 
 static int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
@@ -500,7 +551,7 @@ static int umd_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cm
 				return SCE_EINVAL;
 			}
 
-			res = ProcessDevctlRead(outdata, outlen, indata);
+			res = ProcessDevctlRead(arg, outdata, outlen, indata);
 
 			return res;
 		}

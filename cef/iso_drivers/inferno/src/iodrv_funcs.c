@@ -275,7 +275,6 @@ static int IoClose(PspIoDrvFileArg *arg) {
 
 static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
-
 	if (ret < 0) {
 		ret = -1;
 		goto exit;
@@ -283,8 +282,8 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 
 	int idx = (int)arg->arg;
 	int offset = g_open_slot[idx].offset;
-	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 
+	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 	if (ret < 0) {
 		ret = -1;
 		goto exit;
@@ -294,6 +293,12 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 
 	if (g_total_sectors < offset + len) {
 		read_len = g_total_sectors - offset;
+	}
+
+	ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
+	if (ret < 0) {
+		ret = -1;
+		goto exit;
 	}
 
 	// per-fd seek delay
@@ -314,7 +319,13 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 		sceKernelDelayThread(read_len * ISO_SECTOR_SIZE * g_umd_speed);
 	}
 
-	int retv = isoReadUmdFile(offset * ISO_SECTOR_SIZE, data, read_len * ISO_SECTOR_SIZE);
+	int retv = _isoReadUmdFileInner(offset * ISO_SECTOR_SIZE, data, read_len * ISO_SECTOR_SIZE);
+
+	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
+	if (ret < 0) {
+		ret = -1;
+		goto exit;
+	}
 
 	if (retv <= 0) {
 		ret = retv;
@@ -323,7 +334,6 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 
 	retv = retv / ISO_SECTOR_SIZE;
 	ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
-
 	if (ret < 0) {
 		ret = -1;
 		goto exit;
@@ -334,7 +344,6 @@ static int IoRead(PspIoDrvFileArg *arg, char *data, int len) {
 	g_open_slot[idx].last_read_byte_pos = g_head_pos;
 
 	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
-
 	if (ret < 0) {
 		ret = -1;
 		goto exit;
@@ -396,7 +405,7 @@ exit:
 	logmsg3("[DEBUG]: %s: ofs=0x%08X, whence=%d -> 0x%08X\n", __func__, (uint)ofs, whence, ret);
 
 	if (ret >= 0 && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		g_cur_offset = ret;
+		g_cur_offset = ret * ISO_SECTOR_SIZE;
 	}
 
 	return ret;
@@ -483,7 +492,7 @@ exit:
 	return ret;
 }
 
-static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param) {
+static int umd_devctl_read(PspIoDrvFileArg *arg, void *outdata, int outlen, struct LbaParams *param) {
 	u32 byte_size_total = param->byte_size_total;
 
 	if (outlen < byte_size_total) {
@@ -504,7 +513,53 @@ static int umd_devctl_read(void *outdata, int outlen, struct LbaParams *param) {
 		offset = lba_top * ISO_SECTOR_SIZE - byte_size_start + ISO_SECTOR_SIZE;
 	}
 
-	int ret = isoReadUmdFile(offset, outdata, byte_size_total);
+	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
+    if (ret < 0) {
+        return -1;
+    }
+
+    int idx = arg != NULL ? (int)arg->arg : -1;
+    u32 last_read_byte_pos = g_head_pos;
+
+    if (idx >= 0 && idx < MAX_FILES_NR) {
+        last_read_byte_pos = g_open_slot[idx].last_read_byte_pos;
+    }
+
+    if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+		u32 diff;
+		if (last_read_byte_pos > offset) {
+			diff = last_read_byte_pos - offset;
+		} else {
+			diff = offset - last_read_byte_pos;
+		}
+        sceKernelDelayThread(
+            (diff * g_umd_seek) / 1024
+        );
+    }
+
+    if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+        sceKernelDelayThread(byte_size_total * g_umd_speed);
+    }
+
+    ret = _isoReadUmdFileInner(offset, outdata, byte_size_total);
+
+    if (ret > 0 && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+        u32 new_position = offset + ret;
+
+        g_head_pos = new_position;
+
+        /*
+         * Do not change the descriptor's logical offset.
+         * Only update its simulated physical read position.
+         */
+        if (idx >= 0 && idx < MAX_FILES_NR) {
+            g_open_slot[idx].last_read_byte_pos = new_position;
+        }
+    }
+
+    if (sceKernelSignalSema(g_umd9660_sema_id, 1) < 0) {
+        return -1;
+    }
 
 	return ret;
 }
@@ -638,7 +693,7 @@ static int IoDevctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd,
 			goto exit;
 		}
 
-		ret = umd_devctl_read(outdata, outlen, indata);
+		ret = umd_devctl_read(arg, outdata, outlen, indata);
 		goto exit;
 	} else if (cmd == 0x01E38012) {
 		int outlen2 = outlen;

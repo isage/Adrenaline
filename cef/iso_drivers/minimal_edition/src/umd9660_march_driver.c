@@ -163,6 +163,38 @@ static int umd9660_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mod
 	return SCE_ENODEV;
 }
 
+static int _isoReadUmdFileInner(u32 offset, void *ptr, u32 data_len) {
+	g_read_arg.offset = offset;
+	g_read_arg.address = ptr;
+	g_read_arg.size = data_len;
+
+	int ret =  sceKernelExtendKernelStack(
+        0x2000,
+        (void*)iso_read,
+        &g_read_arg
+    );
+
+	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate seek time
+		u32 diff = 0;
+		g_last_read_offset = offset+data_len;
+		if (g_cur_offset > g_last_read_offset) {
+			diff = g_cur_offset - g_last_read_offset;
+		} else {
+			diff = g_last_read_offset - g_cur_offset;
+		}
+		g_cur_offset = g_last_read_offset;
+		u32 seek_time = (diff * g_umd_seek)/1024;
+		sceKernelDelayThread(seek_time);
+	}
+	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+		// simulate read time
+		sceKernelDelayThread(data_len * g_umd_speed);
+	}
+
+	return ret;
+}
+
 //sub_00000740:
 static int umd9660_read(PspIoDrvFileArg *arg, char *data, int sector) {
 	if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
@@ -175,10 +207,6 @@ static int umd9660_read(PspIoDrvFileArg *arg, char *data, int sector) {
 	//len >= pos + a2
 	if (g_umd_file_len < offset + sector ) {
 		i = g_umd_file_len - offset; //len - pos
-	}
-
-	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
-		return -1;
 	}
 
 	// per-fd seek delay
@@ -199,7 +227,11 @@ static int umd9660_read(PspIoDrvFileArg *arg, char *data, int sector) {
 		sceKernelDelayThread(i * ISO_SECTOR_SIZE * g_umd_speed);
 	}
 
-	int ret = isoReadUmdFile( offset << 11 , data , i << 11);//loc_000003E0
+	int ret = _isoReadUmdFileInner( offset << 11 , data , i << 11);//loc_000003E0
+
+	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+		return -1;
+	}
 
 	if (ret < 0) {
 		return -1;
@@ -281,7 +313,7 @@ static SceOff umd9660_lseek(PspIoDrvFileArg *arg ,SceOff offset,int whence) {
 	return umd_cur_offset;
 }
 
-static int ProcessDevctlRead( void *outdata , int outlen , void *indata ) {
+static int ProcessDevctlRead(PspIoDrvFileArg *arg, void *outdata , int outlen , void *indata ) {
 	u32 *date_buff = (u32 *)indata;
 
 	int offset = date_buff[8/4] << 11;
@@ -300,7 +332,55 @@ static int ProcessDevctlRead( void *outdata , int outlen , void *indata ) {
 			}
 		}
 
-		return isoReadUmdFile( offset , outdata , size );//loc_000003E0
+		int ret = sceKernelWaitSema(g_umd_sema, 1, 0);
+		if (ret < 0) {
+			return -1;
+		}
+
+		int idx = arg != NULL ? (int)arg->arg : -1;
+		u32 last_read_byte_pos = g_head_pos;
+
+		if (idx >= 0 && idx < MAX_FILES_NR) {
+			last_read_byte_pos = g_io_status[idx].last_read_byte_pos;
+		}
+
+		if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+			u32 diff;
+			if (last_read_byte_pos > offset) {
+				diff = last_read_byte_pos - offset;
+			} else {
+				diff = offset - last_read_byte_pos;
+			}
+			sceKernelDelayThread(
+				(diff * g_umd_seek) / 1024
+			);
+		}
+
+		if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+			sceKernelDelayThread(size * g_umd_speed);
+		}
+
+		ret = _isoReadUmdFileInner(offset, outdata, size);
+
+		if (ret > 0 && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+			u32 new_position = offset + ret;
+
+			g_head_pos = new_position;
+
+			/*
+			* Do not change the descriptor's logical offset.
+			* Only update its simulated physical read position.
+			*/
+			if (idx >= 0 && idx < MAX_FILES_NR) {
+				g_io_status[idx].last_read_byte_pos = new_position;
+			}
+		}
+
+		if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+			return -1;
+		}
+
+		return ret;//loc_000003E0
 	}
 
 	return SCE_ENOBUFS;
@@ -359,7 +439,7 @@ static int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned in
 		break;
 	case 0x01E380C0:
 		if (indata && outdata) {
-			return ProcessDevctlRead( outdata , outlen , indata );
+			return ProcessDevctlRead(arg, outdata , outlen , indata );
 		}
 		return SCE_EINVAL;
 		break;
@@ -492,29 +572,7 @@ int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
 		return -1;
 	}
 
-	g_read_arg.offset = offset;
-	g_read_arg.address = buf;
-	g_read_arg.size = outsize;
-
-	int ret = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
-
-	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		// simulate seek time
-		u32 diff = 0;
-		g_last_read_offset = offset+outsize;
-		if (g_cur_offset > g_last_read_offset) {
-			diff = g_cur_offset - g_last_read_offset;
-		} else {
-			diff = g_last_read_offset - g_cur_offset;
-		}
-		g_cur_offset = g_last_read_offset;
-		u32 seek_time = (diff * g_umd_seek)/1024;
-		sceKernelDelayThread(seek_time);
-	}
-	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		// simulate read time
-		sceKernelDelayThread(outsize * g_umd_speed);
-	}
+	int ret = _isoReadUmdFileInner(offset, buf, outsize);
 
 	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
 		return -1;
