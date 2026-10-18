@@ -390,7 +390,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "BAMG") == 0) {
 		// Fix freeze on `Bust-A-Move Deluxe`
-		SetUmdEmuSpeed(2, 2, UMD_DELAY_STRAT_GLOBAL);
+		SetUmdEmuSpeed(0, 2, UMD_DELAY_STRAT_PER_FD);
 
 	} else if (strcmp(modname, "starwars_psp") == 0) {
 		// Fix `Lego Star Wars 2` WLAN switch state returning `off` due to cache syncronization issues on ePSP implementation.
@@ -398,7 +398,7 @@ void PatchGamesByMod(SceModule* mod) {
 
 	} else if (strcmp(modname, "Megpoid") == 0) {
 		// Fix sound and sync issues on `Megpoid the Music#`
-		SetUmdEmuSpeed(0, 1, UMD_DELAY_STRAT_GLOBAL);
+		SetUmdEmuSpeed(0, 1, UMD_DELAY_STRAT_PER_FD);
 
 		// Disable ms cache as well.
 		sctrlMsCacheInit(NULL, 0);
