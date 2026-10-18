@@ -5,6 +5,7 @@
 
 ### Adrenaline
 - Add support to use files on `ux0:data/PSPEMUCFW/` instead of `ux0:app/PSPEMUCFW/`
+  - That means if PSP Firmware files are on `ux0:data/PSPEMUCFW/`, it is possible to update Adrenaline by VPK installation without losing the PSP firmware installation.
 - Add PSPemu font files to the ramfs flash0 image if possible
 - Reduce memory usage
 - Use IFTU based Sharp Bilinear without Scanlines when conditions are right
@@ -26,6 +27,7 @@
 - Fix wrong logic on VSH isofs driver
 - Fix UB on virtualPBP initialization
 - Fix overflow on custom POPS `CONFIG.BIN` injection
+- Fix per-fd UMDemu seek/read delays not happening when reading virtual disc through `devctl`
 - Fix slowness on read/seek system fonts by caching system fonts when used
   - Besides `Dissidia 012`, it potentially fix stuttering on other games that relies heavily on the system fonts
 - Refactor SystemControl and Pentazemin modules to use `sctrlHENSetSystemBootedHandler`
