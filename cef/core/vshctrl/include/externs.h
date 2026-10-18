@@ -16,5 +16,7 @@ extern int g_bus_list[9];
 
 extern u32 g_firsttick;
 
+extern int g_has_categories_lite;
+
 
 #endif

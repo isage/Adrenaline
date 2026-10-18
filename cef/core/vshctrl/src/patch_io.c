@@ -419,7 +419,7 @@ int sceIoDreadPatched(SceUID fd, SceIoDirent *dir) {
 			}
 
 			if (g_isodfd >= 0) {
-				res = AddIsoDirent(iso_dir, g_isodfd, dir, 1);
+				res = AddIsoDirent(iso_dir, g_isodfd, dir, g_has_categories_lite);
 				if (res > 0) {
 					goto exit;
 				}

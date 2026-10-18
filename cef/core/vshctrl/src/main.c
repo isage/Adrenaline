@@ -35,6 +35,8 @@ STMOD_HANDLER previous;
 SEConfigEPI g_cfw_config;
 u32 g_firsttick;
 
+int g_has_categories_lite = 0;
+
 int OnModuleStart(SceModule *mod) {
 	char *modname = mod->modname;
 
@@ -59,6 +61,8 @@ int module_start(SceSize args, void *argp) {
 	logmsg("VshCtrl started\n");
 
 	PatchLoadExec();
+
+	g_has_categories_lite = sceKernelFindModuleByName("Game_Categories_Light") != NULL;
 
 	sctrlSEGetConfig((SEConfig*)&g_cfw_config);
 
