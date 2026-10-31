@@ -26,7 +26,7 @@ LIBDIR = ../../lib
 USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
-LIBS = -lpspgum -lpspgu -lpspge -lpspdisplay -lpsppaf -lpspvsh -lpspvshctrl -lpspkubridge -lpspvshcommongui -lpspsystemctrl_user
+LIBS = -lpspgum -lpspgu -lpspge -lpspdisplay -lpsppaf -lpspvsh -lpspvshctrl -lpspkubridge -lpspvshcommongui -lpspsystemctrl_user -ladrenalinectrl
 
 ifdef XMBCTRL_DEBUG
 CFLAGS += -DDEBUG=$(XMBCTRL_DEBUG)

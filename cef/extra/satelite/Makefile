@@ -1,7 +1,5 @@
 TARGET = satelite
 OBJS = src/main.o \
-	src/menu.o \
-	src/blit.o \
 	exports.o
 
 INCDIR = ../../include  include
@@ -17,7 +15,7 @@ USE_PSPSDK_LIBS = 0
 USE_PSPSDK_LIBC = 0
 
 LIBDIR = ../../lib
-LIBS = -lpspdebug -lpsppower -lpspdisplay -lpspvshctrl -lpspsysc_user -lpspsystemctrl_user
+LIBS = -ltinyfont -lya2d -lpspgum -lpspgu -lpspmath -lpspdebug -lpsppower -lpspdisplay -lpspvshctrl -lpspsysc_user -lpspsystemctrl_user
 
 ifdef SATELITE_DEBUG
 CFLAGS += -DDEBUG=$(SATELITE_DEBUG)

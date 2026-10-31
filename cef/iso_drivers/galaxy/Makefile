@@ -17,7 +17,7 @@ USE_KERNEL_LIBC=1
 USE_KERNEL_LIBS=1
 
 LIBDIR = ../../lib
-LIBS = -lcisoread -lpspinit_kernel -lpsputils_kernel -lpspsysmem_kernel -lpspkernel_library -lpspsysclib_kernel -lpsploadcore_kernel -lpspthreadman_kernel -lpspiofilemgr_kernel -lpspsystemctrl_kernel
+LIBS = -lcisoread -lpspumd_driver -lpspinit_kernel -lpsputils_kernel -lpspsysmem_kernel -lpspkernel_library -lpspsysclib_kernel -lpsploadcore_kernel -lpspthreadman_kernel -lpspiofilemgr_kernel -lpspsystemctrl_kernel
 
 
 ifdef GALAXY_DEBUG
