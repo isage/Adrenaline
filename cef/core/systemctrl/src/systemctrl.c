@@ -819,3 +819,10 @@ int sctrlKernelMsIsEf() {
 	int res = (apitype == PSP_INIT_APITYPE_EF5 || apitype == PSP_INIT_APITYPE_UMD_EMU_EF1 || apitype == PSP_INIT_APITYPE_EF2 || apitype ==  PSP_INIT_APITYPE_VSH2);
 	return res;
 }
+
+extern void* custom_rebootex;
+void sctrlHENSetRebootexOverride(const u8 *rebootex)
+{
+    if (rebootex != NULL) // override rebootex
+        custom_rebootex = (void*)rebootex;
+}
