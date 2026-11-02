@@ -18,11 +18,16 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <stdio.h>
 
 #include <pspsdk.h>
 #include <pspkernel.h>
 
+#include <cfwmacros.h>
+#include <systemctrl.h>
+
 #include "xmbctrl.h"
+#include "utils.h"
 
 #define MASKBITS 0x3F
 #define MASKBYTE 0x80
@@ -59,4 +64,34 @@ int utf8_to_unicode(wchar_t *dest, char *src) {
 	dest[x++] = '\0';
 
 	return x;
+}
+
+void scanTimeMachineInstallations() {
+    SceIoStat stat;
+    char path[256];
+    g_num_tm_installs = 0;
+    for (int i = 0; i < 1; i++){
+        snprintf(path, sizeof(path), "ms0:/TM/%s", g_tm_paths[i].path);
+        if (sceIoGetstat(path, &stat) >= 0){
+            g_tm_installs[g_num_tm_installs++] = i+1;
+        }
+    }
+}
+
+void exec_tm_reboot(int i) {
+    char tmpath[256];
+    snprintf(tmpath, sizeof(tmpath), "ms0:/TM/%s", g_tm_paths[i].path);
+    int k1 = pspSdkSetK1(0);
+    SceUID mod = sceKernelLoadModule(tmpath, 0, NULL);
+    if (mod < 0) {
+        pspSdkSetK1(k1);
+        return;
+    }
+    int res = sceKernelStartModule(mod, 0, NULL, NULL, NULL);
+    pspSdkSetK1(k1);
+    if (res >= 0) {
+		sctrlKernelExitVSH(NULL);
+	} else {
+		sceKernelUnloadModule(mod);
+	}
 }

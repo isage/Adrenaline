@@ -4,6 +4,18 @@
 #include <stddef.h>
 #include <pspkerneltypes.h>
 
+#include <cfwmacros.h>
+
+typedef struct TimeMachineOptions {
+	char *name;
+	char *path;
+} TimeMachineOptions;
+
+extern TimeMachineOptions g_tm_paths[1];
+
+extern u8 g_tm_installs[1];
+extern u8 g_num_tm_installs;
+
 // Extract specific string segments from "__DATE__" ("Mmm dd yyyy")
 #define YEAR_STR  (__DATE__ + 7)
 #define DAY_CHAR1   ((__DATE__[4] == ' ') ? '0' : (__DATE__[4]))
@@ -29,5 +41,8 @@
 
 
 int utf8_to_unicode(wchar_t *dest, char *src);
+void exec_tm_reboot(int i);
+
+void scanTimeMachineInstallations();
 
 #endif
