@@ -50,8 +50,6 @@
 STMOD_HANDLER g_module_handler = NULL;
 SYSBOOT_HANDLER g_on_system_booted_handler = NULL;
 
-void* custom_rebootex = NULL;
-
 static int (* RunReboot)(u32 *params) = NULL;
 static int (* DecodeKL4E)(void *dest, u32 size_dest, void *src, u32 size_src) = NULL;
 
@@ -329,15 +327,21 @@ int RunRebootPatched(u32 *params) {
 }
 
 int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
-	memset((char *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);
-	memcpy(
-		(void *)REBOOTEX_TEXT,
-		(custom_rebootex)? custom_rebootex : rebootex,
-		(custom_rebootex)? REBOOTEX_MAX_SIZE : size_rebootex
-	);
-	memcpy((void *)REBOOTEX_CONFIG, &g_rebootex_config, sizeof(RebootexConfigEPI));
-	// Backup the CFW config across reboot
-	memcpy((void *)EPI_CONFIG_ADDR, &g_cfw_config, sizeof(SEConfigEPI));
+	memset((void *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);
+
+	if (g_custom_rebootex == NULL) {
+		memcpy((void *)REBOOTEX_TEXT, rebootex, size_rebootex);
+		memcpy((void *)REBOOTEX_CONFIG, &g_rebootex_config, sizeof(RebootexConfigEPI));
+		// Backup the CFW config across reboot
+		memcpy((void *)EPI_CONFIG_ADDR, &g_cfw_config, sizeof(SEConfigEPI));
+	} else {
+		memcpy((void *)REBOOTEX_TEXT, g_custom_rebootex, g_custom_rebootex_size);
+		memset((void *)REBOOTEX_CONFIG, 0, sizeof(RebootexConfigEPI));
+		if (g_custom_rebootex_config != NULL) {
+			memcpy((void *)REBOOTEX_CONFIG, g_custom_rebootex_config, g_custom_rebootex_config_size);
+		}
+		memset((void *)EPI_CONFIG_ADDR, 0, sizeof(SEConfigEPI));
+	}
 	return DecodeKL4E(dest, size_dest, src, size_src);
 }
 

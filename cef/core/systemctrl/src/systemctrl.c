@@ -41,6 +41,11 @@
 
 #include "../../adrenaline_version.h"
 
+void* g_custom_rebootex = NULL;
+SceSize g_custom_rebootex_size = 0;
+void* g_custom_rebootex_config = NULL;
+SceSize g_custom_rebootex_config_size = 0;
+
 SceSize strncpy_s(char *strDest, SceSize numberOfElements, const char *strSource, SceSize count);
 
 void sctrlFlushCache() {
@@ -820,9 +825,17 @@ int sctrlKernelMsIsEf() {
 	return res;
 }
 
-extern void* custom_rebootex;
-void sctrlHENSetRebootexOverride(const u8 *rebootex)
-{
-    if (rebootex != NULL) // override rebootex
-        custom_rebootex = (void*)rebootex;
+void sctrlHENSetRebootexOverride(const void *rebootex, u32 size) {
+	// override rebootex
+    if (rebootex != NULL) {
+        g_custom_rebootex = (void*)rebootex;
+		g_custom_rebootex_size = size;
+	}
+}
+
+void sctrlHENSetRebootexConfigOverride(void *rebootex_config, u32 size) {
+	if (rebootex_config != NULL) {
+        g_custom_rebootex_config = (void*)rebootex_config;
+		g_custom_rebootex_config_size = size;
+	}
 }
