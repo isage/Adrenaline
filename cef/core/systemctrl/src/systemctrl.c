@@ -42,9 +42,9 @@
 #include "../../adrenaline_version.h"
 
 void* g_custom_rebootex = NULL;
-SceSize g_custom_rebootex_size = 0;
+u32 g_custom_rebootex_size = 0;
 void* g_custom_rebootex_config = NULL;
-SceSize g_custom_rebootex_config_size = 0;
+u32 g_custom_rebootex_config_size = 0;
 
 SceSize strncpy_s(char *strDest, SceSize numberOfElements, const char *strSource, SceSize count);
 
