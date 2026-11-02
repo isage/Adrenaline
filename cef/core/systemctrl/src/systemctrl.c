@@ -825,7 +825,7 @@ int sctrlKernelMsIsEf() {
 	return res;
 }
 
-void sctrlHENSetRebootexOverride(const void *rebootex, u32 size) {
+void sctrlHENSetRebootexOverride(void *rebootex, u32 size) {
 	// override rebootex
     if (rebootex != NULL) {
         g_custom_rebootex = (void*)rebootex;
