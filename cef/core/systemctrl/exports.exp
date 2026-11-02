@@ -173,6 +173,7 @@ PSP_EXPORT_FUNC(sctrlHENGetRebootexConfig)
 #PSP_EXPORT_FUNC(sctrlHENRegisterMDecryptHandler)
 #PSP_EXPORT_FUNC(sctrlHENRegisterLLEHandler)
 PSP_EXPORT_FUNC(sctrlHENSetRebootexOverride)
+PSP_EXPORT_FUNC(sctrlHENSetRebootexConfigOverride)
 
 # sctrlKernel - COMMON
 PSP_EXPORT_FUNC(sctrlKernelExitVSH)
