@@ -103,6 +103,7 @@ enum {
 	fake_ef0_music_action_arg = 0x1020,
 	fake_ef0_video_action_arg = 0x1022,
 	fake_ef0_savedata_action_arg = 4,
+	sysconf_tm_action_arg = 0x1005,
 };
 
 enum FakeEf {
@@ -121,6 +122,7 @@ enum CustomId {
 	CUSTOM_ID_FAKE_EF_VIDEO = 95,
 	CUSTOM_ID_FAKE_EF_GAME = 96,
 	CUSTOM_ID_FAKE_EF_SAVEDATA = 97,
+	CUSTOM_ID_TIME_MACHINE = 98,
 };
 
 typedef struct {

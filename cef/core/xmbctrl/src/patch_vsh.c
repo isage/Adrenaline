@@ -42,6 +42,7 @@ static u32 g_backup[4];
 
 static SceVshItem *g_plugin_mgr_item = NULL;
 static SceVshItem *g_cfw_conf_item = NULL;
+static SceVshItem *g_time_machine_item = NULL;
 static SceVshItem *g_ef_item[5] = {NULL};
 static void *g_xmb_arg0 = NULL;
 static void *g_xmb_arg1 = NULL;
@@ -71,6 +72,7 @@ static unsigned char g_usb_item[] __attribute__((aligned(16))) = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
+static SceVshItem *g_sys_update_item = NULL;
 static SceVshItem *g_ef_camera_item = NULL;
 static SceVshItem *g_ef_music_item = NULL;
 static SceVshItem *g_ef_video_item = NULL;
@@ -83,6 +85,8 @@ int g_is_ef_drive = 0;
 
 static u32 g_last_action_arg = ms_game_action;
 static u32 g_unk_strukt_addr = 0;
+
+static char* g_tm_options[] = { "Cancel", "Boot" };
 
 #define PLUGINS_CONTEXT 1
 
@@ -203,6 +207,10 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		logmsg4("[DEBUG]: text=%s topitem=%d id=%d action=%d arg=%d subtitle=%s relocate=%d unk=%d memstick=%d umd_icon=%d context.text=%s\n", item->text, topitem, item->id, item->action, item->action_arg, item->subtitle, item->relocate, item->unk, item->memstick, item->umd_icon, item->context->text);
 	}
 
+	if (paf_strcmp(item->text, "msg_system_update") == 0) {
+		scanTimeMachineInstallations();
+	}
+
 	if (paf_strcmp(item->text, "msgtop_sysconf_console") == 0) {
 		g_sysconf_action = item->action;
 
@@ -210,6 +218,9 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 		// So apply re-patch the action for it
 		if (g_plugin_mgr_item != NULL) {
 			g_plugin_mgr_item->action = g_sysconf_action;
+		}
+		if (g_time_machine_item != NULL) {
+			g_time_machine_item->action = g_sysconf_action;
 		}
 	}
 
@@ -270,6 +281,11 @@ int AddVshItemPatched(void *a0, int topitem, SceVshItem *item) {
 
 		AddVshItem(a0, topitem, g_ef_item[FAKE_EF_SAVEDATA]);
 		// AddVshItem(a0, topitem, g_ef_savedata_item);
+	}
+
+	if (g_num_tm_installs > 0 && paf_strcmp(item->text, "msgtop_sysconf_date") == 0) {
+		g_time_machine_item = addCustomVshItem(CUSTOM_ID_TIME_MACHINE, "msgtop_time_machine", sysconf_tm_action_arg, item);
+		AddVshItem(a0, topitem, g_time_machine_item);
 	}
 
 	int ret = AddVshItem(a0, topitem, item);
@@ -380,7 +396,11 @@ int ExecuteActionPatched(int action, int action_arg) {
 			g_is_cfw_config = 2;
 			action = sysconf_console_action;
 			action_arg = sysconf_console_action_arg;
-		} else {
+		} else if (action_arg == sysconf_tm_action_arg){
+        	g_is_cfw_config = 3;
+            action = sysconf_console_action;
+            action_arg = sysconf_console_action_arg;
+        } else {
 			g_is_cfw_config = 0;
 		}
 	}
@@ -487,6 +507,17 @@ void OnInitMenuPspConfigPatched() {
 				}
 			}
 		}
+	} else if (g_is_cfw_config == 3) {
+		if (((u32*)g_sysconf_option)[2] == 0){
+            for (int i = 0; i < NELEMS(g_tm_installs); i++){
+                int tm_id = g_tm_installs[i];
+                if (tm_id != 0) {
+                    AddSysconfContextItem(g_tm_paths[tm_id-1].name, g_tm_paths[tm_id-1].path, g_tm_paths[tm_id-1].name);
+                } else {
+					break;
+				}
+            }
+        }
 	} else {
 		OnInitMenuPspConfig();
 	}
@@ -503,7 +534,9 @@ SceSysconfItem *GetSysconfItemPatched(void *a0, void *a1) {
 		}
 	} else if (g_is_cfw_config == 2) {
 		g_context_mode = PLUGINS_CONTEXT;
-	}
+	} else if (g_is_cfw_config == 3){
+        g_context_mode = 1;
+    }
 	return item;
 }
 
@@ -548,7 +581,10 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 				utf8_to_unicode((wchar_t *)g_user_buffer, plugin->path);
 				return (wchar_t *)g_user_buffer;
 			}
-		}
+		} else if (g_is_cfw_config == 3) {
+            utf8_to_unicode((wchar_t *)g_user_buffer, name);
+        	return (wchar_t *)g_user_buffer;
+        }
 
 		if (paf_strcmp(name, "msgtop_sysconf_cfwconfig") == 0) {
 			paf_snprintf(g_buf, 63, STAR " Epinephrine CFW Settings");
@@ -556,6 +592,10 @@ wchar_t *scePafGetTextPatched(void *a0, char *name) {
 			return (wchar_t *)g_user_buffer;
 		} else if (paf_strcmp(name, "msgtop_sysconf_pluginsmgr") == 0) {
 			paf_snprintf(g_buf, 63, STAR " Plugins Manager");
+			utf8_to_unicode((wchar_t *)g_user_buffer, g_buf);
+			return (wchar_t *)g_user_buffer;
+		} else if(paf_strcmp(name, "msgtop_time_machine") == 0) {
+			paf_snprintf(g_buf, 63, STAR " Time Machine");
 			utf8_to_unicode((wchar_t *)g_user_buffer, g_buf);
 			return (wchar_t *)g_user_buffer;
 		}
@@ -584,7 +624,9 @@ int vshGetRegistryValuePatched(u32 *option, char *name, void *arg2, int size,int
 				*value = plugin->active;
 				return 0;
 			}
-		}
+		} else if (g_is_cfw_config == 3) {
+            return 0;
+        }
 	}
 
 	int res = vshGetRegistryValue(option, name, arg2, size, value);
@@ -616,7 +658,17 @@ int vshSetRegistryValuePatched(u32 *option, char *name, int size, int *value) {
 				}
 				return 0;
 			}
-		}
+		} else if (g_is_cfw_config == 3){
+            if (*value){
+                for (int i = 0; i < NELEMS(g_tm_paths); i++) {
+                    if (paf_strcmp(name, g_tm_paths[i].name) == 0) {
+                        exec_tm_reboot(i);
+                        return 0;
+                    }
+                }
+            }
+            return 0;
+        }
 	}
 
 	return vshSetRegistryValue(option, name, size, value);
@@ -630,7 +682,11 @@ int PAF_Resource_GetPageNodeByID_Patched(void *resource, char *name, SceRcoEntry
 			if (paf_strcmp(name, "page_psp_config_umd_autoboot") == 0) {
 				HijackContext(*child, g_item_opts[g_context_mode].c, g_item_opts[g_context_mode].n);
 			}
-		}
+		} else if (g_is_cfw_config == 3) {
+            if(paf_strcmp(name, "page_psp_config_umd_autoboot") == 0) {
+                HijackContext(*child, g_tm_options, NELEMS(g_tm_options));
+            }
+        }
 	}
 
 	return res;
