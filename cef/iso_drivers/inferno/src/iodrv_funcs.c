@@ -25,6 +25,7 @@
 #include <pspsysmem.h>
 #include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
+#include <pspiofilemgr_kernel.h>
 
 #include <isoctrl.h>
 #include <cfwmacros.h>
@@ -748,7 +749,7 @@ static PspIoDrvFuncs g_drv_funcs = {
 PspIoDrv g_iodrv = {
 	.name = "umd",
 	.dev_type = 4, // block device
-	.unk2 = 0x800,
+	.size = 0x800,
 	.name2 = "UMD9660",
 	.funcs = &g_drv_funcs,
 };
