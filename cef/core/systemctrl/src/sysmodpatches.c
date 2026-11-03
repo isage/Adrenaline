@@ -330,12 +330,22 @@ int DecodeKL4EPatched(void *dest, u32 size_dest, void *src, u32 size_src) {
 	memset((void *)REBOOTEX_TEXT, 0, REBOOTEX_MAX_SIZE);
 
 	if (g_custom_rebootex == NULL) {
-		memcpy((void *)REBOOTEX_TEXT, rebootex, size_rebootex);
+		// GZIP rebootex
+		if (rebootex[0] == 0x1F && rebootex[1] == 0x8B) {
+			sctrlGzipDecompress((unsigned char *)REBOOTEX_TEXT, rebootex, REBOOTEX_MAX_SIZE);
+		} else { // Plain rebootex
+			memcpy((void *)REBOOTEX_TEXT, rebootex, size_rebootex);
+		}
 		memcpy((void *)REBOOTEX_CONFIG, &g_rebootex_config, sizeof(RebootexConfigEPI));
 		// Backup the CFW config across reboot
 		memcpy((void *)EPI_CONFIG_ADDR, &g_cfw_config, sizeof(SEConfigEPI));
 	} else {
-		memcpy((void *)REBOOTEX_TEXT, g_custom_rebootex, g_custom_rebootex_size);
+		// GZIP rebootex
+		if (((u8 *)g_custom_rebootex)[0] == 0x1F && ((u8 *)g_custom_rebootex)[1] == 0x8B) {
+			sctrlGzipDecompress((unsigned char *)REBOOTEX_TEXT, g_custom_rebootex, REBOOTEX_MAX_SIZE);
+		} else { // Plain rebootex
+			memcpy((void *)REBOOTEX_TEXT, g_custom_rebootex, g_custom_rebootex_size);
+		}
 		memset((void *)REBOOTEX_CONFIG, 0, sizeof(RebootexConfigEPI));
 		if (g_custom_rebootex_config != NULL) {
 			memcpy((void *)REBOOTEX_CONFIG, g_custom_rebootex_config, g_custom_rebootex_config_size);
