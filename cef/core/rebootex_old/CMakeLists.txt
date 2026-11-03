@@ -6,3 +6,9 @@ target_link_libraries(rebootex PRIVATE bootloadex)
 target_link_options(rebootex PRIVATE -nostartfiles -nostdlib -T${CMAKE_CURRENT_SOURCE_DIR}/linkfile.x)
 
 create_raw_binary(rebootex)
+
+add_custom_command(
+  TARGET rebootex
+  POST_BUILD
+  COMMAND python3 $<TARGET_PROPERTY:tool_gz,EXEC> rebootex.bin rebootex.bin.gz
+)

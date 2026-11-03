@@ -50,7 +50,7 @@ target_include_directories(systemctrl PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 add_custom_command(OUTPUT rebootex.h
   DEPENDS rebootex
-  COMMAND bin2c "$<TARGET_FILE:rebootex>.bin" rebootex.h rebootex
+  COMMAND bin2c "$<TARGET_FILE:rebootex>.bin.gz" rebootex.h rebootex
 )
 
 add_custom_command(
