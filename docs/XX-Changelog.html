@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-9b5fbdb4.js";
+            window.path_to_searchindex_js = "searchindex-33b54d03.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-1af7a252.js"></script>
@@ -417,12 +417,35 @@
 <h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
 <h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
 <ul>
-<li>Add support to use files on <code>ux0:data/PSPEMUCFW/</code> instead of <code>ux0:app/PSPEMUCFW/</code></li>
+<li>Add support to use files on <code>ux0:data/PSPEMUCFW/</code> instead of <code>ux0:app/PSPEMUCFW/</code>
+<ul>
+<li>That means if PSP Firmware files are on <code>ux0:data/PSPEMUCFW/</code>, it is possible to update Adrenaline by VPK installation without losing the PSP firmware installation.</li>
+</ul>
+</li>
+<li>Add PSPemu font files to the ramfs flash0 image if possible</li>
+<li>Reduce memory usage</li>
+<li>Use IFTU based Sharp Bilinear without Scanlines when conditions are right</li>
 <li>Fix savestate thumbnail on some graphical filters showing as one color plain image</li>
 <li>Fix UTF-8 rendering on Adrenaline Menu</li>
+<li>Fix a memory leak on error code path</li>
+<li>Fix ghost frame on PS1 titles when Graphical Filters enabled</li>
+<li>Fix bilinear filter not being applied when <code>Smooth Graphics</code> is off.</li>
 </ul>
 <h3 id="epinephrine-cfw"><a class="header" href="#epinephrine-cfw">Epinephrine CFW</a></h3>
 <ul>
+<li>
+<p>Introduce Janus: A ISO file switcher <strong>[<a href="./05-PSPPlayback.html#janus-iso-switcher">docs</a>]</strong></p>
+<ul>
+<li>Change disc from multi-disc titles (e.g. <code>Final Fantasy Type-0</code>)</li>
+<li>Change disc for older title bonus content (e.g. <code>Yu-Gi-Oh! GX: Tag Force</code> series)</li>
+</ul>
+</li>
+<li>
+<p>Introduce Time Machine feature: Load entire ePSP firmware and CFW on Memory Stick</p>
+<ul>
+<li>For now it only supports ARK-5</li>
+</ul>
+</li>
 <li>
 <p>Add option to select PSP game plugin loading behavior <strong>[<a href="./08-CfwConfiguration.html#psp-gameapp-plugin-ram-partition">docs</a>]</strong></p>
 </li>
@@ -436,12 +459,39 @@
 <p>Fix formatting issues on recovery</p>
 </li>
 <li>
+<p>Fix wrong logic on VSH isofs driver</p>
+</li>
+<li>
+<p>Fix UB on virtualPBP initialization</p>
+</li>
+<li>
+<p>Fix overflow on custom POPS <code>CONFIG.BIN</code> injection</p>
+</li>
+<li>
+<p>Fix per-fd UMDemu seek/read delays not happening when reading virtual disc through <code>devctl</code></p>
+</li>
+<li>
+<p>Fix slowness on read/seek system fonts by caching system fonts when used</p>
+<ul>
+<li>Besides <code>Dissidia 012</code>, it potentially fix stuttering on other games that relies heavily on the system fonts</li>
+</ul>
+</li>
+<li>
 <p>Refactor SystemControl and Pentazemin modules to use <code>sctrlHENSetSystemBootedHandler</code></p>
+</li>
+<li>
+<p>Improve overall stability and performance</p>
+</li>
+<li>
+<p><strong>Game Compatibility:</strong></p>
+<ul>
+<li>Fix <code>Dissidia 012</code> stuttering on text-heavy menus by caching system fonts.</li>
+</ul>
 </li>
 <li>
 <p><strong>DEV:</strong> Introduce <code>sctrlHENSetSystemBootedHandler</code></p>
 <ul>
-<li>It allows to se a handler that is called only once when the system just finished the boot sequence.</li>
+<li>It allows to set a handler that is called only once when the system just finished the boot sequence.</li>
 </ul>
 </li>
 <li>

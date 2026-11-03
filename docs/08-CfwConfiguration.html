@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-9b5fbdb4.js";
+            window.path_to_searchindex_js = "searchindex-33b54d03.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-1af7a252.js"></script>
@@ -445,7 +445,7 @@
 <p>Configures the CPU/BUS clock speed on when the system is running a PSP game, PSP app or PSP homebrew.</p>
 <h4 id="options-1"><a class="header" href="#options-1">Options:</a></h4>
 <ul>
-<li><code>Default</code>: Game/app dependant</li>
+<li><code>Default</code>: Game/app dependent</li>
 <li><code>20/10</code></li>
 <li><code>75/37</code></li>
 <li><code>100/50</code></li>
@@ -605,7 +605,7 @@
 </div>
 
 <h3 id="fake-max-free-memory"><a class="header" href="#fake-max-free-memory">Fake max free memory</a></h3>
-<p>Controls wether to limit the reported maximum free memory and how much to limit from <code>sceKernelMaxFreeMemSize</code> on a title.</p>
+<p>Controls whether to limit the reported maximum free memory and how much to limit from <code>sceKernelMaxFreeMemSize</code> on a title.</p>
 <p>Any option other than <code>Auto</code> will always use that value, regardless of existent game patches and fixes.</p>
 <h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
 <ul>
@@ -635,7 +635,7 @@
   caution
 </p>
 
-<p>Some games may require more specific values to make then stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the <a href="https://github.com/isage/Adrenaline/issues">project issue tracer</a> (but also check first to avoid opening duplicated issue tracker).</p>
+<p>Some games may require more specific values to make them stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the <a href="https://github.com/isage/Adrenaline/issues">project issue tracker</a> (but also check first to avoid opening duplicated issue tracker).</p>
 </div>
 
 <h3 id="psp-gameapp-plugin-ram-partition"><a class="header" href="#psp-gameapp-plugin-ram-partition">PSP game/app plugin RAM Partition</a></h3>
@@ -670,7 +670,7 @@
 </div>
 
 <h3 id="use-graphic-engine-2"><a class="header" href="#use-graphic-engine-2">Use Graphic Engine 2</a></h3>
-<p>Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
+<p>Controls whether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
 <div class="mdbook-callouts mdbook-callouts-note">
 <p class="mdbook-callouts-title">
@@ -678,7 +678,7 @@
   note
 </p>
 
-<p>The modules being called “2” doesn’t mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>The modules being called “2” doesn’t mean it is an improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
 <p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
 </div>
 
@@ -692,7 +692,7 @@
 </div>
 
 <h3 id="use-media-engine-2"><a class="header" href="#use-media-engine-2">Use Media Engine 2</a></h3>
-<p>Controls wether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
+<p>Controls whether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
 <div class="mdbook-callouts mdbook-callouts-note">
 <p class="mdbook-callouts-title">
@@ -700,7 +700,7 @@
   note
 </p>
 
-<p>The modules being called “2” doesn’t mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>The modules being called “2” doesn’t mean it is an improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
 <p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
 </div>
 
@@ -807,7 +807,7 @@
 <h3 id="umdemu-iso-read-speed-delay-factor"><a class="header" href="#umdemu-iso-read-speed-delay-factor">UMDemu ISO read speed delay factor</a></h3>
 <p>Epinephrine’s UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that read speed simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desyc issues when both <a href="./08-CfwConfiguration.html#umdemu-iso-seek-time-delay-factor">seek</a> and read time are set to <code>Auto</code>.</p>
+<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desync issues when both <a href="./08-CfwConfiguration.html#umdemu-iso-seek-time-delay-factor">seek</a> and read time are set to <code>Auto</code>.</p>
 <h4 id="option-1"><a class="header" href="#option-1">Option:</a></h4>
 <ul>
 <li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes. If <code>UMDemu ISO seek speed delay factor</code> is different than <code>Auto</code>, it is interpreted as <code>0x</code> (i.e. no read time delays).</li>

@@ -37,7 +37,7 @@
             const path_to_root = "";
             const default_light_theme = "rust";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-9b5fbdb4.js";
+            window.path_to_searchindex_js = "searchindex-33b54d03.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-1af7a252.js"></script>
@@ -416,7 +416,7 @@
 <h1 id="adrenaline-project"><a class="header" href="#adrenaline-project">Adrenaline Project</a></h1>
 <hr>
 <p>The Adrenaline Project turns the PS Vita’s PSP emulator into a highly-featured virtual PSP running a Custom 6.61 PSP Firmware, with extra Vita-side integrations.</p>
-<p>The Adrenaline Peoject is two software projects in one: <strong>Adrenaline Application</strong> (1) and <strong>Epinephrine CFW</strong> (2).</p>
+<p>The Adrenaline Project is two software projects in one: <strong>Adrenaline Application</strong> (1) and <strong>Epinephrine CFW</strong> (2).</p>
 <ol>
 <li><strong>Adrenaline</strong> is a software that modifies the official PSP Emulator (PSPemu/ePSP) using <a href="https://github.com/yifanlu/taiHEN">taiHEN CFW framework</a> to make it possible to run a Custom PSP 6.61 Firmware (CFW). It is also the software that handles the Vita-side integrations with the PSP firmware and hardware.</li>
 <li><strong>Epinephrine</strong> is a Custom Firmware for the Vita’s PSPemu derived from TN-V CFW that, besides usual PSP CFW features, it helps to get access to PSP XMB and most of the PSP native environment in the PSPemu.</li>
@@ -501,6 +501,7 @@
 <tr><td>L+R+Down+Start</td><td>Fast exit to XMB/VSH</td><td>Anytime on XMB or PSP title</td></tr>
 <tr><td>L2+R2+Down+Select</td><td>Fast exit to XMB/VSH</td><td>Anytime on PS1 title on Vita</td></tr>
 <tr><td>L2+R2+Down+Start</td><td>Fast exit to XMB/VSH</td><td>Anytime on PS1 title on Vita</td></tr>
+<tr><td>L+R+Up+Start</td><td>Open Janus ISO Switcher Menu</td><td>During PSP ISO title and games</td></tr>
 <tr><td>Select</td><td>Open VSH Menu</td><td>XMB/VSH</td></tr>
 <tr><td>Hold L</td><td>Plugins disabled</td><td>On PSP/PS1 title Reset/Power-on/launch</td></tr>
 <tr><td>Hold R</td><td>Execute BOOT.BIN in UMDemu ISO</td><td>On PSP ISO title and games launch</td></tr>
@@ -1063,7 +1064,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </p>
 
 <h2 id="main-tab"><a class="header" href="#main-tab">Main tab</a></h2>
-<p>This tab has the launched application information (title and title ID) and the most basic options, detailed bellow.</p>
+<p>This tab has the launched application information (title and title ID) and the most basic options, detailed below.</p>
 <ul>
 <li><code>Enter Standby Mode</code>: Make the system enter standby mode</li>
 <li><code>Open Official Settings</code>: Opens the official PSVita/PSTV PSPemu game settings</li>
@@ -1768,7 +1769,7 @@ ux0:app/PSPEMUCFW/sce_module/adrenaline_kernel.skprx
 </ul>
 <p>The <code>uma0:</code> option can be used to facilitate PS3&lt;-&gt;PSVITA data share (e.g. savedata files) for people that does that frequently.</p>
 <h2 id="system-storage-location"><a class="header" href="#system-storage-location">System Storage Location</a></h2>
-<p>Chooses the drive Adrenaline App shows up fot the chosen CFW as the System Storage drive (<code>ef0:</code>).</p>
+<p>Chooses the drive Adrenaline App shows up for the chosen CFW as the System Storage drive (<code>ef0:</code>).</p>
 <p>The options are:</p>
 <ul>
 <li><code>Disabled</code></li>
@@ -3099,7 +3100,7 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
   example
 </p>
 
-<p>Note that this example if for <strong>Motorstorm Artic Edge</strong> US version, change or add <code>TITLE ID</code>s according to the games you want that it enabled.</p>
+<p>Note that this example is for <strong>Motorstorm Arctic Edge</strong> US version, change or add <code>TITLE ID</code>s according to the games you want that it enabled.</p>
 <p>On <code>???0:/pspemu/seplugins/plugins.txt</code>, add the following line:</p>
 <pre><code>UCES01250, ms0:/seplugins/atpro.prx, on
 </code></pre>
@@ -3564,6 +3565,12 @@ ULUS10041 ULES00502, ms0:/seplugins/cwcheat/cwcheat.prx, off
 <h3 id="execute-bootbin-instead-of-ebootbin"><a class="header" href="#execute-bootbin-instead-of-ebootbin">Execute BOOT.BIN instead of EBOOT.BIN</a></h3>
 <p>Epinephrine supports launching ISO games/apps executing the <code>BOOT.BIN</code> inside the ISO instead of the <code>EBOOT.BIN</code> by holding <code>R</code> while launching the game/app.</p>
 <p>This feature can be used in the few games that requires usage of the <code>BOOT.BIN</code> to work properly, as it is the case for ISO of demos, prototypes, decrypted and modded games.</p>
+<h3 id="janus-iso-switcher"><a class="header" href="#janus-iso-switcher">Janus ISO Switcher</a></h3>
+<p>Epinephrine has a native ISO switcher, it allows to switch the ISO driver file in a way that simulates a physical UMD disc switch. This allows Epinephrine to support multi-disc PSP games as well games that have integration with other titles from the same franchise.</p>
+<p>To bring the menu up, you can use the <code>L+R+UP+START</code>, after that, you just need to select the ISO file you want to switch.</p>
+<p align="center">
+<img src="assets/05-janus-0.png" width="49%" /> <img src="assets/05-janus-1.png" width="49%" />
+</p>
 <div style="break-before: page; page-break-before: always;"></div><style>
 .mdbook-callouts {
   padding: 8px 16px;
@@ -4091,7 +4098,7 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 <ul>
 <li><strong><code>Inferno 1</code></strong>: The original <code>Inferno</code> driver as seen in PRO-C. It includes the <code>block offset cache</code> speedup hack that greatly improved speed with <code>CSO</code> format in comparison to traditional drivers such as <code>March33 Driver</code>. It also included an overall cache that could use the extra RAM on PSP slims to improve speed, this is known as <code>Inferno Cache</code>, though it had conflicts with the <code>Force Extra RAM</code> patch.</li>
 <li><strong><code>Inferno 1V</code></strong>: The original <code>Inferno</code> driver port for <code>PROVITA</code>, used up to ARK-3. It was a stripped-down version of the one in PRO-C, minus the <code>Inferno Cache</code> since the Vita lacked the PSP Slim’s extra RAM.</li>
-<li><strong><code>Inferno 1S</code></strong>: An experimental <code>Inferno 1V</code> fork that added support for Splitted ISO files (<code>SSO</code>), it was meant to improve the experience of transferring ISO files via <code>FTP</code>, it was scrapped and never used but source code can still be found in the original ARK-1 repository under the name <code>inferno.new</code>.</li>
+<li><strong><code>Inferno 1S</code></strong>: An experimental <code>Inferno 1V</code> fork that added support for Split ISO files (<code>SSO</code>), it was meant to improve the experience of transferring ISO files via <code>FTP</code>, it was scrapped and never used but source code can still be found in the original ARK-1 repository under the name <code>inferno.new</code>.</li>
 <li><strong><code>Inferno 1D</code></strong>: A port of <code>Inferno 1</code> to the ME CFW with added support for the <code>DAX</code> file format. It uses two separate algorithms to handle <code>CSO</code> and <code>DAX</code>.</li>
 <li><strong><code>Inferno 1.5</code></strong>: Available in PRO-C2, 1.5 is one of the greatest updates to a PSP ISO Driver ever made in regards to Compressed ISO reading speed. Thanks to the research of developer <code>Codestation</code>, we were able to figure out a new speedup hack that proved to be the biggest one yet. It uses the fact that whenever a game requests data, the compressed data is always going to be smaller than the requested data, thus the buffer given by the game can be used to read all the compressed data at once and process each block in place, thus hugely reducing the amount of IO calls to satisfy the data request (which for an ISO is only one IO call), to put it in technical forms, the algorithm went from having a linear O(n) complexity (where n = amount of IO calls) to having the same constant O(1) complexity as an ISO. During this research, Codestation also developed a lightweight version of <code>CSO</code> called <code>ZSO</code>, which is structurally identical to a <code>CSO</code> file but data is compressed using the <code>LZ4</code> instead of the standard <code>DEFLATE</code> algorithm, which offers the fastest decompression speed available, while being identical to <code>CSO</code> in its structure allowed the same algorithm to be used for both formats.</li>
 <li><strong><code>Inferno 1.5V</code></strong>: A stripped-down version of the newly updated <code>Inferno 1.5</code> ported over to Adrenaline. It gets rid of <code>Inferno Cache</code> as it was considered unnecessary on PS Vita, and also removes support for <code>ZSO</code> format, while maintaining the speedup hacks for <code>CSO</code>. This was the version that Adrenaline used up to version <code>7.1.7</code>.</li>
@@ -4619,10 +4626,10 @@ Interestingly enough, the speed differences between <code>DAX</code> and <code>C
 </div>
 
 <h2 id="evolution-of-the-driver-2"><a class="header" href="#evolution-of-the-driver-2">Evolution of the driver</a></h2>
-<p>The ME driver was originally developed by neur0n for their custom firmware (L)ME CFW. It started as a reverse engineer of the <code>March33 Driver</code> when it was closed-source, but then it started to evolve as the ME CFW was being developed. Back then, the ME CFW also called this driver as “March33 Drive” for it’s history of the March33 driver reversed engineered. The following version is a ludic version number; we will consider all reported changes as the last release of the same base OFW version.</p>
+<p>The ME driver was originally developed by neur0n for their custom firmware (L)ME CFW. It started as a reverse engineer of the <code>March33 Driver</code> when it was closed-source, but then it started to evolve as the ME CFW was being developed. Back then, the ME CFW also called this driver as “March33 Drive” for its history of the March33 driver reverse engineered. The following version is a ludic version number; we will consider all reported changes as the last release of the same base OFW version.</p>
 <ul>
 <li><strong><code>ME Driver 1.0</code></strong>: A reverse-engineered version of the <code>March33</code> driver made available in the ME CFW.</li>
-<li><strong><code>ME Driver 1.5</code></strong>: An natural evolution fo the <code>MinimalEdition</code> driver by the latest release of the ME CFW.</li>
+<li><strong><code>ME Driver 1.5</code></strong>: A natural evolution of the <code>MinimalEdition</code> driver by the latest release of the ME CFW.</li>
 </ul>
 <p>Now that we’ve covered the history and evolution of the <code>MinimalEdition</code> Driver over the years, we can focus on the changes made to it in EPI that justify it being called <code>MinimalEdition Driver 2</code>.</p>
 <ul>
@@ -5458,7 +5465,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>VSH Menu is a menu that can be accessed while on XMB/VSH. It contains the most common CFW configurations that users of Epinephrine change with more frequency and quick commands.</p>
 <p>To access this menu, click the <code>Select</code> button while on XMB/VSH.</p>
 <p>Epinephrine comes with two flavours of the VSH Menu: <code>Modern</code> and <code>Classic</code>.</p>
-<p>The <code>Modern</code> is a re-implementation from scratch that uses GU on VSH, a recently developed way to GPU render graphics while on XMB/VSH. Yes, that means this implementation is GPU rendered. It also contais some quality-of-life improvements, like following the defined button to function as enter/back. Besides that, this new implementation also extends the functionality to provide a quick access to advanced game options; this were made to make testing configuration on game titles not working faster.</p>
+<p>The <code>Modern</code> is a re-implementation from scratch that uses GU on VSH, a recently developed way to GPU render graphics while on XMB/VSH. Yes, that means this implementation is GPU rendered. It also contains some quality-of-life improvements, like following the defined button to function as enter/back. Besides that, this new implementation also extends the functionality to provide a quick access to advanced game options; this was made to make testing configuration on game titles not working faster.</p>
 <p>Initially this implementation was developed to demonstrate the usage of the VSH-GU.</p>
 <p align="center">
 <img src="assets/07-vsh-menu-modern.png" width="33%" />
@@ -5755,7 +5762,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Configures the CPU/BUS clock speed on when the system is running a PSP game, PSP app or PSP homebrew.</p>
 <h4 id="options-1"><a class="header" href="#options-1">Options:</a></h4>
 <ul>
-<li><code>Default</code>: Game/app dependant</li>
+<li><code>Default</code>: Game/app dependent</li>
 <li><code>20/10</code></li>
 <li><code>75/37</code></li>
 <li><code>100/50</code></li>
@@ -5915,7 +5922,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 </div>
 
 <h3 id="fake-max-free-memory"><a class="header" href="#fake-max-free-memory">Fake max free memory</a></h3>
-<p>Controls wether to limit the reported maximum free memory and how much to limit from <code>sceKernelMaxFreeMemSize</code> on a title.</p>
+<p>Controls whether to limit the reported maximum free memory and how much to limit from <code>sceKernelMaxFreeMemSize</code> on a title.</p>
 <p>Any option other than <code>Auto</code> will always use that value, regardless of existent game patches and fixes.</p>
 <h4 id="options-8"><a class="header" href="#options-8">Options:</a></h4>
 <ul>
@@ -5945,7 +5952,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
   caution
 </p>
 
-<p>Some games may require more specific values to make then stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the <a href="https://github.com/isage/Adrenaline/issues">project issue tracer</a> (but also check first to avoid opening duplicated issue tracker).</p>
+<p>Some games may require more specific values to make them stable on high memory layout (e.g. Rainbow Six: Vegas). In case none of the options helps with crashes, create/open/upvote an issue on the <a href="https://github.com/isage/Adrenaline/issues">project issue tracker</a> (but also check first to avoid opening duplicated issue tracker).</p>
 </div>
 
 <h3 id="psp-gameapp-plugin-ram-partition"><a class="header" href="#psp-gameapp-plugin-ram-partition">PSP game/app plugin RAM Partition</a></h3>
@@ -5980,7 +5987,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 </div>
 
 <h3 id="use-graphic-engine-2"><a class="header" href="#use-graphic-engine-2">Use Graphic Engine 2</a></h3>
-<p>Controls wether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
+<p>Controls whether to load an alternative implementation of the Graphic Engine module, i.e. loads <code>ge_2.prx</code> instead of <code>ge.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
 <div class="mdbook-callouts mdbook-callouts-note">
 <p class="mdbook-callouts-title">
@@ -5988,7 +5995,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
   note
 </p>
 
-<p>The modules being called “2” doesn’t mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>The modules being called “2” doesn’t mean it is an improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
 <p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
 </div>
 
@@ -6002,7 +6009,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 </div>
 
 <h3 id="use-media-engine-2"><a class="header" href="#use-media-engine-2">Use Media Engine 2</a></h3>
-<p>Controls wether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
+<p>Controls whether to load an alternative implementation of the Media Engine module, i.e. loads <code>kermit_me_wrapper_2.prx</code> instead of <code>kermit_me_wrapper.prx</code>.</p>
 <p>This is a CFW option made available to tinkerers to explore possible improvement options for apps/games (considering that native PSPemu has similar options for compatibility with officially released PSP titles on VITA). But it is also an advanced option as it may also cause regressions and/or issues with apps/games.</p>
 <div class="mdbook-callouts mdbook-callouts-note">
 <p class="mdbook-callouts-title">
@@ -6010,7 +6017,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
   note
 </p>
 
-<p>The modules being called “2” doesn’t mean it is a improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
+<p>The modules being called “2” doesn’t mean it is an improved version, but rather a poorly named alternative version to be used as compatibility fixer for a small number of officially released titles.</p>
 <p>So it is a direct effect of a bad naming because programmers (usually with tight deadlines) are bad at naming things that are very similar in functionality with another existing thing, more so in a thing that is not supposed to be known by end-users… Been there, done that LOL.</p>
 </div>
 
@@ -6117,7 +6124,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <h3 id="umdemu-iso-read-speed-delay-factor"><a class="header" href="#umdemu-iso-read-speed-delay-factor">UMDemu ISO read speed delay factor</a></h3>
 <p>Epinephrine’s UMDemu drivers have the ability to simulate the <strong>slower</strong> read speed of a physical UMD.</p>
 <p>This setting allows to control a factor of how much <strong>slower</strong> is that read speed simulation.</p>
-<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desyc issues when both <a href="#umdemu-iso-seek-time-delay-factor">seek</a> and read time are set to <code>Auto</code>.</p>
+<p>This can be used to bypass the anti-CFW checks in some games and fix desynchronization issues on some other games. Epinephrine automatically sets for games known to have those checks and/or desync issues when both <a href="#umdemu-iso-seek-time-delay-factor">seek</a> and read time are set to <code>Auto</code>.</p>
 <h4 id="option-1"><a class="header" href="#option-1">Option:</a></h4>
 <ul>
 <li><code>Auto</code>: Disabled by default, but also can change based on automatic game patches and fixes. If <code>UMDemu ISO seek speed delay factor</code> is different than <code>Auto</code>, it is interpreted as <code>0x</code> (i.e. no read time delays).</li>
@@ -6422,7 +6429,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 
 <h2 id="general"><a class="header" href="#general">General</a></h2>
 <hr>
-<p>This section is more focused on the <a href="#general-settings">General CFW Settings</a>. But it contains a couple of extra itens detailed bellow.</p>
+<p>This section is more focused on the <a href="#general-settings">General CFW Settings</a>. But it contains a couple of extra items detailed below.</p>
 <p align="center">
 <img src="assets/09-rec-menu-general.png" width="50%" />
 </p>
@@ -6433,7 +6440,7 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <p>Exit the Recovery Menu and restart the vPSP system.</p>
 <h2 id="advanced"><a class="header" href="#advanced">Advanced</a></h2>
 <hr>
-<p>This section is more focused on the <a href="#advanced-settings">Advanced CFW Settings</a>. But it contains a few extra itens detailed bellow.</p>
+<p>This section is more focused on the <a href="#advanced-settings">Advanced CFW Settings</a>. But it contains a few extra items detailed below.</p>
 <p align="center">
 <img src="assets/09-rec-menu-advanced.png" width="50%" />
 </p>
@@ -6728,6 +6735,26 @@ A plugin known as <code>cdda_enabler</code> developed by <code>theFl0w</code> wa
 <img src="assets/10-plugin-manager.png" width="49%" />
 <img src="assets/10-plugin-manager-list.png" width="49%" />
 <img src="assets/10-plugins-manager-options.png" width="49%" />
+</p>
+
+<h2 id="-time-machine"><a class="header" href="#-time-machine">★ Time Machine</a></h2>
+<hr>
+<p>This menu can be found in the <code>Settings</code> section of the XMB. It allows to load entire PSPemu firmware and CFW on Memory Stick. If no launchers are found, the menu item will auto-hidden.</p>
+<p>Once opened, it will show the list of found launchers for specific PSPemu firmware and CFW.</p>
+<p>The launchers can be found <a href="https://github.com/PSP-Arkfive/TimeMachine/tree/main/vPSP">here</a>.</p>
+<div class="mdbook-callouts mdbook-callouts-warn">
+<p class="mdbook-callouts-title">
+  <span class="mdbook-callouts-icon"></span>
+  warn
+</p>
+
+<p>Currently we only support ARK on 6.61.</p>
+</div>
+
+<p align="center">
+<img src="assets/10-time-machine0.png" width="49%" />
+<img src="assets/10-time-machine1.png" width="49%" />
+<img src="assets/10-time-machine2.png" width="49%" />
 </p>
 
 <div style="break-before: page; page-break-before: always;"></div><style>
@@ -7082,7 +7109,7 @@ cmake --build build
 </code></pre>
 </div>
 
-<p>On the <strong>VITA-side</strong>, we don’t have something super well stablished, you can use <code>sceClibPrintf</code> function, and the messages will show up in the <code>tty</code>, that you can access through log homebrews (we recommend <a href="https://github.com/isage/catlog">catlog</a>).</p>
+<p>On the <strong>VITA-side</strong>, we don’t have something super well established, you can use <code>sceClibPrintf</code> function, and the messages will show up in the <code>tty</code>, that you can access through log homebrews (we recommend <a href="https://github.com/isage/catlog">catlog</a>).</p>
 <h3 id="accessing-the-logs"><a class="header" href="#accessing-the-logs">Accessing the logs</a></h3>
 <p>You can access in real-time and in your computer all logs by using logs homebrew such as <a href="https://github.com/isage/catlog">catlog</a>. This is the easiest way to access them.</p>
 <p>For <strong>eCFW</strong> modules to show logs on real-time you have to enable the <a href="#tty-redirection">TTY redirection</a> setting.</p>
@@ -8459,12 +8486,35 @@ ur0:tai/my_awesome_plugins.suprx
 <h2 id="unreleased"><a class="header" href="#unreleased">Unreleased</a></h2>
 <h3 id="adrenaline"><a class="header" href="#adrenaline">Adrenaline</a></h3>
 <ul>
-<li>Add support to use files on <code>ux0:data/PSPEMUCFW/</code> instead of <code>ux0:app/PSPEMUCFW/</code></li>
+<li>Add support to use files on <code>ux0:data/PSPEMUCFW/</code> instead of <code>ux0:app/PSPEMUCFW/</code>
+<ul>
+<li>That means if PSP Firmware files are on <code>ux0:data/PSPEMUCFW/</code>, it is possible to update Adrenaline by VPK installation without losing the PSP firmware installation.</li>
+</ul>
+</li>
+<li>Add PSPemu font files to the ramfs flash0 image if possible</li>
+<li>Reduce memory usage</li>
+<li>Use IFTU based Sharp Bilinear without Scanlines when conditions are right</li>
 <li>Fix savestate thumbnail on some graphical filters showing as one color plain image</li>
 <li>Fix UTF-8 rendering on Adrenaline Menu</li>
+<li>Fix a memory leak on error code path</li>
+<li>Fix ghost frame on PS1 titles when Graphical Filters enabled</li>
+<li>Fix bilinear filter not being applied when <code>Smooth Graphics</code> is off.</li>
 </ul>
 <h3 id="epinephrine-cfw-1"><a class="header" href="#epinephrine-cfw-1">Epinephrine CFW</a></h3>
 <ul>
+<li>
+<p>Introduce Janus: A ISO file switcher <strong>[<a href="#janus-iso-switcher">docs</a>]</strong></p>
+<ul>
+<li>Change disc from multi-disc titles (e.g. <code>Final Fantasy Type-0</code>)</li>
+<li>Change disc for older title bonus content (e.g. <code>Yu-Gi-Oh! GX: Tag Force</code> series)</li>
+</ul>
+</li>
+<li>
+<p>Introduce Time Machine feature: Load entire ePSP firmware and CFW on Memory Stick</p>
+<ul>
+<li>For now it only supports ARK-5</li>
+</ul>
+</li>
 <li>
 <p>Add option to select PSP game plugin loading behavior <strong>[<a href="#psp-gameapp-plugin-ram-partition">docs</a>]</strong></p>
 </li>
@@ -8478,12 +8528,39 @@ ur0:tai/my_awesome_plugins.suprx
 <p>Fix formatting issues on recovery</p>
 </li>
 <li>
+<p>Fix wrong logic on VSH isofs driver</p>
+</li>
+<li>
+<p>Fix UB on virtualPBP initialization</p>
+</li>
+<li>
+<p>Fix overflow on custom POPS <code>CONFIG.BIN</code> injection</p>
+</li>
+<li>
+<p>Fix per-fd UMDemu seek/read delays not happening when reading virtual disc through <code>devctl</code></p>
+</li>
+<li>
+<p>Fix slowness on read/seek system fonts by caching system fonts when used</p>
+<ul>
+<li>Besides <code>Dissidia 012</code>, it potentially fix stuttering on other games that relies heavily on the system fonts</li>
+</ul>
+</li>
+<li>
 <p>Refactor SystemControl and Pentazemin modules to use <code>sctrlHENSetSystemBootedHandler</code></p>
+</li>
+<li>
+<p>Improve overall stability and performance</p>
+</li>
+<li>
+<p><strong>Game Compatibility:</strong></p>
+<ul>
+<li>Fix <code>Dissidia 012</code> stuttering on text-heavy menus by caching system fonts.</li>
+</ul>
 </li>
 <li>
 <p><strong>DEV:</strong> Introduce <code>sctrlHENSetSystemBootedHandler</code></p>
 <ul>
-<li>It allows to se a handler that is called only once when the system just finished the boot sequence.</li>
+<li>It allows to set a handler that is called only once when the system just finished the boot sequence.</li>
 </ul>
 </li>
 <li>
