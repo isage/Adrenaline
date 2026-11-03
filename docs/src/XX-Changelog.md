@@ -17,9 +17,11 @@
 
 ### Epinephrine CFW
 
-- Introduce Janus: A ISO file switcher
+- Introduce Janus: A ISO file switcher **\[[docs](./05-PSPPlayback.md#janus-iso-switcher)\]**
   - Change disc from multi-disc titles (e.g. `Final Fantasy Type-0`)
   - Change disc for older title bonus content (e.g. `Yu-Gi-Oh! GX: Tag Force` series)
+- Introduce Time Machine feature: Load entire ePSP firmware and CFW on Memory Stick
+  - For now it only supports ARK-5
 - Add option to select PSP game plugin loading behavior **\[[docs](./08-CfwConfiguration.md#psp-gameapp-plugin-ram-partition)\]**
 - Add option to forcibly disable high memory layout **\[[docs](./08-CfwConfiguration.md#high-memory-layout)\]**
 - Fix branch logic for plugins patch
