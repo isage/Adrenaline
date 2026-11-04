@@ -36,6 +36,7 @@
 - Improve overall stability and performance
 - **Game Compatibility:**
   - Fix `Dissidia 012` stuttering on text-heavy menus by caching system fonts.
+  - Fix `Gran Turismo` crashing when opening [Adrenaline Menu](./03-AdrenalineMenu.md)
 
 - **DEV:** Introduce `sctrlHENSetSystemBootedHandler`
 	- It allows to set a handler that is called only once when the system just finished the boot sequence.

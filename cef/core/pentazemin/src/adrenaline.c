@@ -110,7 +110,7 @@ void initAdrenalineInfo(void) {
 	g_adrenaline->api_type = sceKernelInitApitype();
 }
 
-#define MAX_THREADS 32
+#define MAX_THREADS 64
 #define USER_THREAD (0x80000000)
 static SceUID g_threads[MAX_THREADS] = {-1};
 static int g_thread_count = 0;
