@@ -1,20 +1,20 @@
 /*
-	Adrenaline PopCorn
-	Copyright (C) 2016-2018, TheFloW
-	Copyright (C) 2025, GrayJack
+    Adrenaline PopCorn
+    Copyright (C) 2016-2018, TheFloW
+    Copyright (C) 2025, GrayJack
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <string.h>
@@ -31,52 +31,54 @@ PSP_MODULE_INFO("EPI-PopcornManager", 0x1007, 1, 1);
 
 static STMOD_HANDLER previous = NULL;
 
-static int (* setCompiledSdkVersion)(u32 ver) = NULL;
+static int (*setCompiledSdkVersion)(u32 ver) = NULL;
 static void setPsxCompiledFwVersion(u32 version) {
-	if (NULL == setCompiledSdkVersion) {
-		setCompiledSdkVersion = (void*)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x358CA1BB);
-	}
+    if (NULL == setCompiledSdkVersion) {
+        setCompiledSdkVersion =
+            (void *)sctrlHENFindFunction("sceSystemMemoryManager", "SysMemUserForUser", 0x358CA1BB);
+    }
 
-	setCompiledSdkVersion(version);
+    setCompiledSdkVersion(version);
 }
 
 static int OnModuleStart(SceModule *mod) {
-	static int user_mod_start = 0;
+    static int user_mod_start = 0;
 
-	// Do not patch the game PBP itself
-	// "simple" official POPS game module
-	// "complex" custom POPS game module
-	if (user_mod_start && strcmp(mod->modname, "simple") != 0 && strcmp(mod->modname, "complex") != 0) {
-		PatchForceEf0Io(mod);
-	}
+    // Do not patch the game PBP itself
+    // "simple" official POPS game module
+    // "complex" custom POPS game module
+    if (user_mod_start && strcmp(mod->modname, "simple") != 0
+        && strcmp(mod->modname, "complex") != 0) {
+        PatchForceEf0Io(mod);
+    }
 
-	if (strcmp(mod->modname, "pops") == 0) {
-		PatchPops(mod);
-	} else if (strcmp(mod->modname, "sceKernelLibrary") == 0) {
-		user_mod_start = 1;
-	}
+    if (strcmp(mod->modname, "pops") == 0) {
+        PatchPops(mod);
+    } else if (strcmp(mod->modname, "sceKernelLibrary") == 0) {
+        user_mod_start = 1;
+    }
 
-	if (!previous){
-		return 0;
-	}
+    if (!previous) {
+        return 0;
+    }
 
-	return previous(mod);
+    return previous(mod);
 }
 
 int module_start(SceSize args, void *argp) {
-	logInit("ms0:/log_popcorn.txt");
-	logmsg("Popcorn started...\n");
+    logInit("ms0:/log_popcorn.txt");
+    logmsg("Popcorn started...\n");
 
-	int res = initGlobals();
-	if (res < 0) {
-		return res;
-	}
+    int res = initGlobals();
+    if (res < 0) {
+        return res;
+    }
 
-	setPsxCompiledFwVersion(FW_661);
+    setPsxCompiledFwVersion(FW_661);
 
-	previous = sctrlHENSetStartModuleHandler(OnModuleStart);
+    previous = sctrlHENSetStartModuleHandler(OnModuleStart);
 
-	PatchScePopsMgr();
+    PatchScePopsMgr();
 
-	return 0;
+    return 0;
 }

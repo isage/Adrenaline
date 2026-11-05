@@ -1,21 +1,21 @@
 /*
-	Adrenaline Galaxy Controller
-	Copyright (C) 2025, GrayJack
-	Copyright (C) 2021, PRO CFW
-	Copyright (C) 2008, M33 Team Developers (Dark_Alex, adrahil, Mathieulh)
+    Adrenaline Galaxy Controller
+    Copyright (C) 2025, GrayJack
+    Copyright (C) 2021, PRO CFW
+    Copyright (C) 2008, M33 Team Developers (Dark_Alex, adrahil, Mathieulh)
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <string.h>
@@ -27,44 +27,43 @@
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 
-#include "galaxy.h"
 #include "../bits/iso_common.h"
+#include "galaxy.h"
 
 PSP_MODULE_INFO("EPI-GalaxyController", 0x1006, 1, 0);
 
-int module_start(SceSize args, void* argp) {
-	logInit("ms0:/log_galaxy.txt");
-	logmsg("Galaxy driver started...\n")
+int module_start(SceSize args, void *argp) {
+    logInit("ms0:/log_galaxy.txt");
+    logmsg("Galaxy driver started...\n")
 
-	// Get ISO path
-	isoSetUmdFile(sctrlSEGetUmdFile());
+        // Get ISO path
+        isoSetUmdFile(sctrlSEGetUmdFile());
 
-	// Leave NP9660 alone, we got no ISO
-	if(g_iso_fn[0] == 0) {
-		return 1;
-	}
+    // Leave NP9660 alone, we got no ISO
+    if (g_iso_fn[0] == 0) {
+        return 1;
+    }
 
-	PatchThreadManager();
+    PatchThreadManager();
 
-	logmsg("[INFO]: Start UMDemu File: %s\n", g_iso_fn);
+    logmsg("[INFO]: Start UMDemu File: %s\n", g_iso_fn);
 
-	// ISO File Descriptor
-	int fd = -1;
+    // ISO File Descriptor
+    int fd = -1;
 
-	// Wait for MS
-	while (1) {
-		fd = sceIoOpen(g_iso_fn, PSP_O_RDONLY, 0);
+    // Wait for MS
+    while (1) {
+        fd = sceIoOpen(g_iso_fn, PSP_O_RDONLY, 0);
 
-		if (fd >= 0) {
-			break;
-		}
+        if (fd >= 0) {
+            break;
+        }
 
-		// Delay and retry
-		sceKernelDelayThread(10000);
-	}
+        // Delay and retry
+        sceKernelDelayThread(10000);
+    }
 
-	sceIoClose(fd);
+    sceIoClose(fd);
 
-	return 0;
+    return 0;
 }
-

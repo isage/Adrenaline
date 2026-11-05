@@ -1,31 +1,31 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
-	Copyright (C) 2024-2025, isage
-	Copyright (C) 2025, GrayJack
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
+    Copyright (C) 2024-2025, isage
+    Copyright (C) 2025, GrayJack
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <string.h>
 
-#include <pspsdk.h>
-#include <psploadcore.h>
 #include <pspiofilemgr.h>
+#include <psploadcore.h>
+#include <pspsdk.h>
 
-#include <psperror.h>
 #include <cfwmacros.h>
+#include <psperror.h>
 #include <systemctrl.h>
 
 #include <adrenaline_log.h>
@@ -33,14 +33,7 @@
 #include "externs.h"
 
 static char *g_blacklist[] = {
-	"iso",
-	"seplugins",
-	"isocache",
-	"irshell",
-	".cso",
-	".dax",
-	".jso",
-	".zso",
+    "iso", "seplugins", "isocache", "irshell", ".cso", ".dax", ".jso", ".zso",
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,27 +41,29 @@ static char *g_blacklist[] = {
 ////////////////////////////////////////////////////////////////////////////////
 
 static inline int is_in_blacklist(const char *dname) {
-	logmsg4("[DEBUG]: %s: dname=%s\n", __func__, dname);
+    logmsg4("[DEBUG]: %s: dname=%s\n", __func__, dname);
 
     // lower string
     char temp[255];
-	memset(temp, 0, sizeof(temp));
+    memset(temp, 0, sizeof(temp));
     strncpy(temp, dname, sizeof(temp));
 
-    lowerString(temp, temp, strlen(temp)+1);
+    lowerString(temp, temp, strlen(temp) + 1);
 
     for (int i = 0; i < NELEMS(g_blacklist); ++i) {
-		char *found = strstr(temp, g_blacklist[i]);
+        char *found = strstr(temp, g_blacklist[i]);
         if (found != NULL) {
-			// "ISO" can show up inside other words
-			// So if index is of the "iso", and "iso" was found after the start of the lowered string (`temp`)
-			// and ".iso" or "/iso", we should consider another word that contains "iso" inside it.
-			//
-			// Example: God of War - Ghost of Sparta: it tries to find and open `SPA_050_PRISON.BIN`
-			if (i == 0 && (int)found > (int)temp && (int)(found-1) != '.' && (int)(found-1) != '/') {
-				return 0;
-			}
-        	return 1;
+            // "ISO" can show up inside other words
+            // So if index is of the "iso", and "iso" was found after the start of the lowered
+            // string (`temp`) and ".iso" or "/iso", we should consider another word that contains
+            // "iso" inside it.
+            //
+            // Example: God of War - Ghost of Sparta: it tries to find and open `SPA_050_PRISON.BIN`
+            if (i == 0 && (int)found > (int)temp && (int)(found - 1) != '.'
+                && (int)(found - 1) != '/') {
+                return 0;
+            }
+            return 1;
         }
     }
 
@@ -80,134 +75,138 @@ static inline int is_in_blacklist(const char *dname) {
 ////////////////////////////////////////////////////////////////////////////////
 
 SceUID sceIoDopenHidePatched(const char *dirname) {
-	SceUID res = SCE_KERR_ILLEGAL_ACCESS;
+    SceUID res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(dirname)) {
-		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, dirname);
-		goto exit;
-	}
+    if (is_in_blacklist(dirname)) {
+        logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, dirname);
+        goto exit;
+    }
 
-	res = sceIoDopen(dirname);
+    res = sceIoDopen(dirname);
 
 exit:
-	logmsg4("[DEBUG]: %s: dirname=%s -> 0x%08X\n", __func__, dirname, res);
+    logmsg4("[DEBUG]: %s: dirname=%s -> 0x%08X\n", __func__, dirname, res);
     return res;
 }
 
-int sceIoDreadHidePatched(SceUID fd, SceIoDirent * dir) {
+int sceIoDreadHidePatched(SceUID fd, SceIoDirent *dir) {
     int res = sceIoDread(fd, dir);
 
     if (res >= 0 && is_in_blacklist(dir->d_name)) {
-		memset(dir, 0, sizeof(SceIoDirent));
-		if (res == 0) {
-			res = SCE_KERR_ILLEGAL_ACCESS;
-		} else {
-			logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, dir->d_name);
-			res = sceIoDreadHidePatched(fd, dir);
-		}
+        memset(dir, 0, sizeof(SceIoDirent));
+        if (res == 0) {
+            res = SCE_KERR_ILLEGAL_ACCESS;
+        } else {
+            logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, dir->d_name);
+            res = sceIoDreadHidePatched(fd, dir);
+        }
     }
 
     return res;
 }
 
-static SceUID (* _sceIoOpen)(const char *path, int flags, SceMode mode) = sceIoOpen;
+static SceUID (*_sceIoOpen)(const char *path, int flags, SceMode mode) = sceIoOpen;
 SceUID sceIoOpenHidePatched(const char *path, int flags, SceMode mode) {
-	SceUID res = SCE_KERR_ILLEGAL_ACCESS;
+    SceUID res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(path)) {
-		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		goto exit;
-	}
+    if (is_in_blacklist(path)) {
+        logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
+        goto exit;
+    }
 
-	res = _sceIoOpen(path, flags, mode);
+    res = _sceIoOpen(path, flags, mode);
 
 exit:
-	logmsg4("[DEBUG]: %s: path=%s, flags=0x%08X, mode=0x%08X -> 0x%08X\n", __func__, path, flags, mode, res);
-	return res;
+    logmsg4(
+        "[DEBUG]: %s: path=%s, flags=0x%08X, mode=0x%08X -> 0x%08X\n", __func__, path, flags, mode,
+        res
+    );
+    return res;
 }
 
 int sceIoRemoveHidePatched(const char *path) {
-	int res = SCE_KERR_ILLEGAL_ACCESS;
+    int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(path)) {
-		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		goto exit;
-	}
+    if (is_in_blacklist(path)) {
+        logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
+        goto exit;
+    }
 
-	res = sceIoRemove(path);
+    res = sceIoRemove(path);
 
 exit:
-	return res;
+    return res;
 }
 
 int sceIoGetstatHidePatched(const char *path, SceIoStat *stat) {
-	int res = SCE_KERR_ILLEGAL_ACCESS;
+    int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(path)) {
-		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		goto exit;
-	}
+    if (is_in_blacklist(path)) {
+        logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
+        goto exit;
+    }
 
-	res = sceIoGetstat(path, stat);
+    res = sceIoGetstat(path, stat);
 
 exit:
-	logmsg4("[INFO]: %s: path=%s -> 0x%08X\n", __func__, path, res);
-	return res;
+    logmsg4("[INFO]: %s: path=%s -> 0x%08X\n", __func__, path, res);
+    return res;
 }
 
 int sceIoChstatHidePatched(const char *path, SceIoStat *stat, int bits) {
-	int res = SCE_KERR_ILLEGAL_ACCESS;
+    int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(path)) {
-		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		goto exit;
-	}
+    if (is_in_blacklist(path)) {
+        logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
+        goto exit;
+    }
 
-	res = sceIoChstat(path, stat, bits);
+    res = sceIoChstat(path, stat, bits);
 
 exit:
-	return res;
+    return res;
 }
 
 int sceIoRmdirHidePatched(const char *path) {
-	int res = SCE_KERR_ILLEGAL_ACCESS;
+    int res = SCE_KERR_ILLEGAL_ACCESS;
 
-	if (is_in_blacklist(path)) {
-		logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
-		goto exit;
-	}
+    if (is_in_blacklist(path)) {
+        logmsg("[WARN]: %s: Game tried to access CFW files: %s\n", __func__, path);
+        goto exit;
+    }
 
-	res = sceIoRmdir(path);
+    res = sceIoRmdir(path);
 
 exit:
-	return res;
+    return res;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchHideCfwFiles(SceModule* mod) {
-	int apptype = sceKernelApplicationType();
-	int apitype = sceKernelInitApitype();
+void PatchHideCfwFiles(SceModule *mod) {
+    int apptype = sceKernelApplicationType();
+    int apitype = sceKernelInitApitype();
 
-	// Do not apply patches:
-	// 1. Sanity check: Not VSH or UPDATE
-	// 2. If it is an (unsigned) homebrew running (PSP_INIT_APITYPE_MS2 and PSP_INIT_APITYPE_EF2)
-	// 3. If it is configured to not hide even on games
-	// 4. Not on POPS, as PS1 games do not have anti-CFW for PSP
-	if (apptype == PSP_INIT_KEYCONFIG_VSH || apptype == PSP_INIT_KEYCONFIG_UPDATER || apptype == PSP_INIT_KEYCONFIG_POPS || apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || g_cfw_config.no_hide_cfw_files) {
-		return;
-	}
+    // Do not apply patches:
+    // 1. Sanity check: Not VSH or UPDATE
+    // 2. If it is an (unsigned) homebrew running (PSP_INIT_APITYPE_MS2 and PSP_INIT_APITYPE_EF2)
+    // 3. If it is configured to not hide even on games
+    // 4. Not on POPS, as PS1 games do not have anti-CFW for PSP
+    if (apptype == PSP_INIT_KEYCONFIG_VSH || apptype == PSP_INIT_KEYCONFIG_UPDATER
+        || apptype == PSP_INIT_KEYCONFIG_POPS || apitype == PSP_INIT_APITYPE_MS2
+        || apitype == PSP_INIT_APITYPE_EF2 || g_cfw_config.no_hide_cfw_files) {
+        return;
+    }
 
-	// The hide CFW files overwrite the hook to `sceIoOpen` made by the DRM
-	// patch if both are active. So we use the `sceIoOpenDrmPatched` if that
-	// option is enabled
-	if (!g_cfw_config.no_nodrm_engine && g_licensed_eboot ) {
-		_sceIoOpen = sceIoOpenDrmPatched;
-		logmsg3("[INFO]: Using `sceIoOpenDrmPatched` for HideCFWFiles\n");
-	}
+    // The hide CFW files overwrite the hook to `sceIoOpen` made by the DRM
+    // patch if both are active. So we use the `sceIoOpenDrmPatched` if that
+    // option is enabled
+    if (!g_cfw_config.no_nodrm_engine && g_licensed_eboot) {
+        _sceIoOpen = sceIoOpenDrmPatched;
+        logmsg3("[INFO]: Using `sceIoOpenDrmPatched` for HideCFWFiles\n");
+    }
 
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xE3EB004C, sceIoDreadHidePatched);
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xB8A740F4, sceIoChstatHidePatched);
@@ -217,5 +216,5 @@ void PatchHideCfwFiles(SceModule* mod) {
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, sceIoOpenHidePatched);
     sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xB29DDF9C, sceIoDopenHidePatched);
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }

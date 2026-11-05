@@ -7,7 +7,7 @@
 
 extern SEConfigEPI g_cfw_config;
 
-extern int (* g_vshmenu_ctrl)(SceCtrlData *pad_data, int count);
+extern int (*g_vshmenu_ctrl)(SceCtrlData *pad_data, int count);
 
 extern u8 g_set;
 extern int g_cpu_list[9];
@@ -17,6 +17,5 @@ extern int g_bus_list[9];
 extern u32 g_firsttick;
 
 extern int g_has_categories_lite;
-
 
 #endif

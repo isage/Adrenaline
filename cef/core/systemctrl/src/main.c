@@ -1,48 +1,47 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
-	Copyright (C) 2025, GrayJack
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
+    Copyright (C) 2025, GrayJack
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <string.h>
 
-#include <pspusbcam.h>
 #include <pspdisplay.h>
 #include <psperror.h>
+#include <pspusbcam.h>
 // #include <psploadexec.h>
 
-#include <isoctrl.h>
 #include <cfwmacros.h>
-#include <systemctrl.h>
 #include <infernoctrl.h>
+#include <isoctrl.h>
+#include <systemctrl.h>
 #include <systemctrl_epi.h>
 
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 
+#include "../bits/ttystdio.h"
 #include "externs.h"
+#include "gameinfo.h"
+#include "malloc.h"
 #include "modulepatches.h"
 #include "nodrm.h"
-#include "malloc.h"
-#include "gameinfo.h"
 #include "plugin.h"
-#include "utils.h"
 #include "storage_cache.h"
-#include "../bits/ttystdio.h"
-
+#include "utils.h"
 
 PSP_MODULE_INFO("SystemControl", 0x1007, 1, 1);
 
@@ -52,10 +51,11 @@ SceAdrenaline *g_adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 static int g_is_tty_redir_init = 0;
 
-static int g_cpu_list[] = { 0, 20, 75, 100, 133, 222, 266, 300, 333 };
-static int g_bus_list[] = { 0, 10, 37,  50,  66, 111, 133, 150, 166 };
-static u32 g_cache_size_list[] = { 0, 1024, 2*1024, 4*1024, 8*1024, 16*1024, 32*1024, 64*1024 };
-static u8 g_cache_num_list[] = { 0, 1, 2, 4, 8, 16, 32, 64, 128 };
+static int g_cpu_list[] = {0, 20, 75, 100, 133, 222, 266, 300, 333};
+static int g_bus_list[] = {0, 10, 37, 50, 66, 111, 133, 150, 166};
+static u32 g_cache_size_list[] = {0,        1024,      2 * 1024,  4 * 1024,
+                                  8 * 1024, 16 * 1024, 32 * 1024, 64 * 1024};
+static u8 g_cache_num_list[] = {0, 1, 2, 4, 8, 16, 32, 64, 128};
 
 #define N_CPU (sizeof(g_cpu_list) / sizeof(int))
 #define N_CACHE_SIZE (sizeof(g_cache_size_list) / sizeof(u32))
@@ -65,326 +65,360 @@ int mallocinit();
 
 static void OnSystemStatusIdle() {
 
-	if (g_cfw_config.no_ms_cache == 0) {
-		sctrlMsCacheInit("ms", MSCACHE_BUFSIZE_MIN);
-	}
+    if (g_cfw_config.no_ms_cache == 0) {
+        sctrlMsCacheInit("ms", MSCACHE_BUFSIZE_MIN);
+    }
 
-	// ISO UMD seek/speed simulation
-	SceModule* mod = NULL;
-	#if defined(DEBUG) && DEBUG >= 3
-	char *iso_driver_name = NULL;
-	#endif
-	switch (g_rebootex_config.bootfileindex) {
-		case MODE_INFERNO:
-			mod = sceKernelFindModuleByName("EPI-InfernoDriver");
-			#if defined(DEBUG) && DEBUG >= 3
-			iso_driver_name = "Inferno";
-			#endif
-			break;
+    // ISO UMD seek/speed simulation
+    SceModule *mod = NULL;
+#if defined(DEBUG) && DEBUG >= 3
+    char *iso_driver_name = NULL;
+#endif
+    switch (g_rebootex_config.bootfileindex) {
+        case MODE_INFERNO:
+            mod = sceKernelFindModuleByName("EPI-InfernoDriver");
+#if defined(DEBUG) && DEBUG >= 3
+            iso_driver_name = "Inferno";
+#endif
+            break;
 
-		case MODE_MARCH33:
-			mod = sceKernelFindModuleByName("EPI-March33Driver");
-			#if defined(DEBUG) && DEBUG >= 3
-			iso_driver_name = "March33";
-			#endif
-			break;
+        case MODE_MARCH33:
+            mod = sceKernelFindModuleByName("EPI-March33Driver");
+#if defined(DEBUG) && DEBUG >= 3
+            iso_driver_name = "March33";
+#endif
+            break;
 
-		case MODE_ME:
-			mod = sceKernelFindModuleByName("EPI-MEisoDriver");
-			#if defined(DEBUG) && DEBUG >= 3
-			iso_driver_name = "Mininal Edition";
-			#endif
-			break;
+        case MODE_ME:
+            mod = sceKernelFindModuleByName("EPI-MEisoDriver");
+#if defined(DEBUG) && DEBUG >= 3
+            iso_driver_name = "Mininal Edition";
+#endif
+            break;
 
-		case MODE_NP9660:
-			mod = sceKernelFindModuleByName("EPI-GalaxyController");
-			#if defined(DEBUG) && DEBUG >= 3
-			iso_driver_name = "NP9660";
-			#endif
-			break;
+        case MODE_NP9660:
+            mod = sceKernelFindModuleByName("EPI-GalaxyController");
+#if defined(DEBUG) && DEBUG >= 3
+            iso_driver_name = "NP9660";
+#endif
+            break;
 
-		default:
-			mod = NULL;
-			#if defined(DEBUG) && DEBUG >= 3
-			iso_driver_name = NULL;
-			#endif
-			break;
-	}
+        default:
+            mod = NULL;
+#if defined(DEBUG) && DEBUG >= 3
+            iso_driver_name = NULL;
+#endif
+            break;
+    }
 
-	if (mod != NULL) {
-		if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
-			g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
+    if (mod != NULL) {
+        if (g_cfw_config.umd_seek > 0 || g_cfw_config.umd_speed > 0) {
+            g_cfw_config.iso_cache = CACHE_CONFIG_OFF;
 
-			void (*SetUmdDelay)(int, int, int) = (void*)sctrlHENFindFunctionInMod(mod, "isoCtrl_driver", 0xFAEC97D6);
+            void (*SetUmdDelay)(int, int, int) =
+                (void *)sctrlHENFindFunctionInMod(mod, "isoCtrl_driver", 0xFAEC97D6);
 
-			if (SetUmdDelay != NULL) {
-				int strategy = UMD_DELAY_STRAT_PER_FD;
-				if (g_cfw_config.umd_sim_strat == SIM_UMD_STRAT_PER_FD) {
-					strategy = UMD_DELAY_STRAT_PER_FD;
-				} else if (g_cfw_config.umd_sim_strat == SIM_UMD_STRAT_GLOBAL) {
-					strategy = UMD_DELAY_STRAT_GLOBAL;
-				}
+            if (SetUmdDelay != NULL) {
+                int strategy = UMD_DELAY_STRAT_PER_FD;
+                if (g_cfw_config.umd_sim_strat == SIM_UMD_STRAT_PER_FD) {
+                    strategy = UMD_DELAY_STRAT_PER_FD;
+                } else if (g_cfw_config.umd_sim_strat == SIM_UMD_STRAT_GLOBAL) {
+                    strategy = UMD_DELAY_STRAT_GLOBAL;
+                }
 
-				SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed, strategy);
-				logmsg3("[INFO]: %s ISO UMD seek/speed factor: %s strategy; %d seek factor; %d speed factor\n", iso_driver_name, (strategy == UMD_DELAY_STRAT_PER_FD) ? "Per FD" : "Global", g_cfw_config.umd_seek, g_cfw_config.umd_speed);
-			}
-		}
+                SetUmdDelay(g_cfw_config.umd_seek, g_cfw_config.umd_speed, strategy);
+                logmsg3(
+                    "[INFO]: %s ISO UMD seek/speed factor: %s strategy; %d seek factor; %d "
+                    "speed factor\n",
+                    iso_driver_name, (strategy == UMD_DELAY_STRAT_PER_FD) ? "Per FD" : "Global",
+                    g_cfw_config.umd_seek, g_cfw_config.umd_speed
+                );
+            }
+        }
 
+        // Handle Inferno Iso cache
+        if (g_rebootex_config.bootfileindex == MODE_INFERNO
+            && g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
+            if (g_rebootex_config.ram2 > 24 || g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT
+                || g_cfw_config.high_memory != HIGHMEM_OPT_FORCE_OFF) {
+                g_cfw_config.iso_cache_partition = 2;
+            } else {
+                g_cfw_config.iso_cache_partition = 11;
+            }
 
-		// Handle Inferno Iso cache
-		if (g_rebootex_config.bootfileindex == MODE_INFERNO && g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
-			if (g_rebootex_config.ram2 > 24 || g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT || g_cfw_config.high_memory != HIGHMEM_OPT_FORCE_OFF) {
-				g_cfw_config.iso_cache_partition = 2;
-			} else {
-				g_cfw_config.iso_cache_partition = 11;
-			}
+            int (*CacheInit)(int, int, int) =
+                (void *)sctrlHENFindFunctionInMod(mod, "inferno_driver", 0x8CDE7F95);
+            if (CacheInit != NULL) {
+                u32 cache_size =
+                    (g_cfw_config.iso_cache_size == ISO_CACHE_SIZE_AUTO)
+                        ? 32 * 1024
+                        : g_cache_size_list[g_cfw_config.iso_cache_size % N_CACHE_SIZE];
+                u8 cache_num = (g_cfw_config.iso_cache_num == ISO_CACHE_NUM_AUTO)
+                                   ? 32
+                                   : g_cache_num_list[g_cfw_config.iso_cache_num % N_CACHE_NUM];
+                CacheInit(cache_size, cache_num, g_cfw_config.iso_cache_partition);
+                logmsg3(
+                    "[INFO]: Inferno ISO cache: %d caches of %ld KiB in partition %d — Total: "
+                    "%ld KiB\n",
+                    cache_num, cache_size / 1024, g_cfw_config.iso_cache_partition,
+                    (cache_num * cache_size) / 1024
+                );
+            }
 
-			int (*CacheInit)(int, int, int) = (void*)sctrlHENFindFunctionInMod(mod, "inferno_driver", 0x8CDE7F95);
-			if (CacheInit != NULL) {
-				u32 cache_size = (g_cfw_config.iso_cache_size == ISO_CACHE_SIZE_AUTO) ? 32*1024 : g_cache_size_list[g_cfw_config.iso_cache_size%N_CACHE_SIZE];
-				u8 cache_num = (g_cfw_config.iso_cache_num == ISO_CACHE_NUM_AUTO) ? 32 : g_cache_num_list[g_cfw_config.iso_cache_num%N_CACHE_NUM];
-				CacheInit(cache_size, cache_num, g_cfw_config.iso_cache_partition);
-				logmsg3("[INFO]: Inferno ISO cache: %d caches of %ld KiB in partition %d — Total: %ld KiB\n", cache_num, cache_size/1024, g_cfw_config.iso_cache_partition, (cache_num*cache_size)/1024);
-			}
+            int (*CacheSetPolicy)(int) =
+                (void *)sctrlHENFindFunctionInMod(mod, "inferno_driver", 0xC0736FD6);
+            if (CacheSetPolicy != NULL) {
+                if (g_cfw_config.iso_cache == CACHE_CONFIG_LRU) {
+                    CacheSetPolicy(INFERNO_CACHE_LRU);
+                    logmsg3("[INFO]: Inferno ISO cache policy: LRU\n");
+                } else if (g_cfw_config.iso_cache == CACHE_CONFIG_RR) {
+                    CacheSetPolicy(INFERNO_CACHE_RR);
+                    logmsg3("[INFO]: Inferno ISO cache policy: RR\n");
+                }
+            }
+        }
+    }
 
-			int (*CacheSetPolicy)(int) = (void*)sctrlHENFindFunctionInMod(mod, "inferno_driver", 0xC0736FD6);
-			if (CacheSetPolicy != NULL) {
-				if (g_cfw_config.iso_cache == CACHE_CONFIG_LRU) {
-					CacheSetPolicy(INFERNO_CACHE_LRU);
-					logmsg3("[INFO]: Inferno ISO cache policy: LRU\n");
-				} else if (g_cfw_config.iso_cache == CACHE_CONFIG_RR) {
-					CacheSetPolicy(INFERNO_CACHE_RR);
-					logmsg3("[INFO]: Inferno ISO cache policy: RR\n");
-				}
-			}
-		}
-	}
+    // Set CPU/BUS speed on apps/games
+    int medium_type = sceKernelBootFrom();
+    int app_type = sceKernelApplicationType();
+    u8 is_correct_medium =
+        (medium_type == PSP_BOOT_DISC || medium_type == PSP_BOOT_MS || medium_type == PSP_BOOT_EF);
 
-
-	// Set CPU/BUS speed on apps/games
-	int medium_type = sceKernelBootFrom();
-	int app_type = sceKernelApplicationType();
-	u8 is_correct_medium = (medium_type == PSP_BOOT_DISC || medium_type == PSP_BOOT_MS || medium_type == PSP_BOOT_EF);
-
-	if (app_type != PSP_INIT_KEYCONFIG_VSH && is_correct_medium) {
-		sctrlHENSetSpeed(g_cpu_list[g_cfw_config.app_cpu_speed % N_CPU], g_bus_list[g_cfw_config.app_cpu_speed % N_CPU]);
-	}
-
+    if (app_type != PSP_INIT_KEYCONFIG_VSH && is_correct_medium) {
+        sctrlHENSetSpeed(
+            g_cpu_list[g_cfw_config.app_cpu_speed % N_CPU],
+            g_bus_list[g_cfw_config.app_cpu_speed % N_CPU]
+        );
+    }
 }
 
-static void register_resident_libs(SceModule * mod) {
-	// // Invalid Arguments
-	// if(mod == NULL) {
-	// 	return;
-	// }
+static void register_resident_libs(SceModule *mod) {
+    // // Invalid Arguments
+    // if(mod == NULL) {
+    // 	return;
+    // }
 
-	// int i = 0;
-	// while (i < mod->ent_size) {
-	// 	SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
+    // int i = 0;
+    // while (i < mod->ent_size) {
+    // 	SceLibraryEntryTable *entry = (SceLibraryEntryTable *)(mod->ent_top + i);
 
-	// 	if (entry->libname) {
-	// 		logmsg3("\t- `%s`: 0x%04X ver:(0x%02X, 0x%02X) FUNC:%d VAR:%d\n", entry->libname, entry->attribute, entry->version[0], entry->version[1], entry->stubcount, entry->vstubcount);
-	// 	}
+    // 	if (entry->libname) {
+    // 		logmsg3("\t- `%s`: 0x%04X ver:(0x%02X, 0x%02X) FUNC:%d VAR:%d\n", entry->libname,
+    // entry->attribute, entry->version[0], entry->version[1], entry->stubcount, entry->vstubcount);
+    // 	}
 
-	// 	i += (entry->len * 4);
-	// }
+    // 	i += (entry->len * 4);
+    // }
 }
 
 static int OnModuleStart(SceModule *mod) {
-	static u8 ready_gamepatch_mod = 0;
-	static u8 load_file_config = 0;
+    static u8 ready_gamepatch_mod = 0;
+    static u8 load_file_config = 0;
 
-	PatchGameInfoGetter(mod);
+    PatchGameInfoGetter(mod);
 
-	char *modname = mod->modname;
-	u32 text_addr = mod->text_addr;
+    char *modname = mod->modname;
+    u32 text_addr = mod->text_addr;
 
-	// Load SE config from file
-	if (load_file_config) {
-		int res = sctrlSEGetConfig((SEConfig*)&g_cfw_config);
-		logmsg("[DEBUG]: %s: sctrlSEGetConfig -> 0x%08X\n", __func__, res);
-		if (res == 0) {
-			load_file_config = 0;
-			// configure Pentazemin
-			PentazeminConfig penconfig = {
-				.osk_type = g_cfw_config.use_sony_psposk,
-				.ge_type = g_cfw_config.use_ge2,
-				.me_type = g_cfw_config.use_me2,
-			};
-			sctrlPentazeminConfigure(&penconfig);
+    // Load SE config from file
+    if (load_file_config) {
+        int res = sctrlSEGetConfig((SEConfig *)&g_cfw_config);
+        logmsg("[DEBUG]: %s: sctrlSEGetConfig -> 0x%08X\n", __func__, res);
+        if (res == 0) {
+            load_file_config = 0;
+            // configure Pentazemin
+            PentazeminConfig penconfig = {
+                .osk_type = g_cfw_config.use_sony_psposk,
+                .ge_type = g_cfw_config.use_ge2,
+                .me_type = g_cfw_config.use_me2,
+            };
+            sctrlPentazeminConfigure(&penconfig);
 
-			// Only start the redirection it configured
-			if (g_cfw_config.tty_redirection && !g_is_tty_redir_init) {
-				g_is_tty_redir_init = tty_init() == 0;
-			}
-		}
+            // Only start the redirection it configured
+            if (g_cfw_config.tty_redirection && !g_is_tty_redir_init) {
+                g_is_tty_redir_init = tty_init() == 0;
+            }
+        }
 
-		// If it reached title module and still ENOENT, no point in continue trying
-		if (res == SCE_ENOENT && ready_gamepatch_mod) {
-			logmsg("[ERROR]: Failed to load CFW config from file. Continuing with in memory version or default.\n");
-			load_file_config = 0;
-		}
-	}
+        // If it reached title module and still ENOENT, no point in continue trying
+        if (res == SCE_ENOENT && ready_gamepatch_mod) {
+            logmsg(
+                "[ERROR]: Failed to load CFW config from file. Continuing with in memory "
+                "version or default.\n"
+            );
+            load_file_config = 0;
+        }
+    }
 
-	// Game/App module patches
-	if (ready_gamepatch_mod) {
-		if (sceKernelApplicationType() != PSP_INIT_KEYCONFIG_VSH) {
-			logmsg3("[INFO]: Title Module Name: %s\n", modname);
-			PatchDrmGameModule(mod);
-			PatchHideCfwFiles(mod);
-			PatchGamesByMod(mod);
-		}
-		ready_gamepatch_mod = 0;
-	}
+    // Game/App module patches
+    if (ready_gamepatch_mod) {
+        if (sceKernelApplicationType() != PSP_INIT_KEYCONFIG_VSH) {
+            logmsg3("[INFO]: Title Module Name: %s\n", modname);
+            PatchDrmGameModule(mod);
+            PatchHideCfwFiles(mod);
+            PatchGamesByMod(mod);
+        }
+        ready_gamepatch_mod = 0;
+    }
 
-	// Third-party Plugins modules
-	if (sctrlIsLoadingPlugins()) {
-		PatchPluginModule(mod);
-	}
+    // Third-party Plugins modules
+    if (sctrlIsLoadingPlugins()) {
+        PatchPluginModule(mod);
+    }
 
-	if (strcmp(modname, "sceLowIO_Driver") == 0) {
-		if (mallocinit() < 0) {
-			while (1) {
-				VWRITE32(0, 0);
-			}
-		}
+    if (strcmp(modname, "sceLowIO_Driver") == 0) {
+        if (mallocinit() < 0) {
+            while (1) {
+                VWRITE32(0, 0);
+            }
+        }
 
-	} else if (strcmp(modname, "sceKermitMsfs_driver") == 0) {
-		load_file_config = 1;
+    } else if (strcmp(modname, "sceKermitMsfs_driver") == 0) {
+        load_file_config = 1;
 
-	} else if (strcmp(modname, "sceController_Service") == 0) {
-		PatchController(mod);
+    } else if (strcmp(modname, "sceController_Service") == 0) {
+        PatchController(mod);
 
-	} else if (strcmp(modname, "sceLoadExec") == 0) {
-		PatchLoadExec(mod);
+    } else if (strcmp(modname, "sceLoadExec") == 0) {
+        PatchLoadExec(mod);
 
-		// #if defined(DEBUG) && DEBUG >= 4
-		// extern int (* _runExec)(RunExecParams*);
-		// extern int runExecPatched(RunExecParams* args);
-		// HIJACK_FUNCTION(text_addr+0x2148, runExecPatched, _runExec);
-		// #endif // defined(DEBUG) && DEBUG >= 3
+        // #if defined(DEBUG) && DEBUG >= 4
+        // extern int (* _runExec)(RunExecParams*);
+        // extern int runExecPatched(RunExecParams* args);
+        // HIJACK_FUNCTION(text_addr+0x2148, runExecPatched, _runExec);
+        // #endif // defined(DEBUG) && DEBUG >= 3
 
-		// Hijack all execute calls
-		extern int (* _sceLoadExecVSHWithApitype)(int, const char*, SceKernelLoadExecVSHParam*, unsigned int);
-		extern int sctrlKernelLoadExecVSHWithApitype(int apitype, const char * file, SceKernelLoadExecVSHParam * param);
-		u32 _LoadExecVSHWithApitype = sctrlHENFindFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
-		HIJACK_FUNCTION(_LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype);
+        // Hijack all execute calls
+        extern int (*_sceLoadExecVSHWithApitype)(
+            int, const char *, SceKernelLoadExecVSHParam *, unsigned int
+        );
+        extern int sctrlKernelLoadExecVSHWithApitype(
+            int apitype, const char *file, SceKernelLoadExecVSHParam *param
+        );
+        u32 _LoadExecVSHWithApitype =
+            sctrlHENFindFirstJAL(sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0xD8320A28));
+        HIJACK_FUNCTION(
+            _LoadExecVSHWithApitype, sctrlKernelLoadExecVSHWithApitype, _sceLoadExecVSHWithApitype
+        );
 
-		// Hijack exit calls
-		extern int (*_sceKernelExitVSH)(void*);
-		u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
-		HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
+        // Hijack exit calls
+        extern int (*_sceKernelExitVSH)(void *);
+        u32 _KernelExitVSH = sctrlHENFindFunctionInMod(mod, "LoadExecForKernel", 0x08F7166C);
+        HIJACK_FUNCTION(_KernelExitVSH, sctrlKernelExitVSH, _sceKernelExitVSH);
 
-	} else if (strcmp(modname, "scePower_Service") == 0) {
-		logmsg("[INFO]: Built: %s %s\n", __DATE__, __TIME__);
-		logmsg("[INFO]: Boot From: 0x%X\n", sceKernelBootFrom());
-		logmsg("[INFO]: App Type: 0x%X\n", sceKernelApplicationType());
-		logmsg("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
-		logmsg("[INFO]: Fake Apitype: 0x%X\n", g_adrenaline->fake_api_type);
-		logmsg("[INFO]: Filename: %s\n", sceKernelInitFileName());
+    } else if (strcmp(modname, "scePower_Service") == 0) {
+        logmsg("[INFO]: Built: %s %s\n", __DATE__, __TIME__);
+        logmsg("[INFO]: Boot From: 0x%X\n", sceKernelBootFrom());
+        logmsg("[INFO]: App Type: 0x%X\n", sceKernelApplicationType());
+        logmsg("[INFO]: Apitype: 0x%X\n", sceKernelInitApitype());
+        logmsg("[INFO]: Fake Apitype: 0x%X\n", g_adrenaline->fake_api_type);
+        logmsg("[INFO]: Filename: %s\n", sceKernelInitFileName());
 
-		if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_OFF) {
-			// Set to normal and not allow to change it.
-			sctrlHENSetMemory(24, 16);
-			ApplyMemory();
+        if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_OFF) {
+            // Set to normal and not allow to change it.
+            sctrlHENSetMemory(24, 16);
+            ApplyMemory();
 
-		} else if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME  && g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT) {
-			if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_STABLE) {
-				sctrlHENSetMemory(40, 0);
-			} else if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_MAX) {
-				sctrlHENSetMemory(52, 0);
-			}
-			ApplyMemory();
+        } else if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_GAME
+                   && g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT) {
+            if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_STABLE) {
+                sctrlHENSetMemory(40, 0);
+            } else if (g_cfw_config.high_memory == HIGHMEM_OPT_FORCE_MAX) {
+                sctrlHENSetMemory(52, 0);
+            }
+            ApplyMemory();
 
-		} else {
-			// If not force-high-memory. Make sure to make p11 as big as
-			// possible (stable), but in a state that if a game request
-			// high-memory, re-setting and re-applying is possible.
-			sctrlHENSetMemory(24, 16);
-			ApplyAndResetMemory();
-		}
+        } else {
+            // If not force-high-memory. Make sure to make p11 as big as
+            // possible (stable), but in a state that if a game request
+            // high-memory, re-setting and re-applying is possible.
+            sctrlHENSetMemory(24, 16);
+            ApplyAndResetMemory();
+        }
 
-	} else if (strcmp(modname, "sceChkreg") == 0) {
-		PatchChkreg();
+    } else if (strcmp(modname, "sceChkreg") == 0) {
+        PatchChkreg();
 
-	} else if (strcmp(modname, "scePspNpDrm_Driver") == 0) {
-		PatchNpDrmDriver(mod);
+    } else if (strcmp(modname, "scePspNpDrm_Driver") == 0) {
+        PatchNpDrmDriver(mod);
 
-	} else if (strcmp(modname, "sceNp9660_driver") == 0) {
-		PatchNp9660Driver(mod);
+    } else if (strcmp(modname, "sceNp9660_driver") == 0) {
+        PatchNp9660Driver(mod);
 
-	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
-		findAndSetTitleId();
-		logmsg("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
-		CheckControllerInput();
+    } else if (strcmp(modname, "sceUtility_Driver") == 0) {
+        findAndSetTitleId();
+        logmsg("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
+        CheckControllerInput();
 
-	} else if (strcmp(modname, "sceMediaSync") == 0) {
-		PatchMediaSync(mod);
+    } else if (strcmp(modname, "sceMediaSync") == 0) {
+        PatchMediaSync(mod);
 
-	} else if (strcmp(modname, "sceNpSignupPlugin_Module") == 0) {
-		// ImageVersion = 0x10000000
-		MAKE_INSTRUCTION(text_addr + 0x38CBC, 0x3C041000);
-		sctrlFlushCache();
+    } else if (strcmp(modname, "sceNpSignupPlugin_Module") == 0) {
+        // ImageVersion = 0x10000000
+        MAKE_INSTRUCTION(text_addr + 0x38CBC, 0x3C041000);
+        sctrlFlushCache();
 
-	} else if (strcmp(modname, "sceVshNpSignin_Module") == 0) {
-		// Kill connection error
-		MAKE_INSTRUCTION(text_addr + 0x6CF4, 0x10000008);
+    } else if (strcmp(modname, "sceVshNpSignin_Module") == 0) {
+        // Kill connection error
+        MAKE_INSTRUCTION(text_addr + 0x6CF4, 0x10000008);
 
-		// ImageVersion = 0x10000000
-		MAKE_INSTRUCTION(text_addr + 0x96C4, 0x3C041000);
+        // ImageVersion = 0x10000000
+        MAKE_INSTRUCTION(text_addr + 0x96C4, 0x3C041000);
 
-		sctrlFlushCache();
+        sctrlFlushCache();
 
-	} else if (strcmp(modname, "sceKernelLibrary") == 0) { // last kernel module to load before user/game
-		ready_gamepatch_mod = 1;
-		PatchGameByTitleId();
+    } else if (strcmp(modname, "sceKernelLibrary")
+               == 0) { // last kernel module to load before user/game
+        ready_gamepatch_mod = 1;
+        PatchGameByTitleId();
 
-	} else if (strcmp(modname, "sceMp3_Library") == 0 || (strcmp(modname, "sceVshOSK_Module") == 0 && g_cfw_config.use_sony_psposk)) {
-		// Unlock mp3 variable bitrate and qwerty osk on old games/homebrew
-		sctrlHookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
-		sctrlFlushCache();
+    } else if (strcmp(modname, "sceMp3_Library") == 0
+               || (strcmp(modname, "sceVshOSK_Module") == 0 && g_cfw_config.use_sony_psposk)) {
+        // Unlock mp3 variable bitrate and qwerty osk on old games/homebrew
+        sctrlHookImportByNID(mod, "SysMemUserForUser", 0xFC114573, &sctrlHENFakeDevkitVersion);
+        sctrlFlushCache();
 
-	} else if (strcmp(modname, "vsh_module") == 0) {
-		PatchVshForDrm(mod);
-		PatchDrmOnVsh();
+    } else if (strcmp(modname, "vsh_module") == 0) {
+        PatchVshForDrm(mod);
+        PatchDrmOnVsh();
 
-	} else if (strcmp(modname, "sysconf_plugin_module") == 0) {
-		PatchSysconfForDrm(mod);
+    } else if (strcmp(modname, "sysconf_plugin_module") == 0) {
+        PatchSysconfForDrm(mod);
+    }
 
-	}
+    logmsg3("[DEBUG]: %s: mod_name=%s — text_addr=0x%08lX\n", __func__, modname, text_addr);
+    register_resident_libs(mod);
 
-	logmsg3("[DEBUG]: %s: mod_name=%s — text_addr=0x%08lX\n", __func__, modname, text_addr);
-	register_resident_libs(mod);
-
-	return 0;
+    return 0;
 }
 
 int module_start(SceSize args, void *argp) {
-	logInit("ms0:/log_systemctrl.txt");
-	logmsg("SystemControl started...\n")
+    logInit("ms0:/log_systemctrl.txt");
+    logmsg("SystemControl started...\n")
 
-	PatchSysmem();
-	PatchLoadCore();
-	PatchInterruptMgr();
-	PatchModuleMgr();
-	sctrlFlushCache();
+        PatchSysmem();
+    PatchLoadCore();
+    PatchInterruptMgr();
+    PatchModuleMgr();
+    sctrlFlushCache();
 
-	// Restore CFW config from the RAM backup in the start (if it exists)
-	if (IS_ADR_SECONFIG(EPI_CONFIG_ADDR)) {
-		memcpy(&g_cfw_config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigEPI));
-	}
+    // Restore CFW config from the RAM backup in the start (if it exists)
+    if (IS_ADR_SECONFIG(EPI_CONFIG_ADDR)) {
+        memcpy(&g_cfw_config, (void *)EPI_CONFIG_ADDR, sizeof(SEConfigEPI));
+    }
 
-	sctrlHENSetStartModuleHandler(OnModuleStart);
-	sctrlHENSetSystemBootedHandler(OnSystemStatusIdle);
+    sctrlHENSetStartModuleHandler(OnModuleStart);
+    sctrlHENSetSystemBootedHandler(OnSystemStatusIdle);
 
-	UnprotectExtraMemory();
+    UnprotectExtraMemory();
 
-	memcpy(&g_rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
+    memcpy(&g_rebootex_config, (void *)REBOOTEX_CONFIG, sizeof(RebootexConfigEPI));
 
-	// Only start the redirection it configured
-	if (g_cfw_config.tty_redirection && !g_is_tty_redir_init) {
-		g_is_tty_redir_init = tty_init() == 0;
-	}
+    // Only start the redirection it configured
+    if (g_cfw_config.tty_redirection && !g_is_tty_redir_init) {
+        g_is_tty_redir_init = tty_init() == 0;
+    }
 
-	return 0;
+    return 0;
 }

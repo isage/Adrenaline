@@ -4,4 +4,3 @@
 int InitUmdMan();
 
 #endif
-

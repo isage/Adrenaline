@@ -3,12 +3,12 @@
 
 #include <stddef.h>
 
-#include <pspsdk.h>
 #include <pspkernel.h>
+#include <pspsdk.h>
 #include <psputility_sysparam.h>
 
-#include <systemctrl.h>
 #include <kubridge.h>
+#include <systemctrl.h>
 
 #define LINE_BUFFER_SIZE 1024
 #define LINE_TOKEN_DELIMITER ','
@@ -16,25 +16,25 @@
 #define STAR "★"
 #define ADVANCED "▲"
 
-enum{
-	PLACE_VSH,
-	PLACE_GAME,
-	PLACE_POPS,
+enum {
+    PLACE_VSH,
+    PLACE_GAME,
+    PLACE_POPS,
 };
 
-enum{
-	PLUGIN_OFF,
-	PLUGIN_ON,
-	PLUGIN_REMOVED,
+enum {
+    PLUGIN_OFF,
+    PLUGIN_ON,
+    PLUGIN_REMOVED,
 };
 
-typedef struct{
-	char* name;
-	char* path;
-	char* surname;
-	char* runlevel;
-	int active;
-	int place;
+typedef struct {
+    char *name;
+    char *path;
+    char *surname;
+    char *runlevel;
+    int active;
+    int place;
 } Plugin;
 
 extern List g_plugins;
@@ -43,6 +43,6 @@ void loadPlugins(void);
 
 void savePlugins(void);
 
-char* getPluginDisplayName(const Plugin *plugin, char *file, int len);
+char *getPluginDisplayName(const Plugin *plugin, char *file, int len);
 
 #endif

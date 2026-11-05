@@ -1,24 +1,22 @@
 #include <string.h>
 
+#include <bootloadex.h>
+#include <bootloadex_ark.h>
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
-#include <bootloadex.h>
-#include <bootloadex_ark.h>
 
 RebootexConfigEPI *g_rebootex_config = (RebootexConfigEPI *)REBOOTEX_CONFIG;
 
-
-int pspemuLfatOpenEPI(BootFile* file) {
+int pspemuLfatOpenEPI(BootFile *file) {
     int ret = -1;
-    char* p = file->name;
+    char *p = file->name;
 
-    if (strcmp(p, "pspbtcnf.bin") == 0){
-		if (g_rebootex_config->bootfileindex == MODE_RECOVERY) {
-			g_rebootex_config->bootfileindex = MODE_UMD;
+    if (strcmp(p, "pspbtcnf.bin") == 0) {
+        if (g_rebootex_config->bootfileindex == MODE_RECOVERY) {
+            g_rebootex_config->bootfileindex = MODE_UMD;
             file->name = "/kd/pspbtrnf.bin";
-		}
-        else {
+        } else {
             file->name = "/kd/pspbtjnf.bin";
         }
     }
@@ -26,16 +24,11 @@ int pspemuLfatOpenEPI(BootFile* file) {
     return ret;
 }
 
-
 BootLoadExConfig g_bleconf = {
     .boot_type = TYPE_PAYLOADEX,
     .boot_storage = FLASH_BOOT,
-    .extra_io.vita_io = {
-        .redirect_flash = 0,
-        .pspemuLfatOpenExtra = &pspemuLfatOpenEPI
-    }
+    .extra_io.vita_io = {.redirect_flash = 0, .pspemuLfatOpenExtra = &pspemuLfatOpenEPI}
 };
-
 
 // Entry Point
 int cfwBoot(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7) {

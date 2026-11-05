@@ -1,28 +1,28 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <string.h>
 
 #include <pspinit.h>
-#include <pspkermit.h>
-#include <pspsysmem.h>
-#include <pspsysevent.h>
 #include <pspiofilemgr.h>
+#include <pspkermit.h>
+#include <pspsysevent.h>
+#include <pspsysmem.h>
 #include <pspsysmem_kernel.h>
 
 #include <cfwmacros.h>
@@ -35,79 +35,80 @@
 #include "binary.h"
 
 typedef struct {
-	void *sasCore;
-	int grainSamples;
-	int maxVoices;
-	int outMode;
-	int sampleRate;
+    void *sasCore;
+    int grainSamples;
+    int maxVoices;
+    int outMode;
+    int sampleRate;
 } SasInitArguments;
 
 static SasInitArguments g_sas_args;
 static int g_sas_inited = 0;
 
-
 static SceUID adrenaline_semaid = -1;
 
-static int (* _scePowerSuspendOperation)(int a1);
+static int (*_scePowerSuspendOperation)(int a1);
 
-static int (* SetFlag1)(void);
-static int (* SetFlag2)(void);
-static int (* sceKermitSyncDisplay)(void);
+static int (*SetFlag1)(void);
+static int (*SetFlag2)(void);
+static int (*sceKermitSyncDisplay)(void);
 
-static int (* uiResumePoint)(u32 *data);
-static void (* VitaSync)(void);
+static int (*uiResumePoint)(u32 *data);
+static void (*VitaSync)(void);
 
-static int (* sceSasCoreInit)(void);
-static int (* sceSasCoreExit)(void);
+static int (*sceSasCoreInit)(void);
+static int (*sceSasCoreExit)(void);
 
-static int (* __sceSasInit)(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate);
+static int (*__sceSasInit)(
+    void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate
+);
 
 SceAdrenaline *g_adrenaline = (SceAdrenaline *)ADRENALINE_ADDRESS;
 
 int sctrlSendAdrenalineCmd(int cmd, u32 args) {
-	int k1 = pspSdkSetK1(0);
+    int k1 = pspSdkSetK1(0);
 
-	char buf[sizeof(SceKermitRequest) + 0x40];
-	SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
-	SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
-	sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
+    char buf[sizeof(SceKermitRequest) + 0x40];
+    SceKermitRequest *request_aligned = (SceKermitRequest *)ALIGN((u32)buf, 0x40);
+    SceKermitRequest *request_uncached = (SceKermitRequest *)((u32)request_aligned | 0x20000000);
+    sceKernelDcacheInvalidateRange(request_aligned, sizeof(SceKermitRequest));
 
-	u64 resp;
-	sceKermitSendRequest(request_uncached, KERMIT_MODE_EXTRA_2, cmd, args, 0, &resp);
+    u64 resp;
+    sceKermitSendRequest(request_uncached, KERMIT_MODE_EXTRA_2, cmd, args, 0, &resp);
 
-	pspSdkSetK1(k1);
-	return resp;
+    pspSdkSetK1(k1);
+    return resp;
 }
 
 static int getSfoTitle(char *title, int n) {
-	return sctrlGetInitPARAM("TITLE", NULL, (u32 *)&n, title);
+    return sctrlGetInitPARAM("TITLE", NULL, (u32 *)&n, title);
 }
 
 void initAdrenalineInfo(void) {
-	memset(g_adrenaline, 0, sizeof(SceAdrenaline));
+    memset(g_adrenaline, 0, sizeof(SceAdrenaline));
 
-	int keyconfig = sceKernelApplicationType();
-	if (keyconfig == PSP_INIT_KEYCONFIG_GAME || keyconfig == PSP_INIT_KEYCONFIG_POPS) {
-		getSfoTitle(g_adrenaline->title, 128);
-	} else if (keyconfig == PSP_INIT_KEYCONFIG_VSH) {
-		strcpy(g_adrenaline->title, "XMB\xE2\x84\xA2");
-	} else {
-		strcpy(g_adrenaline->title, "Unknown");
-	}
+    int keyconfig = sceKernelApplicationType();
+    if (keyconfig == PSP_INIT_KEYCONFIG_GAME || keyconfig == PSP_INIT_KEYCONFIG_POPS) {
+        getSfoTitle(g_adrenaline->title, 128);
+    } else if (keyconfig == PSP_INIT_KEYCONFIG_VSH) {
+        strcpy(g_adrenaline->title, "XMB\xE2\x84\xA2");
+    } else {
+        strcpy(g_adrenaline->title, "Unknown");
+    }
 
-	SceGameInfo *game_info = sceKernelGetGameInfo();
-	if ((game_info->flags & 0x100) != 0) {
-		strcpy(g_adrenaline->titleid, game_info->title_id);
-	}
+    SceGameInfo *game_info = sceKernelGetGameInfo();
+    if ((game_info->flags & 0x100) != 0) {
+        strcpy(g_adrenaline->titleid, game_info->title_id);
+    }
 
-	char *filename = sceKernelInitFileName();
-	if (filename) {
-		strcpy(g_adrenaline->filename, filename);
-	}
+    char *filename = sceKernelInitFileName();
+    if (filename) {
+        strcpy(g_adrenaline->filename, filename);
+    }
 
-	g_adrenaline->app_type = sceKernelApplicationType();
-	g_adrenaline->pops_mode = g_adrenaline->app_type == PSP_INIT_KEYCONFIG_POPS;
-	g_adrenaline->api_type = sceKernelInitApitype();
+    g_adrenaline->app_type = sceKernelApplicationType();
+    g_adrenaline->pops_mode = g_adrenaline->app_type == PSP_INIT_KEYCONFIG_POPS;
+    g_adrenaline->api_type = sceKernelInitApitype();
 }
 
 #define MAX_THREADS 64
@@ -117,267 +118,281 @@ static int g_thread_count = 0;
 static int g_suspended_count = 0;
 
 static int pauseWorld(void) {
-	int res = sceKernelGetThreadmanIdList(SCE_KERNEL_TMID_Thread, g_threads, MAX_THREADS, &g_thread_count);
+    int res = sceKernelGetThreadmanIdList(
+        SCE_KERNEL_TMID_Thread, g_threads, MAX_THREADS, &g_thread_count
+    );
 
-	if (res < 0) {
-		logmsg("[ERROR]: %s: `sceKernelGetThreadmanIdList` failed with 0x%08X\n", __func__, res);
-		return res;
-	}
+    if (res < 0) {
+        logmsg("[ERROR]: %s: `sceKernelGetThreadmanIdList` failed with 0x%08X\n", __func__, res);
+        return res;
+    }
 
-	if (g_thread_count > MAX_THREADS) {
-		logmsg("[WARN]: %s: `sceKernelGetThreadmanIdList` got more threads than we can hold\n", __func__);
-	}
+    if (g_thread_count > MAX_THREADS) {
+        logmsg(
+            "[WARN]: %s: `sceKernelGetThreadmanIdList` got more threads than we can hold\n",
+            __func__
+        );
+    }
 
-	for (int i = 0; i < g_thread_count; i++) {
-		SceKernelThreadInfo info = {0};
-		info.size = sizeof(SceKernelThreadInfo);
-		res = sceKernelReferThreadStatus(g_threads[i], &info);
+    for (int i = 0; i < g_thread_count; i++) {
+        SceKernelThreadInfo info = {0};
+        info.size = sizeof(SceKernelThreadInfo);
+        res = sceKernelReferThreadStatus(g_threads[i], &info);
 
-		if (res == 0
-			&& (info.attr & USER_THREAD) == USER_THREAD
-			&& (info.status & PSP_THREAD_RUNNING) == 0
-			&& (info.status & PSP_THREAD_SUSPEND) == 0) {
+        if (res == 0 && (info.attr & USER_THREAD) == USER_THREAD
+            && (info.status & PSP_THREAD_RUNNING) == 0 && (info.status & PSP_THREAD_SUSPEND) == 0) {
 
-			continue;
-		}
+            continue;
+        }
 
-		g_threads[i] = -1;
-	}
+        g_threads[i] = -1;
+    }
 
-	for (int i = g_thread_count - 1; i >= 0; i--) {
-		if (g_threads[i] >= 0) {
-			res = sceKernelSuspendThread(g_threads[i]);
+    for (int i = g_thread_count - 1; i >= 0; i--) {
+        if (g_threads[i] >= 0) {
+            res = sceKernelSuspendThread(g_threads[i]);
 
-			if (res < 0) {
-				logmsg("[ERROR]: %s: `sceKernelSuspendThread(0x%08X)` failed with 0x%08X\n", __func__, g_threads[i], res);
-			} else {
-				g_suspended_count += 1;
-			}
-		}
-	}
+            if (res < 0) {
+                logmsg(
+                    "[ERROR]: %s: `sceKernelSuspendThread(0x%08X)` failed with 0x%08X\n", __func__,
+                    g_threads[i], res
+                );
+            } else {
+                g_suspended_count += 1;
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 static int resumeWorld(void) {
-	if (g_suspended_count <= 0) {
-		return 0;
-	}
+    if (g_suspended_count <= 0) {
+        return 0;
+    }
 
-	int repeated = 0;
+    int repeated = 0;
 repeat_resume:
-	for (int i = 0; i < g_thread_count; i++) {
-		if (g_threads[i] >= 0) {
-			int res = sceKernelResumeThread(g_threads[i]);
+    for (int i = 0; i < g_thread_count; i++) {
+        if (g_threads[i] >= 0) {
+            int res = sceKernelResumeThread(g_threads[i]);
 
-			if (res >= 0) {
-				g_suspended_count -= 1;
-			} else {
-				logmsg("[ERROR]: %s: `sceKernelResumeThread` failed with 0x%08X\n", __func__, res);
-			}
-		}
-	}
+            if (res >= 0) {
+                g_suspended_count -= 1;
+            } else {
+                logmsg("[ERROR]: %s: `sceKernelResumeThread` failed with 0x%08X\n", __func__, res);
+            }
+        }
+    }
 
-	if (g_suspended_count > 0 && repeated == 0) {
-		repeated = 1;
-		goto repeat_resume;
-	}
+    if (g_suspended_count > 0 && repeated == 0) {
+        repeated = 1;
+        goto repeat_resume;
+    }
 
-	return 0;
+    return 0;
 }
 
 static int adrenaline_interrupt() {
-	// Signal adrenaline semaphore
-	sceKernelSignalSema(adrenaline_semaid, 1);
-	return 0;
+    // Signal adrenaline semaphore
+    sceKernelSignalSema(adrenaline_semaid, 1);
+    return 0;
 }
 
 static int adrenaline_thread(SceSize args, void *argp) {
-	while (1) {
-		// Wait for semaphore signal
-		sceKernelWaitSema(adrenaline_semaid, 1, NULL);
+    while (1) {
+        // Wait for semaphore signal
+        sceKernelWaitSema(adrenaline_semaid, 1, NULL);
 
-		switch (g_adrenaline->psp_cmd) {
-			case ADRENALINE_PSP_CMD_REINSERT_MS:
-				sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
-				break;
+        switch (g_adrenaline->psp_cmd) {
+            case ADRENALINE_PSP_CMD_REINSERT_MS:
+                sceIoDevctl("fatms0:", 0x0240D81E, NULL, 0, NULL, 0);
+                break;
 
-			case ADRENALINE_PSP_CMD_REINSERT_EF:
-				sceIoDevctl("fatef0:", 0x0240D81E, NULL, 0, NULL, 0);
-				break;
+            case ADRENALINE_PSP_CMD_REINSERT_EF:
+                sceIoDevctl("fatef0:", 0x0240D81E, NULL, 0, NULL, 0);
+                break;
 
-			case ADRENALINE_PSP_CMD_SAVESTATE:
-				g_adrenaline->savestate_mode = SAVESTATE_MODE_SAVE;
-				_scePowerSuspendOperation(0x202);
-				break;
+            case ADRENALINE_PSP_CMD_SAVESTATE:
+                g_adrenaline->savestate_mode = SAVESTATE_MODE_SAVE;
+                _scePowerSuspendOperation(0x202);
+                break;
 
-			case ADRENALINE_PSP_CMD_LOADSTATE:
-				g_adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
-				_scePowerSuspendOperation(0x202);
-				break;
+            case ADRENALINE_PSP_CMD_LOADSTATE:
+                g_adrenaline->savestate_mode = SAVESTATE_MODE_LOAD;
+                _scePowerSuspendOperation(0x202);
+                break;
 
-			case ADRENALINE_PSP_CMD_PAUSE_WORLD:
-				g_adrenaline->psp_cmd = ADRENALINE_PSP_CMD_NONE;
-				pauseWorld();
-				break;
+            case ADRENALINE_PSP_CMD_PAUSE_WORLD:
+                g_adrenaline->psp_cmd = ADRENALINE_PSP_CMD_NONE;
+                pauseWorld();
+                break;
 
-			case ADRENALINE_PSP_CMD_RESUME_WORLD:
-				g_adrenaline->psp_cmd = ADRENALINE_PSP_CMD_NONE;
-				resumeWorld();
-				break;
+            case ADRENALINE_PSP_CMD_RESUME_WORLD:
+                g_adrenaline->psp_cmd = ADRENALINE_PSP_CMD_NONE;
+                resumeWorld();
+                break;
+        }
+    }
 
-		}
-	}
-
-	return 0;
+    return 0;
 }
 
-static int __sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate) {
-	g_sas_args.sasCore = sasCore;
-	g_sas_args.grainSamples = grainSamples;
-	g_sas_args.maxVoices = maxVoices;
-	g_sas_args.outMode = outMode;
-	g_sas_args.sampleRate = sampleRate;
+static int
+__sceSasInitPatched(void *sasCore, int grainSamples, int maxVoices, int outMode, int sampleRate) {
+    g_sas_args.sasCore = sasCore;
+    g_sas_args.grainSamples = grainSamples;
+    g_sas_args.maxVoices = maxVoices;
+    g_sas_args.outMode = outMode;
+    g_sas_args.sampleRate = sampleRate;
 
-	g_sas_inited = 1;
+    g_sas_inited = 1;
 
-	return __sceSasInit(sasCore, grainSamples, maxVoices, outMode, sampleRate);
+    return __sceSasInit(sasCore, grainSamples, maxVoices, outMode, sampleRate);
 }
 
 static void ReInitSasCore(void) {
-	if (__sceSasInit && g_sas_inited) {
-		sceSasCoreExit();
-		sceSasCoreInit();
-		__sceSasInit(g_sas_args.sasCore, g_sas_args.grainSamples, g_sas_args.maxVoices, g_sas_args.outMode, g_sas_args.sampleRate);
-	}
+    if (__sceSasInit && g_sas_inited) {
+        sceSasCoreExit();
+        sceSasCoreInit();
+        __sceSasInit(
+            g_sas_args.sasCore, g_sas_args.grainSamples, g_sas_args.maxVoices, g_sas_args.outMode,
+            g_sas_args.sampleRate
+        );
+    }
 }
 
 static int SysEventHandler(int ev_id, char *ev_name, void *param, int *result) {
-	// Resume completed
-	if (ev_id == 0x400000) {
-		if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-			g_adrenaline->savestate_mode = SAVESTATE_MODE_NONE;
-			ReInitSasCore();
+    // Resume completed
+    if (ev_id == 0x400000) {
+        if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+            g_adrenaline->savestate_mode = SAVESTATE_MODE_NONE;
+            ReInitSasCore();
 
-			if (g_adrenaline->pops_mode) {
-				int (* sceKermitPeripheralInitPops)(void) = (void *)sctrlHENFindFunction("sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631);
-				if (sceKermitPeripheralInitPops) {
-					sceKermitPeripheralInitPops();
-				}
-			}
-		}
-	}
+            if (g_adrenaline->pops_mode) {
+                int (*sceKermitPeripheralInitPops)(void) = (void *)sctrlHENFindFunction(
+                    "sceKermitPeripheral_Driver", "sceKermitPeripheral", 0xC0EBC631
+                );
+                if (sceKermitPeripheralInitPops) {
+                    sceKermitPeripheralInitPops();
+                }
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 static void VitaSyncPatched(void) {
-	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-		void (* SaveStateBinary)(void) = (void *)0x00010000;
-		memcpy((void *)SaveStateBinary, binary, size_binary);
-		sctrlFlushCache();
+    if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+        void (*SaveStateBinary)(void) = (void *)0x00010000;
+        memcpy((void *)SaveStateBinary, binary, size_binary);
+        sctrlFlushCache();
 
-		SaveStateBinary();
+        SaveStateBinary();
 
-		// Param for uiResumePoint
-		u32 data[53];
-		memset(data, 0, sizeof(data));
-		data[0] = sizeof(data);
-		data[8] = 0xFFFF;
-		data[9] = 0x2;
-		data[12] = 0x4B0;
-		uiResumePoint(data);
+        // Param for uiResumePoint
+        u32 data[53];
+        memset(data, 0, sizeof(data));
+        data[0] = sizeof(data);
+        data[8] = 0xFFFF;
+        data[9] = 0x2;
+        data[12] = 0x4B0;
+        uiResumePoint(data);
 
-		while(1);
-	}
+        while (1)
+            ;
+    }
 
-	VitaSync();
+    VitaSync();
 }
 
 static int SetFlag1Patched(void) {
-	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-		return 0;
-	}
+    if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+        return 0;
+    }
 
-	return SetFlag1();
+    return SetFlag1();
 }
 
 static int SetFlag2Patched(void) {
-	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-		return 0;
-	}
+    if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+        return 0;
+    }
 
-	return SetFlag2();
+    return SetFlag2();
 }
 
 static int sceKermitSyncDisplayPatched(void) {
-	if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
-		return 0;
-	}
+    if (g_adrenaline->savestate_mode != SAVESTATE_MODE_NONE) {
+        return 0;
+    }
 
-	return sceKermitSyncDisplay();
+    return sceKermitSyncDisplay();
 }
 
-void PatchSasCore(SceModule* mod) {
-	sceSasCoreInit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xB0F9F98F);
-	sceSasCoreExit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xE143A1EA);
+void PatchSasCore(SceModule *mod) {
+    sceSasCoreInit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xB0F9F98F);
+    sceSasCoreExit = (void *)sctrlHENFindFunctionInMod(mod, "sceSasCore_driver", 0xE143A1EA);
 
-	HIJACK_FUNCTION(sctrlHENFindFunctionInMod(mod, "sceSasCore", 0x42778A9F), __sceSasInitPatched, __sceSasInit);
+    HIJACK_FUNCTION(
+        sctrlHENFindFunctionInMod(mod, "sceSasCore", 0x42778A9F), __sceSasInitPatched, __sceSasInit
+    );
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }
 
-void PatchLowIODriver2(SceModule* mod) {
-	u32 text_addr = mod->text_addr;
+void PatchLowIODriver2(SceModule *mod) {
+    u32 text_addr = mod->text_addr;
 
-	HIJACK_FUNCTION(text_addr + 0x880, SetFlag1Patched, SetFlag1);
-	HIJACK_FUNCTION(text_addr + 0xCD8, SetFlag2Patched, SetFlag2);
-	HIJACK_FUNCTION(sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver", 0xD69C50BB), sceKermitSyncDisplayPatched, sceKermitSyncDisplay);
+    HIJACK_FUNCTION(text_addr + 0x880, SetFlag1Patched, SetFlag1);
+    HIJACK_FUNCTION(text_addr + 0xCD8, SetFlag2Patched, SetFlag2);
+    HIJACK_FUNCTION(
+        sctrlHENFindFunction("sceKermit_Driver", "sceKermit_driver", 0xD69C50BB),
+        sceKermitSyncDisplayPatched, sceKermitSyncDisplay
+    );
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }
 
-void PatchPowerService2(SceModule* mod) {
-	u32 text_addr = mod->text_addr;
+void PatchPowerService2(SceModule *mod) {
+    u32 text_addr = mod->text_addr;
 
-	// Patch to inject binary and to call uiResumePoint
-	uiResumePoint = (void *)text_addr + 0x24C0;
-	K_HIJACK_CALL(text_addr + 0x22FC, VitaSyncPatched, VitaSync);
+    // Patch to inject binary and to call uiResumePoint
+    uiResumePoint = (void *)text_addr + 0x24C0;
+    K_HIJACK_CALL(text_addr + 0x22FC, VitaSyncPatched, VitaSync);
 
-	_scePowerSuspendOperation = (void *)text_addr + 0x1710;
+    _scePowerSuspendOperation = (void *)text_addr + 0x1710;
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }
 
 int initAdrenaline(void) {
-	// Register sysevent handler
-	static PspSysEventHandler event_handler = {
-		sizeof(PspSysEventHandler),
-		"EPI_SysEvent",
-		0x00FFFF00,
-		SysEventHandler
-	};
+    // Register sysevent handler
+    static PspSysEventHandler event_handler = {
+        sizeof(PspSysEventHandler), "EPI_SysEvent", 0x00FFFF00, SysEventHandler
+    };
 
-	sceKernelRegisterSysEventHandler(&event_handler);
+    sceKernelRegisterSysEventHandler(&event_handler);
 
-	// Register adrenaline interrupt
-	sceKermitRegisterVirtualIntrHandler(KERMIT_VIRTUAL_INTR_IMPOSE_CH1, adrenaline_interrupt);
+    // Register adrenaline interrupt
+    sceKermitRegisterVirtualIntrHandler(KERMIT_VIRTUAL_INTR_IMPOSE_CH1, adrenaline_interrupt);
 
-	// Create adrenaline semaphore
-	adrenaline_semaid = sceKernelCreateSema("EPI_Semaphore", 0, 0, 1, NULL);
-	if (adrenaline_semaid < 0) {
-		return adrenaline_semaid;
-	}
+    // Create adrenaline semaphore
+    adrenaline_semaid = sceKernelCreateSema("EPI_Semaphore", 0, 0, 1, NULL);
+    if (adrenaline_semaid < 0) {
+        return adrenaline_semaid;
+    }
 
-	// Create and start adrenaline thread
-	SceUID thid = sceKernelCreateThread("EPI_Thread", adrenaline_thread, 0x10, 0x4000, 0, NULL);
-	if (thid < 0) {
-		return thid;
-	}
+    // Create and start adrenaline thread
+    SceUID thid = sceKernelCreateThread("EPI_Thread", adrenaline_thread, 0x10, 0x4000, 0, NULL);
+    if (thid < 0) {
+        return thid;
+    }
 
-	sceKernelStartThread(thid, 0, NULL);
+    sceKernelStartThread(thid, 0, NULL);
 
-  *(u32 *)DRAW_NATIVE = 0;
+    *(u32 *)DRAW_NATIVE = 0;
 
-	return 0;
+    return 0;
 }

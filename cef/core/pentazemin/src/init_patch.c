@@ -1,15 +1,15 @@
-#include <string.h>
-#include <stdio.h>
+#include <pspinit.h>
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <psputilsforkernel.h>
-#include <pspinit.h>
+#include <stdio.h>
+#include <string.h>
 
-#include <cfwmacros.h>
 #include <bootloadex.h>
+#include <cfwmacros.h>
 #include <systemctrl.h>
-#include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
+#include <systemctrl_se.h>
 
 #include "adrenaline.h"
 #include "externs.h"
@@ -18,85 +18,87 @@
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option) {
+SceUID sceKernelLoadModuleBufferBootInitBtcnfPatched(
+    SceLoadCoreBootModuleInfo *info, void *buf, int flags, SceKernelLMOption *option
+) {
 
-	char path[64];
-	char* filename = info->name;
+    char path[64];
+    char *filename = info->name;
 
-	PSPKeyConfig app_type = sceKernelApplicationType();
+    PSPKeyConfig app_type = sceKernelApplicationType();
 
-	if (g_config.osk_type == OSK_TYPE_PSP) {
-		if (strcmp(filename, "/kd/kermit_utility.prx") == 0) {
-			filename = "/kd/utility.prx";
-		}
-	}
+    if (g_config.osk_type == OSK_TYPE_PSP) {
+        if (strcmp(filename, "/kd/kermit_utility.prx") == 0) {
+            filename = "/kd/utility.prx";
+        }
+    }
 
-	if (g_config.ge_type == GE_TYPE_2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
-		if (strcmp(filename, "/kd/ge.prx") == 0) {
-			filename = "/kd/ge_2.prx";
+    if (g_config.ge_type == GE_TYPE_2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+        if (strcmp(filename, "/kd/ge.prx") == 0) {
+            filename = "/kd/ge_2.prx";
 
-			SceUID mod = sceKernelLoadModule("flash0:/kd/ge_2.prx", 0, NULL);
-			if (mod >= 0) {
-				return mod;
-			}
-		}
-	}
+            SceUID mod = sceKernelLoadModule("flash0:/kd/ge_2.prx", 0, NULL);
+            if (mod >= 0) {
+                return mod;
+            }
+        }
+    }
 
-	if (g_config.me_type == ME_TYPE_2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
-		if (strcmp(filename, "/kd/kermit_me_wrapper.prx") == 0) {
-			filename = "/kd/kermit_me_wrapper_2.prx";
+    if (g_config.me_type == ME_TYPE_2 && app_type != PSP_INIT_KEYCONFIG_VSH) {
+        if (strcmp(filename, "/kd/kermit_me_wrapper.prx") == 0) {
+            filename = "/kd/kermit_me_wrapper_2.prx";
 
-			SceUID mod = sceKernelLoadModule("flash0:/kd/kermit_me_wrapper_2.prx", 0, NULL);
-			if (mod >= 0) {
-				return mod;
-			}
-		}
-	}
+            SceUID mod = sceKernelLoadModule("flash0:/kd/kermit_me_wrapper_2.prx", 0, NULL);
+            if (mod >= 0) {
+                return mod;
+            }
+        }
+    }
 
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename); //not use flash0 cause of cxmb
+    sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename); // not use flash0 cause of cxmb
 
-	SceUID mod = sceKernelLoadModule(path, 0, NULL);
-	if (mod >= 0) {
-		return mod;
-	}
+    SceUID mod = sceKernelLoadModule(path, 0, NULL);
+    if (mod >= 0) {
+        return mod;
+    }
 
-	return sceKernelLoadModuleBufferBootInitBtcnf(info->size, buf, flags, option);
+    return sceKernelLoadModuleBufferBootInitBtcnf(info->size, buf, flags, option);
 }
 
-static SceUID (* LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
+static SceUID (*LoadModuleBufferAnchorInBtcnf)(void *buf, int a1);
 SceUID LoadModuleBufferAnchorInBtcnfPatched(void *buf, SceLoadCoreBootModuleInfo *info) {
 
-	char path[64];
-	char* filename = info->name;
+    char path[64];
+    char *filename = info->name;
 
-	sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename);
+    sprintf(path, "ms0:/__ADRENALINE__/flash0%s", filename);
 
-	SceUID mod = sceKernelLoadModule(path, 0, NULL);
-	if (mod >= 0) {
-		return mod;
-	}
+    SceUID mod = sceKernelLoadModule(path, 0, NULL);
+    if (mod >= 0) {
+        return mod;
+    }
 
-	return LoadModuleBufferAnchorInBtcnf(buf, (info->attr >> 8) & 1);
+    return LoadModuleBufferAnchorInBtcnf(buf, (info->attr >> 8) & 1);
 }
 
-static int (*PrevPatchInit)(int (* module_bootstart)(SceSize, void *), void *argp) = NULL;
-int AdrenalinePatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
-	u32 init_addr = ((u32)module_bootstart) - 0x1A54;
+static int (*PrevPatchInit)(int (*module_bootstart)(SceSize, void *), void *argp) = NULL;
+int AdrenalinePatchInit(int (*module_bootstart)(SceSize, void *), void *argp) {
+    u32 init_addr = ((u32)module_bootstart) - 0x1A54;
 
-	// Ignore StopInit
-	MAKE_NOP(init_addr + 0x18EC);
+    // Ignore StopInit
+    MAKE_NOP(init_addr + 0x18EC);
 
-	// Redirect load functions to load from MS
-	LoadModuleBufferAnchorInBtcnf = (void *)init_addr + 0x1038;
-	MAKE_CALL(init_addr + 0x17E4, LoadModuleBufferAnchorInBtcnfPatched);
-	MAKE_INSTRUCTION(init_addr + 0x17E8, 0x02402821); // move $a1, $s2
+    // Redirect load functions to load from MS
+    LoadModuleBufferAnchorInBtcnf = (void *)init_addr + 0x1038;
+    MAKE_CALL(init_addr + 0x17E4, LoadModuleBufferAnchorInBtcnfPatched);
+    MAKE_INSTRUCTION(init_addr + 0x17E8, 0x02402821); // move $a1, $s2
 
-	MAKE_INSTRUCTION(init_addr + 0x1868, 0x02402021); // move $a0, $s2
-	MAKE_CALL(init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
+    MAKE_INSTRUCTION(init_addr + 0x1868, 0x02402021); // move $a0, $s2
+    MAKE_CALL(init_addr + 0x1878, sceKernelLoadModuleBufferBootInitBtcnfPatched);
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 
-	return PrevPatchInit(module_bootstart, argp);
+    return PrevPatchInit(module_bootstart, argp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -105,19 +107,19 @@ int AdrenalinePatchInit(int (* module_bootstart)(SceSize, void *), void *argp) {
 
 // Patch Loader Core Module
 void PatchLoaderCore(void) {
-	// Find Module
-	SceModule* mod = sceKernelFindModuleByName("sceLoaderCore");
+    // Find Module
+    SceModule *mod = sceKernelFindModuleByName("sceLoaderCore");
 
-	// Fetch Text Address
-	u32 start_addr = mod->text_addr;
-	u32 topaddr = mod->text_addr+mod->text_size;
+    // Fetch Text Address
+    u32 start_addr = mod->text_addr;
+    u32 topaddr = mod->text_addr + mod->text_size;
 
-	for (u32 addr = start_addr; addr<topaddr; addr+=4){
-		u32 data = VREAD32(addr);
-		if (data == 0x02E02021){
-			PrevPatchInit = (void*)K_EXTRACT_CALL(addr-4);
-			MAKE_INSTRUCTION(addr-4, JAL(AdrenalinePatchInit));
-			break;
-		}
-	}
+    for (u32 addr = start_addr; addr < topaddr; addr += 4) {
+        u32 data = VREAD32(addr);
+        if (data == 0x02E02021) {
+            PrevPatchInit = (void *)K_EXTRACT_CALL(addr - 4);
+            MAKE_INSTRUCTION(addr - 4, JAL(AdrenalinePatchInit));
+            break;
+        }
+    }
 }

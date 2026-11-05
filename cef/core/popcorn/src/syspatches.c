@@ -1,38 +1,38 @@
 /*
-	Adrenaline PopCorn
-	Copyright (C) 2016-2018, TheFloW
-	Copyright (C) 2024-2025, isage
-	Copyright (C) 2025, GrayJack
+    Adrenaline PopCorn
+    Copyright (C) 2016-2018, TheFloW
+    Copyright (C) 2024-2025, isage
+    Copyright (C) 2025, GrayJack
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
+#include <pspamctrl.h>
 #include <pspcrypt.h>
 #include <psperror.h>
-#include <pspamctrl.h>
-#include <psploadcore.h>
 #include <pspiofilemgr.h>
+#include <psploadcore.h>
 #include <psputilsforkernel.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
 
-#include <pspextratypes.h>
 #include <adrenaline_log.h>
+#include <pspextratypes.h>
 
 #include "popcorn.h"
 
@@ -56,504 +56,525 @@ static int g_is_ef = 0;
 
 /// Init `g_is_official`, `g_psiso_offsets`, `g_pgd_buf`, `g_custom_config`, `g_config_size`
 int initGlobals(void) {
-	const char * filename = sceKernelInitFileName();
+    const char *filename = sceKernelInitFileName();
 
-	if (NULL == filename) {
-		return -1;
-	}
+    if (NULL == filename) {
+        return -1;
+    }
 
-	if (strncmp(filename, "ms0:/__ef0__", 12) == 0) {
-		g_is_ef = 1;
-	} else {
-		g_is_ef = 0;
-	}
-	logmsg3("[INFO]: %s: `g_is_ef` set\n", __func__);
+    if (strncmp(filename, "ms0:/__ef0__", 12) == 0) {
+        g_is_ef = 1;
+    } else {
+        g_is_ef = 0;
+    }
+    logmsg3("[INFO]: %s: `g_is_ef` set\n", __func__);
 
-	SceUID fd = sceIoOpen(filename, PSP_O_RDONLY, 0);
-	if (fd < 0) {
-		logmsg("[ERROR]: %s: sceIoOpen %s -> 0x%08X\n", __func__, filename, fd);
-		return fd;
-	}
+    SceUID fd = sceIoOpen(filename, PSP_O_RDONLY, 0);
+    if (fd < 0) {
+        logmsg("[ERROR]: %s: sceIoOpen %s -> 0x%08X\n", __func__, filename, fd);
+        return fd;
+    }
 
-	// Read header
-	PBPHeader header;
-	int io_ret = sceIoRead(fd, &header, sizeof(PBPHeader));
+    // Read header
+    PBPHeader header;
+    int io_ret = sceIoRead(fd, &header, sizeof(PBPHeader));
 
-	if (io_ret < 0) {
-		logmsg("[ERROR]: %s: sceIoRead PBP header -> 0x%08X\n", __func__, io_ret);
-		sceIoClose(fd);
-		return io_ret;
-	}
+    if (io_ret < 0) {
+        logmsg("[ERROR]: %s: sceIoRead PBP header -> 0x%08X\n", __func__, io_ret);
+        sceIoClose(fd);
+        return io_ret;
+    }
 
-	// Get magic
-	char magic[16];
-	sceIoLseek(fd, header.psar_offset, PSP_SEEK_SET);
-	io_ret = sceIoRead(fd, magic, sizeof(magic));
+    // Get magic
+    char magic[16];
+    sceIoLseek(fd, header.psar_offset, PSP_SEEK_SET);
+    io_ret = sceIoRead(fd, magic, sizeof(magic));
 
-	if (io_ret < 0) {
-		logmsg("[ERROR]: %s: sceIoRead PSISOIMG magic -> 0x%08X\n", __func__, io_ret);
-		sceIoClose(fd);
-		return io_ret;
-	}
+    if (io_ret < 0) {
+        logmsg("[ERROR]: %s: sceIoRead PSISOIMG magic -> 0x%08X\n", __func__, io_ret);
+        sceIoClose(fd);
+        return io_ret;
+    }
 
-	// Reset psiso_offset
-	memset(g_psiso_offsets, 0, sizeof(g_psiso_offsets));
+    // Reset psiso_offset
+    memset(g_psiso_offsets, 0, sizeof(g_psiso_offsets));
 
-	if (memcmp(magic, "PSISOIMG0000", 12) == 0) { // Single-Disc
-		// Start at psar_offset
-		g_psiso_offsets[0] = header.psar_offset;
+    if (memcmp(magic, "PSISOIMG0000", 12) == 0) { // Single-Disc
+        // Start at psar_offset
+        g_psiso_offsets[0] = header.psar_offset;
 
-		// Prepare for reading PGD
-		sceIoLseek(fd, header.psar_offset + 0x400, PSP_SEEK_SET);
-	} else if (memcmp(magic, "PSTITLEIMG000000", 16) == 0) { // Multi-Disc
-		// Multi disc, offsets are stored at psar+0x200
-		sceIoLseek(fd, header.psar_offset + 0x200, PSP_SEEK_SET);
-		sceIoRead(fd, g_psiso_offsets, sizeof(g_psiso_offsets));
+        // Prepare for reading PGD
+        sceIoLseek(fd, header.psar_offset + 0x400, PSP_SEEK_SET);
+    } else if (memcmp(magic, "PSTITLEIMG000000", 16) == 0) { // Multi-Disc
+        // Multi disc, offsets are stored at psar+0x200
+        sceIoLseek(fd, header.psar_offset + 0x200, PSP_SEEK_SET);
+        sceIoRead(fd, g_psiso_offsets, sizeof(g_psiso_offsets));
 
-		// Adjust to make offsets absolute.
-		for (int i = 0; i < NELEMS(g_psiso_offsets) && g_psiso_offsets[i] != 0; i++) {
-			// Offsets are relative to psar
-			g_psiso_offsets[i] += header.psar_offset;
-		}
+        // Adjust to make offsets absolute.
+        for (int i = 0; i < NELEMS(g_psiso_offsets) && g_psiso_offsets[i] != 0; i++) {
+            // Offsets are relative to psar
+            g_psiso_offsets[i] += header.psar_offset;
+        }
 
-		// Prepare for reading PGD
-		sceIoLseek(fd, header.psar_offset + 0x200, PSP_SEEK_SET);
-	} else {
-		sceIoClose(fd);
-		logmsg("[ERROR]: %s: Failed to find PSISOIMG magic\n", __func__);
-		return -1;
-	}
+        // Prepare for reading PGD
+        sceIoLseek(fd, header.psar_offset + 0x200, PSP_SEEK_SET);
+    } else {
+        sceIoClose(fd);
+        logmsg("[ERROR]: %s: Failed to find PSISOIMG magic\n", __func__);
+        return -1;
+    }
 
-	// Read PGD buffer
-	io_ret = sceIoRead(fd, g_pgd_buf, sizeof(g_pgd_buf));
+    // Read PGD buffer
+    io_ret = sceIoRead(fd, g_pgd_buf, sizeof(g_pgd_buf));
 
-	if (io_ret < 0) {
-		logmsg("[ERROR]: %s: sceIoRead PGD -> 0x%08X\n", __func__, io_ret);
-		sceIoClose(fd);
-		return io_ret;
-	}
-	logmsg3("[INFO]: %s: `g_pgd_buf` set\n", __func__);
+    if (io_ret < 0) {
+        logmsg("[ERROR]: %s: sceIoRead PGD -> 0x%08X\n", __func__, io_ret);
+        sceIoClose(fd);
+        return io_ret;
+    }
+    logmsg3("[INFO]: %s: `g_pgd_buf` set\n", __func__);
 
-	// Close fd
-	sceIoClose(fd);
+    // Close fd
+    sceIoClose(fd);
 
-	// Must have at least one disc.
-	if (g_psiso_offsets[0] == 0) {
-		logmsg("[ERROR]: %s: Zero discs\n", __func__);
-		return -1;
-	}
-	logmsg3("[INFO]: %s: `g_psiso_offsets` set\n", __func__);
+    // Must have at least one disc.
+    if (g_psiso_offsets[0] == 0) {
+        logmsg("[ERROR]: %s: Zero discs\n", __func__);
+        return -1;
+    }
+    logmsg3("[INFO]: %s: `g_psiso_offsets` set\n", __func__);
 
-	// Check PGD magic
-	if (((u32 *)g_pgd_buf)[0] == PGD_MAGIC) {
-		g_is_official = 1;
-	} else {
-		g_is_official = 0;
-	}
-	logmsg3("[INFO]: %s: `g_is_official` set\n", __func__);
+    // Check PGD magic
+    if (((u32 *)g_pgd_buf)[0] == PGD_MAGIC) {
+        g_is_official = 1;
+    } else {
+        g_is_official = 0;
+    }
+    logmsg3("[INFO]: %s: `g_is_official` set\n", __func__);
 
-	// Check and read config.bin
-	//
-	// From now on, errors should be ignored since custom config are optional.
-	// 1. Set filename
-	char config_filename[256] = {0};
-	char* slash = strrchr(filename, '/');
-	if (!slash || (slash - filename + 1 + sizeof("CONFIG.BIN") > sizeof(config_filename))) {
-		logmsg(" [ERROR]: %s: Ignoring custom config: Invalid filename to find custom config: %s\n", __func__, filename);
-		return 0;
-	}
-	int dir_len = (int)(slash - filename + 1);
-	snprintf(config_filename, sizeof(config_filename), "%.*sCONFIG.BIN", dir_len, filename);
+    // Check and read config.bin
+    //
+    // From now on, errors should be ignored since custom config are optional.
+    // 1. Set filename
+    char config_filename[256] = {0};
+    char *slash = strrchr(filename, '/');
+    if (!slash || (slash - filename + 1 + sizeof("CONFIG.BIN") > sizeof(config_filename))) {
+        logmsg(
+            " [ERROR]: %s: Ignoring custom config: Invalid filename to find custom config: %s\n",
+            __func__, filename
+        );
+        return 0;
+    }
+    int dir_len = (int)(slash - filename + 1);
+    snprintf(config_filename, sizeof(config_filename), "%.*sCONFIG.BIN", dir_len, filename);
 
-	// 2. Open file
-	fd = -1;
-	fd = sceIoOpen(config_filename, PSP_O_RDONLY, 0777);
-	if (fd < 0) {
-		logmsg("[ERROR]: %s: sceIoOpen %s -> 0x%08X\n", __func__, config_filename, fd);
-		return 0;
-	}
+    // 2. Open file
+    fd = -1;
+    fd = sceIoOpen(config_filename, PSP_O_RDONLY, 0777);
+    if (fd < 0) {
+        logmsg("[ERROR]: %s: sceIoOpen %s -> 0x%08X\n", __func__, config_filename, fd);
+        return 0;
+    }
 
-	// 3. Read it if it exists
-	if (fd >= 0) {
-		g_config_size = 0;
+    // 3. Read it if it exists
+    if (fd >= 0) {
+        g_config_size = 0;
 
-		int config_size = sceIoLseek32(fd, 0, PSP_SEEK_END);
-		if (config_size <= 0 || config_size > sizeof(g_custom_config)) {
-			logmsg("[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__);
-			sceIoClose(fd);
-			return 0;
-		}
+        int config_size = sceIoLseek32(fd, 0, PSP_SEEK_END);
+        if (config_size <= 0 || config_size > sizeof(g_custom_config)) {
+            logmsg(
+                "[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__
+            );
+            sceIoClose(fd);
+            return 0;
+        }
 
-		if (sceIoLseek(fd, 0, PSP_SEEK_SET) < 0) {
-			logmsg("[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__);
-			sceIoClose(fd);
-			return 0;
-		}
+        if (sceIoLseek(fd, 0, PSP_SEEK_SET) < 0) {
+            logmsg(
+                "[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__
+            );
+            sceIoClose(fd);
+            return 0;
+        }
 
-		io_ret = sceIoRead(fd, g_custom_config, config_size);
-		sceIoClose(fd);
+        io_ret = sceIoRead(fd, g_custom_config, config_size);
+        sceIoClose(fd);
 
-		if (io_ret != config_size) {
-			logmsg("[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__);
-			return 0;
-		}
+        if (io_ret != config_size) {
+            logmsg(
+                "[ERROR]: %s: Ignoring custom config: Fail to get custom config size\n", __func__
+            );
+            return 0;
+        }
 
-		g_config_size = config_size;
-		logmsg3("[INFO]: %s: `g_custom_config` set: 0x%08X bytes\n", __func__, g_config_size);
-	}
+        g_config_size = config_size;
+        logmsg3("[INFO]: %s: `g_custom_config` set: 0x%08X bytes\n", __func__, g_config_size);
+    }
 
-	return 0;
+    return 0;
 }
 
 // PGD decryption by Hykem
 // https://github.com/Hykem/psxtract/blob/master/Linux/crypto.c
 static int kirk7(u8 *buf, int size, int type) {
-	u32 *header = (u32 *)buf;
+    u32 *header = (u32 *)buf;
 
-	header[0] = 5;
-	header[1] = 0;
-	header[2] = 0;
-	header[3] = type;
-	header[4] = size;
+    header[0] = 5;
+    header[1] = 0;
+    header[2] = 0;
+    header[3] = type;
+    header[4] = size;
 
-	return sceUtilsBufferCopyWithRange(buf, size + KIRK7_HEADER_SIZE, buf, size, 7);
+    return sceUtilsBufferCopyWithRange(buf, size + KIRK7_HEADER_SIZE, buf, size, 7);
 }
 
-static const char* fix_path_on_ef(const char *file) {
-	if (strncmp(file, "ef0:", 4) == 0) {
-		static char fixed[256] = {0};
+static const char *fix_path_on_ef(const char *file) {
+    if (strncmp(file, "ef0:", 4) == 0) {
+        static char fixed[256] = {0};
 
-		// When the system reboots to launch the game, `ef0:` is not yet available, so we use the ms0 magic path to ef0 driver
-		memset(fixed, 0, sizeof(fixed));
-		snprintf(fixed, sizeof(fixed), "ms0:/__ef0__%s", file+4);
-		return fixed;
-	} else {
-		return file;
-	}
+        // When the system reboots to launch the game, `ef0:` is not yet available, so we use the
+        // ms0 magic path to ef0 driver
+        memset(fixed, 0, sizeof(fixed));
+        snprintf(fixed, sizeof(fixed), "ms0:/__ef0__%s", file + 4);
+        return fixed;
+    } else {
+        return file;
+    }
 }
 
-static const char* force_path_on_ef(const char *file) {
-	if (g_is_ef && ((strncmp(file, "ms0:", 4) == 0 && strncmp(file, "ms0:/__ef0__", 12) != 0) || strncmp(file, "ef0:", 4) == 0)) {
-		static char fixed[256] = {0};
+static const char *force_path_on_ef(const char *file) {
+    if (g_is_ef
+        && ((strncmp(file, "ms0:", 4) == 0 && strncmp(file, "ms0:/__ef0__", 12) != 0)
+            || strncmp(file, "ef0:", 4) == 0)) {
+        static char fixed[256] = {0};
 
-		// When the system reboots to launch the game, `ef0:` is not yet available, so we use the ms0 magic path to ef0 driver
-		memset(fixed, 0, sizeof(fixed));
-		snprintf(fixed, sizeof(fixed), "ms0:/__ef0__%s", file+4);
-		return fixed;
-	} else {
-		return file;
-	}
+        // When the system reboots to launch the game, `ef0:` is not yet available, so we use the
+        // ms0 magic path to ef0 driver
+        memset(fixed, 0, sizeof(fixed));
+        snprintf(fixed, sizeof(fixed), "ms0:/__ef0__%s", file + 4);
+        return fixed;
+    } else {
+        return file;
+    }
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-static int (* _scePopsManExitVSHKernel)(int error) = NULL;
+static int (*_scePopsManExitVSHKernel)(int error) = NULL;
 int scePopsManExitVSHKernelPatched(u32 destSize, u8 *src, u8 *dest) {
-	if (destSize & 0x80000000) {
-		logmsg4("[DEBUG]: %s: error=0x%08lX", __func__, destSize);
-		return _scePopsManExitVSHKernel(destSize);
-	}
+    if (destSize & 0x80000000) {
+        logmsg4("[DEBUG]: %s: error=0x%08lX", __func__, destSize);
+        return _scePopsManExitVSHKernel(destSize);
+    }
 
-	int size = sceKernelDeflateDecompress(dest, destSize, src, 0);
+    int size = sceKernelDeflateDecompress(dest, destSize, src, 0);
 
-	int ret;
-	if (size == 0x9300) {
-		ret = 0x92FF;
-		logmsg4("%s: [FAKE] return value -> 0x%08lX\n", __func__, ret);
-	} else {
-		ret = size;
-	}
+    int ret;
+    if (size == 0x9300) {
+        ret = 0x92FF;
+        logmsg4("%s: [FAKE] return value -> 0x%08lX\n", __func__, ret);
+    } else {
+        ret = size;
+    }
 
-	logmsg4("[DEBUG]: %s: DeflateDecompress destSize=0x%08X, src=0x%08X, dest=0x%08X -> 0x%08X\n",__func__, (uint)destSize, (uint)src, (uint)dest, ret);
-	return ret;
+    logmsg4(
+        "[DEBUG]: %s: DeflateDecompress destSize=0x%08X, src=0x%08X, dest=0x%08X -> 0x%08X\n",
+        __func__, (uint)destSize, (uint)src, (uint)dest, ret
+    );
+    return ret;
 }
 
 static int (*_sceMeAudio_2AB4FE43)(void *buf, int size) = NULL;
 static int sceMeAudio_2AB4FE43_Patched(void *buf, int size) {
-	if (NULL == _sceMeAudio_2AB4FE43) {
-		logmsg("[ERROR]: %s: Pointer to original function was not set\n", __func__);
-		return SCE_KERR_ILLEGAL_ADDR;
-	}
+    if (NULL == _sceMeAudio_2AB4FE43) {
+        logmsg("[ERROR]: %s: Pointer to original function was not set\n", __func__);
+        return SCE_KERR_ILLEGAL_ADDR;
+    }
 
-	u32 k1 = pspSdkSetK1(0);
-	int ret = _sceMeAudio_2AB4FE43(buf, size);
-	pspSdkSetK1(k1);
+    u32 k1 = pspSdkSetK1(0);
+    int ret = _sceMeAudio_2AB4FE43(buf, size);
+    pspSdkSetK1(k1);
 
-	logmsg3("[DEBUG]: %s: buf=0x%p, size=0x%08X -> 0x%08X", __func__, buf, size, ret);
-	return ret;
+    logmsg3("[DEBUG]: %s: buf=0x%p, size=0x%08X -> 0x%08X", __func__, buf, size, ret);
+    return ret;
 }
 
-static int (* SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id) = NULL;
+static int (*SetVersionKeyContentId)(char *file, u8 *version_key, char *content_id) = NULL;
 static int GetVersionKeyContentIdPatched(char *file, u8 *version_key, char *content_id) {
-	u8 dummy_version_key[VERSION_KEY_SIZE];
-	char dummy_content_id[CONTENT_ID_SIZE];
+    u8 dummy_version_key[VERSION_KEY_SIZE];
+    char dummy_content_id[CONTENT_ID_SIZE];
 
-	if (!version_key) {
-		version_key = dummy_version_key;
-	}
+    if (!version_key) {
+        version_key = dummy_version_key;
+    }
 
-	if (!content_id) {
-		content_id = dummy_content_id;
-	}
+    if (!content_id) {
+        content_id = dummy_content_id;
+    }
 
-	memset(version_key, 0, VERSION_KEY_SIZE);
-	memset(content_id, 0, CONTENT_ID_SIZE);
+    memset(version_key, 0, VERSION_KEY_SIZE);
+    memset(content_id, 0, CONTENT_ID_SIZE);
 
-	if (g_is_official) {
-		// Set mac type
-		int mac_type = MAC_KEY_TYPE_UNK0;
+    if (g_is_official) {
+        // Set mac type
+        int mac_type = MAC_KEY_TYPE_UNK0;
 
-		if (((u32 *)g_pgd_buf)[2] == 1) {
-			mac_type = MAC_KEY_TYPE_UNK1;
+        if (((u32 *)g_pgd_buf)[2] == 1) {
+            mac_type = MAC_KEY_TYPE_UNK1;
 
-			if (((u32 *)g_pgd_buf)[1] > 1) {
-				mac_type = MAC_KEY_TYPE_FIXED;
-			}
-		} else {
-			mac_type = MAC_KEY_TYPE_FUSE_ID;
-		}
+            if (((u32 *)g_pgd_buf)[1] > 1) {
+                mac_type = MAC_KEY_TYPE_FIXED;
+            }
+        } else {
+            mac_type = MAC_KEY_TYPE_FUSE_ID;
+        }
 
-		// Generate the key from MAC 0x70
-		SceMacKey mac_key;
-		sceDrmBBMacInit(&mac_key, mac_type);
-		sceDrmBBMacUpdate(&mac_key, g_pgd_buf, 0x70);
+        // Generate the key from MAC 0x70
+        SceMacKey mac_key;
+        sceDrmBBMacInit(&mac_key, mac_type);
+        sceDrmBBMacUpdate(&mac_key, g_pgd_buf, 0x70);
 
-		u8 xor_keys[VERSION_KEY_SIZE];
-		sceDrmBBMacFinal(&mac_key, xor_keys, NULL);
+        u8 xor_keys[VERSION_KEY_SIZE];
+        sceDrmBBMacFinal(&mac_key, xor_keys, NULL);
 
-		u8 kirk_buf[VERSION_KEY_SIZE + KIRK7_HEADER_SIZE];
+        u8 kirk_buf[VERSION_KEY_SIZE + KIRK7_HEADER_SIZE];
 
-		if (mac_key.type == MAC_KEY_TYPE_FIXED) {
-			memcpy(kirk_buf + KIRK7_HEADER_SIZE, g_pgd_buf + 0x70, VERSION_KEY_SIZE);
-			kirk7(kirk_buf, VERSION_KEY_SIZE, 0x63);
-		} else {
-			memcpy(kirk_buf, g_pgd_buf + 0x70, VERSION_KEY_SIZE);
-		}
+        if (mac_key.type == MAC_KEY_TYPE_FIXED) {
+            memcpy(kirk_buf + KIRK7_HEADER_SIZE, g_pgd_buf + 0x70, VERSION_KEY_SIZE);
+            kirk7(kirk_buf, VERSION_KEY_SIZE, 0x63);
+        } else {
+            memcpy(kirk_buf, g_pgd_buf + 0x70, VERSION_KEY_SIZE);
+        }
 
-		memcpy(kirk_buf + KIRK7_HEADER_SIZE, kirk_buf, VERSION_KEY_SIZE);
-		kirk7(kirk_buf, VERSION_KEY_SIZE, (mac_key.type == 2) ? 0x3A : 0x38);
+        memcpy(kirk_buf + KIRK7_HEADER_SIZE, kirk_buf, VERSION_KEY_SIZE);
+        kirk7(kirk_buf, VERSION_KEY_SIZE, (mac_key.type == 2) ? 0x3A : 0x38);
 
-		// Get version key
-		for (int i = 0; i < VERSION_KEY_SIZE; i++) {
-			version_key[i] = xor_keys[i] ^ kirk_buf[i];
-		}
-	}
+        // Get version key
+        for (int i = 0; i < VERSION_KEY_SIZE; i++) {
+            version_key[i] = xor_keys[i] ^ kirk_buf[i];
+        }
+    }
 
-	return SetVersionKeyContentId(file, version_key, content_id);
+    return SetVersionKeyContentId(file, version_key, content_id);
 }
 
 SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode) {
-	file = fix_path_on_ef(file);
-	// Remove drm flag
-	int patched_flags = (g_is_official) ? flags : flags & ~0x40000000;
-	SceUID res = sceIoOpen(file, patched_flags, mode);
+    file = fix_path_on_ef(file);
+    // Remove drm flag
+    int patched_flags = (g_is_official) ? flags : flags & ~0x40000000;
+    SceUID res = sceIoOpen(file, patched_flags, mode);
 
-	logmsg3("[DEBUG]: %s: file=%s, flags=0x%08X -> 0x%08X\n", __func__, file, flags, res);
-	return res;
+    logmsg3("[DEBUG]: %s: file=%s, flags=0x%08X -> 0x%08X\n", __func__, file, flags, res);
+    return res;
 }
 
 SceUID sceIoDopenPatched(const char *dirpath) {
-	dirpath = fix_path_on_ef(dirpath);
-	SceUID res = sceIoDopen(dirpath);
+    dirpath = fix_path_on_ef(dirpath);
+    SceUID res = sceIoDopen(dirpath);
 
-	logmsg3("[DEBUG]: %s: dirpath=%s -> 0x%08X\n", __func__, dirpath, res);
-	return res;
+    logmsg3("[DEBUG]: %s: dirpath=%s -> 0x%08X\n", __func__, dirpath, res);
+    return res;
 }
 
 int sceIoGetstatPatched(const char *file, SceIoStat *stat) {
-	file = fix_path_on_ef(file);
-	int res = sceIoGetstat(file, stat);
+    file = fix_path_on_ef(file);
+    int res = sceIoGetstat(file, stat);
 
-	logmsg3("[DEBUG]: %s: file=%s -> 0x%08X\n", __func__, file, res);
-	return res;
+    logmsg3("[DEBUG]: %s: file=%s -> 0x%08X\n", __func__, file, res);
+    return res;
 }
 
+static int
+sceIoIoctlPatched(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
+    int ret = 0;
 
-static int sceIoIoctlPatched(SceUID fd, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
-	int ret = 0;
+    if (cmd == 0x04100002) { // Seek
+        ret = sceIoLseek(fd, *(u32 *)indata, PSP_SEEK_SET);
 
-	if (cmd == 0x04100002) { // Seek
-		ret = sceIoLseek(fd, *(u32 *)indata, PSP_SEEK_SET);
+        if (ret < 0) {
+            logmsg("[ERROR]: %s sceIoLseek -> 0x%08X\n", __func__, ret);
+        }
+        ret = 0;
 
-		if (ret < 0) {
-			logmsg("[ERROR]: %s sceIoLseek -> 0x%08X\n", __func__, ret);
-		}
-		ret = 0;
+        logmsg4("[INFO]: %s: [FAKE] fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
+    } else {
+        // ret = sceIoIoctl(fd, cmd, indata, inlen, outdata, outlen);
+        ret = 0;
+        logmsg4("[INFO]: %s: [FAKE] fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
+    }
 
-		logmsg4("[INFO]: %s: [FAKE] fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
-	} else {
-		// ret = sceIoIoctl(fd, cmd, indata, inlen, outdata, outlen);
-		ret = 0;
-		logmsg4("[INFO]: %s: [FAKE] fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
-	}
-
-	logmsg3("[DEBUG]: %s: fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
-	return ret;
+    logmsg3("[DEBUG]: %s: fd=0x%08X, cmd=0x%08X -> 0x%08X\n", __func__, fd, cmd, ret);
+    return ret;
 }
 
 static int sceIoReadPatched(SceUID fd, u8 *data, SceSize size) {
-	u32 k1 = pspSdkSetK1(0);
-	u32 pos = sceIoLseek32(fd, 0, PSP_SEEK_CUR);
-	int res = sceIoRead(fd, data, size);
+    u32 k1 = pspSdkSetK1(0);
+    u32 pos = sceIoLseek32(fd, 0, PSP_SEEK_CUR);
+    int res = sceIoRead(fd, data, size);
 
-	// Inject custom config and apply anti-libcrypt patch
-	for (int i = 0; i < NELEMS(g_psiso_offsets); i++) {
-		if (g_psiso_offsets[i] == 0) {
-			break;
-		}
+    // Inject custom config and apply anti-libcrypt patch
+    for (int i = 0; i < NELEMS(g_psiso_offsets); i++) {
+        if (g_psiso_offsets[i] == 0) {
+            break;
+        }
 
-		// Emulator reads a huge chunk of data starting at PSISOIMG+0x400
-		// More information about PSISOIMG: https://www.psdevwiki.com/psp/PSISOIMG0000
-		u32 huge_chunk_read_pos = g_psiso_offsets[i]+0x400;
+        // Emulator reads a huge chunk of data starting at PSISOIMG+0x400
+        // More information about PSISOIMG: https://www.psdevwiki.com/psp/PSISOIMG0000
+        u32 huge_chunk_read_pos = g_psiso_offsets[i] + 0x400;
 
-		// If not the read we expect, go to the next possibility
-		if (pos != huge_chunk_read_pos) {
-			continue;
-		}
+        // If not the read we expect, go to the next possibility
+        if (pos != huge_chunk_read_pos) {
+            continue;
+        }
 
-		// Seek to where PSISOIMG0000 magic is expected to appear and read it
-		char magic[12];
-		sceIoLseek(fd, g_psiso_offsets[i], PSP_SEEK_SET);
-		sceIoRead(fd, magic, sizeof(magic));
-		// Seek back into where file cursor should be.
-		sceIoLseek(fd, pos+size, PSP_SEEK_SET);
+        // Seek to where PSISOIMG0000 magic is expected to appear and read it
+        char magic[12];
+        sceIoLseek(fd, g_psiso_offsets[i], PSP_SEEK_SET);
+        sceIoRead(fd, magic, sizeof(magic));
+        // Seek back into where file cursor should be.
+        sceIoLseek(fd, pos + size, PSP_SEEK_SET);
 
-		// Magic is correct
-		if (memcmp(magic, "PSISOIMG0000", 12) == 0 && res == size) {
-			// Copy custom config if it exists
-			if (g_config_size > 0 && size >= 0x20 + (SceSize)g_config_size) {
-				// It is located at 0x420 after PSISOIMG, thus 0x20 after given buffer
-				memcpy(data+0x20, g_custom_config, g_config_size);
-				logmsg("[INFO]: %s: Custom config was set.\n", __func__);
-			}
+        // Magic is correct
+        if (memcmp(magic, "PSISOIMG0000", 12) == 0 && res == size) {
+            // Copy custom config if it exists
+            if (g_config_size > 0 && size >= 0x20 + (SceSize)g_config_size) {
+                // It is located at 0x420 after PSISOIMG, thus 0x20 after given buffer
+                memcpy(data + 0x20, g_custom_config, g_config_size);
+                logmsg("[INFO]: %s: Custom config was set.\n", __func__);
+            }
 
-			// anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG, 0xEB0 after given buffer
-			// buf points to PSISOIMG+0x0400, which conveniently starts with the disc_id
-			if (size >= 0xeb4) {
-				u32 libcrypt_magic = searchLibCryptMagicWord(data);
+            // anti-libcrypt patch, calculate libcrypt magic and inject at 0x12B0 after PSISOIMG,
+            // 0xEB0 after given buffer buf points to PSISOIMG+0x0400, which conveniently starts
+            // with the disc_id
+            if (size >= 0xeb4) {
+                u32 libcrypt_magic = searchLibCryptMagicWord(data);
 
-				// A magic word for this title was found
-				if (libcrypt_magic != 0) {
-					// It needs to be xored with this constant
-					libcrypt_magic ^= LIBCRYPT_XOR_MAGIC;
-					memcpy(data+0xeb0, &libcrypt_magic, sizeof(libcrypt_magic));
-					logmsg("[INFO]: %s: Anti-libcrypt patch was applied.\n", __func__);
-				}
-			}
-		}
-	}
+                // A magic word for this title was found
+                if (libcrypt_magic != 0) {
+                    // It needs to be xored with this constant
+                    libcrypt_magic ^= LIBCRYPT_XOR_MAGIC;
+                    memcpy(data + 0xeb0, &libcrypt_magic, sizeof(libcrypt_magic));
+                    logmsg("[INFO]: %s: Anti-libcrypt patch was applied.\n", __func__);
+                }
+            }
+        }
+    }
 
-	if (res != size) {
-		goto exit;
-	}
+    if (res != size) {
+        goto exit;
+    }
 
-	if (!g_is_official && size >= 0x420 && data[0x41B] == 0x27 && data[0x41C] == 0x19 && data[0x41D] == 0x22 && data[0x41E] == 0x41 && data[0x41A] == data[0x41F]) {
-		data[0x41B] = 0x55;
-		logmsg3("[INFO]: %s: Unknown patch loc_6c\n", __func__);
-	}
+    if (!g_is_official && size >= 0x420 && data[0x41B] == 0x27 && data[0x41C] == 0x19
+        && data[0x41D] == 0x22 && data[0x41E] == 0x41 && data[0x41A] == data[0x41F]) {
+        data[0x41B] = 0x55;
+        logmsg3("[INFO]: %s: Unknown patch loc_6c\n", __func__);
+    }
 
-	// Fake ~PSP magic to avoid crash
-	if (size == sizeof(u32)) {
-		u32 magic = ELF_MAGIC;
-		if (memcmp(data, &magic, sizeof(u32)) == 0) {
-			magic = PSP_MAGIC;
-			memcpy(data, &magic, sizeof(u32));
-			logmsg3("%s: [FAKE] PSP magic\n", __func__);
-		}
-	}
+    // Fake ~PSP magic to avoid crash
+    if (size == sizeof(u32)) {
+        u32 magic = ELF_MAGIC;
+        if (memcmp(data, &magic, sizeof(u32)) == 0) {
+            magic = PSP_MAGIC;
+            memcpy(data, &magic, sizeof(u32));
+            logmsg3("%s: [FAKE] PSP magic\n", __func__);
+        }
+    }
 
 exit:
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: fd=0x%08X, data=0x%p, size=0x%08X -> 0x%08X\n", __func__, fd, data, size, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3(
+        "[DEBUG]: %s: fd=0x%08X, data=0x%p, size=0x%08X -> 0x%08X\n", __func__, fd, data, size, res
+    );
+    return res;
 }
 
 SceUID sceIoOpenEfPatched(const char *file, int flags, SceMode mode) {
-	int k1 = pspSdkSetK1(0);
-	file = force_path_on_ef(file);
-	// Remove drm flag
-	int patched_flags = (g_is_official) ? flags : flags & ~0x40000000;
-	SceUID res = sceIoOpen(file, patched_flags, mode);
+    int k1 = pspSdkSetK1(0);
+    file = force_path_on_ef(file);
+    // Remove drm flag
+    int patched_flags = (g_is_official) ? flags : flags & ~0x40000000;
+    SceUID res = sceIoOpen(file, patched_flags, mode);
 
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: file=%s, flags=0x%08X -> 0x%08X\n", __func__, file, flags, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3("[DEBUG]: %s: file=%s, flags=0x%08X -> 0x%08X\n", __func__, file, flags, res);
+    return res;
 }
 
 int sceIoReadEfPatched(SceUID fd, u8 *data, SceSize size) {
-	int k1 = pspSdkSetK1(0);
-	int res = sceIoRead(fd, data, size);
-	pspSdkSetK1(k1);
+    int k1 = pspSdkSetK1(0);
+    int res = sceIoRead(fd, data, size);
+    pspSdkSetK1(k1);
 
-	logmsg3("[DEBUG]: %s: fd=0x%08X, data=0x%p, size=0x%08X -> 0x%08X\n", __func__, fd, data, size, res);
-	return res;
+    logmsg3(
+        "[DEBUG]: %s: fd=0x%08X, data=0x%p, size=0x%08X -> 0x%08X\n", __func__, fd, data, size, res
+    );
+    return res;
 }
 
 SceUID sceIoDopenEfPatched(const char *dirpath) {
-	int k1 = pspSdkSetK1(0);
-	dirpath = force_path_on_ef(dirpath);
-	SceUID res = sceIoDopen(dirpath);
+    int k1 = pspSdkSetK1(0);
+    dirpath = force_path_on_ef(dirpath);
+    SceUID res = sceIoDopen(dirpath);
 
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: dirpath=%s -> 0x%08X\n", __func__, dirpath, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3("[DEBUG]: %s: dirpath=%s -> 0x%08X\n", __func__, dirpath, res);
+    return res;
 }
 
 int sceIoRemoveEfPatched(const char *file) {
-	int k1 = pspSdkSetK1(0);
-	file = force_path_on_ef(file);
-	int res = sceIoRemove(file);
+    int k1 = pspSdkSetK1(0);
+    file = force_path_on_ef(file);
+    int res = sceIoRemove(file);
 
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: file=%s -> 0x%08X\n", __func__, file, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3("[DEBUG]: %s: file=%s -> 0x%08X\n", __func__, file, res);
+    return res;
 }
 
 int sceIoGetstatEfPatched(const char *file, SceIoStat *stat) {
-	int k1 = pspSdkSetK1(0);
-	file = force_path_on_ef(file);
-	int res = sceIoGetstat(file, stat);
+    int k1 = pspSdkSetK1(0);
+    file = force_path_on_ef(file);
+    int res = sceIoGetstat(file, stat);
 
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: file=%s -> 0x%08X\n", __func__, file, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3("[DEBUG]: %s: file=%s -> 0x%08X\n", __func__, file, res);
+    return res;
 }
 
 int sceIoRenameEfPatched(const char *oldname, const char *newname) {
-	int k1 = pspSdkSetK1(0);
-	char fixed_old[256];
-	oldname = force_path_on_ef(oldname);
-	strncpy(fixed_old, oldname, sizeof(fixed_old) - 1);
-	fixed_old[sizeof(fixed_old) - 1] = '\0';
-	newname = force_path_on_ef(newname);
-	int res = sceIoRename(fixed_old, newname);
+    int k1 = pspSdkSetK1(0);
+    char fixed_old[256];
+    oldname = force_path_on_ef(oldname);
+    strncpy(fixed_old, oldname, sizeof(fixed_old) - 1);
+    fixed_old[sizeof(fixed_old) - 1] = '\0';
+    newname = force_path_on_ef(newname);
+    int res = sceIoRename(fixed_old, newname);
 
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: oldname=%s newname=%s -> 0x%08X\n", __func__, oldname, newname, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3("[DEBUG]: %s: oldname=%s newname=%s -> 0x%08X\n", __func__, oldname, newname, res);
+    return res;
 }
 
 int sceIoRmdirEfPatched(const char *path) {
-	int k1 = pspSdkSetK1(0);
-	path = force_path_on_ef(path);
-	int res = sceIoRmdir(path);
+    int k1 = pspSdkSetK1(0);
+    path = force_path_on_ef(path);
+    int res = sceIoRmdir(path);
 
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: path=%s -> 0x%08X\n", __func__, path, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3("[DEBUG]: %s: path=%s -> 0x%08X\n", __func__, path, res);
+    return res;
 }
 
 int sceIoMkdirEfPatched(const char *dir, SceMode mode) {
-	int k1 = pspSdkSetK1(0);
-	dir = force_path_on_ef(dir);
-	int res = sceIoMkdir(dir, mode);
+    int k1 = pspSdkSetK1(0);
+    dir = force_path_on_ef(dir);
+    int res = sceIoMkdir(dir, mode);
 
-	pspSdkSetK1(k1);
-	logmsg3("[DEBUG]: %s: path=%s mode=%d -> 0x%08X\n", __func__, dir, res);
-	return res;
+    pspSdkSetK1(k1);
+    logmsg3("[DEBUG]: %s: path=%s mode=%d -> 0x%08X\n", __func__, dir, res);
+    return res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -561,89 +582,89 @@ int sceIoMkdirEfPatched(const char *dir, SceMode mode) {
 ////////////////////////////////////////////////////////////////////////////////
 
 void PatchScePopsMgr(void) {
-	SceModule *mod = sceKernelFindModuleByName("scePops_Manager");
-	u32 text_addr = mod->text_addr;
+    SceModule *mod = sceKernelFindModuleByName("scePops_Manager");
+    u32 text_addr = mod->text_addr;
 
-	// Use different mode for SceKermitPocs
-	VWRITE32(text_addr + 0x2030, 0x2405000E);
-	VWRITE32(text_addr + 0x20F0, 0x2405000E);
-	VWRITE32(text_addr + 0x21A0, 0x2405000E);
+    // Use different mode for SceKermitPocs
+    VWRITE32(text_addr + 0x2030, 0x2405000E);
+    VWRITE32(text_addr + 0x20F0, 0x2405000E);
+    VWRITE32(text_addr + 0x21A0, 0x2405000E);
 
-	// Use different pops register location
-	VWRITE32(text_addr + 0x11B4, 0x3C014BCD);
+    // Use different pops register location
+    VWRITE32(text_addr + 0x11B4, 0x3C014BCD);
 
-	// Patch key function. With this, KEYS.BIN or license files are not required anymore.
-	// Also this gives support to custom PSone games.
-	SetVersionKeyContentId = (void *)text_addr + 0x124; // Is this `sceNpDrmSetLicenseeKey`?
-	REDIRECT_FUNCTION(text_addr + 0x14FC, GetVersionKeyContentIdPatched);
+    // Patch key function. With this, KEYS.BIN or license files are not required anymore.
+    // Also this gives support to custom PSone games.
+    SetVersionKeyContentId = (void *)text_addr + 0x124; // Is this `sceNpDrmSetLicenseeKey`?
+    REDIRECT_FUNCTION(text_addr + 0x14FC, GetVersionKeyContentIdPatched);
 
-	// Patch permission issues with audio function
-	_sceMeAudio_2AB4FE43 = (void*)sctrlHENFindFunctionInMod(mod, "sceMeAudio", 0x2AB4FE43);
-	sctrlHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched);
+    // Patch permission issues with audio function
+    _sceMeAudio_2AB4FE43 = (void *)sctrlHENFindFunctionInMod(mod, "sceMeAudio", 0x2AB4FE43);
+    sctrlHookImportByNID(mod, "sceMeAudio", 0x2AB4FE43, sceMeAudio_2AB4FE43_Patched);
 
-	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xB29DDF9C, sceIoDopenPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xACE946E8, sceIoGetstatPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xB29DDF9C, sceIoDopenPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x6A638D83, sceIoReadPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xACE946E8, sceIoGetstatPatched);
 
-	if (!g_is_official) {
-		// Fake dnas drm
-		sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x63632449, sceIoIoctlPatched);
+    if (!g_is_official) {
+        // Fake dnas drm
+        sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x63632449, sceIoIoctlPatched);
 
-		// Dummying amctrl decryption functions
-		MAKE_DUMMY_FUNCTION(text_addr + 0xA90, 1);
-		MAKE_NOP(text_addr + 0x53C);
+        // Dummying amctrl decryption functions
+        MAKE_DUMMY_FUNCTION(text_addr + 0xA90, 1);
+        MAKE_NOP(text_addr + 0x53C);
 
-		// Removes checks in scePopsManLoadModule that only allows loading modules below FW 3.XX
-		MAKE_NOP(text_addr + 0x10D0);
-	}
+        // Removes checks in scePopsManLoadModule that only allows loading modules below FW 3.XX
+        MAKE_NOP(text_addr + 0x10D0);
+    }
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }
 
 void PatchPops(SceModule *mod) {
-	// Use different pops register location
-	for (u32 i = 0; i < mod->text_size; i += 4) {
-		if ((VREAD32(mod->text_addr+i) & 0xFFE0FFFF) == 0x3C0049FE) {
-			VWRITE16(mod->text_addr+i, 0x4BCD);
-		}
-	}
+    // Use different pops register location
+    for (u32 i = 0; i < mod->text_size; i += 4) {
+        if ((VREAD32(mod->text_addr + i) & 0xFFE0FFFF) == 0x3C0049FE) {
+            VWRITE16(mod->text_addr + i, 0x4BCD);
+        }
+    }
 
-	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xB29DDF9C, sceIoDopenPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xACE946E8, sceIoGetstatPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xB29DDF9C, sceIoDopenPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0x109F50BC, sceIoOpenPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForKernel", 0xACE946E8, sceIoGetstatPatched);
 
-	if (!g_is_official) {
-		// Patch syscall to use it as deflate decompress
-		_scePopsManExitVSHKernel = (void *)sctrlHENFindImportInMod(mod, "scePopsMan", 0x0090B2C8);
-		sctrlHookImportByNID(mod, "scePopsMan", 0x0090B2C8, scePopsManExitVSHKernelPatched);
+    if (!g_is_official) {
+        // Patch syscall to use it as deflate decompress
+        _scePopsManExitVSHKernel = (void *)sctrlHENFindImportInMod(mod, "scePopsMan", 0x0090B2C8);
+        sctrlHookImportByNID(mod, "scePopsMan", 0x0090B2C8, scePopsManExitVSHKernelPatched);
 
-		// Use our decompression function
-		MAKE_CALL(mod->text_addr + 0xC99C, _scePopsManExitVSHKernel);
+        // Use our decompression function
+        MAKE_CALL(mod->text_addr + 0xC99C, _scePopsManExitVSHKernel);
 
-		// Fix index length. This enables CDDA support
-		VWRITE32(mod->text_addr + 0x164E4, 0x10000014);
-	}
+        // Fix index length. This enables CDDA support
+        VWRITE32(mod->text_addr + 0x164E4, 0x10000014);
+    }
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }
 
 void PatchForceEf0Io(SceModule *mod) {
-	if (!g_is_ef) {
-		return;
-	}
+    if (!g_is_ef) {
+        return;
+    }
 
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xB29DDF9C, sceIoDopenEfPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, sceIoOpenEfPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, sceIoGetstatEfPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, sceIoRemoveEfPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x779103A0, sceIoRenameEfPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, sceIoRmdirEfPatched);
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x06A70004, sceIoMkdirEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xB29DDF9C, sceIoDopenEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x109F50BC, sceIoOpenEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xACE946E8, sceIoGetstatEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0xF27A9C51, sceIoRemoveEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x779103A0, sceIoRenameEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x1117C65F, sceIoRmdirEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x06A70004, sceIoMkdirEfPatched);
 
 #ifdef DEBUG
-	sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x6A638D83, sceIoReadEfPatched);
+    sctrlHookImportByNID(mod, "IoFileMgrForUser", 0x6A638D83, sceIoReadEfPatched);
 #endif
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }

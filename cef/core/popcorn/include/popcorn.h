@@ -1,26 +1,26 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef __POPCORN_H__
 #define __POPCORN_H__
 
-#include <psptypes.h>
 #include <psploadcore.h>
+#include <psptypes.h>
 
 #define KIRK7_HEADER_SIZE 0x14
 
@@ -29,7 +29,6 @@
 
 #define PGD_MAGIC 0x44475000
 #define LIBCRYPT_XOR_MAGIC 0x72D0EE59
-
 
 u32 searchLibCryptMagicWord(const char *disc_id);
 int initGlobals(void);

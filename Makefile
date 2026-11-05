@@ -18,3 +18,6 @@ cmake-debug:
 clean:
 	rm -rf build cef/build
 	make -C cef clean
+
+format:
+	@find cef usbdevice user kernel vsh -type f \( -name '*.c' -o -name '*.h' \) -exec clang-format -i {} +

@@ -1,118 +1,118 @@
 #include <string.h>
 
+#include <pspinit.h>
 #include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 #include <psputilsforkernel.h>
-#include <pspinit.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
 #include <systemctrl_se.h>
 
 #include "adrenaline.h"
-#include <systemctrl_adrenaline.h>
 #include "externs.h"
-
+#include <systemctrl_adrenaline.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
 
 static int exit_callback(int arg1, int arg2, void *common) {
-	sceKernelSuspendAllUserThreads();
+    sceKernelSuspendAllUserThreads();
 
-	g_adrenaline->pops_mode = 0;
-	sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
+    g_adrenaline->pops_mode = 0;
+    sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
 
-	static u32 vshmain_args[0x100];
-	memset(vshmain_args, 0, sizeof(vshmain_args));
+    static u32 vshmain_args[0x100];
+    memset(vshmain_args, 0, sizeof(vshmain_args));
 
-	vshmain_args[0] = sizeof(vshmain_args);
-	vshmain_args[1] = 0x20;
-	vshmain_args[16] = 1;
+    vshmain_args[0] = sizeof(vshmain_args);
+    vshmain_args[1] = 0x20;
+    vshmain_args[16] = 1;
 
-	SceKernelLoadExecVSHParam param;
+    SceKernelLoadExecVSHParam param;
 
-	memset(&param, 0, sizeof(param));
-	param.size = sizeof(param);
-	param.argp = NULL;
-	param.args = 0;
-	param.vshmain_args = vshmain_args;
-	param.vshmain_args_size = sizeof(vshmain_args);
-	param.key = "vsh";
+    memset(&param, 0, sizeof(param));
+    param.size = sizeof(param);
+    param.argp = NULL;
+    param.args = 0;
+    param.vshmain_args = vshmain_args;
+    param.vshmain_args_size = sizeof(vshmain_args);
+    param.key = "vsh";
 
-	sctrlKernelExitVSH(&param);
+    sctrlKernelExitVSH(&param);
 
-	return 0;
+    return 0;
 }
 
 static int CallbackThread(SceSize args, void *argp) {
-	SceUID cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
-	if (cbid < 0) {
-		return cbid;
-	}
+    SceUID cbid = sceKernelCreateCallback("Exit Callback", exit_callback, NULL);
+    if (cbid < 0) {
+        return cbid;
+    }
 
-	int (* sceKernelRegisterExitCallback)(SceUID cbid) = (void *)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x4AC57943);
-	sceKernelRegisterExitCallback(cbid);
+    int (*sceKernelRegisterExitCallback)(SceUID cbid) =
+        (void *)sctrlHENFindFunction("sceLoadExec", "LoadExecForUser", 0x4AC57943);
+    sceKernelRegisterExitCallback(cbid);
 
-	sceKernelSleepThreadCB();
+    sceKernelSleepThreadCB();
 
-	return 0;
+    return 0;
 }
 
 static SceUID SetupCallbacks(void) {
-	SceUID thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
-	if (thid >= 0) {
-		sceKernelStartThread(thid, 0, 0);
-	}
-	return thid;
+    SceUID thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, 0, 0);
+    if (thid >= 0) {
+        sceKernelStartThread(thid, 0, 0);
+    }
+    return thid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // PATCHED IMPLEMENTATIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-static int (* SetIdleCallback)(int flags);
+static int (*SetIdleCallback)(int flags);
 static int SetIdleCallbackPatched(int flags) {
-	// Only allow idle callback for music player sleep-timer
-	if (flags & 8) {
-		return SetIdleCallback(flags);
-	}
+    // Only allow idle callback for music player sleep-timer
+    if (flags & 8) {
+        return SetIdleCallback(flags);
+    }
 
-	return 0;
+    return 0;
 }
 
-static int sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, SceUInt *timeout) {
-	int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
+static int
+sceKernelWaitEventFlagPatched(int evid, u32 bits, u32 wait, u32 *outBits, SceUInt *timeout) {
+    int res = sceKernelWaitEventFlag(evid, bits, wait, outBits, timeout);
 
-	if (outBits && (*outBits & 0x1)) {
-		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
-	} else if (outBits && (*outBits & 0x2)) {
-		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
-	}
+    if (outBits && (*outBits & 0x1)) {
+        sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_PAUSE_POPS, 0);
+    } else if (outBits && (*outBits & 0x2)) {
+        sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
+    }
 
-	return res;
+    return res;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
 
-void PatchImposeDriver(SceModule* mod) {
-	u32 text_addr = mod->text_addr;
+void PatchImposeDriver(SceModule *mod) {
+    u32 text_addr = mod->text_addr;
 
-	// Hide volume bar
-	MAKE_NOP(text_addr + 0x4AEC);
+    // Hide volume bar
+    MAKE_NOP(text_addr + 0x4AEC);
 
-	HIJACK_FUNCTION(text_addr + 0x381C, SetIdleCallbackPatched, SetIdleCallback);
+    HIJACK_FUNCTION(text_addr + 0x381C, SetIdleCallbackPatched, SetIdleCallback);
 
-	if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
-		SetupCallbacks();
-		MAKE_DUMMY_FUNCTION(text_addr + 0x91C8, PSP_INIT_KEYCONFIG_GAME);
-	}
+    if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+        SetupCallbacks();
+        MAKE_DUMMY_FUNCTION(text_addr + 0x91C8, PSP_INIT_KEYCONFIG_GAME);
+    }
 
-	REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
+    REDIRECT_FUNCTION(text_addr + 0x92B0, sceKernelWaitEventFlagPatched);
 
-	sctrlFlushCache();
+    sctrlFlushCache();
 }

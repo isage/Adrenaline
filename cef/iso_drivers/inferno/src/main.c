@@ -17,12 +17,12 @@
 
 #include <string.h>
 
-#include <pspreg.h>
-#include <pspumd.h>
-#include <psprtc.h>
-#include <pspsysmem.h>
 #include <pspkernel.h>
+#include <pspreg.h>
+#include <psprtc.h>
 #include <pspsysevent.h>
+#include <pspsysmem.h>
+#include <pspumd.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
@@ -41,67 +41,68 @@ u32 psp_fw_version;
 int sceKernelSetQTGP3(void *data);
 
 u8 g_umddata[16] = {
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 };
 
 extern int power_event_handler(int ev_id, char *ev_name, void *param, int *result);
 
 PspSysEventHandler g_power_event = {
-	.size = sizeof(g_power_event),
-	.name = "infernoSysEvent",
-	.type_mask = 0x00FFFF00, // both suspend / resume
-	.handler = &power_event_handler,
+    .size = sizeof(g_power_event),
+    .name = "infernoSysEvent",
+    .type_mask = 0x00FFFF00, // both suspend / resume
+    .handler = &power_event_handler,
 };
 
 int setup_umd_device(void) {
-	isoSetUmdFile(sctrlSEGetUmdFile());
+    isoSetUmdFile(sctrlSEGetUmdFile());
 
-	infernoSetDiscType(sctrlSEGetDiscType());
+    infernoSetDiscType(sctrlSEGetDiscType());
 
-	int ret = sceIoAddDrv(&g_iodrv);
+    int ret = sceIoAddDrv(&g_iodrv);
 
-	if (ret < 0) {
-		return ret;
-	}
+    if (ret < 0) {
+        return ret;
+    }
 
-	sceKernelSetQTGP3(g_umddata);
-	ret = 0;
+    sceKernelSetQTGP3(g_umddata);
+    ret = 0;
 
-	return ret;
+    return ret;
 }
 
 int init_inferno(void) {
-	g_drive_status = PSP_UMD_INITING;
-	g_umd_cbid = -1;
-	g_umd_error_status = 0;
-	if (g_drive_status_evf < 0) g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
-	sceKernelRegisterSysEventHandler(&g_power_event);
+    g_drive_status = PSP_UMD_INITING;
+    g_umd_cbid = -1;
+    g_umd_error_status = 0;
+    if (g_drive_status_evf < 0) {
+        g_drive_status_evf = sceKernelCreateEventFlag("SceMediaManUser", 0x201, 0, NULL);
+    }
+    sceKernelRegisterSysEventHandler(&g_power_event);
 
-	return MIN(g_drive_status_evf, 0);
+    return MIN(g_drive_status_evf, 0);
 }
 
-int module_start(SceSize args, void* argp) {
-	logInit("ms0:/log_inferno.txt");
-	logmsg("Inferno driver started...\n")
+int module_start(SceSize args, void *argp) {
+    logInit("ms0:/log_inferno.txt");
+    logmsg("Inferno driver started...\n")
 
-	int ret = setup_umd_device();
+        int ret = setup_umd_device();
 
-	if (ret < 0) {
-		return ret;
-	}
+    if (ret < 0) {
+        return ret;
+    }
 
-	logmsg("[INFO]: Start UMDemu File: %s\n", g_iso_fn);
+    logmsg("[INFO]: Start UMDemu File: %s\n", g_iso_fn);
 
-	ret = init_inferno();
+    ret = init_inferno();
 
-	return MIN(ret, 0);
+    return MIN(ret, 0);
 }
 
 int module_stop(SceSize args, void *argp) {
-	sceIoDelDrv("umd");
-	sceKernelDeleteEventFlag(g_drive_status_evf);
-	sceKernelUnregisterSysEventHandler(&g_power_event);
+    sceIoDelDrv("umd");
+    sceKernelDeleteEventFlag(g_drive_status_evf);
+    sceKernelUnregisterSysEventHandler(&g_power_event);
 
-	return 0;
+    return 0;
 }

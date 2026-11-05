@@ -1,21 +1,21 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
-	Copyright (C) 2024-2025, isage
-	Copyright (C) 2025, GrayJack
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
+    Copyright (C) 2024-2025, isage
+    Copyright (C) 2025, GrayJack
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <string.h>
@@ -25,8 +25,8 @@
 #include <pspsysmem_kernel.h>
 
 #include <cfwmacros.h>
-#include <systemctrl_se.h>
 #include <systemctrl_epi.h>
+#include <systemctrl_se.h>
 
 #include <adrenaline_log.h>
 
@@ -34,133 +34,136 @@
 #include <systemctrl_epi.h>
 
 typedef struct LbaParams {
-	int unknown1; // 0
-	int cmd; // 4
-	int lba_top; // 8
-	int lba_size; // 12
-	int byte_size_total;  // 16
-	int byte_size_centre; // 20
-	int byte_size_start; // 24
-	int byte_size_last;  // 28
+    int unknown1; // 0
+    int cmd; // 4
+    int lba_top; // 8
+    int lba_size; // 12
+    int byte_size_total;  // 16
+    int byte_size_centre; // 20
+    int byte_size_start; // 24
+    int byte_size_last;  // 28
 } LbaParams;
 
 static SceGameInfo g_default_gameinfo = {
-	.title_id = "HOME0000\0\0\0\0\0\0\0\0",
+    .title_id = "HOME0000\0\0\0\0\0\0\0\0",
 };
 
 // 0 - Not able to get | 1 - Able to get
 int readTitleIdFromDisc() {
-	int disc_fd = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
+    int disc_fd = sceIoOpen("disc0:/UMD_DATA.BIN", PSP_O_RDONLY, 0777);
 
-	if (disc_fd < 0) {
-		return 0;
-	}
+    if (disc_fd < 0) {
+        return 0;
+    }
 
-	// Country code
-	sceIoRead(disc_fd, g_rebootex_config.title_id, 4);
-	// Delimiter skip
-	sceIoLseek(disc_fd, 1, PSP_SEEK_CUR);
-	// Title ID
-	sceIoRead(disc_fd, g_rebootex_config.title_id + 4, 5);
+    // Country code
+    sceIoRead(disc_fd, g_rebootex_config.title_id, 4);
+    // Delimiter skip
+    sceIoLseek(disc_fd, 1, PSP_SEEK_CUR);
+    // Title ID
+    sceIoRead(disc_fd, g_rebootex_config.title_id + 4, 5);
 
-	sceIoClose(disc_fd);
-	return 1;
+    sceIoClose(disc_fd);
+    return 1;
 }
 
 // 0 - Not able to get | 1 - Able to get
 int readTitleIdFromPBP() {
-	u32 size = sizeof(g_rebootex_config.title_id);
-	int res = sctrlGetInitPARAM("DISC_ID", NULL, &size, g_rebootex_config.title_id);
+    u32 size = sizeof(g_rebootex_config.title_id);
+    int res = sctrlGetInitPARAM("DISC_ID", NULL, &size, g_rebootex_config.title_id);
 
-	if (res < 0) {
-		return 0;
-	}
-	return 1;
+    if (res < 0) {
+        return 0;
+    }
+    return 1;
 }
 
 // 0 - Not able to get | 1 - Able to get
 int readTitleIdFromISO() {
-	int (*isoGetTitleId)(char title_id[10]) = NULL;
+    int (*isoGetTitleId)(char title_id[10]) = NULL;
 
-	char * iso_mod_name = "INVALID";
-	switch (g_rebootex_config.bootfileindex){
-		case MODE_INFERNO:
-			iso_mod_name = "EPI-InfernoDriver";
-			break;
-		case MODE_MARCH33:
-			iso_mod_name = "EPI-March33Driver";
-			break;
-		case MODE_ME:
-			iso_mod_name = "EPI-MEisoDriver";
-			break;
-		case MODE_NP9660:
-			iso_mod_name = "EPI-GalaxyController";
-			break;
-		default:
-			break;
-	}
+    char *iso_mod_name = "INVALID";
+    switch (g_rebootex_config.bootfileindex) {
+        case MODE_INFERNO:
+            iso_mod_name = "EPI-InfernoDriver";
+            break;
+        case MODE_MARCH33:
+            iso_mod_name = "EPI-March33Driver";
+            break;
+        case MODE_ME:
+            iso_mod_name = "EPI-MEisoDriver";
+            break;
+        case MODE_NP9660:
+            iso_mod_name = "EPI-GalaxyController";
+            break;
+        default:
+            break;
+    }
 
-	if (g_rebootex_config.bootfileindex != MODE_UMD) {
-		isoGetTitleId = (void *)sctrlHENFindFunction(iso_mod_name, "isoCtrl_driver", 0xD4FAB33F);
-	}
+    if (g_rebootex_config.bootfileindex != MODE_UMD) {
+        isoGetTitleId = (void *)sctrlHENFindFunction(iso_mod_name, "isoCtrl_driver", 0xD4FAB33F);
+    }
 
-	if (isoGetTitleId == NULL) {
-		logmsg4("%s: [DEBUG]: Not found `isoGetTitleId`\n", __func__);
-		return 0;
-	}
+    if (isoGetTitleId == NULL) {
+        logmsg4("%s: [DEBUG]: Not found `isoGetTitleId`\n", __func__);
+        return 0;
+    }
 
-	logmsg4("%s: [DEBUG]: Found `isoGetTitleId`\n", __func__);
+    logmsg4("%s: [DEBUG]: Found `isoGetTitleId`\n", __func__);
 
-	return isoGetTitleId(g_rebootex_config.title_id);
+    return isoGetTitleId(g_rebootex_config.title_id);
 }
 
 void findAndSetTitleId() {
-	int apitype = sceKernelInitApitype();
-	if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2 || apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2 || apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
-		return;
-	}
+    int apitype = sceKernelInitApitype();
+    if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2
+        || apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2
+        || apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
+        return;
+    }
 
-	if (g_rebootex_config.title_id[0] == '\0') {
-		int is_iso = g_rebootex_config.bootfileindex >= MODE_OE_LEGACY && g_rebootex_config.bootfileindex <= MODE_ME;
-		if (is_iso) {
-			readTitleIdFromISO();
-		} else {
-			readTitleIdFromPBP();
-		}
-	}
+    if (g_rebootex_config.title_id[0] == '\0') {
+        int is_iso = g_rebootex_config.bootfileindex >= MODE_OE_LEGACY
+                     && g_rebootex_config.bootfileindex <= MODE_ME;
+        if (is_iso) {
+            readTitleIdFromISO();
+        } else {
+            readTitleIdFromPBP();
+        }
+    }
 
-	SceGameInfo* gameinfo = sceKernelGetGameInfo();
-	// Get the info from SceGameInfo if the `title_id` field is set
-	if ((gameinfo->flags & 0x100) != 0) {
-		memcpy(g_rebootex_config.title_id, gameinfo->title_id, 9);
-	}
+    SceGameInfo *gameinfo = sceKernelGetGameInfo();
+    // Get the info from SceGameInfo if the `title_id` field is set
+    if ((gameinfo->flags & 0x100) != 0) {
+        memcpy(g_rebootex_config.title_id, gameinfo->title_id, 9);
+    }
 
-	if (g_rebootex_config.title_id[0] == '\0') {
-		memcpy(g_default_gameinfo.title_id, g_rebootex_config.title_id, 9);
-	}
+    if (g_rebootex_config.title_id[0] == '\0') {
+        memcpy(g_default_gameinfo.title_id, g_rebootex_config.title_id, 9);
+    }
 
-	if (g_rebootex_config.title_id[0] == '\0' && g_adrenaline != NULL) {
-		memcpy(g_adrenaline->titleid, g_rebootex_config.title_id, 9);
-	}
+    if (g_rebootex_config.title_id[0] == '\0' && g_adrenaline != NULL) {
+        memcpy(g_adrenaline->titleid, g_rebootex_config.title_id, 9);
+    }
 }
 
-SceGameInfo* sceKernelGetGameInfoPatched() {
-	SceGameInfo* gameinfo = sceKernelGetGameInfo();
+SceGameInfo *sceKernelGetGameInfoPatched() {
+    SceGameInfo *gameinfo = sceKernelGetGameInfo();
 
-	if (gameinfo == NULL) {
-		return &g_default_gameinfo;
-	}
+    if (gameinfo == NULL) {
+        return &g_default_gameinfo;
+    }
 
-	return gameinfo;
+    return gameinfo;
 }
 
-void PatchGameInfoGetter(SceModule* mod) {
-	// Kernel module
-	if((mod->text_addr & 0x80000000) != 0) {
-		u32 func = sctrlHENFindFunctionInMod(mod, "SysMemForKernel", 0xEF29061C);
+void PatchGameInfoGetter(SceModule *mod) {
+    // Kernel module
+    if ((mod->text_addr & 0x80000000) != 0) {
+        u32 func = sctrlHENFindFunctionInMod(mod, "SysMemForKernel", 0xEF29061C);
 
-		if (func != 0) {
-			REDIRECT_FUNCTION(func, sceKernelGetGameInfoPatched);
-		}
-	}
+        if (func != 0) {
+            REDIRECT_FUNCTION(func, sceKernelGetGameInfoPatched);
+        }
+    }
 }

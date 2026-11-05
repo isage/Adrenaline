@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <pspsdk.h>
-#include <pspumd.h>
 #include <pspkernel.h>
+#include <pspsdk.h>
 #include <pspthreadman_kernel.h>
+#include <pspumd.h>
 
 #include <isoctrl.h>
 #include <psperror.h>
@@ -14,15 +14,15 @@
 #include <adrenaline_log.h>
 
 // #include "systemctrl_me.h"
-#include "umd9660_driver.h"
 #include "../bits/iso_common.h"
+#include "umd9660_driver.h"
 
-void sceKernelSetQTGP3(void*);
+void sceKernelSetQTGP3(void *);
 void sceUmdSetDriveStatus(int status);
 
-SceUID g_umd_sema = -1;	//data2740
-static int g_umd_file_len = 0x7FFFFFFF;	//data23D4 (sector len)
-static u8 *g_sectorbuf = NULL;	//data2484
+SceUID g_umd_sema = -1; // data2740
+static int g_umd_file_len = 0x7FFFFFFF; // data23D4 (sector len)
+static u8 *g_sectorbuf = NULL; // data2484
 
 static u8 g_umd_seek = 0;
 static u8 g_umd_speed = 0;
@@ -31,653 +31,648 @@ static u32 g_cur_offset = 0;
 static u32 g_last_read_offset = 0;
 
 typedef struct {
-	int flag;
-	int offset;
-	u32 last_read_byte_pos;
+    int flag;
+    int offset;
+    u32 last_read_byte_pos;
 } IO_STATUS;
 
-static IO_STATUS g_io_status[8];//data2744
+static IO_STATUS g_io_status[8];// data2744
 //+0 index
 //+4 offset
 
 typedef struct {
-	const char *id;
-	int type;
+    const char *id;
+    int type;
 } UMD_ID_LIST;
 
 static UMD_ID_LIST g_disc_list[] = {
-	{ "ULES-00124", 1},
-	{ "ULUS-10019", 1},
-	{ "ULJM-05024", 1},
-	{ "ULAS-42009", 1},
-	{ "NPUG-80086", 2},//FlOw
+    {"ULES-00124", 1},
+    {"ULUS-10019", 1},
+    {"ULJM-05024", 1},
+    {"ULAS-42009", 1},
+    {"NPUG-80086", 2}, //  FlOw
 //	{ "ULJS-00430", 2},
-	{ "ULKS-46116", 3},
-	{ "ULKS-46189", 3},
-	{ "ULJM-06034", 3},
-	{ "ULKS-46190", 3},
-	{ "ULKS-46191", 3},
-	{ "ULKS-46240", 3},
-	{ "ULKS-46236", 3},
-	{ "ULUS-10538", 3},
-	{ "ULJM-05836", 3},
-
+    {"ULKS-46116", 3},
+    {"ULKS-46189", 3},
+    {"ULJM-06034", 3},
+    {"ULKS-46190", 3},
+    {"ULKS-46191", 3},
+    {"ULKS-46240", 3},
+    {"ULKS-46236", 3},
+    {"ULUS-10538", 3},
+    {"ULJM-05836", 3},
 };
 
 int g_game_group = 0;
 
 static u32 g_head_pos = 0;
 
-//sub_00000CB0:
-static int umd9660_init(PspIoDrvArg * arg) {
-	u8 *buff;
-	int i;
+// sub_00000CB0:
+static int umd9660_init(PspIoDrvArg *arg) {
+    u8 *buff;
+    int i;
 
-	buff = (u8 *)sctrlKernelMalloc(SECTOR_SIZE);
+    buff = (u8 *)sctrlKernelMalloc(SECTOR_SIZE);
 
-	if (buff == NULL) {
-		return -1;
-	}
+    if (buff == NULL) {
+        return -1;
+    }
 
-	g_sectorbuf = buff;
-	g_umd_sema = sceKernelCreateSema("EcsUmd9660DeviceFile", 0, 1, 1, NULL);
+    g_sectorbuf = buff;
+    g_umd_sema = sceKernelCreateSema("EcsUmd9660DeviceFile", 0, 1, 1, NULL);
 
-	if (g_umd_sema < 0) {
-		return g_umd_sema;
-	}
+    if (g_umd_sema < 0) {
+        return g_umd_sema;
+    }
 
-	while (!g_iso_opened) {
-		logmsg4("[INFO]: %s: Attempting to open iso.\n", __func__);
-		iso_open();
-		sceKernelDelayThread(20000);
-	}
+    while (!g_iso_opened) {
+        logmsg4("[INFO]: %s: Attempting to open iso.\n", __func__);
+        iso_open();
+        sceKernelDelayThread(20000);
+    }
 
-	memset(g_io_status , 0 , sizeof(IO_STATUS) * 8);
+    memset(g_io_status, 0, sizeof(IO_STATUS) * 8);
 
-	g_read_arg.offset = 0x10*SECTOR_SIZE;
-	g_read_arg.address = g_sectorbuf;
-	g_read_arg.size = SECTOR_SIZE;
+    g_read_arg.offset = 0x10 * SECTOR_SIZE;
+    g_read_arg.address = g_sectorbuf;
+    g_read_arg.size = SECTOR_SIZE;
 
-	iso_read(&g_read_arg);
+    iso_read(&g_read_arg);
 
-	buff = g_sectorbuf + 883;
+    buff = g_sectorbuf + 883;
 
-	for (i = 0; i < (sizeof(g_disc_list)/sizeof(UMD_ID_LIST)); i++) {
-		if (memcmp( buff , g_disc_list[i].id , 10) == 0) {
-			g_game_group = g_disc_list[i].type;
-			break;
-		}
-	}
+    for (i = 0; i < (sizeof(g_disc_list) / sizeof(UMD_ID_LIST)); i++) {
+        if (memcmp(buff, g_disc_list[i].id, 10) == 0) {
+            g_game_group = g_disc_list[i].type;
+            break;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
+static int umd9660_exit(PspIoDrvArg *arg) {
+    SceUInt sp = 0x7A120;
 
-static int umd9660_exit(PspIoDrvArg* arg) {
-	SceUInt sp = 0x7A120;
+    sceKernelWaitSema(g_umd_sema /*data2740*/, 1, &sp);
 
-	sceKernelWaitSema(g_umd_sema /*data2740*/ , 1, &sp);
+    if (g_sectorbuf) {
+        sctrlKernelFree(g_sectorbuf);
+        g_sectorbuf = NULL;
+    }
 
-	if (g_sectorbuf) {
-		sctrlKernelFree(g_sectorbuf);
-		g_sectorbuf = NULL;
-	}
+    if (g_umd_sema >= 0) {
+        sceKernelDeleteSema(g_umd_sema);
+        g_umd_sema = -1;
+    }
 
-	if (g_umd_sema >= 0) {
-		sceKernelDeleteSema(g_umd_sema);
-		g_umd_sema = -1;
-	}
-
-	return 0;
+    return 0;
 }
 
-//sub_00000A78:
+// sub_00000A78:
 static int umd9660_open(PspIoDrvFileArg *arg, char *file, int flags, SceMode mode) {
-	int i = 0;
+    int i = 0;
 
-	for (i = 0; i < 16; i++) {
-		if (sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET) < 0) {
-			iso_open();
-		} else {
-			if (sceKernelWaitSema(g_umd_sema, 1, NULL) < 0) {
-				return -1;
-			}
+    for (i = 0; i < 16; i++) {
+        if (sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET) < 0) {
+            iso_open();
+        } else {
+            if (sceKernelWaitSema(g_umd_sema, 1, NULL) < 0) {
+                return -1;
+            }
 
-			for (i = 0; i < 8; i++) {
-				if (!(g_io_status[i].flag)) {
-					arg->arg = (void *)i;
-					g_io_status[i].flag = 1;
-					g_io_status[i].offset = 0;
-					g_io_status[i].last_read_byte_pos = g_head_pos;
+            for (i = 0; i < 8; i++) {
+                if (!(g_io_status[i].flag)) {
+                    arg->arg = (void *)i;
+                    g_io_status[i].flag = 1;
+                    g_io_status[i].offset = 0;
+                    g_io_status[i].last_read_byte_pos = g_head_pos;
 
-					if (sceKernelSignalSema( g_umd_sema,1) < 0) {
-						return -1;
-					}
+                    if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+                        return -1;
+                    }
 
-					return 0;
-				}
-			}
-		}
-	}
+                    return 0;
+                }
+            }
+        }
+    }
 
-	return SCE_ENODEV;
+    return SCE_ENODEV;
 }
 
 static int _isoReadUmdFileInner(u32 offset, void *ptr, u32 data_len) {
-	g_read_arg.offset = offset;
-	g_read_arg.address = ptr;
-	g_read_arg.size = data_len;
+    g_read_arg.offset = offset;
+    g_read_arg.address = ptr;
+    g_read_arg.size = data_len;
 
-	int ret =  sceKernelExtendKernelStack(
-        0x2000,
-        (void*)iso_read,
-        &g_read_arg
-    );
+    int ret = sceKernelExtendKernelStack(0x2000, (void *)iso_read, &g_read_arg);
 
-	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		// simulate seek time
-		u32 diff = 0;
-		g_last_read_offset = offset+data_len;
-		if (g_cur_offset > g_last_read_offset) {
-			diff = g_cur_offset - g_last_read_offset;
-		} else {
-			diff = g_last_read_offset - g_cur_offset;
-		}
-		g_cur_offset = g_last_read_offset;
-		u32 seek_time = (diff * g_umd_seek)/1024;
-		sceKernelDelayThread(seek_time);
-	}
-	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		// simulate read time
-		sceKernelDelayThread(data_len * g_umd_speed);
-	}
+    if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+        // simulate seek time
+        u32 diff = 0;
+        g_last_read_offset = offset + data_len;
+        if (g_cur_offset > g_last_read_offset) {
+            diff = g_cur_offset - g_last_read_offset;
+        } else {
+            diff = g_last_read_offset - g_cur_offset;
+        }
+        g_cur_offset = g_last_read_offset;
+        u32 seek_time = (diff * g_umd_seek) / 1024;
+        sceKernelDelayThread(seek_time);
+    }
+    if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+        // simulate read time
+        sceKernelDelayThread(data_len * g_umd_speed);
+    }
 
-	return ret;
+    return ret;
 }
 
-//sub_00000740:
+// sub_00000740:
 static int umd9660_read(PspIoDrvFileArg *arg, char *data, int sector) {
-	if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
-		return -1;
-	}
+    if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
+        return -1;
+    }
 
-	int i = sector;
-	int offset = g_io_status[(int)(arg->arg)].offset;
+    int i = sector;
+    int offset = g_io_status[(int)(arg->arg)].offset;
 
-	//len >= pos + a2
-	if (g_umd_file_len < offset + sector ) {
-		i = g_umd_file_len - offset; //len - pos
-	}
+    // len >= pos + a2
+    if (g_umd_file_len < offset + sector) {
+        i = g_umd_file_len - offset; // len - pos
+    }
 
-	// per-fd seek delay
-	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
-		u32 read_byte_pos = offset * ISO_SECTOR_SIZE;
-		u32 last = g_io_status[i].last_read_byte_pos;
-		u32 diff = 0;
-		if (last > read_byte_pos) {
-			diff = last - read_byte_pos;
-		} else {
-			diff = read_byte_pos - last;
-		}
-		sceKernelDelayThread((diff * g_umd_seek) / 1024);
-	}
+    // per-fd seek delay
+    if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+        u32 read_byte_pos = offset * ISO_SECTOR_SIZE;
+        u32 last = g_io_status[i].last_read_byte_pos;
+        u32 diff = 0;
+        if (last > read_byte_pos) {
+            diff = last - read_byte_pos;
+        } else {
+            diff = read_byte_pos - last;
+        }
+        sceKernelDelayThread((diff * g_umd_seek) / 1024);
+    }
 
-	// per-fd speed delay
-	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
-		sceKernelDelayThread(i * ISO_SECTOR_SIZE * g_umd_speed);
-	}
+    // per-fd speed delay
+    if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+        sceKernelDelayThread(i * ISO_SECTOR_SIZE * g_umd_speed);
+    }
 
-	int ret = _isoReadUmdFileInner( offset << 11 , data , i << 11);//loc_000003E0
+    int ret = _isoReadUmdFileInner(offset << 11, data, i << 11);// loc_000003E0
 
-	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
-		return -1;
-	}
+    if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+        return -1;
+    }
 
-	if (ret < 0) {
-		return -1;
-	}
+    if (ret < 0) {
+        return -1;
+    }
 
-	if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
-		return -1;
-	}
+    if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
+        return -1;
+    }
 
-	int ret_sector = ret >> 11;
-	g_io_status[(int)(arg->arg)].offset += ret_sector;
-	g_head_pos = (offset + ret_sector) * ISO_SECTOR_SIZE;
-	g_io_status[(int)(arg->arg)].last_read_byte_pos = g_head_pos;
+    int ret_sector = ret >> 11;
+    g_io_status[(int)(arg->arg)].offset += ret_sector;
+    g_head_pos = (offset + ret_sector) * ISO_SECTOR_SIZE;
+    g_io_status[(int)(arg->arg)].last_read_byte_pos = g_head_pos;
 
-	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
-		return -1;
-	}
+    if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+        return -1;
+    }
 
-	return ret_sector;
+    return ret_sector;
 }
 
-
-//sub_00000250:
+// sub_00000250:
 static int umd9660_close(PspIoDrvFileArg *arg) {
-	if (sceKernelWaitSema( g_umd_sema ,1,NULL) < 0) {
-		return -1;
-	}
+    if (sceKernelWaitSema(g_umd_sema, 1, NULL) < 0) {
+        return -1;
+    }
 
-	int ret = 0;
+    int ret = 0;
 
-	if ( g_io_status[(int)(arg->arg)].flag) {
-		g_io_status[(int)(arg->arg)].flag = 0;
-	} else {
-		ret = SCE_EINVAL;
-	}
+    if (g_io_status[(int)(arg->arg)].flag) {
+        g_io_status[(int)(arg->arg)].flag = 0;
+    } else {
+        ret = SCE_EINVAL;
+    }
 
-	if (sceKernelSignalSema( g_umd_sema ,1) < 0) {
-		return -1;
-	}
+    if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+        return -1;
+    }
 
-	return ret;
+    return ret;
 }
 
-//sub_000000D8:
-static SceOff umd9660_lseek(PspIoDrvFileArg *arg ,SceOff offset,int whence) {
-	if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
-		return -1;
-	}
+// sub_000000D8:
+static SceOff umd9660_lseek(PspIoDrvFileArg *arg, SceOff offset, int whence) {
+    if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
+        return -1;
+    }
 
-	u32 umd_cur_offset = g_io_status[(int)(arg->arg)].offset;
+    u32 umd_cur_offset = g_io_status[(int)(arg->arg)].offset;
 
-	if (whence == PSP_SEEK_SET) {
-		umd_cur_offset	= offset;//dataB0EC
-	} else if (whence == PSP_SEEK_CUR) {
-		umd_cur_offset += offset;
-	} else if (whence == PSP_SEEK_END) {
-		umd_cur_offset = g_umd_file_len - offset;//dataA6E0 - offset
-	} else {
-		if (sceKernelSignalSema(g_umd_sema, 1)<0) {
-			return -1;
-		}
+    if (whence == PSP_SEEK_SET) {
+        umd_cur_offset = offset;// dataB0EC
+    } else if (whence == PSP_SEEK_CUR) {
+        umd_cur_offset += offset;
+    } else if (whence == PSP_SEEK_END) {
+        umd_cur_offset = g_umd_file_len - offset;// dataA6E0 - offset
+    } else {
+        if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+            return -1;
+        }
 
-		return SCE_EINVAL;
-	}
+        return SCE_EINVAL;
+    }
 
+    umd_cur_offset = (umd_cur_offset < g_umd_file_len) ? umd_cur_offset : g_umd_file_len;
 
-	umd_cur_offset = (umd_cur_offset < g_umd_file_len) ? umd_cur_offset : g_umd_file_len;
+    g_io_status[(int)(arg->arg)].offset = umd_cur_offset;
 
-	g_io_status[(int)(arg->arg)].offset = umd_cur_offset;
+    if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+        return -1;
+    }
 
-	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
-		return -1;
-	}
+    if (umd_cur_offset >= 0 && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+        g_cur_offset = umd_cur_offset;
+    }
 
-	if (umd_cur_offset >= 0 && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		g_cur_offset = umd_cur_offset;
-	}
-
-	return umd_cur_offset;
+    return umd_cur_offset;
 }
 
-static int ProcessDevctlRead(PspIoDrvFileArg *arg, void *outdata , int outlen , void *indata ) {
-	u32 *date_buff = (u32 *)indata;
+static int ProcessDevctlRead(PspIoDrvFileArg *arg, void *outdata, int outlen, void *indata) {
+    u32 *date_buff = (u32 *)indata;
 
-	int offset = date_buff[8/4] << 11;
-	int size = date_buff[16/4];
+    int offset = date_buff[8 / 4] << 11;
+    int size = date_buff[16 / 4];
 
-	if ( outlen >= size ) {
-		if (date_buff[24/4]) {
-			if (date_buff[20/4]) {
-				offset += 0x800 - date_buff[24/4];
-			} else {
-				if (date_buff[28/4]) {
-					offset += 0x800 - date_buff[24/4];
-				} else {
-					offset += date_buff[24/4];
-				}
-			}
-		}
+    if (outlen >= size) {
+        if (date_buff[24 / 4]) {
+            if (date_buff[20 / 4]) {
+                offset += 0x800 - date_buff[24 / 4];
+            } else {
+                if (date_buff[28 / 4]) {
+                    offset += 0x800 - date_buff[24 / 4];
+                } else {
+                    offset += date_buff[24 / 4];
+                }
+            }
+        }
 
-		int ret = sceKernelWaitSema(g_umd_sema, 1, 0);
-		if (ret < 0) {
-			return -1;
-		}
+        int ret = sceKernelWaitSema(g_umd_sema, 1, 0);
+        if (ret < 0) {
+            return -1;
+        }
 
-		int idx = arg != NULL ? (int)arg->arg : -1;
-		u32 last_read_byte_pos = g_head_pos;
+        int idx = arg != NULL ? (int)arg->arg : -1;
+        u32 last_read_byte_pos = g_head_pos;
 
-		if (idx >= 0 && idx < MAX_FILES_NR) {
-			last_read_byte_pos = g_io_status[idx].last_read_byte_pos;
-		}
+        if (idx >= 0 && idx < MAX_FILES_NR) {
+            last_read_byte_pos = g_io_status[idx].last_read_byte_pos;
+        }
 
-		if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
-			u32 diff;
-			if (last_read_byte_pos > offset) {
-				diff = last_read_byte_pos - offset;
-			} else {
-				diff = offset - last_read_byte_pos;
-			}
-			sceKernelDelayThread(
-				(diff * g_umd_seek) / 1024
-			);
-		}
+        if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+            u32 diff;
+            if (last_read_byte_pos > offset) {
+                diff = last_read_byte_pos - offset;
+            } else {
+                diff = offset - last_read_byte_pos;
+            }
+            sceKernelDelayThread((diff * g_umd_seek) / 1024);
+        }
 
-		if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
-			sceKernelDelayThread(size * g_umd_speed);
-		}
+        if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+            sceKernelDelayThread(size * g_umd_speed);
+        }
 
-		ret = _isoReadUmdFileInner(offset, outdata, size);
+        ret = _isoReadUmdFileInner(offset, outdata, size);
 
-		if (ret > 0 && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
-			u32 new_position = offset + ret;
+        if (ret > 0 && g_umd_delay_strat == UMD_DELAY_STRAT_PER_FD) {
+            u32 new_position = offset + ret;
 
-			g_head_pos = new_position;
+            g_head_pos = new_position;
 
-			/*
-			* Do not change the descriptor's logical offset.
-			* Only update its simulated physical read position.
-			*/
-			if (idx >= 0 && idx < MAX_FILES_NR) {
-				g_io_status[idx].last_read_byte_pos = new_position;
-			}
-		}
+            /*
+             * Do not change the descriptor's logical offset.
+             * Only update its simulated physical read position.
+             */
+            if (idx >= 0 && idx < MAX_FILES_NR) {
+                g_io_status[idx].last_read_byte_pos = new_position;
+            }
+        }
 
-		if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
-			return -1;
-		}
+        if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+            return -1;
+        }
 
-		return ret;//loc_000003E0
-	}
+        return ret;// loc_000003E0
+    }
 
-	return SCE_ENOBUFS;
+    return SCE_ENOBUFS;
 }
 
-//loc_000004F4:
-static int umd9660_devctl(PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
-	switch(cmd) {
-	case 0x01F00003:
-		return 0;
-		break;
-	case 0x01E28035:
-		((u32 *)outdata)[0] = (u32)g_sectorbuf;//data2484
-		return 0;
-		break;
-		/*
-	case 0x01E18030:
-		return 1;
-		break;
-*/
-		//add
-/*	case 0x01E18033:
-	case 0x01E180C1:
-	case 0x01E180D0:
-	case 0x01E080D4:
-	case 0x01E000D5:
-*/
-	case 0x01E180D3:
-	case 0x01E080A8:
-		return SCE_ENOSYS;
-		break;
+// loc_000004F4:
+static int umd9660_devctl(
+    PspIoDrvFileArg *arg, const char *devname, unsigned int cmd, void *indata, int inlen,
+    void *outdata, int outlen
+) {
+    switch (cmd) {
+        case 0x01F00003:
+            return 0;
+            break;
+        case 0x01E28035:
+            ((u32 *)outdata)[0] = (u32)g_sectorbuf;// data2484
+            return 0;
+            break;
+            /*
+        case 0x01E18030:
+            return 1;
+            break;
+    */
+            // add
+            /*	case 0x01E18033:
+                        case 0x01E180C1:
+                        case 0x01E180D0:
+                        case 0x01E080D4:
+                        case 0x01E000D5:
+                    */
+        case 0x01E180D3:
+        case 0x01E080A8:
+            return SCE_ENOSYS;
+            break;
 
-	case 0x01E38012:
-		if ( outlen < 0) {
-			outlen += 3;
-		}
+        case 0x01E38012:
+            if (outlen < 0) {
+                outlen += 3;
+            }
 
-		memset( outdata , 0 , outlen);
-		((u32 *)outdata)[0]= 0xE0000800;
-		((int *)outdata)[8/4]= 0;
-		((int *)outdata)[28/4]= g_umd_file_len;//data23D4
-		((int *)outdata)[36/4]= g_umd_file_len;//data23D4
-		return 0;
-		break;
+            memset(outdata, 0, outlen);
+            ((u32 *)outdata)[0] = 0xE0000800;
+            ((int *)outdata)[8 / 4] = 0;
+            ((int *)outdata)[28 / 4] = g_umd_file_len;// data23D4
+            ((int *)outdata)[36 / 4] = g_umd_file_len;// data23D4
+            return 0;
+            break;
 
-	case 0x01E280A9:
-		((int *)outdata)[0]= 0x800;
-		return 0;
-		break;
-	case 0x01E38034:
-		if (indata && outdata) {
-			((int *)outdata)[0]= 0;
-			return 0;
-		}
-		return SCE_EINVAL;
-		break;
-	case 0x01E380C0:
-		if (indata && outdata) {
-			return ProcessDevctlRead(arg, outdata , outlen , indata );
-		}
-		return SCE_EINVAL;
-		break;
-	case 0x01F20001:
-		((int *)outdata)[0]= -1;
-		((int *)outdata)[1]= 16;
-		return 0;
-		break;
+        case 0x01E280A9:
+            ((int *)outdata)[0] = 0x800;
+            return 0;
+            break;
+        case 0x01E38034:
+            if (indata && outdata) {
+                ((int *)outdata)[0] = 0;
+                return 0;
+            }
+            return SCE_EINVAL;
+            break;
+        case 0x01E380C0:
+            if (indata && outdata) {
+                return ProcessDevctlRead(arg, outdata, outlen, indata);
+            }
+            return SCE_EINVAL;
+            break;
+        case 0x01F20001:
+            ((int *)outdata)[0] = -1;
+            ((int *)outdata)[1] = 16;
+            return 0;
+            break;
 
-	case 0x01F010DB:
-		return 0;
-		break;
+        case 0x01F010DB:
+            return 0;
+            break;
 
-		//add
-	case 0x01F100A6:
-	case 0x01F100A8:
-		if ( indata && (inlen >= 4)) {
-			return 0;
-		}
-		return SCE_EINVAL;
+            // add
+        case 0x01F100A6:
+        case 0x01F100A8:
+            if (indata && (inlen >= 4)) {
+                return 0;
+            }
+            return SCE_EINVAL;
 
-		break;
-	case 0x01F100A5:
-	case 0x01F100A4:
-	case 0x01F100A3:
-		return 0;
-		break;
+            break;
+        case 0x01F100A5:
+        case 0x01F100A4:
+        case 0x01F100A3:
+            return 0;
+            break;
 
-	case 0x01F20002:
-	case 0x01F20003:
-		if ( outdata && (outlen >=4) ) {
-			((int *)outdata)[0] = g_umd_file_len;//data23D4
-			return 0;
-		}
-		return SCE_EINVAL;
+        case 0x01F20002:
+        case 0x01F20003:
+            if (outdata && (outlen >= 4)) {
+                ((int *)outdata)[0] = g_umd_file_len;// data23D4
+                return 0;
+            }
+            return SCE_EINVAL;
 
-		break;
-		//add
-	case 0x01F300A5:
-		if ( indata && (inlen >= 16)) {
-			if ( outdata && (outlen >=4) ) {
-				return 0;
-			}
-		}
-		return SCE_EINVAL;
-		break;
+            break;
+            // add
+        case 0x01F300A5:
+            if (indata && (inlen >= 16)) {
+                if (outdata && (outlen >= 4)) {
+                    return 0;
+                }
+            }
+            return SCE_EINVAL;
+            break;
 
-	case 0x00208811:
-	case 0x00208810:
-		return 0;
-/*
-	case :
-		break;
-		*/
-	}
+        case 0x00208811:
+        case 0x00208810:
+            return 0;
+            /*
+                case :
+                    break;
+                    */
+    }
 
-	logmsg4("[DEBUG]: %s: unknown devctl 0x%08X\n", __func__ ,cmd);
-	return SCE_ENOSYS;
+    logmsg4("[DEBUG]: %s: unknown devctl 0x%08X\n", __func__, cmd);
+    return SCE_ENOSYS;
 }
 
-//sub_0000083C:
-static int umd9660_ioctl(PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen) {
+// sub_0000083C:
+static int umd9660_ioctl(
+    PspIoDrvFileArg *arg, unsigned int cmd, void *indata, int inlen, void *outdata, int outlen
+) {
 
-	switch( cmd ) {
-		case 0x01F010DB:
-			return 0;
-			break;
+    switch (cmd) {
+        case 0x01F010DB:
+            return 0;
+            break;
 
-		case 0x01D20001:
-			if (sceKernelWaitSema( g_umd_sema, 1, NULL) < 0) {
-				return -1;
-			}
+        case 0x01D20001:
+            if (sceKernelWaitSema(g_umd_sema, 1, NULL) < 0) {
+                return -1;
+            }
 
-			((int *)outdata)[0] = g_io_status[(int)(arg->arg)].offset;
+            ((int *)outdata)[0] = g_io_status[(int)(arg->arg)].offset;
 
-			if (sceKernelSignalSema( g_umd_sema ,1) < 0) {
-				return -1;
-			}
+            if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+                return -1;
+            }
 
-			return 0;
-			break;
-		case 0x01F100A6:
-			if (indata && (inlen >= 4)) {
-				SceOff res = umd9660_lseek( arg , ((SceOff *)indata)[0] , ((int *)indata)[3] );
+            return 0;
+            break;
+        case 0x01F100A6:
+            if (indata && (inlen >= 4)) {
+                SceOff res = umd9660_lseek(arg, ((SceOff *)indata)[0], ((int *)indata)[3]);
 
-				if (res >= 0) {
-					res = 0;
-				}
+                if (res >= 0) {
+                    res = 0;
+                }
 
-				return (int)res;//sub_000000D8
-			}
-			return SCE_EINVAL;
-			break;
+                return (int)res;// sub_000000D8
+            }
+            return SCE_EINVAL;
+            break;
 
-		case 0x01F30003:
-			if (indata && (inlen >= 4) && outdata) {
-				int size = *((int *)indata);
-				if (size <= outlen ) {
-					int res = umd9660_read( arg , outdata, size );//sub_00000740
+        case 0x01F30003:
+            if (indata && (inlen >= 4) && outdata) {
+                int size = *((int *)indata);
+                if (size <= outlen) {
+                    int res = umd9660_read(arg, outdata, size);// sub_00000740
 
-					if (g_game_group == 3) {
-						sceKernelDelayThread(55000);
-					}
+                    if (g_game_group == 3) {
+                        sceKernelDelayThread(55000);
+                    }
 
-					return res;
-				}
-			}
-			return SCE_EINVAL;
-			break;
+                    return res;
+                }
+            }
+            return SCE_EINVAL;
+            break;
 
-		case 0x00208082:
+        case 0x00208082:
 
-		case 0x00208011:
-		case 0x00208010:
+        case 0x00208011:
+        case 0x00208010:
 
-		case 0x00208001:
-		case 0x0020800C:
-		case 0x00208006:
-			return 0;
-			break;
-	}
+        case 0x00208001:
+        case 0x0020800C:
+        case 0x00208006:
+            return 0;
+            break;
+    }
 
-	logmsg4("[INFO]: %s: Unknown ioctl 0x%08X\n", __func__,cmd);
-	return SCE_ENOSYS;
+    logmsg4("[INFO]: %s: Unknown ioctl 0x%08X\n", __func__, cmd);
+    return SCE_ENOSYS;
 }
 
-//loc_000003E0
+// loc_000003E0
 int isoReadUmdFile(u32 offset, void *buf, u32 outsize) {
-	if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
-		return -1;
-	}
+    if (sceKernelWaitSema(g_umd_sema, 1, 0) < 0) {
+        return -1;
+    }
 
-	int ret = _isoReadUmdFileInner(offset, buf, outsize);
+    int ret = _isoReadUmdFileInner(offset, buf, outsize);
 
-	if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
-		return -1;
-	}
+    if (sceKernelSignalSema(g_umd_sema, 1) < 0) {
+        return -1;
+    }
 
-	return ret;
+    return ret;
 }
 
 void isoSetUmdDelay(int seek, int speed, int strategy) {
-	g_umd_seek = seek;
-	g_umd_speed = speed;
-	g_umd_delay_strat = strategy;
+    g_umd_seek = seek;
+    g_umd_speed = speed;
+    g_umd_delay_strat = strategy;
 }
 
 int isoReopenUmdFile(void) {
-	int res = iso_open();
-	sceKernelDelayThread(20000);
-	return res;
+    int res = iso_open();
+    sceKernelDelayThread(20000);
+    return res;
 }
 
 int isoSwapUmdFile(const char *new_file_path, char *previous, SceSize previous_size) {
-	char old_path[MAX_ISO_PATH_SIZE] = {0};
-	memcpy(old_path, g_iso_fn, MAX_ISO_PATH_SIZE);
-	sceUmdSetDriveStatus(PSP_UMD_NOT_PRESENT | PSP_UMD_CHANGED);
-	sceKernelDelayThread(100000);
+    char old_path[MAX_ISO_PATH_SIZE] = {0};
+    memcpy(old_path, g_iso_fn, MAX_ISO_PATH_SIZE);
+    sceUmdSetDriveStatus(PSP_UMD_NOT_PRESENT | PSP_UMD_CHANGED);
+    sceKernelDelayThread(100000);
 
-	isoSetUmdFile(new_file_path);
+    isoSetUmdFile(new_file_path);
 
-	int res = iso_open();
-	sceKernelDelayThread(20000);
+    int res = iso_open();
+    sceKernelDelayThread(20000);
 
-	if (res < 0) {
-		// reset and reopen previous filepath
-		isoSetUmdFile(old_path);
-		iso_open();
-		sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
-		sceKernelDelayThread(20000);
-		sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY);
-		logmsg("[ERROR]: %s: Failed to swap UMD file: %s: 0x%08X\n", __func__, new_file_path, res);
+    if (res < 0) {
+        // reset and reopen previous filepath
+        isoSetUmdFile(old_path);
+        iso_open();
+        sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
+        sceKernelDelayThread(20000);
+        sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY);
+        logmsg("[ERROR]: %s: Failed to swap UMD file: %s: 0x%08X\n", __func__, new_file_path, res);
 
-		return res;
-	}
-	logmsg("[INFO]: %s: UMD file swapped from `%s` to `%s`\n", __func__, old_path, new_file_path);
+        return res;
+    }
+    logmsg("[INFO]: %s: UMD file swapped from `%s` to `%s`\n", __func__, old_path, new_file_path);
 
-	sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
-	sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_CHANGED);
+    sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
+    sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_CHANGED);
 
-	sceKernelDelayThread(20000);
+    sceKernelDelayThread(20000);
     sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY | PSP_UMD_CHANGED);
 
-	// Copy if possible
-	if (previous != NULL && previous_size >= MAX_ISO_PATH_SIZE) {
-		memcpy(previous, old_path, MAX_ISO_PATH_SIZE);
-	}
+    // Copy if possible
+    if (previous != NULL && previous_size >= MAX_ISO_PATH_SIZE) {
+        memcpy(previous, old_path, MAX_ISO_PATH_SIZE);
+    }
 
-	return 0;
+    return 0;
 }
 
 PspIoDrvFuncs umd9660_funcs = {
-	umd9660_init,//cB0
-	umd9660_exit,//2e8
-	umd9660_open,//a78
-	umd9660_close,//250
-	umd9660_read,//740
-	NULL, /* no write */
-	umd9660_lseek,//d8
-	umd9660_ioctl,//83c
-	NULL, /* no remove */
-	NULL, /* no mkdir */
-	NULL, /* no rmdir */
-	NULL,//umd9660_dopen
-	NULL,//umd9660_dclose
-	NULL,//umd9660_dread
-	NULL,//umd9660_getstat
-	NULL, /* no chstat */
-	NULL, /* no rename */
-	NULL,//umd9660_chdir
-	NULL,//umd9660_mount
-	NULL,//umd9660_umount
-	umd9660_devctl,//4f4
-	NULL
+    umd9660_init,// cB0
+    umd9660_exit,// 2e8
+    umd9660_open,// a78
+    umd9660_close,// 250
+    umd9660_read,// 740
+    NULL, /* no write */
+    umd9660_lseek,// d8
+    umd9660_ioctl,// 83c
+    NULL, /* no remove */
+    NULL, /* no mkdir */
+    NULL, /* no rmdir */
+    NULL,// umd9660_dopen
+    NULL,// umd9660_dclose
+    NULL,// umd9660_dread
+    NULL,// umd9660_getstat
+    NULL, /* no chstat */
+    NULL, /* no rename */
+    NULL,// umd9660_chdir
+    NULL,// umd9660_mount
+    NULL,// umd9660_umount
+    umd9660_devctl,// 4f4
+    NULL
 };
 
-PspIoDrv umd9660_driver = { "umd" , 0x4, 0x800, "UMD9660"/*2240*/, &umd9660_funcs/*23EC*/ };//data2444
+PspIoDrv umd9660_driver =
+    {"umd", 0x4, 0x800, "UMD9660" /*2240*/, &umd9660_funcs /*23EC*/};// data2444
 
-int data2248[4] = { -1 , -1 , -1 , -1};
+int data2248[4] = {-1, -1, -1, -1};
 
-
-//sub_00000090
+// sub_00000090
 int march_init() {
-	// Get ISO path
-	isoSetUmdFile(sctrlSEGetUmdFile());
-	logmsg("[INFO]: Start UMDemu File: %s\n", g_iso_fn);
+    // Get ISO path
+    isoSetUmdFile(sctrlSEGetUmdFile());
+    logmsg("[INFO]: Start UMDemu File: %s\n", g_iso_fn);
 
-	int r = sceIoAddDrv( &umd9660_driver );
-	if (r < 0) {
-		return r;
-	}
+    int r = sceIoAddDrv(&umd9660_driver);
+    if (r < 0) {
+        return r;
+    }
 
-	sceKernelSetQTGP3(data2248);
-	return 0;
+    sceKernelSetQTGP3(data2248);
+    return 0;
 }
 
 int march_test() {
-	sceIoDelDrv("umd");
-	march_init();
-	return 0;
+    sceIoDelDrv("umd");
+    march_init();
+    return 0;
 }

@@ -1,33 +1,33 @@
 /*
-	Adrenaline
-	Copyright (C) 2025, GrayJack
-	Copyright (C) 2021, ARK CFW
+    Adrenaline
+    Copyright (C) 2025, GrayJack
+    Copyright (C) 2021, ARK CFW
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <string.h>
 
-#include <pspinit.h>
-#include <pspsysmem.h>
-#include <pspmodulemgr.h>
-#include <pspiofilemgr.h>
 #include <psperror.h>
+#include <pspinit.h>
+#include <pspiofilemgr.h>
+#include <pspmodulemgr.h>
+#include <pspsysmem.h>
 
 #include <cfwmacros.h>
-#include <systemctrl_se.h>
 #include <rebootexconfig.h>
+#include <systemctrl_se.h>
 
 #include <adrenaline_log.h>
 
@@ -40,21 +40,21 @@
 #define MAX_PLUGINS 64
 #define MAX_PLUGIN_PATH 128
 
-typedef struct{
-	int count;
-	char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
+typedef struct {
+    int count;
+    char paths[MAX_PLUGINS][MAX_PLUGIN_PATH];
 } Plugins;
 
-Plugins* g_plugins = NULL;
+Plugins *g_plugins = NULL;
 
-static int (*g_plugin_handler)(const char* path, int modid) = NULL;
+static int (*g_plugin_handler)(const char *path, int modid) = NULL;
 
 enum {
-	RUNLEVEL_UNKNOWN,
-	RUNLEVEL_VSH,
-	RUNLEVEL_UMD,
-	RUNLEVEL_POPS,
-	RUNLEVEL_HOMEBREW,
+    RUNLEVEL_UNKNOWN,
+    RUNLEVEL_VSH,
+    RUNLEVEL_UMD,
+    RUNLEVEL_POPS,
+    RUNLEVEL_HOMEBREW,
 };
 static int cur_runlevel = RUNLEVEL_UNKNOWN;
 
@@ -71,483 +71,507 @@ SceSize g_last_plugin_mem_size = 0;
 static int g_is_plugins_loading = 0;
 
 // Plugins that don't work in certain conditions.
-static char* g_blocklist_plugins[] = {
-	"npdrm_free"
-};
+static char *g_blocklist_plugins[] = {"npdrm_free"};
 
-static int is_in_blocklist(const char* path) {
+static int is_in_blocklist(const char *path) {
 
-	for (int i = 0; i < NELEMS(g_blocklist_plugins); i++) {
-		// Found
-		if (strstr(path, g_blocklist_plugins[i]) != NULL) {
-			if (i == 0 && g_cfw_config.no_nodrm_engine) {
-				return 0;
-			}
-			return 1;
-		}
-	}
+    for (int i = 0; i < NELEMS(g_blocklist_plugins); i++) {
+        // Found
+        if (strstr(path, g_blocklist_plugins[i]) != NULL) {
+            if (i == 0 && g_cfw_config.no_nodrm_engine) {
+                return 0;
+            }
+            return 1;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
-static void addPlugin(const char* path) {
-	for (int i=0; i<g_plugins->count; i++) {
-		char* cmp1 = strchr(g_plugins->paths[i], ':');
-		char* cmp2 = strchr(path, ':');
-		if (!cmp1) {
-			cmp1 = g_plugins->paths[i];
-		}
-		if (!cmp2) {
-			cmp2 = (char*)path;
-		}
-		if (strcasecmp(cmp1, cmp2) == 0) {
-			logmsg4("[DEBUG]: %s: Plugin `%s` already added\n", __func__, path);
-			return; // plugin already added
-		}
-	}
-	if (g_plugins->count < MAX_PLUGINS) {
-		strcpy(g_plugins->paths[g_plugins->count++], path);
-		logmsg4("[DEBUG]: %s: Plugin `%s` added\n", __func__, path);
-	}
+static void addPlugin(const char *path) {
+    for (int i = 0; i < g_plugins->count; i++) {
+        char *cmp1 = strchr(g_plugins->paths[i], ':');
+        char *cmp2 = strchr(path, ':');
+        if (!cmp1) {
+            cmp1 = g_plugins->paths[i];
+        }
+        if (!cmp2) {
+            cmp2 = (char *)path;
+        }
+        if (strcasecmp(cmp1, cmp2) == 0) {
+            logmsg4("[DEBUG]: %s: Plugin `%s` already added\n", __func__, path);
+            return; // plugin already added
+        }
+    }
+    if (g_plugins->count < MAX_PLUGINS) {
+        strcpy(g_plugins->paths[g_plugins->count++], path);
+        logmsg4("[DEBUG]: %s: Plugin `%s` added\n", __func__, path);
+    }
 }
 
-static void removePlugin(const char* path) {
-	for (int i=0; i<g_plugins->count; i++) {
-		if (strcasecmp(g_plugins->paths[i], path) == 0) {
-			if (--g_plugins->count > i) {
-				strcpy(g_plugins->paths[i], g_plugins->paths[g_plugins->count]);
-			}
-			break;
-		}
-	}
+static void removePlugin(const char *path) {
+    for (int i = 0; i < g_plugins->count; i++) {
+        if (strcasecmp(g_plugins->paths[i], path) == 0) {
+            if (--g_plugins->count > i) {
+                strcpy(g_plugins->paths[i], g_plugins->paths[g_plugins->count]);
+            }
+            break;
+        }
+    }
 }
 
 static SceUID loadPlugin(char *path) {
-	g_is_plugin_loading = 1;
-	SceKernelLMOption opt = {
-		.size = sizeof(SceKernelLMOption),
-		.position = PSP_SMEM_High,
-		.access = 1, //default
-		.mpiddata = 0, //default
-		.mpidtext = 0, //default
-	};
-	SceUID res = sceKernelLoadModule(path, 0, &opt);
+    g_is_plugin_loading = 1;
+    SceKernelLMOption opt = {
+        .size = sizeof(SceKernelLMOption),
+        .position = PSP_SMEM_High,
+        .access = 1, // default
+        .mpiddata = 0, // default
+        .mpidtext = 0, // default
+    };
+    SceUID res = sceKernelLoadModule(path, 0, &opt);
 
-	if (res == SCE_KERR_PARTITION_MISMATCH) {
-		logmsg("[ERROR]: Failed to load plugin due to partition mismatch\n");
-		logmsg("[WARN]: Attempting to load plugin on user memory partition\n");
-		opt.position = PSP_SMEM_Low;
-		opt.mpiddata = 2;
-		opt.mpidtext = 2;
-		res = sceKernelLoadModule(path, 0, &opt);
-	}
+    if (res == SCE_KERR_PARTITION_MISMATCH) {
+        logmsg("[ERROR]: Failed to load plugin due to partition mismatch\n");
+        logmsg("[WARN]: Attempting to load plugin on user memory partition\n");
+        opt.position = PSP_SMEM_Low;
+        opt.mpiddata = 2;
+        opt.mpidtext = 2;
+        res = sceKernelLoadModule(path, 0, &opt);
+    }
 
-	g_is_plugin_loading = 0;
+    g_is_plugin_loading = 0;
 
-	return res;
+    return res;
 }
 
 // Load and Start Plugin Module
 static void startPlugins() {
-	for (int i=0; i<g_plugins->count; i++) {
-		int res = 0;
-		char* path = g_plugins->paths[i];
-		// Load Module
-		logmsg4("[DEBUG]: %s: Processing plugin: %s\n", __func__, path);
+    for (int i = 0; i < g_plugins->count; i++) {
+        int res = 0;
+        char *path = g_plugins->paths[i];
+        // Load Module
+        logmsg4("[DEBUG]: %s: Processing plugin: %s\n", __func__, path);
 
-		if (is_in_blocklist(path)) {
-			logmsg("[ERROR]: %s: `%s` is blocked in this context\n", __func__, path);
-			continue;
-		}
+        if (is_in_blocklist(path)) {
+            logmsg("[ERROR]: %s: `%s` is blocked in this context\n", __func__, path);
+            continue;
+        }
 
-		int uid = loadPlugin(path);
-		if (uid >= 0) {
-			// Call handler
-			if (g_plugin_handler) {
-				res = g_plugin_handler(path, uid);
-				// Unload Module on Error
-				if (res < 0) {
-					sceKernelUnloadModule(uid);
-					logmsg("[ERROR]: %s: Failed to load %s -> 0x%08X\n", __func__, path, res);
-					continue;
-				}
-			}
+        int uid = loadPlugin(path);
+        if (uid >= 0) {
+            // Call handler
+            if (g_plugin_handler) {
+                res = g_plugin_handler(path, uid);
+                // Unload Module on Error
+                if (res < 0) {
+                    sceKernelUnloadModule(uid);
+                    logmsg("[ERROR]: %s: Failed to load %s -> 0x%08X\n", __func__, path, res);
+                    continue;
+                }
+            }
 
-			// Start Module
-			res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
+            // Start Module
+            res = sceKernelStartModule(uid, strlen(path) + 1, path, NULL, NULL);
 
-			// Unload Module on Error
-			if (res < 0) {
-				logmsg("[ERROR]: %s: Failed to start %s -> 0x%08X\n", __func__, path, res);
-				sceKernelUnloadModule(uid);
-				g_plugins_loaded_mem -= g_last_plugin_mem_size;
-				g_last_plugin_mem_size = 0;
-				continue;
-			} else {
-				g_plugins_loaded_mem += g_last_plugin_mem_size;
-				g_last_plugin_mem_size = 0;
-				logmsg("[INFO]: Loaded plugin: %s\n", path);
-			}
-		} else {
-			logmsg("[ERROR]: %s: Failed to load %s -> 0x%08X\n", __func__, path, uid);
-		}
-	}
+            // Unload Module on Error
+            if (res < 0) {
+                logmsg("[ERROR]: %s: Failed to start %s -> 0x%08X\n", __func__, path, res);
+                sceKernelUnloadModule(uid);
+                g_plugins_loaded_mem -= g_last_plugin_mem_size;
+                g_last_plugin_mem_size = 0;
+                continue;
+            } else {
+                g_plugins_loaded_mem += g_last_plugin_mem_size;
+                g_last_plugin_mem_size = 0;
+                logmsg("[INFO]: Loaded plugin: %s\n", path);
+            }
+        } else {
+            logmsg("[ERROR]: %s: Failed to load %s -> 0x%08X\n", __func__, path, uid);
+        }
+    }
 }
 
 static int isVshRunlevel() {
-	if (!cur_runlevel) {
-		// Fetch Apitype
-		int apitype = sceKernelInitApitype();
-		if (apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
-			cur_runlevel = RUNLEVEL_VSH;
-		}
-	}
-	return cur_runlevel == RUNLEVEL_VSH;
+    if (!cur_runlevel) {
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype >= PSP_INIT_APITYPE_VSH_KERNEL) {
+            cur_runlevel = RUNLEVEL_VSH;
+        }
+    }
+    return cur_runlevel == RUNLEVEL_VSH;
 }
 
 static int isPopsRunlevel() {
-	if (!cur_runlevel) {
-		// Fetch Apitype
-		int apitype = sceKernelInitApitype();
-		if (apitype == PSP_INIT_APITYPE_MS5 || apitype == PSP_INIT_APITYPE_EF5) {
-			cur_runlevel = RUNLEVEL_POPS;
-		}
-	}
-	return cur_runlevel == RUNLEVEL_POPS;
+    if (!cur_runlevel) {
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == PSP_INIT_APITYPE_MS5 || apitype == PSP_INIT_APITYPE_EF5) {
+            cur_runlevel = RUNLEVEL_POPS;
+        }
+    }
+    return cur_runlevel == RUNLEVEL_POPS;
 }
 
 static int isUmdRunlevel() {
-	if (!cur_runlevel) {
-		// Fetch Apitype
-		int apitype = sceKernelInitApitype();
-		if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2
-			|| (apitype >= PSP_INIT_APITYPE_UMD_EMU_MS1 && apitype <= PSP_INIT_APITYPE_UMD_EMU_EF2)
-			|| apitype == PSP_INIT_APITYPE_USBWLAN
-			|| (apitype >= PSP_INIT_APITYPE_GAME_EBOOT && apitype <= PSP_INIT_APITYPE_EMU_BOOT_EF)) {
+    if (!cur_runlevel) {
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == PSP_INIT_APITYPE_UMD || apitype == PSP_INIT_APITYPE_UMD2
+            || (apitype >= PSP_INIT_APITYPE_UMD_EMU_MS1 && apitype <= PSP_INIT_APITYPE_UMD_EMU_EF2)
+            || apitype == PSP_INIT_APITYPE_USBWLAN
+            || (apitype >= PSP_INIT_APITYPE_GAME_EBOOT
+                && apitype <= PSP_INIT_APITYPE_EMU_BOOT_EF)) {
 
-			cur_runlevel = RUNLEVEL_UMD;
-		}
-	}
-	return cur_runlevel == RUNLEVEL_UMD;
+            cur_runlevel = RUNLEVEL_UMD;
+        }
+    }
+    return cur_runlevel == RUNLEVEL_UMD;
 }
 
 static int isHomebrewRunlevel() {
-	if (!cur_runlevel) {
-		// Fetch Apitype
-		int apitype = sceKernelInitApitype();
-		if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2) {
-			cur_runlevel = RUNLEVEL_HOMEBREW;
-		}
-	}
-	return cur_runlevel == RUNLEVEL_HOMEBREW;
+    if (!cur_runlevel) {
+        // Fetch Apitype
+        int apitype = sceKernelInitApitype();
+        if (apitype == PSP_INIT_APITYPE_MS2 || apitype == PSP_INIT_APITYPE_EF2) {
+            cur_runlevel = RUNLEVEL_HOMEBREW;
+        }
+    }
+    return cur_runlevel == RUNLEVEL_HOMEBREW;
 }
 
-static int isPath(char* runlevel) {
-	return (
-		strcasecmp(runlevel, sceKernelInitFileName())==0 ||
-		strcasecmp(runlevel, sctrlSEGetUmdFile())==0
-	);
+static int isPath(char *runlevel) {
+    return (
+        strcasecmp(runlevel, sceKernelInitFileName()) == 0
+        || strcasecmp(runlevel, sctrlSEGetUmdFile()) == 0
+    );
 }
 
-static int isTitleId(char* runlevel) {
-	if (g_rebootex_config.title_id[0] == 0) {
-		return 0;
-	}
-	char gameid[10];
-	memset(gameid, 0, sizeof(gameid));
-	memcpy(gameid, g_rebootex_config.title_id, 9);
-	lowerString(gameid, gameid, strlen(gameid)+1);
-	return (strstr(runlevel, gameid) != NULL);
+static int isTitleId(char *runlevel) {
+    if (g_rebootex_config.title_id[0] == 0) {
+        return 0;
+    }
+    char gameid[10];
+    memset(gameid, 0, sizeof(gameid));
+    memcpy(gameid, g_rebootex_config.title_id, 9);
+    lowerString(gameid, gameid, strlen(gameid) + 1);
+    return (strstr(runlevel, gameid) != NULL);
 }
 
 // Runlevel Check
-static int matchingRunlevel(char * runlevel) {
-	lowerString(runlevel, runlevel, strlen(runlevel)+1);
+static int matchingRunlevel(char *runlevel) {
+    lowerString(runlevel, runlevel, strlen(runlevel) + 1);
 
-	char* cfw_type = strstr(runlevel, "cfw=");
-	// Plugin is for specific CFW only
-	if (cfw_type) {
-		// Not for Adrenaline, treat as disabled
-		if (strncasecmp(cfw_type+4, "adr", 3) != 0 || strncasecmp(cfw_type+4, "epi", 3) != 0 || strncasecmp(cfw_type+4, "tn", 2) != 0 ) {
-			return 0;
-		}
-	}
+    char *cfw_type = strstr(runlevel, "cfw=");
+    // Plugin is for specific CFW only
+    if (cfw_type) {
+        // Not for Adrenaline, treat as disabled
+        if (strncasecmp(cfw_type + 4, "adr", 3) != 0 || strncasecmp(cfw_type + 4, "epi", 3) != 0
+            || strncasecmp(cfw_type + 4, "tn", 2) != 0) {
+            return 0;
+        }
+    }
 
+    if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) {
+        // always on
+        return 1;
+    }
 
-	if (strcasecmp(runlevel, "all") == 0 || strcasecmp(runlevel, "always") == 0) {
-		// always on
-		return 1;
-	}
+    if (strchr(runlevel, '/')) {
+        // it's a path
+        return isPath(runlevel);
+    }
 
-	if (strchr(runlevel, '/')) {
-		// it's a path
-		return isPath(runlevel);
-	}
+    if (isVshRunlevel() && !g_cfw_config.no_xmb_plugins) {
+        return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
+    }
 
-	if (isVshRunlevel() && !g_cfw_config.no_xmb_plugins) {
-		return (strstr(runlevel, "vsh") != NULL || strstr(runlevel, "xmb") != NULL);
-	}
+    if (isPopsRunlevel() && !g_cfw_config.no_pops_plugins) {
+        // check if plugin loads on specific title
+        if (isTitleId(runlevel)) {
+            return 1;
+        }
+        // check keywords
+        return (
+            strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL
+            || strstr(runlevel, "psx") != NULL
+        ); // PS1 games only
+    }
 
-	if (isPopsRunlevel() && !g_cfw_config.no_pops_plugins) {
-		// check if plugin loads on specific title
-		if (isTitleId(runlevel)) {
-			return 1;
-		}
-		// check keywords
-		return (strstr(runlevel, "pops") != NULL || strstr(runlevel, "ps1") != NULL || strstr(runlevel, "psx") != NULL); // PS1 games only
-	}
+    if (isHomebrewRunlevel() && !g_cfw_config.no_game_plugins) {
+        if (strstr(runlevel, "hbw") != NULL || strstr(runlevel, "homebrew") != NULL
+            || strstr(runlevel, "app") != NULL || strstr(runlevel, "game") != NULL) {
+            // homebrews only
+            return 1;
+        }
+    }
 
-	if (isHomebrewRunlevel() && !g_cfw_config.no_game_plugins) {
-		if (strstr(runlevel, "hbw") != NULL || strstr(runlevel, "homebrew") != NULL || strstr(runlevel, "app") != NULL || strstr(runlevel, "game") != NULL) {
-			// homebrews only
-			return 1;
-		}
-	}
+    if (isUmdRunlevel() && !g_cfw_config.no_game_plugins) {
+        // check if plugin loads on specific title
+        if (isTitleId(runlevel)) {
+            return 1;
+        }
+        // check keywords
+        if (strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL
+            || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "app") != NULL
+            || strstr(runlevel, "game") != NULL) {
+            // Retail games only
+            return 1;
+        }
+    }
 
-	if (isUmdRunlevel() && !g_cfw_config.no_game_plugins) {
-		// check if plugin loads on specific title
-		if (isTitleId(runlevel)) {
-			return 1;
-		}
-		// check keywords
-		if (strstr(runlevel, "umd") != NULL || strstr(runlevel, "psp") != NULL || strstr(runlevel, "umdemu") != NULL || strstr(runlevel, "app") != NULL || strstr(runlevel, "game") != NULL) {
-			// Retail games only
-			return 1;
-		}
-	}
-
-	// Unsupported Runlevel (we don't touch those to keep stability up)
-	return 0;
+    // Unsupported Runlevel (we don't touch those to keep stability up)
+    return 0;
 }
 
 // Boolean String Parser
-static int booleanOn(char * text) {
-	// Different Variations of "true"
-	if (strcasecmp(text, "true") == 0 || strcasecmp(text, "on") == 0 || strcmp(text, "1") == 0 || strcasecmp(text, "enabled") == 0) {
-		return 1;
-	}
+static int booleanOn(char *text) {
+    // Different Variations of "true"
+    if (strcasecmp(text, "true") == 0 || strcasecmp(text, "on") == 0 || strcmp(text, "1") == 0
+        || strcasecmp(text, "enabled") == 0) {
+        return 1;
+    }
 
-	// Default to False
-	return 0;
+    // Default to False
+    return 0;
 }
 
 // Whitespace Detection
 static int is_space(int c) {
-	// Whitespaces
-	if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == '\n') {
-		return 1;
-	}
+    // Whitespaces
+    if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == '\n') {
+        return 1;
+    }
 
-	// Normal Character
-	return 0;
+    // Normal Character
+    return 0;
 }
 
 // Trim Leading and Trailing Whitespaces
-static char * strtrim(char * text) {
-	// Invalid Argument
-	if (text == NULL) {
-		return NULL;
-	}
+static char *strtrim(char *text) {
+    // Invalid Argument
+    if (text == NULL) {
+        return NULL;
+    }
 
-	// Remove Leading Whitespaces
-	while (is_space(text[0])) {
-		text++;
-	}
+    // Remove Leading Whitespaces
+    while (is_space(text[0])) {
+        text++;
+    }
 
-	// Scan Position
-	int pos = strlen(text)-1;
-	if (pos < 0) {
-		return text;
-	}
+    // Scan Position
+    int pos = strlen(text) - 1;
+    if (pos < 0) {
+        return text;
+    }
 
-	// Find Trailing Whitespaces
-	while (is_space(text[pos])) pos--;
+    // Find Trailing Whitespaces
+    while (is_space(text[pos])) {
+        pos--;
+    }
 
-	// Terminate String
-	text[pos+1] = (char)0;
+    // Terminate String
+    text[pos + 1] = (char)0;
 
-	// Return Trimmed String
-	return text;
+    // Return Trimmed String
+    return text;
 }
 
-static int readLine(char* source, char *str) {
-	u8 ch = 0;
-	int n = 0;
-	int i = 0;
+static int readLine(char *source, char *str) {
+    u8 ch = 0;
+    int n = 0;
+    int i = 0;
 
-	while (1) {
-		if ((ch = source[i]) == 0) {
-			*str = 0;
-			return n;
-		}
+    while (1) {
+        if ((ch = source[i]) == 0) {
+            *str = 0;
+            return n;
+        }
 
-		n++;
-		i++;
+        n++;
+        i++;
 
-		if(ch < 0x20) {
-			*str = 0;
-			return n;
-		} else {
-			*str++ = ch;
-		}
-	}
+        if (ch < 0x20) {
+            *str = 0;
+            return n;
+        } else {
+            *str++ = ch;
+        }
+    }
 }
 
 // Parse and Process Line
-static void processLine(const char* parent, char* line, void (*enabler)(const char*), void (*disabler)(const char*)) {
-	// Skip Comment Lines
-	if (!enabler || line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#') {
-		return;
-	}
+static void processLine(
+    const char *parent, char *line, void (*enabler)(const char *), void (*disabler)(const char *)
+) {
+    // Skip Comment Lines
+    if (!enabler || line == NULL || strncmp(line, "//", 2) == 0 || line[0] == ';'
+        || line[0] == '#') {
+        return;
+    }
 
-	// String Token
-	char * runlevel = line;
-	char * path = NULL;
-	char * enabled = NULL;
+    // String Token
+    char *runlevel = line;
+    char *path = NULL;
+    char *enabled = NULL;
 
-	// Original String Length
-	unsigned int length = strlen(line);
+    // Original String Length
+    unsigned int length = strlen(line);
 
-	// Fetch String Token
-	unsigned int i = 0;
-	for (; i < length; i++) {
-		// Got all required Token
-		if (enabled != NULL) {
-			// Handle Trailing Comments as Terminators
-			if (strncmp(line + i, "//", 2) == 0 || line[i] == ';' || line[i] == '#') {
-				// Terminate String
-				line[i] = 0;
+    // Fetch String Token
+    unsigned int i = 0;
+    for (; i < length; i++) {
+        // Got all required Token
+        if (enabled != NULL) {
+            // Handle Trailing Comments as Terminators
+            if (strncmp(line + i, "//", 2) == 0 || line[i] == ';' || line[i] == '#') {
+                // Terminate String
+                line[i] = 0;
 
-				// Stop Token Scan
-				break;
-			}
-		}
+                // Stop Token Scan
+                break;
+            }
+        }
 
-		// Found Delimiter
-		if (line[i] == LINE_TOKEN_DELIMITER) {
-			// Terminate String
-			line[i] = 0;
+        // Found Delimiter
+        if (line[i] == LINE_TOKEN_DELIMITER) {
+            // Terminate String
+            line[i] = 0;
 
-			// Path Start
-			if (path == NULL) path = line + i + 1;
+            // Path Start
+            if (path == NULL) {
+                path = line + i + 1;
+            }
 
-			// Enabled Start
-			else if (enabled == NULL) enabled = line + i + 1;
+            // Enabled Start
+            else if (enabled == NULL) {
+                enabled = line + i + 1;
+            }
 
-			// Got all Data
-			else break;
-		}
-	}
+            // Got all Data
+            else {
+                break;
+            }
+        }
+    }
 
-	// Insufficient Plugin Information
-	if (enabled == NULL) {
-		return;
-	}
+    // Insufficient Plugin Information
+    if (enabled == NULL) {
+        return;
+    }
 
-	// Trim Whitespaces
-	runlevel = strtrim(runlevel);
-	path = strtrim(path);
-	enabled = strtrim(enabled);
+    // Trim Whitespaces
+    runlevel = strtrim(runlevel);
+    path = strtrim(path);
+    enabled = strtrim(enabled);
 
-	// Matching Plugin Runlevel
-	if (matchingRunlevel(runlevel)) {
-		char full_path[MAX_PLUGIN_PATH];
-		if (parent && strchr(path, ':') == NULL) { // relative path
-			strcpy(full_path, parent);
-			strcat(full_path, path);
+    // Matching Plugin Runlevel
+    if (matchingRunlevel(runlevel)) {
+        char full_path[MAX_PLUGIN_PATH];
+        if (parent && strchr(path, ':') == NULL) { // relative path
+            strcpy(full_path, parent);
+            strcat(full_path, path);
 
-		} else { // already full path
-			strcpy(full_path, path);
-		}
+        } else { // already full path
+            strcpy(full_path, path);
+        }
 
-		// Enabled Plugin
-		if (booleanOn(enabled)) {
-			// Start Plugin
-			enabler(full_path);
-		} else {
-			if (disabler) {
-				disabler(full_path);
-			}
-		}
-	}
+        // Enabled Plugin
+        if (booleanOn(enabled)) {
+            // Start Plugin
+            enabler(full_path);
+        } else {
+            if (disabler) {
+                disabler(full_path);
+            }
+        }
+    }
 }
 
 // Load Plugins
-static int ProcessPluginFile(const char* parent, const char* path, void (*enabler)(const char*), void (*disabler)(const char*)) {
-	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+static int ProcessPluginFile(
+    const char *parent, const char *path, void (*enabler)(const char *),
+    void (*disabler)(const char *)
+) {
+    int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
-	// Opened Plugin Config
-	if (fd >= 0) {
-		// allocate buffer in user ram and read entire file
-		int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
-		sceIoLseek(fd, 0, PSP_SEEK_SET);
+    // Opened Plugin Config
+    if (fd >= 0) {
+        // allocate buffer in user ram and read entire file
+        int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
+        sceIoLseek(fd, 0, PSP_SEEK_SET);
 
-		SceUID memid = sceKernelAllocPartitionMemory(PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_Low, fsize+1, NULL);
-		u8* buf = sceKernelGetBlockHeadAddr(memid);
-		if (buf == NULL) {
-			sceIoClose(fd);
-			return -1;
-		}
+        SceUID memid = sceKernelAllocPartitionMemory(
+            PSP_MEMORY_PARTITION_KERNEL, "", PSP_SMEM_Low, fsize + 1, NULL
+        );
+        u8 *buf = sceKernelGetBlockHeadAddr(memid);
+        if (buf == NULL) {
+            sceIoClose(fd);
+            return -1;
+        }
 
-		sceIoRead(fd, buf, fsize);
-		sceIoClose(fd);
-		buf[fsize] = 0;
+        sceIoRead(fd, buf, fsize);
+        sceIoClose(fd);
+        buf[fsize] = 0;
 
-		// Allocate Line Buffer
-		char * line = (char *)oe_malloc(LINE_BUFFER_SIZE);
+        // Allocate Line Buffer
+        char *line = (char *)oe_malloc(LINE_BUFFER_SIZE);
 
-		// Buffer Allocation Success
-		if (line != NULL) {
-			// Read Lines
-			int nread = 0;
-			while ((nread=readLine((char*)buf, line))>0) {
-				buf += nread;
-				if (line[0] == 0) {
-					// empty line
-					continue;
-				}
-				// Process Line
-				processLine(parent, strtrim(line), enabler, disabler);
-			}
+        // Buffer Allocation Success
+        if (line != NULL) {
+            // Read Lines
+            int nread = 0;
+            while ((nread = readLine((char *)buf, line)) > 0) {
+                buf += nread;
+                if (line[0] == 0) {
+                    // empty line
+                    continue;
+                }
+                // Process Line
+                processLine(parent, strtrim(line), enabler, disabler);
+            }
 
-			// Free Buffer
-			oe_free(line);
-		}
+            // Free Buffer
+            oe_free(line);
+        }
 
-		sceKernelFreePartitionMemory(memid);
+        sceKernelFreePartitionMemory(memid);
 
-		// Close Plugin Config
-		return 0;
-	}
-	return -1;
+        // Close Plugin Config
+        return 0;
+    }
+    return -1;
 }
 
 void loadPlugins() {
-	if (g_disable_plugins) {
-		return;
-	}
-	g_is_plugins_loading = 1;
-	// allocate resources
-	g_plugins = oe_malloc(sizeof(Plugins));
-	g_plugins->count = 0; // initialize plugins table
+    if (g_disable_plugins) {
+        return;
+    }
+    g_is_plugins_loading = 1;
+    // allocate resources
+    g_plugins = oe_malloc(sizeof(Plugins));
+    g_plugins->count = 0; // initialize plugins table
 
-	SceIoStat stat;
-	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
+    SceIoStat stat;
+    int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
 
-	if (epiplugins_exists) {
-		ProcessPluginFile("ms0:/seplugins/", "ms0:/seplugins/EPIplugins.txt", addPlugin, removePlugin);
-	} else {
-		ProcessPluginFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
-	}
+    if (epiplugins_exists) {
+        ProcessPluginFile(
+            "ms0:/seplugins/", "ms0:/seplugins/EPIplugins.txt", addPlugin, removePlugin
+        );
+    } else {
+        ProcessPluginFile("ms0:/seplugins/", "ms0:/seplugins/plugins.txt", addPlugin, removePlugin);
+    }
 
-	// start all loaded plugins
-	startPlugins();
-	// free resources
-	oe_free(g_plugins);
-	g_plugins = NULL;
-	g_is_plugins_loading = 0;
+    // start all loaded plugins
+    startPlugins();
+    // free resources
+    oe_free(g_plugins);
+    g_plugins = NULL;
+    g_is_plugins_loading = 0;
 }
 
 int sctrlIsLoadingPlugins() {
-	return g_is_plugins_loading;
+    return g_is_plugins_loading;
 }

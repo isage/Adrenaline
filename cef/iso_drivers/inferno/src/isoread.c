@@ -17,22 +17,21 @@
 
 #include <string.h>
 
+#include <pspkernel.h>
 #include <pspreg.h>
 #include <pspsysmem.h>
-#include <pspkernel.h>
-#include <psputilsforkernel.h>
 #include <pspthreadman_kernel.h>
 #include <pspumd.h>
+#include <psputilsforkernel.h>
 
-#include <isoctrl.h>
 #include <cfwmacros.h>
+#include <isoctrl.h>
 #include <systemctrl.h>
 // #include <systemctrl_se.h>
 #include <adrenaline_log.h>
 
-
-#include "inferno.h"
 #include "../bits/iso_common.h"
+#include "inferno.h"
 
 u8 g_umd_seek = 0;
 u8 g_umd_speed = 0;
@@ -43,105 +42,101 @@ u32 g_last_read_offset = 0;
 int (*iso_reader)(IoReadArg *args) = &iso_read;
 
 int _isoReadUmdFileInner(u32 offset, void *ptr, u32 data_len) {
-	g_read_arg.offset = offset;
-	g_read_arg.address = ptr;
-	g_read_arg.size = data_len;
+    g_read_arg.offset = offset;
+    g_read_arg.address = ptr;
+    g_read_arg.size = data_len;
 
-	int ret =  sceKernelExtendKernelStack(
-        0x2000,
-        (void*)iso_reader,
-        &g_read_arg
-    );
+    int ret = sceKernelExtendKernelStack(0x2000, (void *)iso_reader, &g_read_arg);
 
-	if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		// simulate seek time
-		u32 diff = 0;
-		g_last_read_offset = offset+data_len;
-		if (g_cur_offset > g_last_read_offset) {
-			diff = g_cur_offset - g_last_read_offset;
-		} else {
-			diff = g_last_read_offset - g_cur_offset;
-		}
-		g_cur_offset = g_last_read_offset;
-		u32 seek_time = (diff * g_umd_seek)/1024;
-		sceKernelDelayThread(seek_time);
-	}
-	if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
-		// simulate read time
-		sceKernelDelayThread(data_len * g_umd_speed);
-	}
+    if (g_umd_seek && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+        // simulate seek time
+        u32 diff = 0;
+        g_last_read_offset = offset + data_len;
+        if (g_cur_offset > g_last_read_offset) {
+            diff = g_cur_offset - g_last_read_offset;
+        } else {
+            diff = g_last_read_offset - g_cur_offset;
+        }
+        g_cur_offset = g_last_read_offset;
+        u32 seek_time = (diff * g_umd_seek) / 1024;
+        sceKernelDelayThread(seek_time);
+    }
+    if (g_umd_speed && g_umd_delay_strat == UMD_DELAY_STRAT_GLOBAL) {
+        // simulate read time
+        sceKernelDelayThread(data_len * g_umd_speed);
+    }
 
-	return ret;
+    return ret;
 }
 
 int isoReadUmdFile(u32 offset, void *ptr, u32 data_len) {
-	int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
+    int ret = sceKernelWaitSema(g_umd9660_sema_id, 1, 0);
 
-	if (ret < 0) {
-		return -1;
-	}
+    if (ret < 0) {
+        return -1;
+    }
 
-	int retv = _isoReadUmdFileInner(offset, ptr, data_len);
+    int retv = _isoReadUmdFileInner(offset, ptr, data_len);
 
-	ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
+    ret = sceKernelSignalSema(g_umd9660_sema_id, 1);
 
-	if (ret < 0) {
-		return -1;
-	}
+    if (ret < 0) {
+        return -1;
+    }
 
-	return retv;
+    return retv;
 }
 
 void infernoSetUmdDelay(int seek, int speed) {
-	g_umd_seek = seek;
-	g_umd_speed = speed;
+    g_umd_seek = seek;
+    g_umd_speed = speed;
 }
 
 void isoSetUmdDelay(int seek, int speed, int strategy) {
-	infernoSetUmdDelay(seek, speed);
-	g_umd_delay_strat = strategy;
+    infernoSetUmdDelay(seek, speed);
+    g_umd_delay_strat = strategy;
 }
 
 int isoReopenUmdFile(void) {
-	int res = iso_open();
-	sceKernelDelayThread(20000);
-	return res;
+    int res = iso_open();
+    sceKernelDelayThread(20000);
+    return res;
 }
 
 int isoSwapUmdFile(const char *new_file_path, char *previous, SceSize previous_size) {
-	char old_path[MAX_ISO_PATH_SIZE] = {0};
-	memcpy(old_path, g_iso_fn, MAX_ISO_PATH_SIZE);
-	sceUmdSetDriveStatus(PSP_UMD_NOT_PRESENT | PSP_UMD_CHANGED);
-	sceKernelDelayThread(100000);
+    char old_path[MAX_ISO_PATH_SIZE] = {0};
+    memcpy(old_path, g_iso_fn, MAX_ISO_PATH_SIZE);
+    sceUmdSetDriveStatus(PSP_UMD_NOT_PRESENT | PSP_UMD_CHANGED);
+    sceKernelDelayThread(100000);
 
-	isoSetUmdFile(new_file_path);
+    isoSetUmdFile(new_file_path);
 
-	int res = iso_open();
-	sceKernelDelayThread(20000);
+    int res = iso_open();
+    sceKernelDelayThread(20000);
 
-	if (res < 0) {
-		// reset and reopen previous filepath
-		isoSetUmdFile(old_path);
-		iso_open();
-		sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
-		sceKernelDelayThread(20000);
-		sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY);
-		logmsg("[ERROR]: %s: Failed to swap UMD file: %s: 0x%08X\n", __func__, new_file_path, res);
+    if (res < 0) {
+        // reset and reopen previous filepath
+        isoSetUmdFile(old_path);
+        iso_open();
+        sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
+        sceKernelDelayThread(20000);
+        sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY);
+        logmsg("[ERROR]: %s: Failed to swap UMD file: %s: 0x%08X\n", __func__, new_file_path, res);
 
-		return res;
-	}
-	logmsg("[INFO]: %s: UMD file swapped from `%s` to `%s`\n", __func__, old_path, new_file_path);
+        return res;
+    }
+    logmsg("[INFO]: %s: UMD file swapped from `%s` to `%s`\n", __func__, old_path, new_file_path);
 
-	sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
-	sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_CHANGED);
+    sceIoLseek32(g_iso_fd, 0, PSP_SEEK_SET);
+    sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_CHANGED);
 
-	sceKernelDelayThread(20000);
+    sceKernelDelayThread(20000);
     sceUmdSetDriveStatus(PSP_UMD_PRESENT | PSP_UMD_INITED | PSP_UMD_READY | PSP_UMD_CHANGED);
 
-	// Copy if possible
-	if (previous != NULL && previous_size >= MAX_ISO_PATH_SIZE) {
-		memcpy(previous, old_path, MAX_ISO_PATH_SIZE);
-	}
+    // Copy if possible
+    if (previous != NULL && previous_size >= MAX_ISO_PATH_SIZE) {
+        memcpy(previous, old_path, MAX_ISO_PATH_SIZE);
+    }
 
-	return 0;
+    return 0;
 }

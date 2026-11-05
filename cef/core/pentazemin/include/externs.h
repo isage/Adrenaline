@@ -2,8 +2,8 @@
 #define __PENTAZEMIN_EXTERNS_H__
 
 #include <systemctrl.h>
-#include <systemctrl_se.h>
 #include <systemctrl_adrenaline.h>
+#include <systemctrl_se.h>
 
 extern SceAdrenaline *g_adrenaline;
 

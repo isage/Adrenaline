@@ -33,6 +33,8 @@ char *ScePspemuGetTitleidPatched(void);
 int ScePspemuConvertAddressPatched(uint32_t addr, int mode, uint32_t cache_size);
 SceUID sceIoOpenPatched(const char *file, int flags, SceMode mode);
 int sceIoGetstatPatched(const char *file, SceIoStat *stat);
-int sceDisplaySetFrameBufForCompatPatched(int a1, int a2, int a3, int a4, int a5, SceDisplayFrameBuf *pParam);
+int sceDisplaySetFrameBufForCompatPatched(
+    int a1, int a2, int a3, int a4, int a5, SceDisplayFrameBuf *pParam
+);
 
 #endif

@@ -1,19 +1,19 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef __MAIN_H__
@@ -26,7 +26,9 @@
 
 #include "../adrenaline_vita.h"
 
-#define INCLUDE_EXTERN_RESOURCE(name) extern unsigned char _binary_flash0_##name##_start; extern unsigned char _binary_flash0_##name##_size;
+#define INCLUDE_EXTERN_RESOURCE(name)                   \
+    extern unsigned char _binary_flash0_##name##_start; \
+    extern unsigned char _binary_flash0_##name##_size;
 
 #define ALIGN(x, align) (((x) + ((align) - 1)) & ~((align) - 1))
 
@@ -42,95 +44,95 @@
 #define FLASH0_ARK_SIZE 0x40000
 
 enum MemoryStickLocations {
-	MEMORY_STICK_LOCATION_UX0,
-	MEMORY_STICK_LOCATION_UR0,
-	MEMORY_STICK_LOCATION_IMC0,
-	MEMORY_STICK_LOCATION_XMC0,
-	MEMORY_STICK_LOCATION_UMA0,
-	MEMORY_STICK_LOCATION_UMA0_PSP,
+    MEMORY_STICK_LOCATION_UX0,
+    MEMORY_STICK_LOCATION_UR0,
+    MEMORY_STICK_LOCATION_IMC0,
+    MEMORY_STICK_LOCATION_XMC0,
+    MEMORY_STICK_LOCATION_UMA0,
+    MEMORY_STICK_LOCATION_UMA0_PSP,
 };
 
 enum EfLocations {
-	EF_LOCATION_DISABLED,
-	EF_LOCATION_UMA0,
-	EF_LOCATION_XMC0,
-	EF_LOCATION_UX0,
-	EF_LOCATION_UMA0_PSP,
+    EF_LOCATION_DISABLED,
+    EF_LOCATION_UMA0,
+    EF_LOCATION_XMC0,
+    EF_LOCATION_UX0,
+    EF_LOCATION_UMA0_PSP,
 };
 
 enum UsbDevices {
-	USBDEVICE_MODE_MEMORY_CARD,
-	USBDEVICE_MODE_INTERNAL_STORAGE,
-	USBDEVICE_MODE_SD2VITA,
-	USBDEVICE_MODE_PSVSD,
+    USBDEVICE_MODE_MEMORY_CARD,
+    USBDEVICE_MODE_INTERNAL_STORAGE,
+    USBDEVICE_MODE_SD2VITA,
+    USBDEVICE_MODE_PSVSD,
 };
 
 enum FluxMode {
-	FLUX_MODE_OFF,
-	FLUX_MODE_YELLOW,
-	FLUX_MODE_BLUE,
-	FLUX_MODE_BLACK,
+    FLUX_MODE_OFF,
+    FLUX_MODE_YELLOW,
+    FLUX_MODE_BLUE,
+    FLUX_MODE_BLACK,
 };
 
 enum GraphicFilterMode {
-	FILTER_ORIGINAL,
-	FILTER_BILINEAR,
-	FILTER_SHARP_BILINEAR,
-	FILTER_ADVANCED_AA,
-	FILTER_LCD3X,
-	FILTER_SHARP_BILINEAR2,
-	FILTER_SCALE2X,
+    FILTER_ORIGINAL,
+    FILTER_BILINEAR,
+    FILTER_SHARP_BILINEAR,
+    FILTER_ADVANCED_AA,
+    FILTER_LCD3X,
+    FILTER_SHARP_BILINEAR2,
+    FILTER_SCALE2X,
 };
 
 typedef struct {
-	int magic[2];
-	int graphics_filtering;
-	int no_smooth_graphics;
-	int flux_mode;
-	int screen_size;
-	int ms_location;
-	int use_ds3_ds4;
-	int screen_mode;
-	int skip_logo;
-	float psp_screen_scale_x;
-	float psp_screen_scale_y;
-	float ps1_screen_scale_x;
-	float ps1_screen_scale_y;
-	int usbdevice;
+    int magic[2];
+    int graphics_filtering;
+    int no_smooth_graphics;
+    int flux_mode;
+    int screen_size;
+    int ms_location;
+    int use_ds3_ds4;
+    int screen_mode;
+    int skip_logo;
+    float psp_screen_scale_x;
+    float psp_screen_scale_y;
+    float ps1_screen_scale_x;
+    float ps1_screen_scale_y;
+    int usbdevice;
 } AdrenalineConfig717;
 
 typedef struct {
-	int magic[2];
-	uint8_t graphics_filtering;
-	uint8_t no_smooth_graphics;
-	uint8_t flux_mode;
-	uint8_t ms_location;
-	uint8_t skip_logo;
-	uint8_t usbdevice;
-	float psp_screen_scale_x;
-	float psp_screen_scale_y;
-	float ps1_screen_scale_x;
-	float ps1_screen_scale_y;
-	uint8_t cfw_type;
-	uint8_t ef_location;
+    int magic[2];
+    uint8_t graphics_filtering;
+    uint8_t no_smooth_graphics;
+    uint8_t flux_mode;
+    uint8_t ms_location;
+    uint8_t skip_logo;
+    uint8_t usbdevice;
+    float psp_screen_scale_x;
+    float psp_screen_scale_y;
+    float ps1_screen_scale_x;
+    float ps1_screen_scale_y;
+    uint8_t cfw_type;
+    uint8_t ef_location;
 } AdrenalineConfig;
 
 extern AdrenalineConfig config;
 extern SceUID usbdevice_modid;
 
-extern int (* ScePspemuDivide)(uint64_t x, uint64_t y);
-extern int (* ScePspemuErrorExit)(int error);
-extern int (* ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
-extern int (* ScePspemuWritebackCache)(void *addr, int size);
-extern int (* ScePspemuKermitWaitAndGetRequest)(int mode, SceKermitRequest **request);
-extern int (* ScePspemuKermitSendResponse)(int mode, SceKermitRequest *request, uint64_t response);
-extern int (* ScePspemuConvertStatTimeToUtc)(SceIoStat *stat);
-extern int (* ScePspemuConvertStatTimeToLocaltime)(SceIoStat *stat);
-extern int (* ScePspemuSettingsHandler)(int a1, int a2, int a3, int a4);
-extern int (* ScePspemuSetDisplayConfig)(void);
-extern int (* ScePspemuPausePops)(int pause);
-extern int (* ScePspemuInitPops)(void);
-extern int (* ScePspemuInitPocs)(void);
+extern int (*ScePspemuDivide)(uint64_t x, uint64_t y);
+extern int (*ScePspemuErrorExit)(int error);
+extern int (*ScePspemuConvertAddress)(uint32_t addr, int mode, uint32_t cache_size);
+extern int (*ScePspemuWritebackCache)(void *addr, int size);
+extern int (*ScePspemuKermitWaitAndGetRequest)(int mode, SceKermitRequest **request);
+extern int (*ScePspemuKermitSendResponse)(int mode, SceKermitRequest *request, uint64_t response);
+extern int (*ScePspemuConvertStatTimeToUtc)(SceIoStat *stat);
+extern int (*ScePspemuConvertStatTimeToLocaltime)(SceIoStat *stat);
+extern int (*ScePspemuSettingsHandler)(int a1, int a2, int a3, int a4);
+extern int (*ScePspemuSetDisplayConfig)(void);
+extern int (*ScePspemuPausePops)(int pause);
+extern int (*ScePspemuInitPops)(void);
+extern int (*ScePspemuInitPocs)(void);
 
 extern tai_hook_ref_t sceCompatSuspendResumeRef;
 extern tai_hook_ref_t sceCompatWriteSharedCtrlRef;

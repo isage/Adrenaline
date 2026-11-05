@@ -17,8 +17,8 @@
 
 #include <string.h>
 
-#include <pspsdk.h>
 #include <pspdisplay.h>
+#include <pspsdk.h>
 #include <pspsysmem_kernel.h>
 
 #include <cfwmacros.h>
@@ -28,11 +28,10 @@
 #define _ADRENALINE_LOG_IMPL_
 #include <adrenaline_log.h>
 
-#include "externs.h"
-#include "adrenaline.h"
-#include "modulepatches.h"
 #include "../bits/ttystdio.h"
-
+#include "adrenaline.h"
+#include "externs.h"
+#include "modulepatches.h"
 
 PSP_MODULE_INFO("Pentazemin", 0x1007, 1, 0);
 
@@ -40,118 +39,119 @@ PSP_MODULE_INFO("Pentazemin", 0x1007, 1, 0);
 static STMOD_HANDLER previous = NULL;
 static SYSBOOT_HANDLER sysboot_previous = NULL;
 
-
 static void PentazeminOnSystemBooted(void) {
-	initAdrenalineInfo();
-	PatchVolatileMemBug();
+    initAdrenalineInfo();
+    PatchVolatileMemBug();
 
-	// Set fake framebuffer so that cwcheat can be displayed
-	if (g_adrenaline->pops_mode) {
-		sceDisplaySetFrameBuf((void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888, PSP_DISPLAY_SETBUF_NEXTFRAME);
-		memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
-	} else {
-		sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
-	}
-	sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED, 0);
+    // Set fake framebuffer so that cwcheat can be displayed
+    if (g_adrenaline->pops_mode) {
+        sceDisplaySetFrameBuf(
+            (void *)NATIVE_FRAMEBUFFER, PSP_SCREEN_LINE, PSP_DISPLAY_PIXEL_FORMAT_8888,
+            PSP_DISPLAY_SETBUF_NEXTFRAME
+        );
+        memset((void *)NATIVE_FRAMEBUFFER, 0, SCE_PSPEMU_FRAMEBUFFER_SIZE);
+    } else {
+        sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_RESUME_POPS, 0);
+    }
+    sctrlSendAdrenalineCmd(ADRENALINE_VITA_CMD_APP_STARTED, 0);
 
-	if (sysboot_previous != NULL) {
-		sysboot_previous();
-	}
+    if (sysboot_previous != NULL) {
+        sysboot_previous();
+    }
 }
 
-
 static int PentazeminOnModuleStart(SceModule *mod) {
-	char *modname = mod->modname;
+    char *modname = mod->modname;
 
-	if (strcmp(modname, "sceLowIO_Driver") == 0) {
-		// Protect pops memory
-		if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
-			sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
-		}
+    if (strcmp(modname, "sceLowIO_Driver") == 0) {
+        // Protect pops memory
+        if (sceKernelApplicationType() == PSP_INIT_KEYCONFIG_POPS) {
+            sceKernelAllocPartitionMemory(6, "", PSP_SMEM_Addr, 0x80000, (void *)0x09F40000);
+        }
 
-		memset((void *)0x49F40000, 0, 0x80000);
-		memset((void *)0xABCD0000, 0, 0x1B0);
+        memset((void *)0x49F40000, 0, 0x80000);
+        memset((void *)0xABCD0000, 0, 0x1B0);
 
-		PatchLowIODriver2(mod);
+        PatchLowIODriver2(mod);
 
-	}else if (strcmp(modname, "sceLoadExec") == 0) {
-		PatchLoadExec(mod);
+    } else if (strcmp(modname, "sceLoadExec") == 0) {
+        PatchLoadExec(mod);
 
-	} else if (strcmp(modname, "scePower_Service") == 0) {
-		PatchPowerService(mod);
-		PatchPowerService2(mod);
+    } else if (strcmp(modname, "scePower_Service") == 0) {
+        PatchPowerService(mod);
+        PatchPowerService2(mod);
 
-	} else if (strcmp(modname, "sceChkreg") == 0) {
-		PatchChkreg(mod);
+    } else if (strcmp(modname, "sceChkreg") == 0) {
+        PatchChkreg(mod);
 
-	} else if (strcmp(modname, "sceMesgLed") == 0) {
-		PatchMesgLed(mod);
+    } else if (strcmp(modname, "sceMesgLed") == 0) {
+        PatchMesgLed(mod);
 
-	} else if (strcmp(modname, "sceUmd_driver") == 0) {
-		PatchUmdDriver(mod);
+    } else if (strcmp(modname, "sceUmd_driver") == 0) {
+        PatchUmdDriver(mod);
 
-	} else if(strcmp(modname, "sceMeCodecWrapper") == 0) {
-		PatchMeCodecWrapper(mod);
+    } else if (strcmp(modname, "sceMeCodecWrapper") == 0) {
+        PatchMeCodecWrapper(mod);
 
-	} else if (strcmp(modname, "sceUtility_Driver") == 0) {
-		PatchUtility();
+    } else if (strcmp(modname, "sceUtility_Driver") == 0) {
+        PatchUtility();
 
-	} else if (strcmp(modname, "sceUSBCam_Driver") == 0) {
-		PatchUSBCamDriver(mod);
+    } else if (strcmp(modname, "sceUSBCam_Driver") == 0) {
+        PatchUSBCamDriver(mod);
 
-	} else if (strcmp(modname, "sceImpose_Driver") == 0) {
-		PatchImposeDriver(mod);
+    } else if (strcmp(modname, "sceImpose_Driver") == 0) {
+        PatchImposeDriver(mod);
 
-	} else if (strcmp(modname, "sceSAScore") == 0) {
-		PatchSasCore(mod);
+    } else if (strcmp(modname, "sceSAScore") == 0) {
+        PatchSasCore(mod);
 
-	} else if (strcmp(modname, "scePops_Manager") == 0){
-		PatchPopsMgr(mod);
+    } else if (strcmp(modname, "scePops_Manager") == 0) {
+        PatchPopsMgr(mod);
 
-	} else if (strcmp(modname, "pops") == 0){
-		PatchPops(mod);
+    } else if (strcmp(modname, "pops") == 0) {
+        PatchPops(mod);
 
-	} else if (strcmp(modname, "sysconf_plugin_module") == 0){
-		PatchSysconfPlugin(mod);
+    } else if (strcmp(modname, "sysconf_plugin_module") == 0) {
+        PatchSysconfPlugin(mod);
 
-	} else if (strcmp(modname, "CWCHEATPRX") == 0) {
-		PatchCwCheatPlugin(mod);
+    } else if (strcmp(modname, "CWCHEATPRX") == 0) {
+        PatchCwCheatPlugin(mod);
 
-	} else if(strcmp(modname, "VLF_Module") == 0) {
-		PatchVlfLib(mod);
-	}
+    } else if (strcmp(modname, "VLF_Module") == 0) {
+        PatchVlfLib(mod);
+    }
 
-	// Forward to previous Handler
-	if(previous) {
-		return previous(mod);
-	}
+    // Forward to previous Handler
+    if (previous) {
+        return previous(mod);
+    }
 
-	return 0;
+    return 0;
 }
 
 // Boot Time Entry Point
-int module_start(SceSize args, void * argp) {
-	logInit("ms0:/log_pentazemin.txt");
-	logmsg("Pentazemin started...\n");
+int module_start(SceSize args, void *argp) {
+    logInit("ms0:/log_pentazemin.txt");
+    logmsg("Pentazemin started...\n");
 
-	PatchSysmem();
-	PatchLoaderCore();
-	PatchIoFileMgr();
-	PatchMemlmd();
-	PatchMemUnlock();
-	sctrlFlushCache();
+    PatchSysmem();
+    PatchLoaderCore();
+    PatchIoFileMgr();
+    PatchMemlmd();
+    PatchMemUnlock();
+    sctrlFlushCache();
 
-	// initialize Adrenaline Layer
-	initAdrenaline();
+    // initialize Adrenaline Layer
+    initAdrenaline();
 
-	// Register Module Start Handler
-	previous = sctrlHENSetStartModuleHandler(PentazeminOnModuleStart);
-	sysboot_previous = sctrlHENSetSystemBootedHandler(PentazeminOnSystemBooted);
+    // Register Module Start Handler
+    previous = sctrlHENSetStartModuleHandler(PentazeminOnModuleStart);
+    sysboot_previous = sctrlHENSetSystemBootedHandler(PentazeminOnSystemBooted);
 
-	if (g_config.patch_stdio) {
-		tty_init();
-	}
+    if (g_config.patch_stdio) {
+        tty_init();
+    }
 
-	// Return Success
-	return 0;
+    // Return Success
+    return 0;
 }

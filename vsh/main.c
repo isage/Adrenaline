@@ -1,19 +1,19 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <psp2/appmgr.h>
@@ -32,56 +32,65 @@ static tai_hook_ref_t sceSysmoduleUnloadModuleInternalWithArgRef;
 static tai_hook_ref_t scePafMiscLoadModuleRef;
 static tai_hook_ref_t sceLsdbGetTypeRef;
 
-static SceUID hooks[4] = { -1, -1, -1, -1 };
+static SceUID hooks[4] = {-1, -1, -1, -1};
 
 static int sceLsdbGetTypePatched(void *a1) {
-	int val = TAI_CONTINUE(int, sceLsdbGetTypeRef, a1);
+    int val = TAI_CONTINUE(int, sceLsdbGetTypeRef, a1);
 
-	if (val == 1) { // type normal
-		char *name = sceLsdbGetName(a1);
-		if (name && sceClibStrcmp(name, ADRENALINE_TITLEID) == 0) {
-			return 2; // type pspemu
-		}
-	}
+    if (val == 1) { // type normal
+        char *name = sceLsdbGetName(a1);
+        if (name && sceClibStrcmp(name, ADRENALINE_TITLEID) == 0) {
+            return 2; // type pspemu
+        }
+    }
 
-	return val;
+    return val;
 }
 
 static int scePafMiscLoadModulePatched(int a1, const char *path, int a3, int a4, int a5) {
-	int res = TAI_CONTINUE(int, scePafMiscLoadModuleRef, a1, path, a3, a4, a5);
+    int res = TAI_CONTINUE(int, scePafMiscLoadModuleRef, a1, path, a3, a4, a5);
 
-	if (sceClibStrncmp(path, "vs0:vsh/shell/livespace_db.suprx", 32) == 0) {
-		hooks[3] = taiHookFunctionImport(&sceLsdbGetTypeRef, "SceShell", 0x6BC25E17, 0xDEC358E4, sceLsdbGetTypePatched);
-	}
+    if (sceClibStrncmp(path, "vs0:vsh/shell/livespace_db.suprx", 32) == 0) {
+        hooks[3] = taiHookFunctionImport(
+            &sceLsdbGetTypeRef, "SceShell", 0x6BC25E17, 0xDEC358E4, sceLsdbGetTypePatched
+        );
+    }
 
-	return res;
+    return res;
 }
 
-static int sceSysmoduleLoadModuleInternalWithArgPatched(SceUInt32 id, SceSize args, void *argp, void *unk) {
-	int res = TAI_CONTINUE(int, sceSysmoduleLoadModuleInternalWithArgRef, id, args, argp, unk);
+static int
+sceSysmoduleLoadModuleInternalWithArgPatched(SceUInt32 id, SceSize args, void *argp, void *unk) {
+    int res = TAI_CONTINUE(int, sceSysmoduleLoadModuleInternalWithArgRef, id, args, argp, unk);
 
-	if (res >= 0 && id == 0x80000008) {
-		hooks[2] = taiHookFunctionImport(&scePafMiscLoadModuleRef, "SceShell", 0x3D643CE8, 0xB3B5DF38, scePafMiscLoadModulePatched);
-	}
+    if (res >= 0 && id == 0x80000008) {
+        hooks[2] = taiHookFunctionImport(
+            &scePafMiscLoadModuleRef, "SceShell", 0x3D643CE8, 0xB3B5DF38,
+            scePafMiscLoadModulePatched
+        );
+    }
 
-	return res;
+    return res;
 }
 
-static int sceSysmoduleUnloadModuleInternalWithArgPatched(SceUInt32 id, SceSize args, void *argp, void *unk) {
-	int res = TAI_CONTINUE(int, sceSysmoduleUnloadModuleInternalWithArgRef, id, args, argp, unk);
+static int
+sceSysmoduleUnloadModuleInternalWithArgPatched(SceUInt32 id, SceSize args, void *argp, void *unk) {
+    int res = TAI_CONTINUE(int, sceSysmoduleUnloadModuleInternalWithArgRef, id, args, argp, unk);
 
-	if (res >= 0 && id == 0x80000008) {
-		if (hooks[2] >= 0) {
-			taiHookRelease(hooks[2], scePafMiscLoadModuleRef);
-			hooks[2] = -1;
-		}
-	}
+    if (res >= 0 && id == 0x80000008) {
+        if (hooks[2] >= 0) {
+            taiHookRelease(hooks[2], scePafMiscLoadModuleRef);
+            hooks[2] = -1;
+        }
+    }
 
-	return res;
+    return res;
 }
 
 // real name is sceAppMgrLaunchApp2, but oh well...
-int sceAppMgrLaunchAppByPath4(const char* path, const char* titleid, int unk1, char* params, int unk3, void* unk4);
+int sceAppMgrLaunchAppByPath4(
+    const char *path, const char *titleid, int unk1, char *params, int unk3, void *unk4
+);
 
 int adrStartBlanking(int vol);
 
@@ -89,69 +98,86 @@ int sceAppMgrGetStatusByName(const char *name, SceAppMgrAppState *state);
 int sceAVConfigGetMasterVol(int *vol);
 int sceAVConfigSetMasterVol(int vol);
 
-void _start() __attribute__ ((weak, alias("module_start")));
+void _start() __attribute__((weak, alias("module_start")));
 int module_start(SceSize args, void *argp) {
-	tai_module_info_t info;
-	info.size = sizeof(info);
-	if (taiGetModuleInfo("SceLsdb", &info) < 0) {
-		hooks[0] = taiHookFunctionImport(&sceSysmoduleLoadModuleInternalWithArgRef, "SceShell", 0x03FCF19D, 0xC3C26339, sceSysmoduleLoadModuleInternalWithArgPatched);
-		hooks[1] = taiHookFunctionImport(&sceSysmoduleUnloadModuleInternalWithArgRef, "SceShell", 0x03FCF19D, 0xA2F40C4C, sceSysmoduleUnloadModuleInternalWithArgPatched);
-	} else {
-		hooks[3] = taiHookFunctionImport(&sceLsdbGetTypeRef, "SceShell", 0x6BC25E17, 0xDEC358E4, sceLsdbGetTypePatched);
-	}
+    tai_module_info_t info;
+    info.size = sizeof(info);
+    if (taiGetModuleInfo("SceLsdb", &info) < 0) {
+        hooks[0] = taiHookFunctionImport(
+            &sceSysmoduleLoadModuleInternalWithArgRef, "SceShell", 0x03FCF19D, 0xC3C26339,
+            sceSysmoduleLoadModuleInternalWithArgPatched
+        );
+        hooks[1] = taiHookFunctionImport(
+            &sceSysmoduleUnloadModuleInternalWithArgRef, "SceShell", 0x03FCF19D, 0xA2F40C4C,
+            sceSysmoduleUnloadModuleInternalWithArgPatched
+        );
+    } else {
+        hooks[3] = taiHookFunctionImport(
+            &sceLsdbGetTypeRef, "SceShell", 0x6BC25E17, 0xDEC358E4, sceLsdbGetTypePatched
+        );
+    }
 
-	// check if eboot is running and blank screen/sound until restart
-	SceAppMgrAppState state;
-	sceClibMemset(&state, 0, sizeof(state));
+    // check if eboot is running and blank screen/sound until restart
+    SceAppMgrAppState state;
+    sceClibMemset(&state, 0, sizeof(state));
 
-	int vol = 0;
+    int vol = 0;
 
-	if (sceAVConfigGetMasterVol(&vol) < 0) // PSTV
-		sceAVConfigGetSystemVol(&vol); // Vita
+    if (sceAVConfigGetMasterVol(&vol) < 0) { // PSTV
+        sceAVConfigGetSystemVol(&vol); // Vita
+    }
 
-	if (sceAppMgrGetStatusByName(ADRENALINE_TITLEID, &state) == 0) {
-		if (sceAVConfigSetMasterVol(0) < 0) {
-			sceAVConfigSetSystemVol(0);
-		}
-		adrStartBlanking(vol);
-	}
+    if (sceAppMgrGetStatusByName(ADRENALINE_TITLEID, &state) == 0) {
+        if (sceAVConfigSetMasterVol(0) < 0) {
+            sceAVConfigSetSystemVol(0);
+        }
+        adrStartBlanking(vol);
+    }
 
-	// Destroy
-	int ret = sceAppMgrDestroyAppByName(ADRENALINE_TITLEID);
+    // Destroy
+    int ret = sceAppMgrDestroyAppByName(ADRENALINE_TITLEID);
 
-	//Relaunch if we killed
-	if (ret >= 0) {
-		char params[0x400];
-		sceClibSnprintf(params, sizeof(params), "originalpath=ux0:app/"ADRENALINE_TITLEID"&selfpath=ux0:app/"ADRENALINE_TITLEID"/eboot.bin&discid="ADRENALINE_TITLEID"&parentallevel=0&gamedataid=&appver=00.00&bootable=&category=gd");
+    // Relaunch if we killed
+    if (ret >= 0) {
+        char params[0x400];
+        sceClibSnprintf(
+            params, sizeof(params),
+            "originalpath=ux0:app/" ADRENALINE_TITLEID "&selfpath=ux0:app/" ADRENALINE_TITLEID
+            "/eboot.bin&discid=" ADRENALINE_TITLEID
+            "&parentallevel=0&gamedataid=&appver=00.00&bootable=&category=gd"
+        );
 
-		// we need to run pspemu but with adrenaline titleid
-		sceAppMgrLaunchAppByPath4("vs0:app/NPXS10028/eboot.bin", ADRENALINE_TITLEID, 0, params, 0, 0);
+        // we need to run pspemu but with adrenaline titleid
+        sceAppMgrLaunchAppByPath4(
+            "vs0:app/NPXS10028/eboot.bin", ADRENALINE_TITLEID, 0, params, 0, 0
+        );
 
-		// for some reason, sceAppMgrLaunchAppByPath4 creates process, but doesn't start/activate it
-		// call sceAppMgrLaunchAppByName to *properly* start and activate already properly created pspemu process
-		sceAppMgrLaunchAppByName(0x60000, ADRENALINE_TITLEID,params);
-	}
+        // for some reason, sceAppMgrLaunchAppByPath4 creates process, but doesn't start/activate it
+        // call sceAppMgrLaunchAppByName to *properly* start and activate already properly created
+        // pspemu process
+        sceAppMgrLaunchAppByName(0x60000, ADRENALINE_TITLEID, params);
+    }
 
-	return SCE_KERNEL_START_SUCCESS;
+    return SCE_KERNEL_START_SUCCESS;
 }
 
 int module_stop(SceSize args, void *argp) {
-	if (hooks[3] >= 0) {
-		taiHookRelease(hooks[3], sceLsdbGetTypeRef);
-		hooks[3] = -1;
-	}
-	if (hooks[2] >= 0) {
-		taiHookRelease(hooks[2], scePafMiscLoadModuleRef);
-		hooks[2] = -1;
-	}
-	if (hooks[1] >= 0) {
-		taiHookRelease(hooks[1], sceSysmoduleUnloadModuleInternalWithArgRef);
-		hooks[1] = -1;
-	}
-	if (hooks[0] >= 0) {
-		taiHookRelease(hooks[0], sceSysmoduleLoadModuleInternalWithArgRef);
-		hooks[0] = -1;
-	}
+    if (hooks[3] >= 0) {
+        taiHookRelease(hooks[3], sceLsdbGetTypeRef);
+        hooks[3] = -1;
+    }
+    if (hooks[2] >= 0) {
+        taiHookRelease(hooks[2], scePafMiscLoadModuleRef);
+        hooks[2] = -1;
+    }
+    if (hooks[1] >= 0) {
+        taiHookRelease(hooks[1], sceSysmoduleUnloadModuleInternalWithArgRef);
+        hooks[1] = -1;
+    }
+    if (hooks[0] >= 0) {
+        taiHookRelease(hooks[0], sceSysmoduleLoadModuleInternalWithArgRef);
+        hooks[0] = -1;
+    }
 
-	return SCE_KERNEL_STOP_SUCCESS;
+    return SCE_KERNEL_STOP_SUCCESS;
 }

@@ -4,8 +4,8 @@
 #include <pspumd.h>
 
 enum SceUmdMode {
-	SCE_UMD_MODE_POWERON = 0x01,
-	SCE_UMD_MODE_POWERCUR = 0x02,
+    SCE_UMD_MODE_POWERON = 0x01,
+    SCE_UMD_MODE_POWERCUR = 0x02,
 };
 
 typedef pspUmdInfo SceUmdDiscInfo;
@@ -14,6 +14,3 @@ int InitMediaMan();
 void UmdNotifyCallback(int stat);
 
 #endif // __MEDIAMAN_H__
-
-
-

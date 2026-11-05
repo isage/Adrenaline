@@ -1,7 +1,7 @@
 #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #include <systemctrl.h>
 #include <systemctrl_se.h>
@@ -9,365 +9,383 @@
 #include <adrenaline_log.h>
 
 #include "list.h"
-#include "xmbctrl.h"
 #include "plugins.h"
+#include "xmbctrl.h"
 
 List g_plugins;
 
-static char* sample_plugin_path = "ms0:/SEPLUGINS/example.prx";
+static char *sample_plugin_path = "ms0:/SEPLUGINS/example.prx";
 static int g_cur_place = 0;
 
-
-static int isRunlevelEnabled(char* line) {
-	return (paf_strncasecmp(line, "on", 2) == 0 || paf_strncasecmp(line, "1", 1) == 0 || paf_strncasecmp(line, "enabled", 7) == 0 || paf_strncasecmp(line, "true", 4) == 0);
+static int isRunlevelEnabled(char *line) {
+    return (
+        paf_strncasecmp(line, "on", 2) == 0 || paf_strncasecmp(line, "1", 1) == 0
+        || paf_strncasecmp(line, "enabled", 7) == 0 || paf_strncasecmp(line, "true", 4) == 0
+    );
 }
 
 static int isspace(int c) {
-	if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == '\n') {
-		return 1;
-	}
+    if (c == ' ' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == '\n') {
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }
 
 // Trim leading and trailing whitespaces
-static char * strtrim(char * text) {
-	// Invalid argument
-	if (text == NULL) {
-		return NULL;
-	}
+static char *strtrim(char *text) {
+    // Invalid argument
+    if (text == NULL) {
+        return NULL;
+    }
 
-	// Remove leading whitespaces
-	while (isspace(text[0])) {
-		text++;
-	}
+    // Remove leading whitespaces
+    while (isspace(text[0])) {
+        text++;
+    }
 
-	// Scan position
-	int pos = paf_strlen(text)-1;
-	if (pos<0) {
-		return text;
-	}
+    // Scan position
+    int pos = paf_strlen(text) - 1;
+    if (pos < 0) {
+        return text;
+    }
 
-	// Find trailing whitespaces
-	while (isspace(text[pos])) {
-		pos--;
-	}
+    // Find trailing whitespaces
+    while (isspace(text[pos])) {
+        pos--;
+    }
 
-	// Terminate String
-	text[pos+1] = (char)0;
+    // Terminate String
+    text[pos + 1] = (char)0;
 
-	// Return Trimmed String
-	return text;
+    // Return Trimmed String
+    return text;
 }
 
-static int readLine(char * source, char *str, int str_size) {
-	int n = 0;
+static int readLine(char *source, char *str, int str_size) {
+    int n = 0;
 
-	while (source[n] != 0 && source[n] >= 0x20) {
-		if (n >= str_size - 1) {
-			str[0] = 0;
-			return -1;
-		}
+    while (source[n] != 0 && source[n] >= 0x20) {
+        if (n >= str_size - 1) {
+            str[0] = 0;
+            return -1;
+        }
 
-		str[n] = source[n];
-		n++;
-	}
+        str[n] = source[n];
+        n++;
+    }
 
-	str[n] = 0;
-	return n + (source[n] != 0);
+    str[n] = 0;
+    return n + (source[n] != 0);
 }
 
 // Parse and Process Line
-static int processLine(char * line, int (process_line)(char*, char*, char*)) {
-	// Skip lines comments
-	if (line == NULL || paf_strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#') {
-		return 0;
-	}
+static int processLine(char *line, int(process_line)(char *, char *, char *)) {
+    // Skip lines comments
+    if (line == NULL || paf_strncmp(line, "//", 2) == 0 || line[0] == ';' || line[0] == '#') {
+        return 0;
+    }
 
-	// String Token
-	char * runlevel = line;
-	char * path = NULL;
-	char * enabled = NULL;
+    // String Token
+    char *runlevel = line;
+    char *path = NULL;
+    char *enabled = NULL;
 
-	// Original string length
-	unsigned int length = paf_strlen(line);
+    // Original string length
+    unsigned int length = paf_strlen(line);
 
-	// Fetch string token
-	for (u32 i = 0; i < length; i++) {
-		// Got all required Token
-		if (enabled != NULL) {
-			// Handle trailing comments as terminators
-			if (paf_strncmp(line + i, "//", 2) == 0 || line[i] == ';' || line[i] == '#') {
-				// Terminate dtring
-				line[i] = 0;
+    // Fetch string token
+    for (u32 i = 0; i < length; i++) {
+        // Got all required Token
+        if (enabled != NULL) {
+            // Handle trailing comments as terminators
+            if (paf_strncmp(line + i, "//", 2) == 0 || line[i] == ';' || line[i] == '#') {
+                // Terminate dtring
+                line[i] = 0;
 
-				// Stop token scan
-				break;
-			}
-		}
+                // Stop token scan
+                break;
+            }
+        }
 
-		if (line[i] == LINE_TOKEN_DELIMITER) {
-			// Terminate string
-			line[i] = 0;
+        if (line[i] == LINE_TOKEN_DELIMITER) {
+            // Terminate string
+            line[i] = 0;
 
-			// Path start
-			if(path == NULL) {
-				path = line + i + 1;
-			} else if(enabled == NULL) {
-				// Enabled start
-				enabled = line + i + 1;
-			} else {
-				// Got all data
-				break;
-			}
-		}
-	}
+            // Path start
+            if (path == NULL) {
+                path = line + i + 1;
+            } else if (enabled == NULL) {
+                // Enabled start
+                enabled = line + i + 1;
+            } else {
+                // Got all data
+                break;
+            }
+        }
+    }
 
-	// Insufficient plugin information
-	if (enabled == NULL) {
-		return 0;
-	}
+    // Insufficient plugin information
+    if (enabled == NULL) {
+        return 0;
+    }
 
-	// Trim whitespaces
-	runlevel = strtrim(runlevel);
-	path = strtrim(path);
-	enabled = strtrim(enabled);
+    // Trim whitespaces
+    runlevel = strtrim(runlevel);
+    path = strtrim(path);
+    enabled = strtrim(enabled);
 
-	return process_line(runlevel, path, enabled);
+    return process_line(runlevel, path, enabled);
 }
 
-static void ProcessPluginFile(char* path, int (process_line)(char*, char*, char*), void (*process_custom)(char*)) {
-	int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+static void ProcessPluginFile(
+    char *path, int(process_line)(char *, char *, char *), void (*process_custom)(char *)
+) {
+    int fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
 
-	// Opened Plugin Config
-	if (fd >= 0) {
-		// allocate buffer and read entire file
-		int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
-		sceIoLseek(fd, 0, PSP_SEEK_SET);
+    // Opened Plugin Config
+    if (fd >= 0) {
+        // allocate buffer and read entire file
+        int fsize = sceIoLseek(fd, 0, PSP_SEEK_END);
+        sceIoLseek(fd, 0, PSP_SEEK_SET);
 
-		u8* buf = paf_malloc(fsize+1);
-		if (buf == NULL){
-			sceIoClose(fd);
-			return;
-		}
+        u8 *buf = paf_malloc(fsize + 1);
+        if (buf == NULL) {
+            sceIoClose(fd);
+            return;
+        }
 
-		sceIoRead(fd, buf, fsize);
-		sceIoClose(fd);
-		buf[fsize] = 0;
+        sceIoRead(fd, buf, fsize);
+        sceIoClose(fd);
+        buf[fsize] = 0;
 
-		// Allocate Line Buffer
-		char* line = paf_malloc(LINE_BUFFER_SIZE);
-		// Buffer Allocation Success
-		if (line != NULL) {
-			// Read Lines
-			int nread = 0;
-			int total_read = 0;
+        // Allocate Line Buffer
+        char *line = paf_malloc(LINE_BUFFER_SIZE);
+        // Buffer Allocation Success
+        if (line != NULL) {
+            // Read Lines
+            int nread = 0;
+            int total_read = 0;
 
-			while ((nread=readLine((char*)buf+total_read, line, LINE_BUFFER_SIZE)) > 0) {
-				total_read += nread;
-				// if (line[0] == 0) continue; // empty line
-				int dup_line_len = paf_strlen(line)+1;
-				char* dupline = paf_malloc(dup_line_len);
+            while ((nread = readLine((char *)buf + total_read, line, LINE_BUFFER_SIZE)) > 0) {
+                total_read += nread;
+                // if (line[0] == 0) continue; // empty line
+                int dup_line_len = paf_strlen(line) + 1;
+                char *dupline = paf_malloc(dup_line_len);
 
-				if (dupline == NULL) {
-					logmsg("[ERROR]: %s: Failed to allocate `%d` bytes\n", __func__, dup_line_len);
-					continue;
-				}
+                if (dupline == NULL) {
+                    logmsg("[ERROR]: %s: Failed to allocate `%d` bytes\n", __func__, dup_line_len);
+                    continue;
+                }
 
-				paf_memset(dupline, 0, dup_line_len);
-				paf_strncpy(dupline, line, dup_line_len);
-				// Process Line
-				if (processLine(strtrim(line), process_line)) {
-					paf_free(dupline);
-				} else {
-					process_custom(dupline);
-				}
-			}
-			paf_free(line);
-		}
-		// Close Plugin Config
-		sceIoClose(fd);
-		paf_free(buf);
-	}
+                paf_memset(dupline, 0, dup_line_len);
+                paf_strncpy(dupline, line, dup_line_len);
+                // Process Line
+                if (processLine(strtrim(line), process_line)) {
+                    paf_free(dupline);
+                } else {
+                    process_custom(dupline);
+                }
+            }
+            paf_free(line);
+        }
+        // Close Plugin Config
+        sceIoClose(fd);
+        paf_free(buf);
+    }
 }
 
-static void list_cleaner(void* item) {
-	if (item == NULL) {
-		return;
-	}
+static void list_cleaner(void *item) {
+    if (item == NULL) {
+        return;
+    }
 
-	Plugin* plugin = (Plugin*)item;
-	if (plugin->name) paf_free(plugin->name);
-	if (plugin->surname) paf_free(plugin->surname);
-	if (plugin->path) paf_free(plugin->path);
-	if (plugin->runlevel) paf_free(plugin->runlevel);
-	paf_free(plugin);
+    Plugin *plugin = (Plugin *)item;
+    if (plugin->name) {
+        paf_free(plugin->name);
+    }
+    if (plugin->surname) {
+        paf_free(plugin->surname);
+    }
+    if (plugin->path) {
+        paf_free(plugin->path);
+    }
+    if (plugin->runlevel) {
+        paf_free(plugin->runlevel);
+    }
+    paf_free(plugin);
 }
 
-static void processCustomLine(char* line) {
-	logmsg4("[DEBUG]: %s: Processing plugin custom line `%s`\n", __func__, line);
-	Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
+static void processCustomLine(char *line) {
+    logmsg4("[DEBUG]: %s: Processing plugin custom line `%s`\n", __func__, line);
+    Plugin *plugin = (Plugin *)paf_malloc(sizeof(Plugin));
 
-	if (plugin == NULL) {
-		return;
-	}
+    if (plugin == NULL) {
+        return;
+    }
 
-	paf_memset(plugin, 0, sizeof(Plugin));
-	plugin->path = line;
-	plugin->place = g_cur_place;
-	add_list(&g_plugins, plugin);
+    paf_memset(plugin, 0, sizeof(Plugin));
+    plugin->path = line;
+    plugin->place = g_cur_place;
+    add_list(&g_plugins, plugin);
 }
 
-static void processPlugin(char* runlevel, char* path, char* enabled) {
-	logmsg4("[DEBUG]: %s: Processing plugin line `%s, %s, %s`\n", __func__, runlevel, path, enabled);
-	int n = g_plugins.count;
-	char* name = paf_malloc(20);
-	if (name == NULL) {
-		return;
-	}
-	paf_memset(name, 0, 20);
-	paf_snprintf(name, 20, "plugin_%d", n);
+static void processPlugin(char *runlevel, char *path, char *enabled) {
+    logmsg4(
+        "[DEBUG]: %s: Processing plugin line `%s, %s, %s`\n", __func__, runlevel, path, enabled
+    );
+    int n = g_plugins.count;
+    char *name = paf_malloc(20);
+    if (name == NULL) {
+        return;
+    }
+    paf_memset(name, 0, 20);
+    paf_snprintf(name, 20, "plugin_%d", n);
 
-	char* surname = paf_malloc(20);
-	if (surname == NULL) {
-		return;
-	}
-	paf_memset(surname, 0, 20);
-	paf_snprintf(surname, 20, "plugins%d", n);
+    char *surname = paf_malloc(20);
+    if (surname == NULL) {
+        return;
+    }
+    paf_memset(surname, 0, 20);
+    paf_snprintf(surname, 20, "plugins%d", n);
 
-	int path_len = paf_strlen(path) + 1;
-	char* full_path = (char*)paf_malloc(path_len);
-	if (full_path == NULL) {
-		return;
-	}
-	paf_memset(full_path, 0, path_len);
-	paf_snprintf(full_path, path_len, "%s", path);
+    int path_len = paf_strlen(path) + 1;
+    char *full_path = (char *)paf_malloc(path_len);
+    if (full_path == NULL) {
+        return;
+    }
+    paf_memset(full_path, 0, path_len);
+    paf_snprintf(full_path, path_len, "%s", path);
 
-	int run_level_len = paf_strlen(runlevel) + 1;
-	char* run_level = (char*)paf_malloc(run_level_len);
-	if (run_level == NULL) {
-		return;
-	}
-	paf_memset(run_level, 0, run_level_len);
-	paf_snprintf(run_level, run_level_len, "%s", runlevel);
+    int run_level_len = paf_strlen(runlevel) + 1;
+    char *run_level = (char *)paf_malloc(run_level_len);
+    if (run_level == NULL) {
+        return;
+    }
+    paf_memset(run_level, 0, run_level_len);
+    paf_snprintf(run_level, run_level_len, "%s", runlevel);
 
-	Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
-	if (plugin == NULL) {
-		return;
-	}
-	plugin->name = name;
-	plugin->surname = surname;
-	plugin->path = full_path;
-	plugin->runlevel = run_level;
-	plugin->place = g_cur_place;
-	plugin->active = isRunlevelEnabled(enabled);
+    Plugin *plugin = (Plugin *)paf_malloc(sizeof(Plugin));
+    if (plugin == NULL) {
+        return;
+    }
+    plugin->name = name;
+    plugin->surname = surname;
+    plugin->path = full_path;
+    plugin->runlevel = run_level;
+    plugin->place = g_cur_place;
+    plugin->active = isRunlevelEnabled(enabled);
 
-	add_list(&g_plugins, plugin);
+    add_list(&g_plugins, plugin);
 }
 
-void loadPlugins(){
-	clear_list(&g_plugins, &list_cleaner);
+void loadPlugins() {
+    clear_list(&g_plugins, &list_cleaner);
 
-	SceIoStat stat;
-	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
+    SceIoStat stat;
+    int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
 
-	if (epiplugins_exists) {
-		ProcessPluginFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
-	} else {
-		ProcessPluginFile("ms0:/seplugins/plugins.txt", &processPlugin, &processCustomLine);
-	}
+    if (epiplugins_exists) {
+        ProcessPluginFile("ms0:/seplugins/EPIplugins.txt", &processPlugin, &processCustomLine);
+    } else {
+        ProcessPluginFile("ms0:/seplugins/plugins.txt", &processPlugin, &processCustomLine);
+    }
 
-
-	if (g_plugins.count == 0){
-		// Add example plugin
-		Plugin* plugin = (Plugin*)paf_malloc(sizeof(Plugin));
-		plugin->name = (char*)paf_malloc(20);
-		plugin->surname = (char*)paf_malloc(20);
-		plugin->runlevel = (char*)paf_malloc(20);
-		plugin->path = (char*)paf_malloc(paf_strlen(sample_plugin_path)+1);
-		plugin->active = 1;
-		plugin->place = 0;
-		paf_strcpy(plugin->name, "plugin_0");
-		paf_strcpy(plugin->surname, "plugins0");
-		paf_strcpy(plugin->runlevel, "ULUS01234");
-		paf_strcpy(plugin->path, sample_plugin_path);
-		add_list(&g_plugins, plugin);
-	}
-	logmsg4("[DEBUG]: Plugin Manager: Plugin file loaded\n");
+    if (g_plugins.count == 0) {
+        // Add example plugin
+        Plugin *plugin = (Plugin *)paf_malloc(sizeof(Plugin));
+        plugin->name = (char *)paf_malloc(20);
+        plugin->surname = (char *)paf_malloc(20);
+        plugin->runlevel = (char *)paf_malloc(20);
+        plugin->path = (char *)paf_malloc(paf_strlen(sample_plugin_path) + 1);
+        plugin->active = 1;
+        plugin->place = 0;
+        paf_strcpy(plugin->name, "plugin_0");
+        paf_strcpy(plugin->surname, "plugins0");
+        paf_strcpy(plugin->runlevel, "ULUS01234");
+        paf_strcpy(plugin->path, sample_plugin_path);
+        add_list(&g_plugins, plugin);
+    }
+    logmsg4("[DEBUG]: Plugin Manager: Plugin file loaded\n");
 }
 
 void savePlugins() {
-	logmsg4("[DEBUG]: Plugin Manager: Plugin file saved\n");
-	if (g_plugins.count == 0) {
-		return;
-	}
+    logmsg4("[DEBUG]: Plugin Manager: Plugin file saved\n");
+    if (g_plugins.count == 0) {
+        return;
+    }
 
-	if (g_plugins.count == 1) {
-		Plugin *plugin = (Plugin *)(g_plugins.table[0]);
-		if (paf_strcmp(plugin->path, sample_plugin_path) == 0) {
-			return;
-		}
-	}
+    if (g_plugins.count == 1) {
+        Plugin *plugin = (Plugin *)(g_plugins.table[0]);
+        if (paf_strcmp(plugin->path, sample_plugin_path) == 0) {
+            return;
+        }
+    }
 
-	sctrlSEGetConfig(&g_cfw_config);
+    sctrlSEGetConfig(&g_cfw_config);
 
-	SceIoStat stat;
-	int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
+    SceIoStat stat;
+    int epiplugins_exists = sceIoGetstat("ms0:/seplugins/EPIplugins.txt", &stat) >= 0;
 
-	int fd = -1;
-	if (epiplugins_exists) {
-		fd = sceIoOpen("ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	} else {
-		fd = sceIoOpen("ms0:/seplugins/plugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-	}
+    int fd = -1;
+    if (epiplugins_exists) {
+        fd = sceIoOpen(
+            "ms0:/seplugins/EPIplugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777
+        );
+    } else {
+        fd =
+            sceIoOpen("ms0:/seplugins/plugins.txt", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+    }
 
-	if (fd < 0) {
-		return;
-	}
+    if (fd < 0) {
+        return;
+    }
 
-	for (int i = 0; i < g_plugins.count; i++) {
-		Plugin *plugin = (Plugin *)(g_plugins.table[i]);
+    for (int i = 0; i < g_plugins.count; i++) {
+        Plugin *plugin = (Plugin *)(g_plugins.table[i]);
 
-		if (plugin->active == PLUGIN_REMOVED) {
-			continue;
-		}
+        if (plugin->active == PLUGIN_REMOVED) {
+            continue;
+        }
 
-		if (plugin->name != NULL && plugin->runlevel != NULL) {
-			static char buf[256] = {0};
-			char *enabled = (plugin->active) ? "on" : "off";
-			paf_memset(buf, 0, sizeof(buf));
-			paf_snprintf(buf, sizeof(buf)-1, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled);
-			sceIoWrite(fd, buf, paf_strlen(buf));
+        if (plugin->name != NULL && plugin->runlevel != NULL) {
+            static char buf[256] = {0};
+            char *enabled = (plugin->active) ? "on" : "off";
+            paf_memset(buf, 0, sizeof(buf));
+            paf_snprintf(
+                buf, sizeof(buf) - 1, "%s, %s, %s\n", plugin->runlevel, plugin->path, enabled
+            );
+            sceIoWrite(fd, buf, paf_strlen(buf));
 
-		  // Custom line
-		} else {
-			sceIoWrite(fd, plugin->path, paf_strlen(plugin->path));
-			sceIoWrite(fd, "\n", 1);
-		}
-	}
+            // Custom line
+        } else {
+            sceIoWrite(fd, plugin->path, paf_strlen(plugin->path));
+            sceIoWrite(fd, "\n", 1);
+        }
+    }
 
-	if (fd >= 0) {
-		sceIoClose(fd);
-	}
+    if (fd >= 0) {
+        sceIoClose(fd);
+    }
 }
 
-char* getPluginDisplayName(const Plugin *plugin, char *file, int len) {
-	char *p = paf_strrchr(plugin->path, '/');
-	if (p == NULL) {
-		p = paf_strchr(plugin->path, ',');
-	}
+char *getPluginDisplayName(const Plugin *plugin, char *file, int len) {
+    char *p = paf_strrchr(plugin->path, '/');
+    if (p == NULL) {
+        p = paf_strchr(plugin->path, ',');
+    }
 
-	if (p != NULL) {
-		p = strtrim(p+1);
-	} else {
-		p = strtrim(plugin->path);
-	}
+    if (p != NULL) {
+        p = strtrim(p + 1);
+    } else {
+        p = strtrim(plugin->path);
+    }
 
-	if (plugin->runlevel != NULL) {
-		paf_snprintf(file, len, "%s [%s]", p, plugin->runlevel);
-	} else {
-		paf_strncpy(file, p, len);
-	}
+    if (plugin->runlevel != NULL) {
+        paf_snprintf(file, len, "%s [%s]", p, plugin->runlevel);
+    } else {
+        paf_strncpy(file, p, len);
+    }
 
-	return file;
+    return file;
 }

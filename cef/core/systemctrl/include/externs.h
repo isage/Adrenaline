@@ -1,19 +1,19 @@
 /*
-	Adrenaline
-	Copyright (C) 2016-2018, TheFloW
+    Adrenaline
+    Copyright (C) 2016-2018, TheFloW
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef __SCTRL_EXTERNS_H_
@@ -21,10 +21,10 @@
 
 #include <pspkermit.h>
 
-#include <systemctrl.h>
-#include <systemctrl_se.h>
 #include <rebootexconfig.h>
+#include <systemctrl.h>
 #include <systemctrl_epi.h>
+#include <systemctrl_se.h>
 
 #include "utils.h"
 
@@ -39,14 +39,14 @@ extern u8 g_is_plugin_loading;
 extern SceSize g_plugins_loaded_mem;
 extern SceSize g_last_plugin_mem_size;
 
-extern void* g_custom_rebootex;
+extern void *g_custom_rebootex;
 extern u32 g_custom_rebootex_size;
-extern void* g_custom_rebootex_config;
+extern void *g_custom_rebootex_config;
 extern u32 g_custom_rebootex_config_size;
 
 extern int g_licensed_eboot;
 
-void lowerString(char* orig, char* ret, int strSize);
+void lowerString(char *orig, char *ret, int strSize);
 
 int LoadExecForKernel_AA2029EC();
 

@@ -3,14 +3,14 @@
 
 #include <stddef.h>
 
-typedef struct List{
-	void** table;
-	int count;
-	int max;
+typedef struct List {
+    void **table;
+    int count;
+    int max;
 } List;
 
-void add_list(List* list, void* item);
+void add_list(List *list, void *item);
 
-void clear_list(List* list, void (*cleaner)(void*));
+void clear_list(List *list, void (*cleaner)(void *));
 
 #endif

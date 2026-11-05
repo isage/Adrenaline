@@ -22,13 +22,13 @@
 
 #define MAX_FILES_NR 8
 
-#define SAFE_FREE(p) \
-	do { \
-		if (p != NULL) { \
-			oe_free(p); \
-			p = NULL; \
-		} \
-	} while ( 0 )
+#define SAFE_FREE(p)     \
+    do {                 \
+        if (p != NULL) { \
+            oe_free(p);  \
+            p = NULL;    \
+        }                \
+    } while (0)
 
 extern u32 psp_model;
 extern u32 psp_fw_version;
