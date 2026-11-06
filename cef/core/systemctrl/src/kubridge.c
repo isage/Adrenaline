@@ -18,6 +18,7 @@
 
 #include <string.h>
 
+#include <pspinit.h>
 #include <pspmodulemgr.h>
 
 #include <cfwmacros.h>
@@ -56,7 +57,9 @@ int kuKernelBootFrom() {
 
 int kuKernelInitFileName(char *filename) {
     int k1 = pspSdkSetK1(0);
-    strcpy(filename, sceKernelInitFileName());
+    if (filename != NULL) {
+        strcpy(filename, sceKernelInitFileName());
+    }
     pspSdkSetK1(k1);
     return 0;
 }
@@ -182,7 +185,10 @@ int kuKernelCallExtendStack(void *func_addr, KernelCallArg *args, int stack_size
 }
 
 void kuKernelGetUmdFile(char *umdfile, int size) {
-    strncpy(umdfile, GetUmdFile(), size);
+    if (umdfile != NULL && size > 0) {
+        strncpy(umdfile, GetUmdFile(), size - 1);
+        umdfile[size - 1] = '\0';
+    }
 }
 
 // Read Dword from Kernel

@@ -67,8 +67,6 @@ int sceKernelStartModulePatched(
     SceUID modid, SceSize argsize, void *argp, int *status, SceKernelSMOption *option
 ) {
     SceModule *mod = sceKernelFindModuleByUID(modid);
-    SceUID fpl = -1;
-    char *plug_buf = NULL;
     int res;
 
     if (mod == NULL) {
@@ -142,11 +140,6 @@ int sceKernelStartModulePatched(
 
 START_MODULE:
     res = sceKernelStartModule(modid, argsize, argp, status, option);
-
-    if (plug_buf) {
-        sceKernelFreeFpl(fpl, plug_buf);
-        sceKernelDeleteFpl(fpl);
-    }
 
     return res;
 }

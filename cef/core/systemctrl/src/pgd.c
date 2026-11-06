@@ -14,12 +14,6 @@
 
 #define VERSION_KEY_SIZE 0x10
 
-char *stpcpy(char *dest, const char *src) {
-    while ((*dest++ = *src++) != '\0')
-        /* nothing */;
-    return --dest;
-}
-
 /*************************************************************/
 
 static u8 g_dnas_key1A90[16] = {0xED, 0xE2, 0x5D, 0x2D, 0xBB, 0xF8, 0x12, 0xE5,
@@ -89,10 +83,15 @@ int nodrmGetVersionKey(u8 *version_key, char *path) {
     int ret = 0;
 
     SceUID fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+    if (fd < 0) {
+        return fd;
+    }
+
     sceIoLseek32(fd, 0x24, PSP_SEEK_SET);
     sceIoRead(fd, &psar, 4);
     sceIoLseek32(fd, psar, PSP_SEEK_SET);
     sceIoRead(fd, header, sizeof(header));
+    sceIoClose(fd);
 
     sceDrmBBMacInit(&mkey, MAC_KEY_TYPE_FIXED);
     sceDrmBBMacUpdate(&mkey, header, 0xC0);
@@ -191,15 +190,13 @@ int dumpPS1key(const char *path, u8 *buf) {
     nodrmBBMacGetKey(&mkey, buf + 0x70, PGD.vkey);
 
     char Path[256];
-    strcpy(Path, path);
-    int len = strlen(Path);
-
-    while (Path[len] != '/') {
-        len--;
+    const char *slash = strrchr(path, '/');
+    if (!slash || ((size_t)(slash - path + 1) + sizeof("KEYS.BIN") > sizeof(Path))) {
+        return -1;
     }
-
-    Path[len + 1] = 0;
-    strcat(Path, "KEYS.BIN");
+    size_t dir_len = (size_t)(slash - path + 1);
+    memcpy(Path, path, dir_len);
+    strcpy(Path + dir_len, "KEYS.BIN");
 
     SceUID fd = sceIoOpen(Path, PSP_O_RDONLY, 0777);
 

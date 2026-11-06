@@ -96,15 +96,5 @@ void *oe_memalign(SceSize align, SceSize size) {
 }
 
 int mallocinit() {
-    int keyconfig = sceKernelApplicationType();
-    if ((keyconfig == PSP_INIT_KEYCONFIG_POPS)
-        || (keyconfig == PSP_INIT_KEYCONFIG_GAME
-            && sceKernelInitApitype() == PSP_INIT_APITYPE_UMD_EMU_MS1)) {
-        return 0;
-    }
-
-    // heapid = sceKernelCreateHeap(PSP_MEMORY_PARTITION_KERNEL, 256 * 1024, 1, "");
-
-    // return (heapid < 0) ? heapid : 0;
     return 0;
 }

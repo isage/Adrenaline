@@ -31,18 +31,6 @@
 #include <adrenaline_log.h>
 
 #include "externs.h"
-#include <systemctrl_epi.h>
-
-typedef struct LbaParams {
-    int unknown1; // 0
-    int cmd; // 4
-    int lba_top; // 8
-    int lba_size; // 12
-    int byte_size_total;  // 16
-    int byte_size_centre; // 20
-    int byte_size_start; // 24
-    int byte_size_last;  // 28
-} LbaParams;
 
 static SceGameInfo g_default_gameinfo = {
     .title_id = "HOME0000\0\0\0\0\0\0\0\0",
@@ -139,10 +127,10 @@ void findAndSetTitleId() {
     }
 
     if (g_rebootex_config.title_id[0] == '\0') {
-        memcpy(g_default_gameinfo.title_id, g_rebootex_config.title_id, 9);
+        memcpy(g_rebootex_config.title_id, g_default_gameinfo.title_id, 9);
     }
 
-    if (g_rebootex_config.title_id[0] == '\0' && g_adrenaline != NULL) {
+    if (g_adrenaline != NULL) {
         memcpy(g_adrenaline->titleid, g_rebootex_config.title_id, 9);
     }
 }

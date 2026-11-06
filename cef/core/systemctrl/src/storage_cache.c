@@ -31,9 +31,6 @@
 
 #include <adrenaline_log.h>
 
-// #define CHECK_MODE
-#undef CHECK_MODE
-
 #define INVALID_POS (-1)
 
 // Cache Structure
@@ -112,7 +109,6 @@ static int storageReadCache(PspIoDrvFileArg *arg, char *data, int len) {
 
     // Found cached portion of the file
     if (cache != NULL) {
-#ifndef CHECK_MODE
         // Calculate buffered file content size
         read_len = MIN(len, cache->pos + cache->bufSize - pos);
 
@@ -122,17 +118,6 @@ static int storageReadCache(PspIoDrvFileArg *arg, char *data, int len) {
 
         // Move position in the file
         storageLseek(arg, pos + result, PSP_SEEK_SET);
-#else
-        // Check validate code
-        result = (*storageRead)(arg, data, len);
-
-        if (0 != memcmp(data, cache->buf + pos - cache->pos, len)) {
-#ifdef DEBUG
-            printk("%s: 0x%08X <%d> cache mismatched!!!\r\n", __func__, (uint)pos, (int)len);
-#endif
-            VWRITE32(0, 0);
-        }
-#endif
 
 #ifdef DEBUG
         g_cache_hit += len;
