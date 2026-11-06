@@ -10,13 +10,13 @@
 
 void PatchMemlmd(void);
 void PatchSysmem(void);
-void PatchUtility(void);
 void PatchIoFileMgr(void);
 void PatchLoaderCore(void);
 void PatchVolatileMemBug(void);
 
 void PatchPops(SceModule *mod);
 void PatchChkreg(SceModule *mod);
+void PatchUtility(SceModule *mod);
 void PatchMesgLed(SceModule *mod);
 void PatchPopsMgr(SceModule *mod);
 void PatchSasCore(SceModule *mod);

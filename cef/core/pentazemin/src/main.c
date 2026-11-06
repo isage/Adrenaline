@@ -94,7 +94,7 @@ static int PentazeminOnModuleStart(SceModule *mod) {
         PatchMeCodecWrapper(mod);
 
     } else if (strcmp(modname, "sceUtility_Driver") == 0) {
-        PatchUtility();
+        PatchUtility(mod);
 
     } else if (strcmp(modname, "sceUSBCam_Driver") == 0) {
         PatchUSBCamDriver(mod);
