@@ -110,6 +110,9 @@ static int is_licensed_eboot(const char *path) {
     int ret = 0;
     u8 buf[0x28];
     SceUID fd = sceIoOpen(path, PSP_O_RDONLY, 0);
+    if (fd < 0) {
+        return 0;
+    }
     sceIoRead(fd, buf, sizeof(buf));
 
     if (!memcmp(buf, "\x00PBP", 4)) {
@@ -237,13 +240,15 @@ int setupEdatVersionKeyPatched(u8 *vkey, u8 *edat, int size) {
     int ret = _setupEdatVersionKey(vkey, edat, size);
 
     if (ret < 0) { // generate key from mac if official method fails.
-        ret = sceIoOpen(g_pgd_path, 1, 0);
-        sceIoRead(ret, g_pgdbuf, 16);
-        sceIoLseek(ret, tou32(g_pgdbuf + 0xC) & 0xFFFF, 0);
-        sceIoRead(ret, g_pgdbuf, 0x90);
-        sceIoClose(ret);
+        SceUID fd = sceIoOpen(g_pgd_path, PSP_O_RDONLY, 0);
+        if (fd >= 0) {
+            sceIoRead(fd, g_pgdbuf, 16);
+            sceIoLseek(fd, tou32(g_pgdbuf + 0xC) & 0xFFFF, 0);
+            sceIoRead(fd, g_pgdbuf, 0x90);
+            sceIoClose(fd);
 
-        ret = nodrmGetEdatKey(vkey, g_pgdbuf);
+            ret = nodrmGetEdatKey(vkey, g_pgdbuf);
+        }
     }
 
     return ret;

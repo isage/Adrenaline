@@ -267,8 +267,8 @@ static int matchingRunlevel(char *runlevel) {
     // Plugin is for specific CFW only
     if (cfw_type) {
         // Not for Adrenaline, treat as disabled
-        if (strncasecmp(cfw_type + 4, "adr", 3) != 0 || strncasecmp(cfw_type + 4, "epi", 3) != 0
-            || strncasecmp(cfw_type + 4, "tn", 2) != 0) {
+        if (strncasecmp(cfw_type + 4, "adr", 3) != 0 && strncasecmp(cfw_type + 4, "epi", 3) != 0
+            && strncasecmp(cfw_type + 4, "tn", 2) != 0) {
             return 0;
         }
     }

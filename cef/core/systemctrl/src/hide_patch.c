@@ -43,25 +43,29 @@ static char *g_blacklist[] = {
 static inline int is_in_blacklist(const char *dname) {
     logmsg4("[DEBUG]: %s: dname=%s\n", __func__, dname);
 
+    if (dname == NULL) {
+        return 0;
+    }
+
     // lower string
-    char temp[255];
+    char temp[256];
     memset(temp, 0, sizeof(temp));
-    strncpy(temp, dname, sizeof(temp));
+    strncpy(temp, dname, sizeof(temp) - 1);
 
     lowerString(temp, temp, strlen(temp) + 1);
 
     for (int i = 0; i < NELEMS(g_blacklist); ++i) {
-        char *found = strstr(temp, g_blacklist[i]);
-        if (found != NULL) {
+        const char *found = strstr(temp, g_blacklist[i]);
+        while (found != NULL) {
             // "ISO" can show up inside other words
             // So if index is of the "iso", and "iso" was found after the start of the lowered
             // string (`temp`) and ".iso" or "/iso", we should consider another word that contains
             // "iso" inside it.
             //
             // Example: God of War - Ghost of Sparta: it tries to find and open `SPA_050_PRISON.BIN`
-            if (i == 0 && (int)found > (int)temp && (int)(found - 1) != '.'
-                && (int)(found - 1) != '/') {
-                return 0;
+            if (i == 0 && found > temp && *(found - 1) != '.' && *(found - 1) != '/') {
+                found = strstr(found + 1, g_blacklist[i]);
+                continue;
             }
             return 1;
         }

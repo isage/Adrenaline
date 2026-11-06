@@ -685,8 +685,11 @@ int sctrlGetSfoPARAM(
         char key_name[128];
         memset(key_name, 0, sizeof(key_name));
         char symbol = 0;
+        size_t key_len = 0;
         while (sceIoRead(fd, &symbol, sizeof(symbol)) > 0) {
-            key_name[strlen(key_name)] = symbol;
+            if (key_len < sizeof(key_name) - 1) {
+                key_name[key_len++] = symbol;
+            }
             if (symbol == 0) {
                 break;
             }

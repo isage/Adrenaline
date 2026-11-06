@@ -395,9 +395,9 @@ static int OnModuleStart(SceModule *mod) {
 
 int module_start(SceSize args, void *argp) {
     logInit("ms0:/log_systemctrl.txt");
-    logmsg("SystemControl started...\n")
+    logmsg("SystemControl started...\n");
 
-        PatchSysmem();
+    PatchSysmem();
     PatchLoadCore();
     PatchInterruptMgr();
     PatchModuleMgr();
