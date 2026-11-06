@@ -20,9 +20,9 @@
 #include <string.h>
 
 #include <pspiofilemgr.h>
+#include <pspsysmem_kernel.h>
 #include <pspthreadman_kernel.h>
 #include <pspumd.h>
-#include <psputilsforkernel.h>
 
 #include <cfwmacros.h>
 #include <systemctrl.h>
@@ -59,8 +59,6 @@ static u8 g_umd_seek = 0;
 static u8 g_umd_speed = 0;
 static u32 g_cur_offset = 0;
 static u32 g_last_read_offset = 0;
-
-int sceKernelSetQTGP3(void *data);
 
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS

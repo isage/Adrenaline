@@ -3,6 +3,7 @@
 
 #include <pspkernel.h>
 #include <pspsdk.h>
+#include <pspsysmem_kernel.h>
 #include <pspthreadman_kernel.h>
 #include <pspumd.h>
 
@@ -17,7 +18,6 @@
 #include "../bits/iso_common.h"
 #include "umd9660_driver.h"
 
-void sceKernelSetQTGP3(void *);
 void sceUmdSetDriveStatus(int status);
 
 SceUID g_umd_sema = -1; // data2740
@@ -654,7 +654,9 @@ PspIoDrvFuncs umd9660_funcs = {
 PspIoDrv umd9660_driver =
     {"umd", 0x4, 0x800, "UMD9660" /*2240*/, &umd9660_funcs /*23EC*/};// data2444
 
-int data2248[4] = {-1, -1, -1, -1};
+u8 data2248[16] = {
+    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+};
 
 // sub_00000090
 int march_init() {
