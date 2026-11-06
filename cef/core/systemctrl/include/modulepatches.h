@@ -45,6 +45,7 @@ void PatchLoadCore(void);
 void PatchModuleMgr(void);
 void PatchIoFileMgr(void);
 void PatchInterruptMgr(void);
+void PatchUtility(SceModule *mod);
 void PatchLoadExec(SceModule *mod);
 void PatchMediaSync(SceModule *mod);
 void PatchController(SceModule *mod);

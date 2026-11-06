@@ -64,7 +64,6 @@ static u8 g_cache_num_list[] = {0, 1, 2, 4, 8, 16, 32, 64, 128};
 int mallocinit();
 
 static void OnSystemStatusIdle() {
-
     if (g_cfw_config.no_ms_cache == 0) {
         sctrlMsCacheInit("ms", MSCACHE_BUFSIZE_MIN);
     }
@@ -347,6 +346,7 @@ static int OnModuleStart(SceModule *mod) {
         PatchNp9660Driver(mod);
 
     } else if (strcmp(modname, "sceUtility_Driver") == 0) {
+        PatchUtility(mod);
         findAndSetTitleId();
         logmsg("[INFO]: Title ID: %s\n", g_rebootex_config.title_id);
         CheckControllerInput();

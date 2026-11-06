@@ -18,6 +18,7 @@ add_cef_prx(systemctrl
     src/sysclibforuser.c
     src/sysmodpatches.c
     src/systemctrl.c
+    src/utility_patch.c
     src/utils.c
     ../../bits/ttystdio.c
     rebootex.h
