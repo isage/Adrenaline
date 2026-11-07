@@ -43,8 +43,11 @@
 - **DEV:** Expand `isoCtrl_driver` API with `isoGetUmdFile`, `isoReopenUmdFile`, `isoSwapUmdFile`.
 - **DEV:** Introduce `NoDrmHelper` CFW library
     - Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.
+- **DEV:** Implement `sceUtilityLoadModule` custom modules expansion.
+  - You can put [PSP dynamic libraries](https://github.com/pspdev/psp-dynamic-libraries) inside your tool folder (`??0:/PSP/GAME/⟨YOUR_APP⟩/`), or in `ms0:/PSP/LIBS/` folder, or merge with `flash0:/kd/` folder, and then load them using `sceUtilityLoadModule` with the [custom utility module values on `systemctrl.h`](https://github.com/pspdev/psp-cfw-sdk/blob/main/include/systemctrl.h#L72)
 - **DEV:** Implement `sctrlHENRegisterKDecryptHandler` CFW API.
 - **DEV:** Implement `sctrlHENRegisterMDecryptHandler` CFW API.
+- **DEV:** Implement `sctrlHENRegisterLLEHandler` CFW API.
 
 ## v8.0.2
 
