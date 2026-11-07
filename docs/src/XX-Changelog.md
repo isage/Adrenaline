@@ -44,6 +44,7 @@
 - **DEV:** Introduce `NoDrmHelper` CFW library
     - Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.
 - **DEV:** Implement `sctrlHENRegisterKDecryptHandler` CFW API.
+- **DEV:** Implement `sctrlHENRegisterMDecryptHandler` CFW API.
 
 ## v8.0.2
 

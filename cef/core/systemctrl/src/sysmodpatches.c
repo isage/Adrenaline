@@ -67,6 +67,9 @@ static int (*_memlmd_unsigner)(u8 *prx, u32 size, int use_polling) = NULL;
 static KDEC_HANDLER _memlmd_decrypt = NULL;
 static KDEC_HANDLER g_extend_memlmd_decryption = NULL;
 
+static MDEC_HANDLER _mesgled_decrypt = NULL;
+static MDEC_HANDLER g_extend_mesgled_decrypt = NULL;
+
 // Known GZIP Compression Tags
 static u32 g_gzip_compress_tag[] = {
     0x28796DAA, 0x7316308C, 0x3EAD0AEE, 0x8555ABF2, 0xC6BA41D3, 0x55668D96, 0xC01DB15D,
@@ -324,6 +327,12 @@ KDEC_HANDLER sctrlHENRegisterKDecryptHandler(KDEC_HANDLER func) {
     KDEC_HANDLER r = g_extend_memlmd_decryption;
     g_extend_memlmd_decryption = func;
     return r;
+}
+
+MDEC_HANDLER sctrlHENRegisterMDecryptHandler(MDEC_HANDLER func) {
+    MDEC_HANDLER ret = g_extend_mesgled_decrypt;
+    g_extend_mesgled_decrypt = func;
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -610,6 +619,42 @@ int memlmd_decrypt_patched(u8 *prx, u32 size, u32 *newsize, int use_polling) {
     return ret;
 }
 
+int mesgled_decrypt_patched(
+    u32 *tag, u8 *key, u32 code, u8 *prx, u32 size, u32 *newsize, u32 use_polling, u8 *blacklist,
+    u32 blacklistsize, u32 type, u8 *xor_key1, u8 *xor_key2
+) {
+    int ret = 0;
+    if (prx != NULL && newsize != NULL) {
+        if (g_extend_mesgled_decrypt != NULL) {
+            ret = g_extend_mesgled_decrypt(
+                tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type,
+                xor_key1, xor_key2
+            );
+
+            if (ret >= 0) {
+                return ret;
+            }
+        }
+
+        u32 compsize = *(u32 *)(prx + 0xB0);
+
+        if (is_prx_compressed(prx, size)) {
+            memcpy(prx, prx + 0x150, compsize);
+
+            *newsize = compsize;
+
+            return 0;
+        }
+    }
+
+    ret = _mesgled_decrypt(
+        tag, key, code, prx, size, newsize, use_polling, blacklist, blacklistsize, type, xor_key1,
+        xor_key2
+    );
+
+    return ret;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -741,12 +786,12 @@ void PatchMemlmd(void) {
         u32 data = VREAD32(addr);
 
         if (data == JAL(_memlmd_decrypt)) {
-            MAKE_INSTRUCTION(addr, JAL(memlmd_decrypt_patched));
+            MAKE_CALL(addr, memlmd_decrypt_patched);
             patches -= 1; // 2
         } else if (data == 0x27BDFF80) {
             _memlmd_decrypt = (void *)(addr - 8);
         } else if (data == JAL(_memlmd_unsigner)) {
-            MAKE_INSTRUCTION(addr, JAL(memlmd_unsigner_patched));
+            MAKE_CALL(addr, memlmd_unsigner_patched);
             patches -= 1; // 2
         } else if (data == 0x3C02F009) {
             // Allow to load packed usermode module.
@@ -766,6 +811,20 @@ void PatchMemlmd(void) {
     }
 
     sctrlFlushCache();
+}
+
+void PatchMesgLed(SceModule *mod) {
+    u32 topaddr = mod->text_addr + mod->text_size;
+
+    for (u32 addr = mod->text_addr; addr < topaddr; addr += 4) {
+        u32 data = VREAD32(addr);
+
+        if (data == 0x2CE30001 && _mesgled_decrypt == NULL) {
+            _mesgled_decrypt = (void *)addr;
+        } else if (data == JAL(_mesgled_decrypt)) {
+            MAKE_CALL(addr, mesgled_decrypt_patched);
+        }
+    }
 }
 
 void PatchPluginModule(SceModule *mod) {
