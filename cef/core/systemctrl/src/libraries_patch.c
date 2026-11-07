@@ -40,6 +40,8 @@
 int (*aLinkLibEntries)(void *lib);
 int (*search_nid_in_entrytable)(void *lib, u32 nid, int unk, int nidSearchOption);
 
+LLE_HANDLER g_lle_handler = NULL;
+
 #define N_MISSING_NID(x) (sizeof(x) / sizeof(MissingNid))
 #define N_MISSING_NID_LIST (sizeof(g_missing_nid_list) / sizeof(MissingNidList))
 
@@ -170,7 +172,7 @@ u32 sctrlHENFindImport(const char *mod_name, const char *library, u32 nid) {
 }
 
 int aLinkLibEntriesPatched(SceStubLibrary *lib) {
-    char *libname = (char *)((u32 *)lib)[8 / 4];
+    char *libname = lib->lib_name;
 
     // Fix Prometheus patch
     if (strcmp(libname, "Kernel_LibrarZ") == 0 || strcmp(libname, "Kernel_Librar0") == 0) {
@@ -201,16 +203,20 @@ int aLinkLibEntriesPatched(SceStubLibrary *lib) {
 int search_nid_in_entrytable_patched(SceResidentLibrary *lib, u32 nid, void *stub, int count) {
     char *libname = lib->lib_name;
     u32 stubtable = ((u32 *)stub)[0x18 / 4];
-    u32 original_stub = ((u32 *)stub)[0x24 / 4];
-    int is_user_mode = ((u32 *)stub)[0x34 / 4];
+    int is_user_mode = ((u32 *)stub)[0x2C / 4];
     u32 stub_addr = stubtable + (count * 8);
+    SceLibraryStubTable *lib_stub_table = (void *)((u32 *)stub)[0x24 / 4];
 
-    u32 module_sdk_version = sctrlHENFindFunction((char *)original_stub, NULL, 0x11B97506);
+    u32 module_sdk_version = sctrlHENFindFunction(lib_stub_table->libname, NULL, 0x11B97506);
     if (module_sdk_version
         && (FIRMWARE_TO_FW(*(u32 *)module_sdk_version) == 0x660
             || FIRMWARE_TO_FW(*(u32 *)module_sdk_version) == 0x661)) {
         // Sony module
     } else {
+        if (g_lle_handler != NULL) {
+            g_lle_handler(lib_stub_table);
+        }
+
         if (!is_user_mode) {
             // Resolve missing NIDs
             void *function = ResolveMissingNIDs(libname, nid);
@@ -580,4 +586,8 @@ void sctrlHENHijackFunction(
     sctrlFlushCache();
 
     logmsg3("[INFO]: %s: Hijacked function 0x%p -> 0x%p\n", __func__, func_addr, patch_func);
+}
+
+void sctrlHENRegisterLLEHandler(LLE_HANDLER handler) {
+    g_lle_handler = handler;
 }
