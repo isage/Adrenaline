@@ -62,6 +62,16 @@ static int (*_sceCtrlReadBufferNegative)(SceCtrlData *pad_data, int count) = NUL
 static int (*_scePowerSetClockFrequency_k)(int cpufreq, int ramfreq, int busfreq) = NULL;
 static int (*_scePowerGetClockFrequency_k)() = NULL;
 
+static int (*_memlmd_StartScrambleKey)(u32 unk, void *hash_addr) = NULL;
+static int (*_memlmd_unsigner)(u8 *prx, u32 size, int use_polling) = NULL;
+static KDEC_HANDLER _memlmd_decrypt = NULL;
+static KDEC_HANDLER g_extend_memlmd_decryption = NULL;
+
+// Known GZIP Compression Tags
+static u32 g_gzip_compress_tag[] = {
+    0x28796DAA, 0x7316308C, 0x3EAD0AEE, 0x8555ABF2, 0xC6BA41D3, 0x55668D96, 0xC01DB15D,
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -190,6 +200,31 @@ void CheckControllerInput() {
     }
 }
 
+static int is_tag_compressed(u32 tag) {
+    for (int i = 0; i < NELEMS(g_gzip_compress_tag); i++) {
+        if (g_gzip_compress_tag[i] == tag) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int is_prx_compressed(u8 *prx, u32 size) {
+    // Minimum size check
+    if (size < 0x160) {
+        return 0;
+    }
+
+    // Check GZIP magic and with supported compression tag
+    if ((*(u16 *)(prx + 0x150) == 0x8B1F) && is_tag_compressed(*(u32 *)(prx + 0x130))) {
+        // GZIP PRX
+        return 1;
+    }
+
+    // Encrypted PRX
+    return 0;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // CFW API (That depends on this file globals/statics)
 ////////////////////////////////////////////////////////////////////////////////
@@ -283,6 +318,12 @@ u32 sctrlHENGetSpeed() {
 
     pspSdkSetK1(k1);
     return res;
+}
+
+KDEC_HANDLER sctrlHENRegisterKDecryptHandler(KDEC_HANDLER func) {
+    KDEC_HANDLER r = g_extend_memlmd_decryption;
+    g_extend_memlmd_decryption = func;
+    return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -487,6 +528,88 @@ SceUID sceKernelCreateThreadPluginPatched(
     return res;
 }
 
+int memlmd_unsigner_patched(u8 *prx, u32 size, int use_polling) {
+    // ~PSP
+    if (prx != NULL && *(u32 *)prx == 0x5053507E) {
+        u32 i;
+        int result = 0;
+
+        // 6.60 kernel modules use type 9 PRX... 0xd4~0x104 is zero padded
+        for (i = 0; i < 0x30; ++i) {
+            if (prx[i + 0xd4]) {
+                result = 1;
+                break;
+            }
+        }
+
+        if (result == 0) {
+            return 0;
+        }
+
+        result = 0;
+
+        // Updater prx ... 0xB8~0x18 is zero padded
+        for (i = 0; i < 0x18; ++i) {
+            if (prx[i + 0xB8]) {
+                result = 1;
+                break;
+            }
+        }
+
+        if (result == 0) {
+            return 0;
+        }
+    }
+
+    return (*_memlmd_unsigner)(prx, size, use_polling);
+}
+
+int memlmd_decrypt_patched(u8 *prx, u32 size, u32 *newsize, int use_polling) {
+    int ret = 0;
+    if (g_extend_memlmd_decryption) {
+        ret = g_extend_memlmd_decryption(prx, size, newsize, use_polling);
+        if (ret >= 0) {
+            return ret;
+        }
+    }
+
+    // Besides the call to the original function, the things below here are not
+    // really needed for PSPemu version of `memlmd_01g.prx`, but can be useful
+    // if we ever change to PSP version.
+
+    if (prx != NULL && newsize != NULL) {
+        u32 compsize = *(u32 *)(prx + 0xB0);
+
+        if (is_prx_compressed(prx, size)) {
+            // Remove PRX header
+            memcpy(prx, prx + 0x150, compsize);
+
+            // Write GZIP payload size
+            *newsize = compsize;
+
+            return 0;
+        }
+    }
+
+    ret = _memlmd_decrypt(prx, size, newsize, use_polling);
+
+    if (ret < 0 && _memlmd_unsigner != NULL && _memlmd_StartScrambleKey != NULL) {
+        if (_memlmd_StartScrambleKey != NULL
+            && _memlmd_StartScrambleKey(0, (void *)0xBFC00200) < 0) {
+            return ret;
+        }
+
+        // Enable user modules to load kernel signchecked modules
+        if (_memlmd_unsigner != NULL && memlmd_unsigner_patched(prx, size, use_polling) < 0) {
+            return ret;
+        }
+
+        ret = _memlmd_decrypt(prx, size, newsize, use_polling);
+    }
+
+    return ret;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // MODULE PATCHERS
 ////////////////////////////////////////////////////////////////////////////////
@@ -605,6 +728,44 @@ void PatchSysmem() {
         (void *)sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", 0xF919F628);
     _sceKernelTotalMemSize =
         (void *)sctrlHENFindFunctionInMod(mod, "SysMemUserForUser", 0xACBD88CA);
+}
+
+void PatchMemlmd(void) {
+    SceModule *mod = sceKernelFindModuleByName("sceMemlmd");
+
+    u32 text_addr = mod->text_addr;
+    u32 top_addr = mod->text_addr + mod->text_size;
+
+    int patches = 5;
+    for (u32 addr = text_addr; addr < top_addr && patches; addr += 4) {
+        u32 data = VREAD32(addr);
+
+        if (data == JAL(_memlmd_decrypt)) {
+            MAKE_INSTRUCTION(addr, JAL(memlmd_decrypt_patched));
+            patches -= 1; // 2
+        } else if (data == 0x27BDFF80) {
+            _memlmd_decrypt = (void *)(addr - 8);
+        } else if (data == JAL(_memlmd_unsigner)) {
+            MAKE_INSTRUCTION(addr, JAL(memlmd_unsigner_patched));
+            patches -= 1; // 2
+        } else if (data == 0x3C02F009) {
+            // Allow to load packed usermode module.
+            VWRITE16(addr, 0xF005);
+            patches--;
+        } else if (data == 0x3222003F) {
+            u32 a = addr;
+            do {
+                a -= 4;
+            } while (VREAD32(a) != 0x27BDFFF0);
+
+            // The inner function which unsigns a PRX module
+            _memlmd_unsigner = (void *)a;
+        } else if (data == 0x2403FF31 && _memlmd_StartScrambleKey == NULL) {
+            _memlmd_StartScrambleKey = (void *)(addr - 8);
+        }
+    }
+
+    sctrlFlushCache();
 }
 
 void PatchPluginModule(SceModule *mod) {

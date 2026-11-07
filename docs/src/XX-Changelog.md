@@ -43,6 +43,7 @@
 - **DEV:** Expand `isoCtrl_driver` API with `isoGetUmdFile`, `isoReopenUmdFile`, `isoSwapUmdFile`.
 - **DEV:** Introduce `NoDrmHelper` CFW library
     - Although used internally for Epinephrine NoDRM engine, this could also be used to help implement plugins that closes eventual gaps in the NoDRM engine or even a external full implementation of a NoDRM engine.
+- **DEV:** Implement `sctrlHENRegisterKDecryptHandler` CFW API.
 
 ## v8.0.2
 

@@ -39,6 +39,7 @@ void CheckControllerInput(void);
 // System Module Patchers
 ////////////////////////////////////////////////////////////////////////////////
 
+void PatchMemlmd(void);
 void PatchChkreg(void);
 void PatchSysmem(void);
 void PatchLoadCore(void);

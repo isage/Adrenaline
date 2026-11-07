@@ -368,8 +368,8 @@ static int OnModuleStart(SceModule *mod) {
 
         sctrlFlushCache();
 
-    } else if (strcmp(modname, "sceKernelLibrary")
-               == 0) { // last kernel module to load before user/game
+        // last kernel module to load before user/game
+    } else if (strcmp(modname, "sceKernelLibrary") == 0) {
         ready_gamepatch_mod = 1;
         PatchGameByTitleId();
 
