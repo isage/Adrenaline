@@ -24,7 +24,7 @@ typedef struct {
 
 int kirk7(u8 *buf, int size, int type);
 
-int nodrmGetVersionKey(u8 *version_key, char *path);
+int nodrmGetVersionKey(u8 *version_key, const char *path);
 int nodrmGetEdatKey(u8 *vkey, u8 *pgd_buf);
 int dumpPS1key(const char *path, u8 *buf);
 
