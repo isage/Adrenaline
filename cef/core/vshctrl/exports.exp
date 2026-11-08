@@ -13,6 +13,8 @@ PSP_EXPORT_FUNC(vctrlVSHUpdateConfig)
 PSP_EXPORT_FUNC(vctrlGetRegistryValue)
 PSP_EXPORT_FUNC(vctrlSetRegistryValue)
 PSP_EXPORT_FUNC(vshDetectDiscType)
+PSP_EXPORT_FUNC(vctrlVSHSetRecovery)
+PSP_EXPORT_FUNC(vctrlVSHSetSpeed)
 PSP_EXPORT_END
 
 PSP_EXPORT_START(VshCtrlPrivate, 0, 0x4001)

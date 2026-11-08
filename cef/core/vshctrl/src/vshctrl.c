@@ -207,3 +207,12 @@ int vctrlVSHRegisterVshGuMenu(void (*vshmenu_draw)(void *)) {
 
     return 0;
 }
+
+void vctrlVSHSetRecovery() {
+    RebootexConfigEPI *rebootex = (RebootexConfigEPI *)sctrlHENGetRebootexConfig(NULL);
+    rebootex->bootfileindex = MODE_RECOVERY;
+}
+
+void vctrlVSHSetSpeed(int cpu, int bus) {
+    sctrlHENSetSpeed(cpu, bus);
+}
