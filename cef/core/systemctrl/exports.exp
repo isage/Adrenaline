@@ -107,6 +107,8 @@ PSP_EXPORT_FUNC(sctrlSESetBootConfFileIndex)
 PSP_EXPORT_FUNC_NID(sctrlSESetBootConfFileIndex, 0x5CB025F0)
 PSP_EXPORT_FUNC(sctrlSESetDiscOut)
 PSP_EXPORT_FUNC(sctrlSEUmountUmd)
+PSP_EXPORT_FUNC(sctrlSERstConfig)
+PSP_EXPORT_FUNC(sctrlSERstConfigEx)
 
 # sctrl - other
 PSP_EXPORT_FUNC(sctrlFlushCache)
@@ -218,6 +220,8 @@ PSP_EXPORT_FUNC(sctrlSESetBootConfFileIndex)
 PSP_EXPORT_FUNC_NID(sctrlSESetBootConfFileIndex, 0x5CB025F0)
 PSP_EXPORT_FUNC(sctrlSESetDiscOut)
 PSP_EXPORT_FUNC(sctrlSEUmountUmd)
+PSP_EXPORT_FUNC(sctrlSERstConfig)
+PSP_EXPORT_FUNC(sctrlSERstConfigEx)
 
 # sctrlSE - KERNEL PRIVATE
 PSP_EXPORT_FUNC(GetUmdFile)

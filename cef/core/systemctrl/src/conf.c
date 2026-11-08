@@ -98,6 +98,9 @@ static inline void restore_overwrite(SEConfigEPI *config) {}
 
 int sctrlSEGetConfigEx(SEConfig *config, int size) {
     int k1 = pspSdkSetK1(0);
+    if (config == NULL) {
+        return SCE_EINVAL;
+    }
     int read = SCE_ERR_ININDEX;
     int res = 0;
 
@@ -167,6 +170,9 @@ exit:
 }
 
 int sctrlSESetConfigEx(SEConfig *cnf, int size) {
+    if (cnf == NULL) {
+        return SCE_EINVAL;
+    }
     // Stop if trying to save a non `SEConfigEPI`
     if (size != sizeof(SEConfigEPI)) {
         return SCE_ERR_INSIZE;
@@ -218,6 +224,9 @@ int sctrlSESetConfig(SEConfig *config) {
 }
 
 int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
+    if (conf == NULL) {
+        return SCE_EINVAL;
+    }
     if (size == sizeof(SEConfigEPI)) {
         memcpy(&g_cfw_config, conf, size);
         return 0;
@@ -226,9 +235,34 @@ int sctrlSEApplyConfigEX(SEConfig *conf, int size) {
 }
 
 void sctrlSEApplyConfig(SEConfig *conf) {
+    if (conf == NULL) {
+        return;
+    }
     memcpy(&g_cfw_config, conf, sizeof(SEConfigEPI));
 }
 
 SEConfig *sctrlSEGetConfigInternal() {
     return (SEConfig *)&g_cfw_config;
+}
+
+int sctrlSERstConfig(SEConfig *conf) {
+    return sctrlSERstConfigEx(conf, sizeof(SEConfigEPI));
+}
+
+
+int sctrlSERstConfigEx(SEConfig *conf, int size) {
+    if (conf == NULL) {
+        return SCE_EINVAL;
+    }
+    if (size != sizeof(SEConfigEPI) && size != sizeof(SEConfigEPI717)) {
+        return SCE_ERR_INSIZE;
+    }
+
+    u32 magic = *(u32*)conf;
+    if (magic == SECONFIG_MAGIC_EPI1) {
+        memset(conf, 0, (conf->adr.magic[1] == ADRENALINE717_CFG_MAGIC_2) ? sizeof(SEConfigEPI717) : sizeof(SEConfigEPI));
+    } else {
+        return SCE_EINVAL;
+    }
+    return 0;
 }
