@@ -829,8 +829,7 @@ u32 sctrlHENFindRefInGlobals(char *libname, u32 addr, u32 ptr) {
         addr &= -0x4;
     }
 
-    while (VREAD32(addr += 4) != ptr)
-        ;
+    while (VREAD32(addr += 4) != ptr) {}
 
     return addr;
 }
