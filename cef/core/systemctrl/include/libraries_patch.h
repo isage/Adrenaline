@@ -302,6 +302,8 @@ extern int (*aLinkLibEntries)(void *lib);
 extern int (*search_nid_in_entrytable)(void *lib, u32 nid, int unk, int nidSearchOption);
 
 int aLinkLibEntriesPatched(SceStubLibrary *lib);
-int search_nid_in_entrytable_patched(SceResidentLibrary *lib, u32 nid, void *stub, int count);
+int search_nid_in_entrytable_patched(
+    SceResidentLibrary *lib, u32 nid, SceStubLibrary *stub, int count
+);
 
 #endif

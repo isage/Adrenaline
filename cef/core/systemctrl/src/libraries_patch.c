@@ -200,12 +200,14 @@ int aLinkLibEntriesPatched(SceStubLibrary *lib) {
     return res;
 }
 
-int search_nid_in_entrytable_patched(SceResidentLibrary *lib, u32 nid, void *stub, int count) {
+int search_nid_in_entrytable_patched(
+    SceResidentLibrary *lib, u32 nid, SceStubLibrary *stub, int count
+) {
     char *libname = lib->lib_name;
-    u32 stubtable = ((u32 *)stub)[0x18 / 4];
-    int is_user_mode = ((u32 *)stub)[0x2C / 4];
-    u32 stub_addr = stubtable + (count * 8);
-    SceLibraryStubTable *lib_stub_table = (void *)((u32 *)stub)[0x24 / 4];
+    SceStub *stubtable = stub->fn_stub_table;
+    u32 is_user_mode = stub->is_user_lib;
+    u32 stub_addr = (u32)stubtable + (count * 8);
+    SceLibraryStubTable *lib_stub_table = stub->lib_stub_table;
 
     u32 module_sdk_version = sctrlHENFindFunction(lib_stub_table->libname, NULL, 0x11B97506);
     if (module_sdk_version
@@ -214,7 +216,7 @@ int search_nid_in_entrytable_patched(SceResidentLibrary *lib, u32 nid, void *stu
         // Sony module
     } else {
         if (g_lle_handler != NULL) {
-            g_lle_handler(lib_stub_table);
+            g_lle_handler(stub->lib_stub_table);
         }
 
         if (!is_user_mode) {
