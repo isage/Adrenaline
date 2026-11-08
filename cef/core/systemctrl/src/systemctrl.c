@@ -459,10 +459,16 @@ void sctrlSESetUmdFile(const char *file) {
     }
 }
 
-void sctrlSESetUmdFileEx(const char *file, char *input) {
-    if (input != NULL) {
-        sctrlSESetUmdFile(file);
+void sctrlSESetUmdFileEx(const char *file, char *output) {
+    if (file == NULL) {
+        return;
     }
+
+    if (output != NULL) {
+        strcpy(output, g_rebootex_config.umdfilename);
+    }
+
+    sctrlSESetUmdFile(file);
 }
 
 char *GetUmdFile(void) __attribute__((alias("sctrlSEGetUmdFile")));
