@@ -19,38 +19,77 @@
 #ifndef __LIBRARIES_PATCH_H__
 #define __LIBRARIES_PATCH_H__
 
+/** Specifies a library and a set of imports from that library.  Use the len
+    member to determine the real size of the table (size = len * 4). */
+typedef struct SceLibraryStubTable {
+    /* The name of the library we're importing from. */
+    const char *libname;
+    /** Minimum required version of the library we want to import. */
+    unsigned char version[2];
+    /* Import attributes. */
+    unsigned short attribute;
+    /** Length of this stub table in 32-bit WORDs. */
+    unsigned char len;
+    /** The number of variables imported from the library. */
+    unsigned char vstubcount;
+    /** The number of functions imported from the library. */
+    unsigned short stubcount;
+    /** Pointer to an array of NIDs. */
+    unsigned int *nidtable;
+    /** Pointer to the imported function stubs. */
+    void *stubtable;
+    /** Pointer to the imported variable stubs. */
+    void *vstubtable;
+} SceLibraryStubTable;
+typedef SceLibraryStubTable SceStubLibraryEntryTable;
+
+/*
+ * Stub library system status.
+ */
+enum SceStubLibraryStatus {
+    /* The stub library is linked only the first time a resident
+     * library is registered. If a newer version of that res. lib
+     * is registered, the stub library won't be linked with that one
+     * again.
+     */
+    STUB_LIBRARY_EXCLUSIVE_LINK = 0x1,
+    /* The stub library is linked with its corresponding resident
+     * library.
+     */
+    STUB_LIBRARY_LINKED = 0x2,
+    STUB_LIBRARY_UNKNOWN = 0x4,
+};
+
 /**
- * This structure represents a function stub belonging to same privilege-level
- * linked libraries, i.e. a kernel resident library linked with a kernel stub
- * library.
+ * This structure represents a function stub belonging to same privilege-level linked libraries,
+ * i.e. a kernel resident library linked with a kernel stub library.
  */
 typedef struct {
     /** The call to the imported function via a MIPS ASM Jump instruction. */
     u32 call;
     /** The delay slot belonging to the call, typically a NOP instruction. */
     u32 delay_slot;
-} DirectCall;
+} SceDirectCallStub;
 
 /**
- * This structure represents a function stub belonging to different
- * privilege-level linked libraries, i.e. a kernel resident library linked with
- * a user stub library.
+ * This structure represents a function stub belonging to different privilege-level linked
+ * libraries, i.e. a kernel resident library linked with a user stub library.
  */
 typedef struct {
     /** The return instruction from the stub. Typically a JR $ra command. */
     u32 return_addr;
     /** The system call exception used to call the imported function. */
     u32 syscall;
-} Syscall;
+} SceSyscallStub;
 
 /**
  * This structure represents an imported function stub.
  */
 typedef union {
     /** User/User or Kernel/Kernel function stub. */
-    DirectCall dc;
+    SceDirectCallStub dc;
     /** Kernel/User function stub. */
-    Syscall sc;
+    SceSyscallStub sc;
 } SceStub;
 
 /**
@@ -63,6 +102,62 @@ typedef struct {
 } SceVariableStub;
 
 /**
+ * This structure represents a stub library control block. This control block is used to manage a
+ * stub library entry table internal.
+ */
+typedef struct SceStubLibrary {
+    /** Unknown. */
+    u32 unk0; // 0
+    /**
+     * A linked list of stub libraries belonging to the same group, i.e. the same resident library.
+     */
+    struct SceStubLibrary *next; // 4
+    /** The name of the library. */
+    const char *lib_name; // 8
+    /**
+     * The version of the library. This member is set by the corresponding stub library entry table.
+     */
+    u8 version[2]; // 12
+    /**
+     * The library's attributes. This member is set by the corresponding stub library entry table.
+     */
+    u16 attribute; // 14
+    /** The length of the corresponding stub library entry table in 32-Bit words. */
+    u8 stub_entry_table_len; // 16
+    /**
+     * The number of imported variables by the stub library. This member is set by the corresponding
+     * stub library entry table.
+     */
+    u8 var_stub_count; // 17
+    /**
+     * The number of imported functions by the stub library. This member is set by the corresponding
+     * stub library entry table.
+     */
+    u16 fn_stub_count; // 18
+    /** Pointer to an array of NIDs identifying the imported functions/variables.*/
+    u32 *nid_table; // 20
+    /** Pointer to the imported function stubs. */
+    SceStub *fn_stub_table; // 24
+    /** Pointer to the imported variable stubs. */
+    SceVariableStub *var_stub_table; // 28
+    /** Unknown. */
+    u16 unk32; // 32
+    /** Pointer to the corresponding stub library entry table. */
+    SceLibraryStubTable *lib_stub_table; // 36
+    /**
+     * The current status of a stub library (control block) in memory. One of
+     * ::SceStubLibraryStatus.
+     */
+    u32 status; // 40
+    /** Indicates whether the stub library lives in User land or Kernel land. */
+    u32 is_user_lib; // 44
+    /** The name of the library. */
+    char *lib_name2; // 48
+    /** Indicates whether the library's name is located in the heap or not. */
+    u32 libname_in_heap; // 52
+} SceStubLibrary; // size = 56
+
+/**
  * This structure is used to record the functions a resident library provides to
  * other modules. This entry table is used to register a resident library to the
  * system. A module can register multiple libraries and multiple libraries with
@@ -70,7 +165,7 @@ typedef struct {
  */
 typedef struct {
     /** The name of the library. */
-    const char *libName; // 0
+    const char *lib_name; // 0
   /**
      * The version of the library. It consists of a 'major' and 'minor' field. If
      * you want to register another version of an already registered resident
@@ -104,102 +199,6 @@ typedef struct {
   /** Unknown. */
     u8 unk19; // 19
 } SceResidentLibraryEntryTable;
-
-/**
- * This structure represents the imports, provided by a resident library, that a
- * given module is using. A module can have multiple stub libraries.
- */
-typedef struct {
-    /** The name of the library. */
-    const char *libName; // 0
-  /**
-     * The version of the library. It consists of a 'major' and 'minor' field. The
-     * version of a stub library shouldn't be higher than the version(s) of the
-     * corresponding resident library/libraries. Linking won't be performed in
-     * such a case.
-     */
-    u8 version[2]; // 4
-  /** The library's attributes. Can be set to either SCE_LIB_NO_SPECIAL_ATTR or
-     * SCE_LIB_WEAK_IMPORT. */
-    u16 attribute; // 6
-  /**
-     * The length of this entry table in 32-Bit words. Set this to either
-     * "STUB_LIBRARY_ENTRY_TABLE_OLD_LEN" or "STUB_LIBRARY_ENTRY_TABLE_NEW_LEN".
-     * Use this member when  you want to iterate through a list of entry tables
-     * (size = len * 4).
-     */
-    u8 len; // 8
-  /** The number of imported variables by the stub library. */
-    u8 var_stub_count; // 9
-  /** The number of imported functions by the stub library. */
-    u16 func_stub_count; // 10
-  /** Pointer to an array of NIDs containing the NIDs of the imported functions
-     * and variables. */
-    u32 *nid_table; // 12
-  /** Pointer to an array of imported function stubs. */
-    SceStub *func_stub_table; // 16
-  /** Pointer to an array of imported variable stubs. */
-    SceVariableStub *var_stub_table; // 20
-  /** Unknown. */
-    u16 unk24; // 24
-} SceStubLibraryEntryTable;
-
-typedef struct SceStubLibrary {
-    /** Unknown. */
-    u32 unk0; // 0
-  /**
-     * A linked list of stub libraries belonging to the same group, i.e. the same
-     * resident library.
-     */
-    struct SceStubLibrary *next; // 4
-  /** The name of the library. */
-    const char *lib_name; // 8
-  /**
-     * The version of the library. This member is set by the corresponding stub
-     * library entry table.
-     */
-    u8 version[2]; // 12
-  /**
-     * The library's attributes. This member is set by the corresponding stub
-     * library entry table.
-     */
-    u16 attribute; // 14
-  /** The length of the corresponding stub library entry table in 32-Bit words.
-     */
-    u8 stub_entry_table_len; // 16
-  /**
-     * The number of imported variables by the stub library. This member is set by
-     * the corresponding stub library entry table.
-     */
-    u8 var_stub_count; // 17
-  /**
-     * The number of imported functions by the stub library. This member is set by
-     * the corresponding stub library entry table.
-     */
-    u16 func_stub_count; // 18
-  /** Pointer to an array of NIDs identifying the imported
-     * functions/variables.*/
-    u32 *nid_table; // 20
-  /** Pointer to the imported function stubs. */
-    SceStub *func_stub_table; // 24
-  /** Pointer to the imported variable stubs. */
-    SceVariableStub *var_stub_table; // 28
-  /** Unknown. */
-    u16 unk32; // 32
-  /** Pointer to the corresponding stub library entry table. */
-    SceStubLibraryEntryTable *lib_stub_table; // 36
-  /**
-     * The current status of a stub library (control block) in memory. One of
-     * ::SceStubLibraryStatus.
-     */
-    u32 status; // 40
-  /** Indicates whether the stub library lives in User land or Kernel land. */
-    u32 is_user_lib; // 44
-  /** The name of the library. */
-    char *lib_name2; // 48
-  /** Indicates whether the library's name is located in the heap or not. */
-    u32 is_lib_name_in_heap; // 52
-} SceStubLibrary;
 
 /**
  * This structure represents a resident library control block. This control block is used to manage
