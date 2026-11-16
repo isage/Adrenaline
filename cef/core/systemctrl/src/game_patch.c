@@ -57,19 +57,19 @@ static void SetUmdEmuSpeed(u8 seek, u8 read, u8 strategy) {
     // Config in `Auto` mode
     if (g_cfw_config.umd_seek == 0 && g_cfw_config.umd_speed == 0) {
 
-        if (g_rebootex_config.bootfileindex != MODE_UMD) {
+        if (g_rebootex_config.bootfileindex != BOOT_MODE_NORMAL) {
             const char *iso_mod_name = "INVALID";
             switch (g_rebootex_config.bootfileindex) {
-                case MODE_INFERNO:
+                case BOOT_MODE_INFERNO:
                     iso_mod_name = "EPI-InfernoDriver";
                     break;
-                case MODE_MARCH33:
+                case BOOT_MODE_MARCH33:
                     iso_mod_name = "EPI-March33Driver";
                     break;
-                case MODE_ME:
+                case BOOT_MODE_ME:
                     iso_mod_name = "EPI-MEisoDriver";
                     break;
-                case MODE_NP9660:
+                case BOOT_MODE_NP9660:
                     iso_mod_name = "EPI-GalaxyController";
                     break;
                 default:
@@ -78,7 +78,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read, u8 strategy) {
 
             SetUmdDelay = (void *)sctrlHENFindFunction(iso_mod_name, "isoCtrl_driver", 0xFAEC97D6);
 
-            if (g_rebootex_config.bootfileindex == MODE_INFERNO) {
+            if (g_rebootex_config.bootfileindex == BOOT_MODE_INFERNO) {
                 CacheInit =
                     (void *)sctrlHENFindFunction(iso_mod_name, "inferno_driver", 0x8CDE7F95);
             }
@@ -97,7 +97,7 @@ static void SetUmdEmuSpeed(u8 seek, u8 read, u8 strategy) {
 
 static void DisableInfernoCache(void) {
     int (*CacheInit)(int, int, int) = NULL;
-    if (g_rebootex_config.bootfileindex == MODE_INFERNO) {
+    if (g_rebootex_config.bootfileindex == BOOT_MODE_INFERNO) {
         CacheInit = (void *)sctrlHENFindFunction("EPI-InfernoDriver", "inferno_driver", 0x8CDE7F95);
 
         if (CacheInit != NULL) {

@@ -67,7 +67,7 @@ static int ctrl_handler(SceCtrlData *pad_data, int count) {
 }
 
 void RecoveryMenu() {
-    sctrlSESetBootConfFileIndex(MODE_RECOVERY);
+    sctrlSESetBootConfFileIndex(BOOT_MODE_RECOVERY);
     sctrlKernelExitVSH(NULL);
 }
 

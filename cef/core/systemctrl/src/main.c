@@ -74,28 +74,28 @@ static void OnSystemStatusIdle() {
     char *iso_driver_name = NULL;
 #endif
     switch (g_rebootex_config.bootfileindex) {
-        case MODE_INFERNO:
+        case BOOT_MODE_INFERNO:
             mod = sceKernelFindModuleByName("EPI-InfernoDriver");
 #if defined(DEBUG) && DEBUG >= 3
             iso_driver_name = "Inferno";
 #endif
             break;
 
-        case MODE_MARCH33:
+        case BOOT_MODE_MARCH33:
             mod = sceKernelFindModuleByName("EPI-March33Driver");
 #if defined(DEBUG) && DEBUG >= 3
             iso_driver_name = "March33";
 #endif
             break;
 
-        case MODE_ME:
+        case BOOT_MODE_ME:
             mod = sceKernelFindModuleByName("EPI-MEisoDriver");
 #if defined(DEBUG) && DEBUG >= 3
             iso_driver_name = "Mininal Edition";
 #endif
             break;
 
-        case MODE_NP9660:
+        case BOOT_MODE_NP9660:
             mod = sceKernelFindModuleByName("EPI-GalaxyController");
 #if defined(DEBUG) && DEBUG >= 3
             iso_driver_name = "NP9660";
@@ -136,7 +136,7 @@ static void OnSystemStatusIdle() {
         }
 
         // Handle Inferno Iso cache
-        if (g_rebootex_config.bootfileindex == MODE_INFERNO
+        if (g_rebootex_config.bootfileindex == BOOT_MODE_INFERNO
             && g_cfw_config.iso_cache != CACHE_CONFIG_OFF) {
             if (g_rebootex_config.ram2 > 24 || g_cfw_config.high_memory != HIGHMEM_OPT_DEFAULT
                 || g_cfw_config.high_memory != HIGHMEM_OPT_FORCE_OFF) {

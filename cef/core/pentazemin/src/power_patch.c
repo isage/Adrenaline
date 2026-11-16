@@ -29,7 +29,7 @@
 #include <systemctrl_se.h>
 
 static int scePowerRequestColdResetPatched(int a0) {
-    sctrlSESetBootConfFileIndex(MODE_UMD);
+    sctrlSESetBootConfFileIndex(BOOT_MODE_NORMAL);
 
     if (a0 == 0) {
         return sctrlKernelExitVSH(NULL);

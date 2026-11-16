@@ -170,33 +170,33 @@ int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, v
         char *name = NULL;
 
         switch (g_rebootex_config->bootfileindex) {
-            case MODE_UMD:
+            case BOOT_MODE_UMD:
                 name = "/kd/pspbtjnf.bin";
                 break;
 
-            case MODE_INFERNO:
+            case BOOT_MODE_INFERNO:
                 name = "/kd/pspbtknf.bin";
                 break;
 
-            case MODE_MARCH33:
+            case BOOT_MODE_MARCH33:
                 name = "/kd/pspbtlnf.bin";
                 break;
 
-            case MODE_ME:
+            case BOOT_MODE_ME:
                 name = "/kd/pspbtnnf.bin";
                 break;
 
-            case MODE_NP9660:
+            case BOOT_MODE_NP9660:
                 name = "/kd/pspbtmnf.bin";
                 break;
 
-            case MODE_RECOVERY:
+            case BOOT_MODE_RECOVERY:
                 name = "/kd/pspbtrnf.bin";
                 break;
         }
 
-        if (g_rebootex_config->bootfileindex == MODE_RECOVERY) {
-            g_rebootex_config->bootfileindex = MODE_UMD;
+        if (g_rebootex_config->bootfileindex == BOOT_MODE_RECOVERY) {
+            g_rebootex_config->bootfileindex = BOOT_MODE_NORMAL;
         }
 
         file->name = name;

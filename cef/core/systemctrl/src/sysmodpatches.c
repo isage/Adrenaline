@@ -169,7 +169,7 @@ static int exitToVsh(SceSize args, void *argp) {
 
     // reset some flags
     SetUmdFile("");
-    sctrlSESetBootConfFileIndex(MODE_UMD);
+    sctrlSESetBootConfFileIndex(BOOT_MODE_NORMAL);
 
     int res = sctrlKernelExitVSH(NULL);
 
@@ -377,8 +377,8 @@ int sceSystemFileGetIndexPatched(void *sfo, void *a1, void *a2) {
 
 int RunRebootPatched(u32 *params) {
     if ((char *)params[2] == NULL) {
-        if (g_rebootex_config.bootfileindex != MODE_RECOVERY) {
-            g_rebootex_config.bootfileindex = MODE_UMD;
+        if (g_rebootex_config.bootfileindex != BOOT_MODE_RECOVERY) {
+            g_rebootex_config.bootfileindex = BOOT_MODE_NORMAL;
         }
         memset(g_rebootex_config.umdfilename, 0, sizeof(g_rebootex_config.umdfilename));
     }

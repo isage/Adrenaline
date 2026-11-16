@@ -98,17 +98,80 @@ typedef struct {
 	int app_type;
 } SceAdrenaline;
 
-enum SEUmdModes
-{
+/**
+ * Represents the possible UMD modes.
+ */
+enum SEUmdModes {
+    /** No ISO/CISO driver. */
     MODE_UMD = 0,
-    MODE_OE_LEGACY, // not available anymore, will default to inferno
+    /** OE ISO/DAX driver
+     *
+     * Originally available on OE CFW. If not available, it will default to another ISO/CISO driver.
+     */
+    MODE_OE_LEGACY,
+    /** March33 ISO/CSO driver from M33 CFW. */
     MODE_MARCH33,
+    /** Sony PBP driver.
+     *
+     * If Galaxy Controller is not available for ISO/CISO support (e.g. ARK-4/5) if will default to
+     * another ISO/CISO driver.
+     */
     MODE_NP9660,
+    /** Inferno ISO/CISO driver. */
     MODE_INFERNO,
+    /** (L)ME ISO/CISO driver.
+     *
+     * Originally available on (L)ME CFW based on March33. If not available, it will default to
+     * another ISO/CISO driver.
+     */
     MODE_ME,
-    MODE_VSHUMD,
-    MODE_UPDATERUMD,
-    MODE_RECOVERY,
+};
+
+/**
+ * Represents the boot mode the system will use on reboot.
+ */
+enum BootModes {
+    /** No ISO/CISO driver. The usual boot mode of OFW. */
+    BOOT_MODE_NORMAL = 0,
+    /** OE ISO/DAX driver boot mode.
+     *
+     * Originally available on OE CFW. If the ISO driver is not available,
+     * it will default to another ISO/CISO driver boot mode.
+     */
+    BOOT_MODE_OE_LEGACY,
+    /** March33 ISO/CISO driver boot mode.
+     *
+     * Originally available on M33 CFW. If the ISO driver is not available,
+     * it will default to another ISO/CISO driver boot mode.
+     */
+    BOOT_MODE_MARCH33,
+    /** Sony PBP driver with ISO/CISO support boot mode.
+     *
+     * If Galaxy Controller is not available for ISO/CISO support
+     * (e.g. ARK-4/5) if will default to another ISO/CISO driver boot mode.
+     */
+    BOOT_MODE_NP9660,
+    /** Inferno ISO/CISO driver boot mode.
+     *
+     * Originally available on PRO CFW. If the ISO driver is not available,
+     * it will default to another ISO/CISO driver boot mode.
+     */
+    BOOT_MODE_INFERNO,
+    /** Minimal Edition ISO/CISO driver boot mode.
+     *
+     * Originally available on (L)ME CFW. If the ISO driver is not available,
+     * it will default to another ISO/CISO driver boot mode.
+     */
+    BOOT_MODE_ME,
+    /** Virtual VSH UMDemu mount.
+     *
+     * A CFW will use the ISO/CISO driver it defaults.
+     */
+    BOOT_MODE_VSHUMD,
+    /** Updater mode. No ISO/CISO driver. */
+    BOOT_MODE_UPDATERUMD,
+    /** Recovery Menu mode. No ISO/CISO driver. */
+    BOOT_MODE_RECOVERY,
 };
 
 /**

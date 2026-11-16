@@ -325,16 +325,16 @@ int LoadExecVSHCommonPatched(
         // Set umd_mode
         if (g_cfw_config.umd_mode == ISO_MODE_INFERNO) {
             logmsg2("[INFO]: Launching with Inferno Driver\n");
-            sctrlSESetBootConfFileIndex(MODE_INFERNO);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_INFERNO);
         } else if (g_cfw_config.umd_mode == ISO_MODE_MARCH33) {
             logmsg2("[INFO]: Launching with March33 Driver\n");
-            sctrlSESetBootConfFileIndex(MODE_MARCH33);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_MARCH33);
         } else if (g_cfw_config.umd_mode == ISO_MODE_ME) {
             logmsg2("[INFO]: Launching with ME Driver\n");
-            sctrlSESetBootConfFileIndex(MODE_ME);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_ME);
         } else if (g_cfw_config.umd_mode == ISO_MODE_NP9660) {
             logmsg2("[INFO]: Launching with NP9660 Driver\n");
-            sctrlSESetBootConfFileIndex(MODE_NP9660);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_NP9660);
         }
 
         if (has_pboot) {

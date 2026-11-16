@@ -72,23 +72,23 @@ int readTitleIdFromISO() {
 
     char *iso_mod_name = "INVALID";
     switch (g_rebootex_config.bootfileindex) {
-        case MODE_INFERNO:
+        case BOOT_MODE_INFERNO:
             iso_mod_name = "EPI-InfernoDriver";
             break;
-        case MODE_MARCH33:
+        case BOOT_MODE_MARCH33:
             iso_mod_name = "EPI-March33Driver";
             break;
-        case MODE_ME:
+        case BOOT_MODE_ME:
             iso_mod_name = "EPI-MEisoDriver";
             break;
-        case MODE_NP9660:
+        case BOOT_MODE_NP9660:
             iso_mod_name = "EPI-GalaxyController";
             break;
         default:
             break;
     }
 
-    if (g_rebootex_config.bootfileindex != MODE_UMD) {
+    if (g_rebootex_config.bootfileindex != BOOT_MODE_NORMAL) {
         isoGetTitleId = (void *)sctrlHENFindFunction(iso_mod_name, "isoCtrl_driver", 0xD4FAB33F);
     }
 
@@ -111,8 +111,8 @@ void findAndSetTitleId() {
     }
 
     if (g_rebootex_config.title_id[0] == '\0') {
-        int is_iso = g_rebootex_config.bootfileindex >= MODE_OE_LEGACY
-                     && g_rebootex_config.bootfileindex <= MODE_ME;
+        int is_iso = g_rebootex_config.bootfileindex >= BOOT_MODE_OE_LEGACY
+                     && g_rebootex_config.bootfileindex <= BOOT_MODE_ME;
         if (is_iso) {
             readTitleIdFromISO();
         } else {

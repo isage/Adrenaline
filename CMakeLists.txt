@@ -65,9 +65,9 @@ add_custom_target(updater
   COMMAND bin2c ${CMAKE_SOURCE_DIR}/bubble/pkg/frame.xml ${CMAKE_SOURCE_DIR}/cef/extra/updater/frame_xml.h frame_xml
   COMMAND bin2c ${CMAKE_SOURCE_DIR}/bubble/pkg/sce_sys/livearea/contents/template.xml ${CMAKE_SOURCE_DIR}/cef/extra/updater/template_xml.h template_xml
   COMMAND ${CEF_UPDATER_BUILD_CMD}
-  COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/updater
-  COMMAND cp ${CEF_UPDATER_PATH} ${CMAKE_CURRENT_BINARY_DIR}/updater
-  COMMAND cp ${CMAKE_SOURCE_DIR}/cef/extra/updater/psp-updatelist.txt ${CMAKE_CURRENT_BINARY_DIR}/updater
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/updater
+  COMMAND ${CMAKE_COMMAND} -E copy ${CEF_UPDATER_PATH} ${CMAKE_CURRENT_BINARY_DIR}/updater
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/cef/extra/updater/psp-updatelist.txt ${CMAKE_CURRENT_BINARY_DIR}/updater
   DEPENDS user_all kernel_all vsh_all
 )
 

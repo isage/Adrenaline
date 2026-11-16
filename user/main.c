@@ -579,12 +579,12 @@ static int sceCompatWaitSpecialRequestPatched(int mode) {
                 || sceIoGetstat("ux0:pspemu" FLASH0_ARK_PATH, &stat) >= 0;
 
     if (pad.buttons & SCE_CTRL_RTRIGGER) {
-        ((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
+        ((uint32_t *)n)[0] = BOOT_MODE_RECOVERY; // Recovery mode
     }
 
     if (sceIoGetstat("ux0:data/" ADRENALINE_TITLEID "/flash0", &stat) < 0
         && sceIoGetstat("ux0:app/" ADRENALINE_TITLEID "/flash0", &stat) < 0) {
-        ((uint32_t *)n)[0] = MODE_RECOVERY; // Recovery mode
+        ((uint32_t *)n)[0] = BOOT_MODE_RECOVERY; // Recovery mode
         allow_ark = 0;
     }
 

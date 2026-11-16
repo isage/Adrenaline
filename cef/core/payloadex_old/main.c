@@ -165,11 +165,11 @@ int sceKernelCheckPspConfigPatched(void *buf, int size, int flag) {
 int sceKernelBootLoadFilePatched(BootFile *file, void *a1, void *a2, void *a3, void *t0) {
 
     if (_strcmp(file->name, "pspbtcnf.bin") == 0) {
-        file->name = (g_rebootex_config->bootfileindex == MODE_RECOVERY) ? "/kd/pspbtrnf.bin"
+        file->name = (g_rebootex_config->bootfileindex == BOOT_MODE_RECOVERY) ? "/kd/pspbtrnf.bin"
                                                                          : "/kd/pspbtjnf.bin";
 
-        if (g_rebootex_config->bootfileindex == MODE_RECOVERY) {
-            g_rebootex_config->bootfileindex = MODE_UMD;
+        if (g_rebootex_config->bootfileindex == BOOT_MODE_RECOVERY) {
+            g_rebootex_config->bootfileindex = BOOT_MODE_NORMAL;
         }
 
     } else if (_strcmp(file->name, REBOOT_MODULE) == 0) {

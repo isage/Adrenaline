@@ -14,29 +14,29 @@ int pspemuLfatOpenEPI(BootFile *file) {
 
     if (strcmp(p, "pspbtcnf.bin") == 0) {
         switch (g_rebootex_config->bootfileindex) {
-            case MODE_UMD:
+            case BOOT_MODE_NORMAL:
                 file->name = "/kd/pspbtjnf.bin";
                 break;
 
-            case MODE_INFERNO:
+            case BOOT_MODE_INFERNO:
                 file->name = "/kd/pspbtknf.bin";
                 break;
 
-            case MODE_MARCH33:
+            case BOOT_MODE_MARCH33:
                 file->name = "/kd/pspbtlnf.bin";
                 break;
 
-            case MODE_ME:
+            case BOOT_MODE_ME:
                 file->name = "/kd/pspbtnnf.bin";
                 break;
 
-            case MODE_NP9660:
+            case BOOT_MODE_NP9660:
                 file->name = "/kd/pspbtmnf.bin";
                 break;
 
-            case MODE_RECOVERY:
+            case BOOT_MODE_RECOVERY:
                 file->name = "/kd/pspbtrnf.bin";
-                g_rebootex_config->bootfileindex = MODE_UMD;
+                g_rebootex_config->bootfileindex = BOOT_MODE_NORMAL;
                 break;
         }
     }

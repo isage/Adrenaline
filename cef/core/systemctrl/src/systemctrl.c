@@ -233,8 +233,8 @@ int sctrlKernelExitVSH(SceKernelLoadExecVSHParam *param) {
     memset(g_rebootex_config.title_id, 0, sizeof(g_rebootex_config.title_id));
 
     // Set boot mode to normal on not recovery
-    if (g_rebootex_config.bootfileindex != MODE_RECOVERY) {
-        sctrlSESetBootConfFileIndex(MODE_UMD);
+    if (g_rebootex_config.bootfileindex != BOOT_MODE_RECOVERY) {
+        sctrlSESetBootConfFileIndex(BOOT_MODE_NORMAL);
     }
 
     int res = _sceKernelExitVSH(param);
@@ -305,16 +305,16 @@ int sctrlKernelLoadExecVSHWithApitype(
     }
 
     // Homebrew API not using ISO driver
-    if (apitype == PSP_INIT_APITYPE_MS2 && sctrlSEGetBootConfFileIndex() == MODE_UMD) {
+    if (apitype == PSP_INIT_APITYPE_MS2 && sctrlSEGetBootConfFileIndex() == BOOT_MODE_NORMAL) {
         // Force selected UMDemu ISO driver to simulate UMD drive
         if (g_cfw_config.umd_mode == ISO_MODE_INFERNO) {
-            sctrlSESetBootConfFileIndex(MODE_INFERNO);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_INFERNO);
         } else if (g_cfw_config.umd_mode == ISO_MODE_MARCH33) {
-            sctrlSESetBootConfFileIndex(MODE_MARCH33);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_MARCH33);
         } else if (g_cfw_config.umd_mode == ISO_MODE_ME) {
-            sctrlSESetBootConfFileIndex(MODE_ME);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_ME);
         } else if (g_cfw_config.umd_mode == ISO_MODE_NP9660) {
-            sctrlSESetBootConfFileIndex(MODE_NP9660);
+            sctrlSESetBootConfFileIndex(BOOT_MODE_NP9660);
         }
 
         // Empty UMD drive (makes sceUmdCheckMedium return false)
@@ -430,21 +430,22 @@ void sctrlSESetUmdFile(const char *file) {
 
     // If booted on a ISO mode, make sctrlSESetUmdFile also
     // update the ISO filename buffer of the currently active ISO driver.
-    if (g_rebootex_config.bootfileindex != MODE_UMD) {
+    if (g_rebootex_config.bootfileindex != BOOT_MODE_NORMAL) {
         void (*_isoSetUmdFile)(const char *) = NULL;
 
         char *iso_mod_name = "INVALID";
         switch (g_rebootex_config.bootfileindex) {
-            case MODE_INFERNO:
+            case BOOT_MODE_OE_LEGACY:
+            case BOOT_MODE_INFERNO:
                 iso_mod_name = "EPI-InfernoDriver";
                 break;
-            case MODE_MARCH33:
+            case BOOT_MODE_MARCH33:
                 iso_mod_name = "EPI-March33Driver";
                 break;
-            case MODE_ME:
+            case BOOT_MODE_ME:
                 iso_mod_name = "EPI-MEisoDriver";
                 break;
-            case MODE_NP9660:
+            case BOOT_MODE_NP9660:
                 iso_mod_name = "EPI-GalaxyController";
                 break;
             default:

@@ -13,8 +13,8 @@ int pspemuLfatOpenEPI(BootFile *file) {
     char *p = file->name;
 
     if (strcmp(p, "pspbtcnf.bin") == 0) {
-        if (g_rebootex_config->bootfileindex == MODE_RECOVERY) {
-            g_rebootex_config->bootfileindex = MODE_UMD;
+        if (g_rebootex_config->bootfileindex == BOOT_MODE_RECOVERY) {
+            g_rebootex_config->bootfileindex = BOOT_MODE_NORMAL;
             file->name = "/kd/pspbtrnf.bin";
         } else {
             file->name = "/kd/pspbtjnf.bin";

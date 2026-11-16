@@ -393,7 +393,7 @@ static void button_func(void) {
 }
 
 static void RecoveryMenu() {
-    sctrlSESetBootConfFileIndex(MODE_RECOVERY);
+    sctrlSESetBootConfFileIndex(BOOT_MODE_RECOVERY);
     sctrlKernelExitVSH(NULL);
 }
 
