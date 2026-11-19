@@ -25,12 +25,12 @@ static int pspemuLfatOpenArkVPSP(BootFile *file) {
         p[5] = 'k'; // use np9660 ISO mode (psvbtknf.bin)
         ret = vitaFlashOpenExtra(file, p);
         if (ret == 0) {
-            relocateFlashFile(file);
+            vitaFlashRelocateFile(file);
         }
     } else if (strncmp(p, "/kd/ark_", 8) == 0) { // ARK module
         ret = vitaFlashOpenExtra(file, p);
         if (ret == 0) {
-            relocateFlashFile(file);
+            vitaFlashRelocateFile(file);
         }
     }
 
