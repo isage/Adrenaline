@@ -104,7 +104,10 @@ int sctrlSEGetConfigEx(SEConfig *config, int size) {
     int read = SCE_ERR_ININDEX;
     int res = 0;
 
-    SceUID fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
+    SceUID fd = sceIoOpen("flash1:/config.epi", PSP_O_RDONLY, 0);
+    if (fd < 0 ) {
+        fd = sceIoOpen("flash1:/config.adrenaline", PSP_O_RDONLY, 0);
+    }
     if (fd < 0) {
         res = fd;
         goto exit;
@@ -181,7 +184,7 @@ int sctrlSESetConfigEx(SEConfig *cnf, int size) {
     int k1 = pspSdkSetK1(0);
 
     SceUID fd =
-        sceIoOpen("flash1:/config.adrenaline", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+        sceIoOpen("flash1:/config.epi", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
     if (fd < 0) {
         pspSdkSetK1(k1);
         return fd;
