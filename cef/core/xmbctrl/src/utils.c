@@ -69,7 +69,7 @@ void scanTimeMachineInstallations() {
     SceIoStat stat;
     char path[256];
     g_num_tm_installs = 0;
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < N_TM_OPTION; i++) {
         snprintf(path, sizeof(path), "ms0:/TM/%s", g_tm_paths[i].path);
         if (sceIoGetstat(path, &stat) >= 0) {
             g_tm_installs[g_num_tm_installs++] = i + 1;

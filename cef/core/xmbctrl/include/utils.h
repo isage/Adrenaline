@@ -11,9 +11,10 @@ typedef struct TimeMachineOptions {
     char *path;
 } TimeMachineOptions;
 
-extern TimeMachineOptions g_tm_paths[1];
+#define N_TM_OPTION 2
+extern TimeMachineOptions g_tm_paths[N_TM_OPTION];
 
-extern u8 g_tm_installs[1];
+extern u8 g_tm_installs[N_TM_OPTION];
 extern u8 g_num_tm_installs;
 
 // Extract specific string segments from "__DATE__" ("Mmm dd yyyy")

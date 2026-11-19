@@ -122,11 +122,12 @@ ItemOptions g_item_opts[] = {
     ITEM_OPT(g_boolean_options), // POPS Plugins
 };
 
-TimeMachineOptions g_tm_paths[1] = {
+TimeMachineOptions g_tm_paths[N_TM_OPTION] = {
     {"6.61 ARK", "V661ARK/reboot.prx"},
+    {"6.61 TN-V2", "V661TN/reboot.prx"},
 };
 
-u8 g_tm_installs[1] = {0};
+u8 g_tm_installs[N_TM_OPTION] = {0};
 u8 g_num_tm_installs = 0;
 
 static STMOD_HANDLER previous = NULL;
